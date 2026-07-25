@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CSR Visual</title>
+  <link rel="stylesheet" data-csr-runtime-style href="../css/csr-dashboard-runtime.css?v=executive-dashboard.css?v=20260724-polish-3">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="../js/csr-dashboard-runtime.js?v=executive-dashboard.css?v=20260724-polish-3"></script>
+  <style>
+    html,body,#csr-root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent}
+    #csr-bootstrap-error{position:absolute;inset:0;display:none;place-items:center;padding:12px;text-align:center;font:600 11px/1.4 Inter,Segoe UI,Arial,sans-serif;color:#a82c4d;background:rgba(255,240,245,.82)}
+  </style>
+</head>
+<body>
+  <div id="csr-root"></div>
+  <div id="csr-bootstrap-error"></div>
+  <script>
+    (function () {
+      'use strict';
+      const root = document.getElementById('csr-root');
+      const errorHost = document.getElementById('csr-bootstrap-error');
+      const query = new URLSearchParams(location.search);
+      const templateId = String(query.get('templateId') || '').trim();
+
+      function fail(error) {
+        console.error('CSR visual bootstrap failed.', error);
+        errorHost.style.display = 'grid';
+        errorHost.textContent = error && error.message ? error.message : String(error || 'CSR visual could not start.');
+      }
+
+      async function start() {
+        if (!templateId) throw new Error('CSR visual templateId is missing.');
+        if (!window.CsrDashboardRuntime || typeof window.CsrDashboardRuntime.start !== 'function') {
+          throw new Error('CSR shared runtime did not load.');
+        }
+
+        // CLONE PATCH: fetch from static JSON instead of MVC endpoint.
+        const endpoint = new URL('../data/csr/' + templateId + '.json', location.href);
+        const response = await fetch(endpoint, { cache: 'no-store' });
+        if (!response.ok) throw new Error((await response.text()) || ('CSR definition request failed: HTTP ' + response.status));
+        const definition = await response.json();
+        definition.directSourceLoading = false;
+        definition.enableVisualLayoutEdit = false;
+        document.title = definition.title || 'CSR Visual';
+        window.CSR_PAGE_CONFIG = definition;
+        window.__csrDashboardInstance = window.CsrDashboardRuntime.start(root, definition);
+      }
+
+      start().catch(fail);
+    })();
+  </script>
+</body>
+</html>

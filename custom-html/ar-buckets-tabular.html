@@ -1,0 +1,720 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <style>
+        :root {
+            --ink: #171777;
+            --header: #171777;
+            --grid: #d7daea;
+            --body: #f7f7fb;
+            --alt: #ffffff;
+            --white: #fff;
+            --neg: #09C698;
+            --pos: #ff2a2a;
+            --muted: #6d7590;
+            --border: #d5d7e0;
+            --b0: #0808EE;
+            --b1: #09C698;
+            --b2: #4F63F7;
+            --b3: #BBFF05;
+            --line: #635BCB;
+            --total: #DDF76D;
+        }
+
+        html,
+        body,
+        #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden !important;
+            background: transparent;
+            font-family: Segoe UI,Arial,Helvetica,sans-serif;
+            color: var(--ink);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: geometricPrecision;
+        }
+
+        .tile {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 92% 8%, rgba(188,237,22,.10), transparent 27%), radial-gradient(circle at 8% 12%, rgba(21,18,244,.05), transparent 29%), linear-gradient(135deg, #ffffff 0%, #f3f7fb 48%, #eef1f6 100%);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden !important;
+            display: grid;
+            grid-template-rows: auto minmax(0,1fr);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 6px 14px rgba(33,43,60,.08);
+        }
+
+            .tile::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 14px;
+                right: 14px;
+                height: 3px;
+                border-radius: 999px;
+                background: linear-gradient(90deg,#171777,#09C698,#BBFF05,rgba(255,255,255,.95));
+                box-shadow: 0 0 8px rgba(23,23,119,.14);
+                z-index: 2;
+            }
+
+        .head {
+            position: relative;
+            z-index: 3;
+            padding: 7px 10px 4px;
+            border-bottom: 1px solid rgba(23,23,119,.10);
+        }
+
+        .title {
+            font-size: 12px;
+            line-height: 1.1;
+            font-weight: 950;
+            color: var(--ink);
+            letter-spacing: -.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .subtitle {
+            font-size: 10px;
+            line-height: 1.1;
+            font-weight: 850;
+            color: #59617d;
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table-wrap {
+            position: relative;
+            z-index: 3;
+            min-height: 0;
+            overflow: hidden !important;
+        }
+
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--grid);
+            padding: 6px 8px;
+            font-size: 10.5px;
+            line-height: 1.05;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        thead th {
+            background: linear-gradient(180deg,#171777 0%,#10106c 100%);
+            color: var(--white);
+            font-weight: 950;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.14);
+        }
+
+            thead th:first-child {
+                width: 31%;
+                text-align: left;
+            }
+
+        tbody td {
+            background: rgba(247,247,251,.92);
+            color: var(--ink);
+            font-weight: 650;
+        }
+
+        tbody tr:nth-child(even) td {
+            background: rgba(255,255,255,.95);
+        }
+
+        tbody td:first-child {
+            text-align: left;
+            font-weight: 950;
+            color: var(--ink);
+        }
+
+        .total-cell {
+            font-weight: 950;
+            color: var(--neg);
+        }
+
+        .state {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle at 92% 8%, rgba(188,237,22,.10), transparent 27%), radial-gradient(circle at 8% 12%, rgba(21,18,244,.05), transparent 29%), linear-gradient(135deg, #ffffff 0%, #f3f7fb 48%, #eef1f6 100%);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .state-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 850;
+            color: var(--muted);
+            max-width: 94%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .spin {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #d9dbe6;
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-box {
+            width: 100%;
+            height: 100%;
+            background: #fff7f7;
+            color: #9b1c1c;
+            padding: 8px;
+            overflow: auto;
+            font-size: 10px;
+            line-height: 1.35;
+            font-weight: 700;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script>
+        (function () {
+            let gotData = false;
+
+            const BUCKETS = [
+                { key: "0_30", label: "0-30", aliases: ["0_30", "Bucket_0_30", "Bucket0_30", "Bucket_030", "0-30", "0 - 30"] },
+                { key: "31_60", label: "31-60", aliases: ["31_60", "Bucket_31_60", "Bucket31_60", "31-60", "31 - 60"] },
+                { key: "61_90", label: "61-90", aliases: ["61_90", "Bucket_61_90", "Bucket61_90", "61-90", "61 - 90"] },
+                { key: "90_plus", label: "90+", aliases: ["90_plus", "90_Plus", "Bucket_90_Plus", "Bucket_90_plus", "Bucket90Plus", "90+", "90 Plus", ">90", "Over 90"] }
+            ];
+
+            const COLORS = ["#0808EE", "#09C698", "#4F63F7", "#BBFF05"];
+
+            function root() { return document.getElementById("root"); }
+
+            function esc(v) {
+                return String(v ?? "").replace(/[&<>"']/g, ch => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[ch]));
+            }
+
+            function showLoader(t) {
+                root().innerHTML =
+                    '<div class="state"><div class="state-inner"><span class="spin"></span><span>' +
+                    esc(t || "loading") +
+                    '</span></div></div>';
+            }
+
+            function showNoData(t) {
+                root().innerHTML =
+                    '<div class="state"><div class="state-inner"><span>' +
+                    esc(t || "no data") +
+                    '</span></div></div>';
+            }
+
+            function showError(e) {
+                root().innerHTML =
+                    '<div class="error-box">' +
+                    esc(e && e.stack ? e.stack : String(e || "Unknown error")) +
+                    '</div>';
+            }
+
+            function parseMaybeJson(v) {
+                if (typeof v !== "string") return v;
+                const s = v.trim();
+                if (!s || ("[".indexOf(s[0]) < 0 && "{".indexOf(s[0]) < 0)) return v;
+                try { return JSON.parse(s); } catch { return v; }
+            }
+
+            function ciGet(r, n) {
+                if (!r || typeof r !== "object") return undefined;
+                const t = String(n).toLowerCase();
+                for (const k of Object.keys(r)) {
+                    if (String(k).toLowerCase() === t) return r[k];
+                }
+                return undefined;
+            }
+
+            function first(r, names) {
+                for (const name of names) {
+                    const v = ciGet(r, name);
+                    if (v !== undefined) return v;
+                }
+                return undefined;
+            }
+
+            function n(v) {
+                if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+                const x = Number(String(v ?? "").replace(/[$,%\s,]/g, ""));
+                return Number.isFinite(x) ? x : 0;
+            }
+
+            function isNil(v) {
+                return v === null || v === undefined || v === "";
+            }
+
+            function hasBucketWide(r) {
+                return r && typeof r === "object" && (
+                    BUCKETS.some(b => first(r, b.aliases) !== undefined) ||
+                    ciGet(r, "TotalAR") !== undefined ||
+                    ciGet(r, "Total AR") !== undefined ||
+                    ciGet(r, "Total") !== undefined
+                );
+            }
+
+            function hasBucketTall(r) {
+                return r &&
+                    typeof r === "object" &&
+                    ciGet(r, "AgingBucket") !== undefined &&
+                    ciGet(r, "Amount") !== undefined;
+            }
+
+            function looks(r) {
+                return (hasBucketWide(r) || hasBucketTall(r)) &&
+                    (
+                        ciGet(r, "PeriodDate") !== undefined ||
+                        ciGet(r, "SelectedDate") !== undefined ||
+                        ciGet(r, "CurrentDate") !== undefined
+                    );
+            }
+
+            function isRows(v) {
+                return Array.isArray(v) && v.length && v.some(looks);
+            }
+
+            function findRows(v, d, s) {
+                d = d || 0;
+                s = s || [];
+                v = parseMaybeJson(v);
+
+                if (isRows(v)) return v;
+                if (!v || typeof v !== "object" || d > 16) return [];
+                if (s.includes(v)) return [];
+
+                s.push(v);
+
+                for (const k of ["data", "rows", "records", "items", "payload", "model", "result", "response", "body", "raw", "source", "detail", "value", "values", "context"]) {
+                    if (Object.prototype.hasOwnProperty.call(v, k)) {
+                        const f = findRows(v[k], d + 1, s);
+                        if (f.length) return f;
+                    }
+                }
+
+                for (const k of Object.keys(v)) {
+                    const f = findRows(v[k], d + 1, s);
+                    if (f.length) return f;
+                }
+
+                return [];
+            }
+
+            function findContext(v, d, s) {
+                d = d || 0;
+                s = s || [];
+                v = parseMaybeJson(v);
+
+                if (!v || typeof v !== "object" || d > 10) return {};
+                if (s.includes(v)) return {};
+
+                s.push(v);
+
+                if (ciGet(v, "title") || ciGet(v, "label") || ciGet(v, "key") || ciGet(v, "filters")) return v;
+
+                for (const k of ["config", "widget", "payload", "model", "context", "request"]) {
+                    if (v[k]) {
+                        const c = findContext(v[k], d + 1, s);
+                        if (Object.keys(c).length) return c;
+                    }
+                }
+
+                return {};
+            }
+
+            function dateObj(raw) {
+                if (!raw) return null;
+                const s = String(raw).trim();
+                const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+                const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(s);
+                return Number.isFinite(d.getTime())
+                    ? new Date(d.getFullYear(), d.getMonth(), d.getDate())
+                    : null;
+            }
+
+            function keyDate(d) {
+                return d
+                    ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+                    : "";
+            }
+
+            function mmddyyyy(d) {
+                return d
+                    ? `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}`
+                    : "";
+            }
+
+            function money(v) {
+                if (isNil(v)) return "—";
+
+                const x = n(v);
+                const a = Math.abs(x);
+                const sg = x < 0 ? "-" : "";
+
+                if (a >= 1e6) {
+                    return sg + (a / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(/\.0$/, "") + "M";
+                }
+
+                if (a >= 1e3) {
+                    return sg + Math.round(a / 1e3).toLocaleString("en-US") + "K";
+                }
+
+                return sg + Math.round(a).toLocaleString("en-US");
+            }
+
+            function normBucket(v) {
+                let s = String(v ?? "")
+                    .trim()
+                    .replace(/&gt;/gi, ">")
+                    .replace(/\\u003e/gi, ">")
+                    .toLowerCase();
+
+                if (["0-30", "0_30", "0 to 30", "0 – 30"].includes(s)) return "0_30";
+                if (["31-60", "31_60", "31 to 60"].includes(s)) return "31_60";
+                if (["61-90", "61_90", "61 to 90"].includes(s)) return "61_90";
+                if ([">90", "90+", "91+", "over 90", "90 plus"].includes(s)) return "90_plus";
+
+                return "";
+            }
+
+            function normalizePeriodKey(v) {
+                const k = String(v || "").toUpperCase();
+
+                if (k === "CURRENT") return "CURRENT";
+                if (k === "PREV_WEEK" || k === "W_1") return "PREV_WEEK";
+                if (k === "M_1" || k === "W_2") return "M_1";
+                if (k === "M_2" || k === "W_3") return "M_2";
+                if (k === "Y_1") return "Y_1";
+
+                return k;
+            }
+
+            function periodRank(p) {
+                const key = normalizePeriodKey(p.periodKey);
+                const so = Number(p.sortOrder);
+
+                /*
+                  Oldest -> newest:
+                  M_2/W_3 -> M_1/W_2 -> PREV_WEEK/W_1 -> CURRENT
+                */
+                if (key === "M_2") return 10;
+                if (key === "M_1") return 20;
+                if (key === "PREV_WEEK") return 30;
+                if (key === "CURRENT") return 40;
+                if (key === "Y_1") return 90;
+
+                /*
+                  SQL view may use:
+                  CURRENT=1, PREV=2, M1=3, M2=4
+                */
+                if (Number.isFinite(so)) {
+                    if (so === 4) return 10;  // M_2
+                    if (so === 3) return 20;  // M_1
+                    if (so === 2) return 30;  // PREV_WEEK
+                    if (so === 1 || so === 0) return 40;  // CURRENT
+                    if (so === 5) return 90;
+                    return so;
+                }
+
+                return 50;
+            }
+
+            function sortPeriods(arr) {
+                return arr.sort((a, b) => {
+                    const ar = periodRank(a);
+                    const br = periodRank(b);
+
+                    if (ar !== br) return ar - br;
+
+                    const ad = a.date ? a.date.getTime() : 0;
+                    const bd = b.date ? b.date.getTime() : 0;
+
+                    return bd - ad;
+                });
+            }
+
+            function buildModel(rows) {
+                const by = new Map();
+
+                for (const r of rows) {
+                    const d = dateObj(ciGet(r, "PeriodDate") ?? ciGet(r, "SelectedDate") ?? ciGet(r, "CurrentDate"));
+                    if (!d) continue;
+
+                    const rawKey = ciGet(r, "PeriodKey");
+                    const periodKey = normalizePeriodKey(rawKey);
+                    const mapKey = (periodKey ? periodKey : "") || keyDate(d);
+
+                    if (!by.has(mapKey)) {
+                        by.set(mapKey, {
+                            date: d,
+                            sortOrder: ciGet(r, "SortOrder"),
+                            periodKey: periodKey,
+                            periodLabel: ciGet(r, "PeriodLabel"),
+                            v: { "0_30": 0, "31_60": 0, "61_90": 0, "90_plus": 0 },
+                            totalFromRows: 0,
+                            totalSeen: false,
+                            bucketSeen: false
+                        });
+                    }
+
+                    const e = by.get(mapKey);
+
+                    if (e.sortOrder === undefined) e.sortOrder = ciGet(r, "SortOrder");
+                    if (!e.periodKey) e.periodKey = periodKey;
+                    if (!e.periodLabel) e.periodLabel = ciGet(r, "PeriodLabel");
+                    if (!e.date) e.date = d;
+
+                    if (hasBucketTall(r)) {
+                        const b = normBucket(ciGet(r, "AgingBucket"));
+
+                        if (b) {
+                            e.v[b] += n(ciGet(r, "Amount"));
+                            e.bucketSeen = true;
+                        }
+                    } else {
+                        for (const b of BUCKETS) {
+                            const val = first(r, b.aliases);
+
+                            if (!isNil(val)) {
+                                e.v[b.key] += n(val);
+                                if (n(val) !== 0) e.bucketSeen = true;
+                            }
+                        }
+                    }
+
+                    const total = ciGet(r, "TotalAR") ?? ciGet(r, "Total AR") ?? ciGet(r, "Total");
+
+                    if (!isNil(total)) {
+                        e.totalFromRows += n(total);
+                        e.totalSeen = true;
+                    }
+                }
+
+                let arr = Array.from(by.values());
+
+                arr.forEach(e => {
+                    e.bucketTotal = BUCKETS.reduce((s, b) => s + n(e.v[b.key]), 0);
+                    e.total = e.bucketTotal !== 0 ? e.bucketTotal : (e.totalSeen ? e.totalFromRows : 0);
+                    e.totalOnly = e.bucketTotal === 0 && e.totalSeen && e.totalFromRows !== 0;
+                });
+
+                arr = arr
+                    .filter(x => x.bucketSeen || x.totalSeen)
+                    .filter(x => normalizePeriodKey(x.periodKey) !== "Y_1");
+
+                arr = sortPeriods(arr);
+
+                const explicitCurrentIndex = arr.findIndex(x => normalizePeriodKey(x.periodKey) === "CURRENT");
+
+                arr.forEach((x, i) => {
+                    x.isToday = explicitCurrentIndex >= 0
+                        ? i === explicitCurrentIndex
+                        : i === 0;
+                });
+
+                return arr;
+            }
+
+            function getTitle(ctx, rows, fallback) {
+                const t = ciGet(ctx, "title") || ciGet(ctx, "label");
+
+                if (t) return String(t);
+
+                const cg = ciGet(rows[0] || {}, "CategoryGroup");
+
+                return String(cg || "").toLowerCase().includes("commercial")
+                    ? "Commercial Aging Buckets"
+                    : fallback;
+            }
+
+            /*
+              Match Delta Week field wording:
+              - Current = Today's date (MM/DD/YYYY)
+              - Every non-current weekly period = Prev week (MM/DD/YYYY)
+              - No M-1 / M-2 / Y-1 labels.
+            */
+            function rowLabel(p) {
+                return (p.isToday ? "Today’s date" : "Prev week") + " (" + mmddyyyy(p.date) + ")";
+            }
+
+            window.__arBucketShared = {
+                BUCKETS,
+                COLORS,
+                root,
+                esc,
+                showLoader,
+                showNoData,
+                showError,
+                findRows,
+                findContext,
+                buildModel,
+                getTitle,
+                rowLabel,
+                money,
+                n
+            };
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const S = window.__arBucketShared;
+            let gotData = false;
+
+            function draw(source) {
+                try {
+                    const rows = S.findRows(source);
+
+                    if (!rows.length) {
+                        if (!gotData) S.showNoData("no data");
+                        return;
+                    }
+
+                    const ctx = S.findContext(source);
+                    const title = S.getTitle(ctx, rows, "Residential Aging Buckets");
+                    const model = S.buildModel(rows);
+
+                    if (!model.length) {
+                        throw new Error("No renderable bucket table periods. Rows found: " + rows.length);
+                    }
+
+                    let html =
+                        '<div class="tile">' +
+                        '<div class="head">' +
+                        '<div class="title">' + S.esc(title) + '</div>' +
+                        '<div class="subtitle">' + S.esc("Active accounts, true debt") + '</div>' +
+                        '</div>' +
+                        '<div class="table-wrap">' +
+                        '<table>' +
+                        '<thead>' +
+                        '<tr>' +
+                        '<th>Week</th>' +
+                        '<th>0-30</th>' +
+                        '<th>31-60</th>' +
+                        '<th>61-90</th>' +
+                        '<th>90+</th>' +
+                        '<th>Total AR</th>' +
+                        '</tr>' +
+                        '</thead>' +
+                        '<tbody>';
+
+                    model.forEach(p => {
+                        html += '<tr>';
+                        html += '<td>' + S.esc(S.rowLabel(p)) + '</td>';
+
+                        S.BUCKETS.forEach(b => {
+                            html += '<td>' + S.esc(S.money(p.v[b.key])) + '</td>';
+                        });
+
+                        html += '<td class="total-cell">' + S.esc(S.money(p.total)) + '</td>';
+                        html += '</tr>';
+                    });
+
+                    html +=
+                        '</tbody>' +
+                        '</table>' +
+                        '</div>' +
+                        '</div>';
+
+                    S.root().innerHTML = html;
+                    gotData = true;
+                } catch (e) {
+                    S.showError(e);
+                }
+            }
+
+            function receive(source) {
+                const rows = S.findRows(source);
+
+                if (rows.length) {
+                    draw(source);
+                    return;
+                }
+
+                if (!gotData) {
+                    const v = source && typeof source === "object" ? source : null;
+
+                    if (
+                        v &&
+                        (
+                            (Array.isArray(v.data) && v.data.length === 0) ||
+                            (Array.isArray(v.rows) && v.rows.length === 0)
+                        )
+                    ) {
+                        S.showNoData("no data");
+                    }
+                }
+            }
+
+            S.showLoader("loading");
+
+            window.addEventListener("message", ev => {
+                const data = ev && ev.data ? ev.data : {};
+                const type = String(data.type || "");
+
+                if (type.startsWith("dashboard-custom-html:") && type.endsWith(":resize")) return;
+
+                receive(data);
+            });
+
+            window.update = receive;
+            window.init = receive;
+            window.setData = receive;
+            window.onData = receive;
+
+            if (window.DashVisualContext) receive(window.DashVisualContext);
+            else if (window.__DashVisualContext) receive(window.__DashVisualContext);
+            else if (window.__DASH_VISUAL_CONTEXT__) receive(window.__DASH_VISUAL_CONTEXT__);
+        })();
+    </script>
+</body>
+</html>

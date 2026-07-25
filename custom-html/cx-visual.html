@@ -1,0 +1,2337 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Universal CX Visual</title>
+    <style>
+        :root {
+            --cx-navy: #060b3f;
+            --cx-blue: #1000ee;
+            --cx-teal: #14c8a7;
+            --cx-lime: #a8ff00;
+            --cx-ink: #081041;
+            --cx-muted: #607086;
+            --cx-grid: rgba(8,16,65,.105);
+            --cx-border: rgba(8,16,65,.16);
+            --cx-good: #08c995;
+            --cx-watch: #6f809b;
+            --cx-bad: #d73b56;
+            --cx-font: Inter,Segoe UI,Roboto,Arial,sans-serif;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: var(--cx-font);
+            color: var(--cx-ink);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .cx-root {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            min-width: 160px;
+            min-height: 110px;
+            overflow: hidden;
+            isolation: isolate;
+            border-radius: 18px;
+            border: 1px solid var(--cx-border);
+            background: radial-gradient(circle at 88% 4%,var(--skin-hot,rgba(205,255,0,.35)),transparent 23%), radial-gradient(circle at 9% 15%,var(--skin-cool,rgba(19,32,255,.08)),transparent 29%), radial-gradient(circle at 78% 92%,var(--skin-low,rgba(20,200,167,.07)),transparent 32%), linear-gradient(135deg,rgba(255,255,255,.76),var(--skin-wash,rgba(242,247,255,.52)) 44%,rgba(255,255,255,.68));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.82);
+        }
+
+            .cx-root::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+                pointer-events: none;
+                opacity: .82;
+                background: linear-gradient(135deg,transparent 0 22%,rgba(0,218,255,.08) 22.5%,transparent 23.5% 52%,rgba(255,255,255,.22) 53%,transparent 54%), linear-gradient(90deg,rgba(255,255,255,.28),transparent 30%,rgba(255,255,255,.16));
+            }
+
+            .cx-root::after {
+                content: "";
+                position: absolute;
+                z-index: 3;
+                top: 0;
+                left: 14px;
+                right: 14px;
+                height: 4px;
+                border-radius: 0 0 10px 10px;
+                background: linear-gradient(90deg,var(--cx-blue),var(--cx-teal),var(--cx-lime));
+                box-shadow: 0 0 16px rgba(140,255,0,.52);
+            }
+
+            .cx-root.cx-skin-kpi {
+                --skin-hot: rgba(168,255,0,.34);
+                --skin-cool: rgba(16,0,238,.105);
+                --skin-low: rgba(20,200,167,.10);
+                --skin-wash: rgba(242,248,255,.56);
+            }
+
+            .cx-root.cx-skin-response {
+                --skin-hot: rgba(20,200,167,.24);
+                --skin-cool: rgba(16,0,238,.13);
+                --skin-low: rgba(168,255,0,.16);
+                --skin-wash: rgba(239,252,249,.60);
+            }
+
+            .cx-root.cx-skin-engagement {
+                --skin-hot: rgba(168,255,0,.20);
+                --skin-cool: rgba(16,0,238,.15);
+                --skin-low: rgba(103,124,255,.11);
+                --skin-wash: rgba(243,244,255,.62);
+            }
+
+            .cx-root.cx-skin-table {
+                --skin-hot: rgba(16,0,238,.10);
+                --skin-cool: rgba(20,200,167,.12);
+                --skin-low: rgba(168,255,0,.10);
+                --skin-wash: rgba(245,248,255,.66);
+            }
+
+            .cx-root.cx-skin-pie {
+                --skin-hot: rgba(168,255,0,.40);
+                --skin-cool: rgba(20,200,167,.13);
+                --skin-low: rgba(16,0,238,.08);
+                --skin-wash: rgba(248,253,240,.62);
+            }
+
+            .cx-root.cx-skin-kpi::after {
+                background: linear-gradient(90deg,#1000ee,#14c8a7,#a8ff00);
+            }
+
+            .cx-root.cx-skin-response::after {
+                background: linear-gradient(90deg,#1000ee,#14c8a7,#a8ff00);
+            }
+
+            .cx-root.cx-skin-engagement::after {
+                background: linear-gradient(90deg,#1000ee,#090563,#14c8a7,#a8ff00);
+            }
+
+            .cx-root.cx-skin-table::after {
+                background: linear-gradient(90deg,#090563,#1000ee,#14c8a7);
+            }
+
+            .cx-root.cx-skin-pie::after {
+                background: linear-gradient(90deg,#14c8a7,#a8ff00,#1000ee);
+            }
+
+        .cx-inner {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            padding: 14px 16px 12px 16px;
+        }
+
+        .cx-title {
+            margin: 0;
+            max-width: calc(100% - 28px);
+            color: var(--cx-navy);
+            font-size: clamp(13px,1.05vw,20px);
+            line-height: 1.1;
+            font-weight: 850;
+            letter-spacing: -.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 0 rgba(255,255,255,.65);
+        }
+
+        .cx-orb {
+            position: absolute;
+            top: 13px;
+            right: 14px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1px solid rgba(8,16,65,.08);
+            opacity: .75;
+            background: radial-gradient(circle at 55% 52%,rgba(255,255,255,.85) 0 20%,transparent 21%), radial-gradient(circle,rgba(255,245,153,.65),rgba(255,255,255,.24));
+        }
+
+        .cx-loading,
+        .cx-empty,
+        .cx-error {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            color: #5d687a;
+            font-size: 11px;
+            font-weight: 750;
+            text-align: center;
+            line-height: 1.35;
+            letter-spacing: .01em;
+        }
+
+            .cx-loading::before {
+                content: "";
+                width: 16px;
+                height: 16px;
+                margin-right: 8px;
+                border-radius: 50%;
+                border: 3px solid rgba(8,16,65,.12);
+                border-top-color: var(--cx-blue);
+                animation: cx-spin .75s linear infinite;
+            }
+
+        .cx-error {
+            align-items: flex-start;
+            justify-content: flex-start;
+            text-align: left;
+            white-space: pre-wrap;
+            overflow: auto;
+            color: #9a1833;
+            background: rgba(255,255,255,.72);
+        }
+
+        @keyframes cx-spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .cx-kpi {
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto auto minmax(0,1fr) auto auto;
+            gap: 8px;
+        }
+
+        .cx-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            align-self: start;
+            margin-top: 4px;
+            color: var(--cx-navy);
+            font-size: clamp(12px,1.05vw,18px);
+            font-weight: 800;
+        }
+
+        .cx-status-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+            background: var(--cx-watch);
+            box-shadow: 0 0 0 5px rgba(107,124,147,.14),inset 0 1px 3px rgba(255,255,255,.8);
+        }
+
+            .cx-status-dot.good {
+                background: var(--cx-good);
+                box-shadow: 0 0 0 5px rgba(8,201,149,.16),0 0 14px rgba(8,201,149,.48),inset 0 1px 3px rgba(255,255,255,.8);
+            }
+
+            .cx-status-dot.bad {
+                background: var(--cx-bad);
+                box-shadow: 0 0 0 5px rgba(215,59,86,.15),0 0 14px rgba(215,59,86,.35),inset 0 1px 3px rgba(255,255,255,.8);
+            }
+
+        .cx-kpi-main {
+            align-self: center;
+            display: grid;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .cx-kpi-value {
+            align-self: center;
+            margin-top: -4px;
+            color: #050a2e;
+            font-size: clamp(34px,7.6vw,72px);
+            line-height: .92;
+            font-weight: 900;
+            letter-spacing: -.075em;
+            text-shadow: 0 1px 0 rgba(255,255,255,.68),0 14px 38px rgba(8,16,65,.16);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cx-kpi-pills {
+            align-self: end;
+            justify-self: start;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        .cx-kpi-pill {
+            display: inline-flex;
+            align-items: center;
+            min-height: 22px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.84);
+            border: 1px solid rgba(7,15,64,.14);
+            box-shadow: 0 8px 22px rgba(8,16,65,.08);
+            color: var(--cx-navy);
+            font-size: 11px;
+            font-weight: 750;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cx-kpi-pill-month {
+            background: rgba(255,255,255,.92);
+        }
+
+        .cx-kpi-pill-delta.good {
+            border-color: rgba(8,201,149,.24);
+            color: #0b6b51;
+            background: rgba(8,201,149,.08);
+        }
+
+        .cx-kpi-pill-delta.bad {
+            border-color: rgba(215,59,86,.22);
+            color: #9a1833;
+            background: rgba(215,59,86,.08);
+        }
+
+        .cx-kpi-pill-delta.watch {
+            border-color: rgba(111,128,155,.22);
+            color: #4d607a;
+            background: rgba(111,128,155,.10);
+        }
+
+        .cx-kpi-foot {
+            position: relative;
+            min-height: 22px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .cx-kpi-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            max-width: 100%;
+            color: #1F2937;
+            font-size: 10px;
+            line-height: 1.22;
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0;
+        }
+
+        @keyframes cxKpiLineA {
+            0% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            43% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes cxKpiLineB {
+            0% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            62% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            88% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            98% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+        }
+
+        .cx-kpi-line-a {
+            animation: cxKpiLineA 13s ease-in-out infinite;
+        }
+
+        .cx-kpi-line-b {
+            animation: cxKpiLineB 13s ease-in-out infinite;
+        }
+
+        .cx-kpi-pills {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            align-self: end;
+            justify-self: start;
+        }
+
+        .cx-kpi-pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: .7;
+            flex: 0 0 auto;
+        }
+
+        .cx-kpi-pill-text {
+            white-space: nowrap;
+        }
+
+        .cx-kpi-foot {
+            position: relative;
+            min-height: 22px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .cx-kpi-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            color: #1F2937;
+            font-size: 10px;
+            line-height: 1.22;
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0;
+        }
+
+        @keyframes cx-kpi-line-a {
+            0% {
+                opacity: 0;
+                transform: translateY(3px)
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+            43% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(-2px)
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px)
+            }
+        }
+
+        @keyframes cx-kpi-line-b {
+            0% {
+                opacity: 0;
+                transform: translateY(3px)
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(3px)
+            }
+
+            62% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+            88% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+            98% {
+                opacity: 0;
+                transform: translateY(-2px)
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px)
+            }
+        }
+
+        .cx-kpi-line-a {
+            animation: cx-kpi-line-a 13s ease-in-out infinite;
+        }
+
+        .cx-kpi-line-b {
+            animation: cx-kpi-line-b 13s ease-in-out infinite;
+        }
+
+        .cx-kpi-line-static {
+            position: relative;
+            opacity: 1;
+            transform: none;
+            animation: none;
+        }
+
+        .cx-chart-wrap {
+            position: absolute;
+            left: 4px;
+            right: 4px;
+            top: 26px;
+            bottom: 0;
+        }
+
+        .cx-svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .cx-grid-line {
+            stroke: var(--cx-grid);
+            stroke-width: 1;
+            stroke-dasharray: 2 5;
+        }
+
+        .cx-axis {
+            stroke: rgba(8,16,65,.18);
+            stroke-width: 1;
+        }
+
+        .cx-axis-label,
+        .cx-y-label,
+        .cx-y2-label {
+            fill: #31415f;
+            font-size: 9px;
+            font-weight: 750;
+            paint-order: stroke fill;
+            stroke: rgba(255,255,255,.78);
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+
+        .cx-y2-label {
+            fill: #667792;
+        }
+
+        .cx-y-title,
+        .cx-y2-title,
+        .cx-x-title {
+            fill: #31415f;
+            font-size: 9px;
+            font-weight: 800;
+            paint-order: stroke fill;
+            stroke: rgba(255,255,255,.75);
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+
+        .cx-bar {
+            filter: drop-shadow(0 8px 10px rgba(7,15,64,.10));
+            transition: opacity .16s ease,filter .16s ease,transform .16s ease;
+            transform-box: fill-box;
+            transform-origin: center bottom;
+        }
+
+            .cx-bar:hover {
+                opacity: .92;
+                filter: drop-shadow(0 10px 12px rgba(7,15,64,.18));
+            }
+
+        .cx-line {
+            fill: none;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 6px 9px rgba(7,15,64,.14));
+        }
+
+        .cx-point {
+            stroke: rgba(255,255,255,.9);
+            stroke-width: 2;
+            filter: drop-shadow(0 5px 7px rgba(7,15,64,.16));
+        }
+
+        .cx-legend {
+            position: absolute;
+            top: 8px;
+            right: 34px;
+            left: auto;
+            bottom: auto;
+            z-index: 5;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+            max-width: 50%;
+            gap: 4px 8px;
+            padding: 3px 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.50);
+            border: 1px solid rgba(8,16,65,.07);
+            box-shadow: 0 6px 16px rgba(7,15,64,.06);
+            backdrop-filter: blur(6px);
+        }
+
+        .cx-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #18264f;
+            font-size: 8px;
+            line-height: 1;
+            font-weight: 750;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            opacity: .96;
+            transition: opacity .15s ease,transform .15s ease;
+        }
+
+        .cx-legend-swatch {
+            width: 8px;
+            height: 8px;
+            border-radius: 3px;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,.55);
+        }
+
+        .cx-legend-line {
+            width: 14px;
+            height: 2px;
+            border-radius: 999px;
+        }
+
+        .cx-table-wrap {
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            top: 42px;
+            bottom: 12px;
+            overflow: auto;
+            border-radius: 10px;
+        }
+
+        table.cx-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #111d4a;
+            font-size: clamp(10px,.72vw,13px);
+            font-weight: 650;
+        }
+
+        .cx-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            padding: 9px 10px;
+            background: #080368;
+            color: #fff;
+            text-align: right;
+            white-space: nowrap;
+            font-weight: 800;
+            border-right: 1px solid rgba(255,255,255,.16);
+        }
+
+            .cx-table thead th:first-child {
+                text-align: left;
+                border-radius: 8px 0 0 0;
+            }
+
+            .cx-table thead th:last-child {
+                border-radius: 0 8px 0 0;
+                border-right: 0;
+            }
+
+        .cx-table tbody td {
+            padding: 8px 10px;
+            text-align: right;
+            border-bottom: 1px solid rgba(8,16,65,.10);
+            background: rgba(255,255,255,.48);
+            white-space: nowrap;
+        }
+
+        .cx-table tbody tr:nth-child(even) td {
+            background: rgba(8,16,65,.045);
+        }
+
+        .cx-table tbody tr:hover td {
+            background: rgba(16,0,238,.075);
+        }
+
+        .cx-table tbody td:first-child {
+            text-align: left;
+            font-weight: 750;
+        }
+
+        .cx-table tfoot td {
+            padding: 9px 10px;
+            border-top: 2px solid rgba(8,16,65,.20);
+            background: rgba(23,23,119,.085);
+            color: var(--cx-navy);
+            font-weight: 900;
+            text-align: right;
+        }
+
+        .cx-table tfoot td:first-child {
+            text-align: left;
+        }
+
+        .cx-cell-status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+            min-width: 46px;
+        }
+
+        .cx-mini-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex: 0 0 auto;
+            opacity: .78;
+            background: var(--cx-watch);
+            box-shadow: 0 0 0 3px rgba(111,128,155,.10), inset 0 1px 2px rgba(255,255,255,.72);
+        }
+
+            .cx-mini-dot.good {
+                background: var(--cx-good);
+                box-shadow: 0 0 0 3px rgba(8,201,149,.11), 0 0 8px rgba(8,201,149,.24), inset 0 1px 2px rgba(255,255,255,.75);
+            }
+
+            .cx-mini-dot.bad {
+                width: 9px;
+                height: 9px;
+                border-radius: 2px;
+                transform: rotate(45deg);
+                background: var(--cx-bad);
+                opacity: .72;
+                box-shadow: 0 0 0 3px rgba(215,59,86,.10), 0 0 8px rgba(215,59,86,.22), inset 0 1px 2px rgba(255,255,255,.65);
+            }
+
+        .cx-pie-wrap {
+            position: absolute;
+            inset: 42px 8px 42px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cx-pie-legend {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px 14px;
+            min-height: 24px;
+            color: var(--cx-navy);
+            font-size: 9px;
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .cx-pie-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 0;
+            white-space: nowrap;
+        }
+
+        .cx-pie-legend-swatch {
+            width: 9px;
+            height: 9px;
+            border-radius: 3px;
+            flex: 0 0 auto;
+            box-shadow: inset 0 0 0 1px rgba(8,16,65,.08);
+        }
+
+        .cx-pie-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .cx-slice {
+            transition: opacity .16s ease,transform .16s ease,filter .16s ease;
+            transform-box: fill-box;
+            transform-origin: center;
+            filter: drop-shadow(0 8px 11px rgba(7,15,64,.14));
+        }
+
+            .cx-slice:hover {
+                opacity: .9;
+                transform: scale(1.025);
+                filter: drop-shadow(0 12px 18px rgba(7,15,64,.20));
+            }
+
+        .cx-pie-center {
+            fill: rgba(255,255,255,.84);
+            stroke: rgba(8,16,65,.12);
+            stroke-width: 1;
+            filter: drop-shadow(0 8px 20px rgba(7,15,64,.13));
+        }
+
+        .cx-pie-total {
+            fill: var(--cx-navy);
+            font-size: 23px;
+            font-weight: 850;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .cx-pie-total-label {
+            fill: var(--cx-muted);
+            font-size: 8px;
+            font-weight: 800;
+            text-anchor: middle;
+            dominant-baseline: central;
+        }
+
+        .cx-pie-label {
+            fill: var(--cx-navy);
+            font-size: 9px;
+            font-weight: 700;
+            text-anchor: middle;
+        }
+
+        .cx-tooltip {
+            position: fixed;
+            z-index: 99;
+            display: none;
+            max-width: 280px;
+            padding: 9px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(8,16,65,.14);
+            background: rgba(255,255,255,.94);
+            box-shadow: 0 18px 46px rgba(7,17,60,.18);
+            color: var(--cx-navy);
+            font-size: 11px;
+            line-height: 1.35;
+            font-weight: 750;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+        }
+
+            .cx-tooltip b {
+                font-weight: 850;
+            }
+
+        @media (max-width:260px),(max-height:150px) {
+            .cx-inner {
+                padding: 10px 11px
+            }
+
+            .cx-title {
+                font-size: 12px
+            }
+
+            .cx-chart-wrap {
+                left: 4px;
+                right: 4px;
+                top: 26px;
+                bottom: 0
+            }
+
+            .cx-table-wrap {
+                left: 9px;
+                right: 9px;
+                top: 34px;
+                bottom: 8px
+            }
+
+            .cx-legend {
+                display: none
+            }
+        }
+    
+
+        .cx-kpi-pill-target {
+            border-color: rgba(16,0,238,.18);
+            color: #080368;
+            background: rgba(16,0,238,.055);
+        }
+
+        .cx-kpi-pill-target.good {
+            border-color: rgba(8,201,149,.24);
+            color: #0b6b51;
+            background: rgba(8,201,149,.08);
+        }
+
+        .cx-kpi-pill-target.bad {
+            border-color: rgba(215,59,86,.22);
+            color: #9a1833;
+            background: rgba(215,59,86,.08);
+        }
+
+        .cx-kpi-pill-target.watch {
+            border-color: rgba(111,128,155,.22);
+            color: #4d607a;
+            background: rgba(111,128,155,.10);
+        }
+
+        .cx-legend.cx-legend-top-right {
+            top: 8px;
+            right: 34px;
+            left: auto;
+            bottom: auto;
+            max-width: 50%;
+        }
+
+        .cx-legend.cx-legend-bottom {
+            top: auto;
+            right: 16px;
+            left: 16px;
+            bottom: 8px;
+            max-width: none;
+            justify-content: center;
+        }
+
+        .cx-legend.cx-legend-compact .cx-legend-item {
+            font-size: 8px;
+            gap: 4px;
+        }
+
+        .cx-legend.cx-legend-compact .cx-legend-swatch {
+            width: 8px;
+            height: 8px;
+            border-radius: 3px;
+        }
+
+        .cx-legend.cx-legend-compact .cx-legend-line {
+            width: 14px;
+            height: 2px;
+        }
+</style>
+</head>
+<body>
+    <div id="cx-root" class="cx-root">
+        <div id="cx-stage" class="cx-loading">Loading</div>
+    </div>
+    <div id="cx-tooltip" class="cx-tooltip"></div>
+    <script>
+    // Runtime marker: 20260721-soe-contract-compatibility-fix
+(function () {
+    "use strict";
+
+    var root = document.getElementById("cx-root");
+    var stage = document.getElementById("cx-stage");
+    var tooltip = document.getElementById("cx-tooltip");
+
+    var state = {
+        config: {},
+        rows: [],
+        rendered: false,
+        hiddenSeries: {},
+        payload: null
+    };
+
+    var fallbackAliases = {
+        title: ["title", "label", "name"],
+        value: ["value", "current_month_value", "currentMonthValue", "current_value", "currentValue", "ytd_value", "count_value", "pct", "percent_value"],
+        valueText: ["value_text", "valueText", "current_month_value_text", "currentMonthValueText", "current_value_text", "currentValueText"],
+        valueType: ["value_type", "valueType"],
+        status: ["status", "status_current", "status_ytd"],
+        delta: ["delta_pct", "delta", "mom", "mom_pct", "month_over_month_pct"],
+        period: ["period_label", "periodLabel", "period", "month_label", "monthLabel", "x_label", "xLabel", "Year & Month", "snapshot_date", "snapshotDate"],
+        periodSort: ["period_sort", "periodSort", "month_sort", "monthSort", "x_sort", "xSort", "sort_order", "sortOrder", "snapshot_date", "snapshotDate"],
+        target: ["target_value", "targetValue", "target", "target_count", "targetCount", "target_numeric", "targetNumeric"],
+        targetText: ["target_text", "targetText", "target_label", "targetLabel"],
+        category: ["category", "customer_type", "customerType", "row_label", "rowLabel", "type", "series_name", "seriesName", "legend", "name", "label"],
+        categorySort: ["category_sort", "categorySort", "row_sort", "rowSort", "type_sort", "typeSort", "series_sort", "seriesSort", "sort_order", "sortOrder"],
+        type: ["type", "category", "engagement_type", "engagementType", "series_name", "seriesName", "legend"],
+        rowLabel: ["row_label", "rowLabel", "kpi", "metric", "customer_type", "customerType", "category"],
+        rowSort: ["row_sort", "rowSort", "category_sort", "categorySort"],
+        currentMonthLabel: ["current_month_label", "currentMonthLabel"],
+        currentMonthValue: ["current_month_value", "currentMonthValue", "current_value", "currentValue", "value"],
+        priorMonthLabel: ["prior_month_label", "priorMonthLabel", "previous_month_label", "previousMonthLabel", "prev_month_label", "prevMonthLabel"],
+        priorMonthValue: ["prior_month_value", "priorMonthValue", "previous_month_value", "previousMonthValue", "prev_month_value", "prevMonthValue", "prior_value", "priorValue"],
+        ytd: ["ytd_value", "ytdValue", "ytd"],
+        currentMonthApplications: ["current_month_applications", "currentMonthApplications", "current_month_application_count", "currentMonthApplicationCount", "current_month_projects", "currentMonthProjects"],
+        priorMonthApplications: ["prior_month_applications", "priorMonthApplications", "prior_month_application_count", "priorMonthApplicationCount", "prior_month_projects", "priorMonthProjects"],
+        ytdApplications: ["ytd_applications", "ytdApplications", "ytd_application_count", "ytdApplicationCount", "ytd_projects", "ytdProjects"],
+        handled: ["handled", "calls_handled", "callsHandled", "bucket_count", "bucketCount"],
+        total: ["total", "total_calls", "totalCalls"],
+        statusCurrent: ["status_current", "statusCurrent", "status"],
+        statusYtd: ["status_ytd", "statusYtd", "status"]
+    };
+
+    var palette = ["#14c8a7", "#4c6fff", "#22d3ee", "#f59e0b", "#8b5cf6", "#00a888", "#38bdf8", "#0891b2", "#64748b"];
+
+    function esc(value) {
+        return String(value == null ? "" : value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function attr(value) {
+        return esc(value).replace(/\n/g, " ");
+    }
+
+    function scrub(value) {
+        return String(value == null ? "" : value)
+            .toLowerCase()
+            .replace(/[\s_\-.\[\]()%#\/&]+/g, "");
+    }
+
+    function parseMaybeJson(value) {
+        if (typeof value !== "string") return value;
+        var text = value.trim();
+        if (!text) return value;
+        text = text.replace(/&quot;/g, "\"").replace(/&#34;/g, "\"").replace(/&#39;/g, "'").replace(/&amp;/g, "&");
+        if (text[0] === "{" || text[0] === "[") {
+            try { return JSON.parse(text); } catch (e) { }
+        }
+        try {
+            var decoded = decodeURIComponent(text);
+            if (decoded && (decoded[0] === "{" || decoded[0] === "[")) return JSON.parse(decoded);
+        } catch (e2) { }
+        return value;
+    }
+
+    function isPlainObject(value) {
+        return value && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function keyMap(obj) {
+        var map = {};
+        Object.keys(obj || {}).forEach(function (key) {
+            map[key] = key;
+            map[String(key).toLowerCase()] = key;
+            map[scrub(key)] = key;
+        });
+        return map;
+    }
+
+    function rawValue(obj, names) {
+        if (!obj || typeof obj !== "object") return undefined;
+        var list = Array.isArray(names) ? names : [names];
+        var map = keyMap(obj);
+        for (var i = 0; i < list.length; i++) {
+            var name = list[i];
+            if (name == null || name === "") continue;
+            if (Object.prototype.hasOwnProperty.call(obj, name)) return obj[name];
+            var lower = String(name).toLowerCase();
+            if (map[lower] != null) return obj[map[lower]];
+            var clean = scrub(name);
+            if (map[clean] != null) return obj[map[clean]];
+        }
+        return undefined;
+    }
+
+    function mergeDeep(target, source) {
+        if (!isPlainObject(source)) return target;
+        Object.keys(source).forEach(function (key) {
+            var value = parseMaybeJson(source[key]);
+            if (isPlainObject(value) && isPlainObject(target[key])) {
+                mergeDeep(target[key], value);
+            } else {
+                target[key] = value;
+            }
+        });
+        return target;
+    }
+
+    function mergeConfig(obj) {
+        obj = parseMaybeJson(obj);
+        if (!isPlainObject(obj)) return;
+
+        var explicit = rawValue(obj, ["config", "Config", "visual", "Visual", "options", "Options", "settings", "Settings", "template", "Template"]);
+        if (isPlainObject(parseMaybeJson(explicit))) {
+            mergeDeep(state.config, parseMaybeJson(explicit));
+        }
+
+        Object.keys(obj).forEach(function (key) {
+            if (/^(data|rows|rawRows|records|items|result)$/i.test(key)) return;
+            if (key === "config" || key === "Config") return;
+            if (state.config[key] == null) state.config[key] = parseMaybeJson(obj[key]);
+        });
+    }
+
+    function getConfigPath(path, fallback) {
+        var parts = String(path || "").split(".").filter(Boolean);
+        var cur = state.config;
+        for (var i = 0; i < parts.length; i++) {
+            if (!isPlainObject(cur)) return fallback;
+            var next = rawValue(cur, [parts[i], parts[i].charAt(0).toLowerCase() + parts[i].slice(1), parts[i].charAt(0).toUpperCase() + parts[i].slice(1)]);
+            if (next == null || next === "") return fallback;
+            cur = parseMaybeJson(next);
+        }
+        return cur == null || cur === "" ? fallback : cur;
+    }
+
+    function getConfig(name, fallback) {
+        return getConfigPath(name, fallback);
+    }
+
+    function getFieldAliasesObject() {
+        var fa = getConfig("FieldAliases", null) || getConfig("Aliases", null);
+        fa = parseMaybeJson(fa);
+        return isPlainObject(fa) ? fa : {};
+    }
+
+    function getAliases(aliasKey) {
+        var fa = getFieldAliasesObject();
+        var fromSettings = rawValue(fa, [aliasKey]);
+        if (fromSettings != null && fromSettings !== "") return Array.isArray(fromSettings) ? fromSettings : [fromSettings];
+        return fallbackAliases[aliasKey] || [aliasKey];
+    }
+
+    function valueByAlias(row, aliasKey, required, fallback) {
+        var aliases = getAliases(aliasKey);
+        var value = rawValue(row, aliases);
+        if (value == null || value === "") {
+            if (required) throw new Error("Missing field for alias " + aliasKey + ". Tried: " + aliases.join(", ") + ". Available: " + Object.keys(row || {}).join(", "));
+            return fallback;
+        }
+        return value;
+    }
+
+    function setHtml(html) {
+        stage.className = "cx-inner";
+        stage.innerHTML = html;
+    }
+
+    function showEmpty(message) {
+        stage.className = "cx-empty";
+        stage.textContent = message || "No data";
+    }
+
+    function showError(error) {
+        stage.className = "cx-error";
+        stage.textContent = String(error && error.message ? error.message : error);
+    }
+
+    function extractRows(payload) {
+        payload = parseMaybeJson(payload);
+        if (!payload) return [];
+        if (Array.isArray(payload)) return normalizeRows(payload, null);
+        if (!isPlainObject(payload)) return [];
+
+        var direct = rawValue(payload, ["data", "Data", "rows", "Rows", "rawRows", "RawRows", "records", "Records", "items", "Items", "result", "Result"]);
+        if (Array.isArray(direct)) return normalizeRows(direct, payload);
+
+        var nested = rawValue(payload, ["payload", "Payload", "model", "Model", "response", "Response"]);
+        var rows = extractRows(nested);
+        return rows.length ? rows : [];
+    }
+
+    function normalizeRows(arr, parent) {
+        if (!Array.isArray(arr) || !arr.length) return [];
+        if (isPlainObject(arr[0])) return arr;
+        if (!Array.isArray(arr[0])) return [];
+        var cols = rawValue(parent || {}, ["columns", "Columns", "fields", "Fields", "schema", "Schema"]) || [];
+        var names = (cols || []).map(function (col) {
+            if (typeof col === "string") return col;
+            return rawValue(col || {}, ["name", "Name", "field", "Field", "key", "Key", "columnName", "ColumnName", "title", "Title", "label", "Label"]);
+        }).filter(Boolean);
+        if (!names.length) return [];
+        return arr.map(function (row) {
+            var obj = {};
+            names.forEach(function (name, index) { obj[name] = row[index]; });
+            return obj;
+        });
+    }
+
+    function num(value, fallback) {
+        if (value == null || value === "") return fallback == null ? 0 : fallback;
+        if (typeof value === "number") return isFinite(value) ? value : (fallback == null ? 0 : fallback);
+        var parsed = Number(String(value).replace(/[$,%#\s]/g, ""));
+        return isFinite(parsed) ? parsed : (fallback == null ? 0 : fallback);
+    }
+
+    function fmt(value, decimals) {
+        var n = num(value, 0);
+        var d = decimals == null ? 0 : decimals;
+        return n.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+
+    function isNumericLike(value) {
+        if (typeof value === "number") return isFinite(value);
+        if (value == null || value === "") return false;
+
+        var text = String(value).trim();
+        if (!text) return false;
+
+        return /^[-+]?\s*[$#]?\s*\d[\d,\s]*(?:\.\d+)?\s*%?$/.test(text);
+    }
+
+    function fmtSmart(value) {
+        var n = num(value, 0);
+        var isWhole = Math.abs(n - Math.round(n)) < 0.0000001;
+        return fmt(n, isWhole ? 0 : 1);
+    }
+
+    function fmtPercent(value) {
+        var n = num(value, 0);
+        var configured = getConfig("NumberFormats.PercentDecimals", null);
+        var decimals;
+
+        if (configured != null && configured !== "" && isFinite(Number(configured))) {
+            decimals = Math.max(0, Math.min(6, Number(configured)));
+        } else {
+            /*
+             * Preserve clean whole-number targets such as 80%, while formatting
+             * measured percentages such as 69.3327 as 69.3%.
+             */
+            decimals = Math.abs(n - Math.round(n)) < 0.0000001 ? 0 : 1;
+        }
+
+        return fmt(n, decimals);
+    }
+
+    function fmtCompact(value) {
+        var n = num(value, 0);
+        if (Math.abs(n) >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+        if (Math.abs(n) >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+        return fmtSmart(n);
+    }
+
+    function formatValue(value, format, prefix, suffix) {
+        var f = String(format || "").trim().toLowerCase();
+        var before = String(prefix || "");
+        var after = String(suffix || "");
+
+        if (value == null || value === "") return "";
+
+        if (f === "compact") {
+            return before + fmtCompact(value) + after;
+        }
+
+        if (f === "percent" || f === "percentage" || f === "pct") {
+            return before + fmtPercent(value) + "%" + after;
+        }
+
+        if (f === "integer" || f === "count" || f === "whole") {
+            return before + fmt(value, 0) + after;
+        }
+
+        if (f === "decimal" || f === "number") {
+            var configuredDecimals = getConfig("NumberFormats.DecimalDecimals", getConfig("Decimals", 1));
+            var decimalPlaces = isFinite(Number(configuredDecimals))
+                ? Math.max(0, Math.min(6, Number(configuredDecimals)))
+                : 1;
+
+            return before + fmt(value, decimalPlaces) + after;
+        }
+
+        if (f === "raw") {
+            /*
+             * SQL decimal values frequently arrive as strings such as
+             * "13.0000" or "69.3327". Keep nonnumeric text untouched, but
+             * normalize numeric raw values instead of exposing SQL precision.
+             */
+            return before + (isNumericLike(value) ? fmtSmart(value) : String(value)) + after;
+        }
+
+        return before + (isNumericLike(value) ? fmtSmart(value) : String(value)) + after;
+    }
+
+    function formatDeltaText(delta) {
+        if (delta == null || delta === "" || !isFinite(num(delta, null))) return "";
+        var d = num(delta, 0);
+        var sign = d > 0 ? "+" : d < 0 ? "-" : "";
+        return sign + fmt(Math.abs(d), 1).replace(/\.0$/, "") + "% MoM";
+    }
+
+    function statusClass(value) {
+        var s = String(value || "").toLowerCase();
+        if (s.indexOf("bad") >= 0 || s.indexOf("fail") >= 0 || s.indexOf("red") >= 0 || s.indexOf("below") >= 0) return "bad";
+        if (s.indexOf("good") >= 0 || s.indexOf("green") >= 0 || s.indexOf("ok") >= 0 || s.indexOf("above") >= 0 || s.indexOf("met") >= 0) return "good";
+        return "watch";
+    }
+
+    function compareTone(deltaPct, increaseIsBad) {
+        if (deltaPct == null || deltaPct === "" || !isFinite(deltaPct)) return "watch";
+        if (deltaPct === 0) return "watch";
+        if (increaseIsBad) return deltaPct > 0 ? "bad" : "good";
+        return deltaPct > 0 ? "good" : "bad";
+    }
+
+    function targetTone(currentRaw, targetRaw) {
+        var current = num(currentRaw, null);
+        var target = num(targetRaw, null);
+        if (current == null || target == null || !isFinite(current) || !isFinite(target)) return "watch";
+        return current >= target ? "good" : "bad";
+    }
+
+    function cleanCardTitle(title) {
+        var s = String(title == null ? "" : title).trim();
+        s = s.replace(/\s*[\(\[\{]\s*(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)(\s+\d{4})?\s*[\)\]\}]\s*$/i, "");
+        s = s.replace(/\s*[-–—]\s*(Jan|January|Feb|February|Mar|March|Apr|April|May|Jun|June|Jul|July|Aug|August|Sep|Sept|September|Oct|October|Nov|November|Dec|December)(\s+\d{4})?\s*$/i, "");
+        return s.trim();
+    }
+
+    function formatChartPeriodLabel(value, sortValue, format) {
+        var mode = String(format || "").trim().toLowerCase();
+        var rawValueText = String(value == null ? "" : value).trim();
+        var sortDigits = String(sortValue == null ? "" : sortValue).replace(/\D/g, "");
+
+        var looksTemporal =
+            sortDigits.length >= 6 ||
+            /^\d{4}[-\/]\d{1,2}(?:[-\/]\d{1,2})?/.test(rawValueText) ||
+            /^[A-Za-z]{3,9}\s+\d{4}$/.test(rawValueText);
+
+        /*
+         * If this is a time axis, never expose raw SQL/ISO dates.
+         * Default to abbreviated month and year.
+         */
+        if (!mode && looksTemporal) {
+            mode = "mmm yyyy";
+        }
+
+        if (!mode) {
+            return rawValueText;
+        }
+
+        var d = null;
+
+        /*
+         * Parse YYYYMM / YYYYMMDD sort values.
+         */
+        if (sortDigits.length >= 6) {
+            var year = Number(sortDigits.slice(0, 4));
+            var month = Number(sortDigits.slice(4, 6));
+
+            if (
+                isFinite(year) &&
+                isFinite(month) &&
+                month >= 1 &&
+                month <= 12
+            ) {
+                d = new Date(year, month - 1, 1);
+            }
+        }
+
+        /*
+         * Parse labels such as June 2026.
+         */
+        if (!d || isNaN(d.getTime())) {
+            var monthYear = rawValueText.match(
+                /^([A-Za-z]{3,9})\s+(\d{4})$/
+            );
+
+            if (monthYear) {
+                var monthNumber = monthNumberFromName(monthYear[1]);
+
+                if (monthNumber != null) {
+                    d = new Date(
+                        Number(monthYear[2]),
+                        monthNumber - 1,
+                        1
+                    );
+                }
+            }
+        }
+
+        /*
+         * Parse ISO values such as 2026-06-01.
+         * Construct locally to avoid UTC timezone month shifting.
+         */
+        if (!d || isNaN(d.getTime())) {
+            var iso = rawValueText.match(
+                /^(\d{4})[-\/](\d{1,2})(?:[-\/](\d{1,2}))?/
+            );
+
+            if (iso) {
+                d = new Date(
+                    Number(iso[1]),
+                    Number(iso[2]) - 1,
+                    1
+                );
+            }
+        }
+
+        if (!d || isNaN(d.getTime())) {
+            return rawValueText;
+        }
+
+        if (
+            mode === "mmm yyyy" ||
+            mode === "month-short" ||
+            mode === "short-month-year"
+        ) {
+            return d.toLocaleDateString(
+                undefined,
+                {
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+        }
+
+        if (
+            mode === "mmmm yyyy" ||
+            mode === "month-full" ||
+            mode === "full-month-year"
+        ) {
+            return d.toLocaleDateString(
+                undefined,
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+        }
+
+        return rawValueText;
+    }
+
+    function formatSignedPhysicalDelta(delta, valueType, unitLabel) {
+        if (delta == null || delta === "" || !isFinite(Number(delta))) return "";
+
+        var d = Number(delta);
+        var sign = d > 0 ? "+" : d < 0 ? "-" : "";
+        var kind = String(valueType || "").toLowerCase();
+        var label = String(unitLabel || "").trim();
+        var body;
+
+        if (kind === "percent" || kind === "percentage" || kind === "pct") {
+            body = fmt(Math.abs(d), Math.abs(d - Math.round(d)) < 0.0000001 ? 0 : 1) + " pts";
+            return sign + body;
+        }
+
+        body = fmtSmart(Math.abs(d));
+        return sign + body + (label ? " " + label : "");
+    }
+
+    function monthNumberFromName(value) {
+        var s = String(value == null ? "" : value).trim().toLowerCase();
+        if (s.indexOf("jan") === 0) return 1;
+        if (s.indexOf("feb") === 0) return 2;
+        if (s.indexOf("mar") === 0) return 3;
+        if (s.indexOf("apr") === 0) return 4;
+        if (s.indexOf("may") === 0) return 5;
+        if (s.indexOf("jun") === 0) return 6;
+        if (s.indexOf("jul") === 0) return 7;
+        if (s.indexOf("aug") === 0) return 8;
+        if (s.indexOf("sep") === 0) return 9;
+        if (s.indexOf("oct") === 0) return 10;
+        if (s.indexOf("nov") === 0) return 11;
+        if (s.indexOf("dec") === 0) return 12;
+        return null;
+    }
+
+    function periodSortFromValue(value) {
+        if (value == null || value === "") return null;
+        if (typeof value === "number" && isFinite(value)) return value;
+        var raw = String(value).trim();
+        if (!raw) return null;
+        var n = Number(raw);
+        if (isFinite(n)) return n;
+        var compact = raw.replace(/[^0-9]/g, "");
+        if (compact.length === 6) {
+            var cy = Number(compact.slice(0, 4));
+            var cm = Number(compact.slice(4, 6));
+            if (isFinite(cy) && isFinite(cm) && cm >= 1 && cm <= 12) return cy * 100 + cm;
+        }
+        var ymd = raw.match(/^(\d{4})[-\/]?(\d{1,2})(?:[-\/]?\d{1,2})?/);
+        if (ymd) {
+            var y1 = Number(ymd[1]);
+            var m1 = Number(ymd[2]);
+            if (isFinite(y1) && isFinite(m1) && m1 >= 1 && m1 <= 12) return y1 * 100 + m1;
+        }
+        var my = raw.match(/^([A-Za-z]{3,9})\s+(\d{4})$/);
+        if (my) {
+            var m2 = monthNumberFromName(my[1]);
+            var y2 = Number(my[2]);
+            if (m2 != null && isFinite(y2)) return y2 * 100 + m2;
+        }
+        var d = new Date(raw);
+        if (!isNaN(d.getTime())) return d.getFullYear() * 100 + (d.getMonth() + 1);
+        return null;
+    }
+
+    function monthLabelFromSortValue(value, shortLabel) {
+        var raw = String(value == null ? "" : value).trim();
+        if (!raw) return "";
+        var digits = raw.replace(/\D/g, "");
+        if (digits.length >= 6) {
+            var year = Number(digits.slice(0, 4));
+            var month = Number(digits.slice(4, 6));
+            if (isFinite(year) && isFinite(month) && month >= 1 && month <= 12) {
+                var d = new Date(year, month - 1, 1);
+                return d.toLocaleDateString(undefined, { month: shortLabel ? "short" : "long", year: "numeric" });
+            }
+        }
+        return "";
+    }
+
+    function periodSortFromRow(row, sortAlias, labelAlias) {
+        var explicit = sortAlias ? periodSortFromValue(valueByAlias(row, sortAlias, false, null)) : null;
+        if (explicit != null) return explicit;
+        var candidates = [];
+        if (labelAlias) candidates.push(valueByAlias(row, labelAlias, false, null));
+        candidates.push(valueByAlias(row, "period", false, null));
+        candidates.push(rawValue(row, ["snapshot_date", "snapshotDate", "date", "Date"]));
+        for (var i = 0; i < candidates.length; i++) {
+            var parsed = periodSortFromValue(candidates[i]);
+            if (parsed != null) return parsed;
+        }
+        return null;
+    }
+
+    function monthLabelFull(value, referenceDate) {
+        var raw = String(value == null ? "" : value).trim();
+        if (!raw) return "";
+        var sortLabel = monthLabelFromSortValue(raw, false);
+        if (sortLabel) return sortLabel;
+        var d = new Date(raw);
+        if (!isNaN(d.getTime())) return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+        var m = raw.match(/^([A-Za-z]{3,9})\s+(\d{4})$/);
+        if (m) return m[1].slice(0, 1).toUpperCase() + m[1].slice(1) + " " + m[2];
+        if (/^[A-Za-z]{3,9}$/.test(raw)) {
+            var ref = referenceDate instanceof Date && !isNaN(referenceDate.getTime()) ? referenceDate : new Date();
+            var mon = monthNumberFromName(raw);
+            if (mon != null) {
+                var y = ref.getFullYear();
+                if ((mon - 1) > ref.getMonth()) y -= 1;
+                return new Date(y, mon - 1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+            }
+        }
+        return raw;
+    }
+
+    function monthLabelShort(value, referenceDate) {
+        var full = monthLabelFull(value, referenceDate);
+        var d = new Date(full);
+        if (!isNaN(d.getTime())) return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
+        var m = String(full).match(/^([A-Za-z]{3,9})\s+(\d{4})$/);
+        return m ? m[1].slice(0, 3) + " " + m[2] : full;
+    }
+
+    function resolveRowReferenceDate(row, fallbackDate) {
+        var rawSnap = rawValue(row, ["snapshot_date", "snapshotDate", "period_month_end", "period_end", "month_end", "date", "Date"]);
+        var d1 = rawSnap ? new Date(rawSnap) : null;
+        if (d1 && !isNaN(d1.getTime())) return d1;
+        var sortValue = valueByAlias(row, "periodSort", false, "");
+        var sortLabel = monthLabelFromSortValue(sortValue, false);
+        var d2 = sortLabel ? new Date(sortLabel) : null;
+        if (d2 && !isNaN(d2.getTime())) return d2;
+        if (fallbackDate instanceof Date && !isNaN(fallbackDate.getTime())) return fallbackDate;
+        return new Date();
+    }
+
+    function normalizedPeriodLabel(row, shortLabel) {
+        var ref = resolveRowReferenceDate(row, new Date());
+        var explicit = valueByAlias(row, "period", false, "");
+        var sortValue = valueByAlias(row, "periodSort", false, "");
+        var sortLabel = monthLabelFromSortValue(sortValue, shortLabel);
+        if (sortLabel) return sortLabel;
+        if (explicit) return shortLabel ? monthLabelShort(explicit, ref) : monthLabelFull(explicit, ref);
+        return shortLabel ? monthLabelShort(ref, ref) : monthLabelFull(ref, ref);
+    }
+
+    function colorForName(name, index) {
+        var label = String(name == null ? "" : name).toLowerCase().trim();
+        var key = scrub(label);
+        var fixed = { "target": "#090563", "email": "#14c8a7", "phone": "#4c6fff", "other": "#22d3ee", "engagements": "#f59e0b", "callshandled": "#8ea0bf", "030sec": "#14c8a7", "3160sec": "#4c6fff", "61120sec": "#f59e0b", "120secplus": "#38bdf8", "120plussec": "#38bdf8" };
+        if (fixed[key]) return fixed[key];
+        var hash = 0;
+        for (var i = 0; i < key.length; i++) { hash = ((hash << 5) - hash) + key.charCodeAt(i); hash |= 0; }
+        return palette[Math.abs(hash + index) % palette.length];
+    }
+
+    function niceMax(value) {
+        var v = Math.max(1, Number(value || 1));
+        var pow = Math.pow(10, Math.floor(Math.log10(v)));
+        var n = v / pow;
+        var nice = n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10;
+        return nice * pow;
+    }
+
+    function uniqueSorted(rows, labelProp, sortProp) {
+        var map = {};
+        rows.forEach(function (row) {
+            var label = String(row[labelProp] == null ? "" : row[labelProp]);
+            if (!label) return;
+            if (!map[label]) map[label] = { label: label, sort: row[sortProp] == null || row[sortProp] === "" ? label : row[sortProp] };
+        });
+        return Object.keys(map).map(function (key) { return map[key]; }).sort(function (a, b) {
+            var an = Number(a.sort), bn = Number(b.sort);
+            if (isFinite(an) && isFinite(bn) && an !== bn) return an - bn;
+            return String(a.sort).localeCompare(String(b.sort));
+        }).map(function (item) { return item.label; });
+    }
+
+    function legendVisible(name) { return state.hiddenSeries[name] !== true; }
+    function toggleLegend(name) { state.hiddenSeries[name] = !state.hiddenSeries[name]; renderSafe(); }
+
+    function getTitle(defaultTitle) {
+        var title = String(getConfig("Title", getConfig("Label", defaultTitle || "")) || defaultTitle || "");
+        if (getConfig("Kpi.CleanTitleMonthSuffix", true)) return cleanCardTitle(title);
+        return title;
+    }
+
+    function kpiRowsSorted() {
+        return state.rows.slice().sort(function (a, b) {
+            var an = periodSortFromRow(a, "periodSort", "period");
+            var bn = periodSortFromRow(b, "periodSort", "period");
+            if (an != null && bn != null && an !== bn) return an - bn;
+            if (an != null && bn == null) return -1;
+            if (an == null && bn != null) return 1;
+            return String(valueByAlias(a, "period", false, "")).localeCompare(String(valueByAlias(b, "period", false, "")));
+        });
+    }
+
+    function resolveToken(name, ctx) {
+        var n = String(name || "").trim();
+        if (n === "title") return ctx.title;
+        if (n === "period") return ctx.period;
+        if (n === "value") return ctx.valueDisplay;
+        if (n === "valueTextOrValue") return ctx.valueDisplay;
+        if (n === "target") return ctx.targetDisplay;
+        if (n === "delta") return ctx.deltaDisplay;
+        if (n === "targetDelta") return ctx.targetDeltaDisplay;
+        if (n === "momDelta") return ctx.momDeltaDisplay;
+        if (n === "status") return ctx.status;
+        var v = valueByAlias(ctx.row, n, false, "");
+        return v == null ? "" : String(v);
+    }
+
+    function applyTemplate(template, ctx) {
+        return String(template == null ? "" : template).replace(/\{([^}]+)\}/g, function (_, name) {
+            return resolveToken(name, ctx);
+        })
+            .replace(/\s+\|\s+$/g, "")
+            .replace(/(?:Target|Against target|MoM):\s*(?=\||$)/gi, "")
+            .replace(/^\s*[|]\s*|\s*[|]\s*$/g, "")
+            .trim();
+    }
+
+    function pillHtml(pill, ctx) {
+        var kind = String(pill.Kind || pill.kind || "").toLowerCase();
+        var alias = pill.Alias || pill.alias || kind;
+        var label = pill.Label || pill.label || "";
+        var cls = pill.Class || pill.class || kind;
+        var toneMode = String(pill.ToneMode || pill.toneMode || "").toLowerCase();
+        var format = pill.Format || pill.format || "";
+        var raw = "";
+        var text = "";
+        var tone = "watch";
+
+        if (kind === "period") {
+            text = format === "month-full" ? normalizedPeriodLabel(ctx.row, false) : normalizedPeriodLabel(ctx.row, true);
+            tone = "watch";
+        } else if (kind === "target") {
+            raw = valueByAlias(ctx.row, alias, false, null);
+            var textAlias = pill.TextAlias || pill.textAlias || "targetText";
+            text = valueByAlias(ctx.row, textAlias, false, "") || (raw == null || raw === "" ? "" : formatValue(raw, ctx.valueType, ctx.prefix, ctx.suffix));
+            if (text && label) text = label + ": " + text;
+            tone = targetTone(ctx.valueRaw, raw);
+        } else if (kind === "delta") {
+            raw = valueByAlias(ctx.row, alias, false, ctx.deltaRaw);
+            text = ctx.deltaDisplay || formatDeltaText(raw);
+            tone = compareTone(num(raw, null), getConfig("Kpi.IncreaseIsBad", false) === true);
+        } else {
+            raw = valueByAlias(ctx.row, alias, false, "");
+            text = raw == null ? "" : String(raw);
+            if (text && label) text = label + ": " + text;
+            tone = statusClass(text);
+        }
+
+        if (!text) return "";
+        if (toneMode === "actual-vs-target") tone = targetTone(ctx.valueRaw, raw || valueByAlias(ctx.row, alias, false, null));
+        if (toneMode === "delta") tone = compareTone(num(raw, null), getConfig("Kpi.IncreaseIsBad", false) === true);
+
+        var css = "cx-kpi-pill cx-kpi-pill-" + esc(cls) + " " + esc(tone);
+        return '<div class="' + css + '"><span class="cx-kpi-pill-text">' + esc(text) + '</span></div>';
+    }
+
+    function renderKpiFromConfig() {
+        if (!state.rows.length) return showEmpty("No data");
+
+        var rows = kpiRowsSorted();
+        var row = rows[rows.length - 1] || state.rows[0];
+        var prevRow = rows.length > 1 ? rows[rows.length - 2] : null;
+
+        var title = getTitle(valueByAlias(row, "title", false, ""));
+        var valueAlias = getConfig("Kpi.ValueAlias", "value");
+        var valueTextAlias = getConfig("Kpi.ValueTextAlias", "valueText");
+        var valueTypeAlias = getConfig("Kpi.ValueFormatAlias", "valueType");
+        var valueRaw = valueByAlias(row, valueAlias, false, valueByAlias(row, "value", true, ""));
+        var valueType = valueByAlias(row, valueTypeAlias, false, getConfig("ValueFormat", "raw"));
+        var prefix = getConfig("ValuePrefix", "");
+        var suffix = getConfig("ValueSuffix", "");
+        var unitLabel = getConfig("Kpi.UnitLabel", "");
+        var valueDisplay = valueByAlias(row, valueTextAlias, false, "") || formatValue(valueRaw, valueType, prefix, suffix);
+        var status = valueByAlias(row, "status", false, "");
+        var period = normalizedPeriodLabel(row, true);
+        var targetRaw = valueByAlias(row, "target", false, null);
+        var targetDisplay = valueByAlias(row, "targetText", false, "") || (targetRaw == null || targetRaw === "" ? "" : formatValue(targetRaw, valueType, prefix, suffix));
+
+        var currentValue = num(valueRaw, null);
+        var previousRaw = prevRow
+            ? valueByAlias(prevRow, valueAlias, false, valueByAlias(prevRow, "value", false, null))
+            : valueByAlias(row, "priorMonthValue", false, null);
+        var prevValue = num(previousRaw, null);
+
+        var deltaRaw = valueByAlias(row, "delta", false, null);
+        if ((deltaRaw == null || deltaRaw === "") && prevValue != null && prevValue !== 0 && currentValue != null) {
+            deltaRaw = ((currentValue - prevValue) / prevValue) * 100.0;
+        }
+        var deltaDisplay = formatDeltaText(deltaRaw);
+
+        var momPhysicalRaw = currentValue != null && prevValue != null ? currentValue - prevValue : null;
+        var targetPhysicalRaw = currentValue != null && targetRaw != null && targetRaw !== "" ? currentValue - num(targetRaw, null) : null;
+        var momDeltaDisplay = formatSignedPhysicalDelta(momPhysicalRaw, valueType, unitLabel);
+        var targetDeltaDisplay = formatSignedPhysicalDelta(targetPhysicalRaw, valueType, unitLabel);
+
+        var ctx = {
+            row: row,
+            title: title,
+            valueRaw: valueRaw,
+            valueType: valueType,
+            prefix: prefix,
+            suffix: suffix,
+            valueDisplay: valueDisplay,
+            status: status,
+            period: period,
+            targetRaw: targetRaw,
+            targetDisplay: targetDisplay,
+            deltaRaw: deltaRaw,
+            deltaDisplay: deltaDisplay,
+            momPhysicalRaw: momPhysicalRaw,
+            momDeltaDisplay: momDeltaDisplay,
+            targetPhysicalRaw: targetPhysicalRaw,
+            targetDeltaDisplay: targetDeltaDisplay
+        };
+
+        var pills = getConfig("Kpi.Pills", null);
+        if (!Array.isArray(pills) || !pills.length) {
+            pills = [
+                { Kind: "period", Alias: "period", Class: "month", Format: "month-short" },
+                { Kind: "target", Label: "Target", Alias: "target", TextAlias: "targetText", Class: "target", ToneMode: "actual-vs-target" },
+                { Kind: "delta", Label: "MoM", Alias: "delta", Class: "delta", ToneMode: "delta" }
+            ];
+        }
+
+        var pillsHtml = '<div class="cx-kpi-pills">' + pills.map(function (pill) { return pillHtml(pill, ctx); }).join("") + '</div>';
+
+        var narratives = getConfig("Kpi.Narratives", null);
+        if (!Array.isArray(narratives) || !narratives.length) {
+            narratives = targetRaw == null || targetRaw === ""
+                ? ["MoM: {momDelta}"]
+                : ["Against target: {targetDelta}", "MoM: {momDelta}"];
+        }
+
+        var narrativeLines = narratives
+            .map(function (template) { return applyTemplate(template, ctx); })
+            .filter(function (line) { return line && !/:\s*$/.test(line); })
+            .slice(0, 2);
+
+        var tooltipLines = getConfig("Kpi.Tooltip", null);
+        if (!Array.isArray(tooltipLines) || !tooltipLines.length) {
+            tooltipLines = ["{title}", "{period}: {valueTextOrValue}", "Target: {target}", "Against target: {targetDelta}", "MoM: {momDelta}", "MoM rate: {delta}"];
+        }
+        var tooltipText = tooltipLines.map(function (line, index) {
+            var rendered = applyTemplate(line, ctx);
+            if (!rendered || /:\s*$/.test(rendered)) return "";
+            return index === 0 ? "<b>" + attr(rendered) + "</b>" : attr(rendered);
+        }).filter(Boolean).join("<br>");
+
+        var statusHtml = status
+            ? '<div class="cx-status"><span class="cx-status-dot ' + statusClass(status) + '"></span><span>' + esc(status) + '</span></div>'
+            : '<div></div>';
+
+        var narrativeHtml = "";
+        if (narrativeLines.length === 1) {
+            narrativeHtml = '<div class="cx-kpi-line cx-kpi-line-static">' + esc(narrativeLines[0]) + '</div>';
+        } else if (narrativeLines.length >= 2) {
+            narrativeHtml =
+                '<div class="cx-kpi-line cx-kpi-line-a">' + esc(narrativeLines[0]) + '</div>' +
+                '<div class="cx-kpi-line cx-kpi-line-b">' + esc(narrativeLines[1]) + '</div>';
+        }
+
+        setHtml(
+            '<div class="cx-orb"></div>' +
+            '<div class="cx-kpi">' +
+            '<h2 class="cx-title">' + esc(title) + '</h2>' +
+            statusHtml +
+            '<div class="cx-kpi-main">' +
+            '<div class="cx-kpi-value" data-tip="' + tooltipText + '">' + esc(valueDisplay) + '</div>' +
+            '</div>' +
+            pillsHtml +
+            '<div class="cx-kpi-foot">' + narrativeHtml + '</div>' +
+            '</div>'
+        );
+    }
+
+    function normalizeChartRows() {
+        var xAlias = getConfig("Chart.XAxisAlias", getConfig("XAxisAlias", "period"));
+        var xSortAlias = getConfig("Chart.XAxisSortAlias", getConfig("XAxisSortAlias", "periodSort"));
+        var xFormat = getConfig("Chart.XAxisFormat", "");
+        var seriesAlias = getConfig("Chart.SeriesAlias", getConfig("SeriesAlias", "category"));
+        var seriesSortAlias = getConfig("Chart.SeriesSortAlias", getConfig("SeriesSortAlias", "categorySort"));
+        var valueAlias = getConfig("Chart.ValueAlias", getConfig("ValueAlias", "value"));
+        var lineAlias = getConfig("Chart.LineAlias", getConfig("LineAlias", null));
+        var targetAlias = getConfig("Chart.TargetAlias", getConfig("TargetAlias", "target"));
+
+        return state.rows.map(function (row) {
+            var rawX = valueByAlias(row, xAlias, true, "");
+            var fixedXSort = periodSortFromRow(row, xSortAlias, xAlias);
+            var displayX = formatChartPeriodLabel(rawX, fixedXSort, xFormat);
+            return {
+                x: String(displayX),
+                xSort: fixedXSort == null ? valueByAlias(row, xSortAlias, false, rawX) : fixedXSort,
+                series: String(valueByAlias(row, seriesAlias, true, "")),
+                seriesSort: valueByAlias(row, seriesSortAlias, false, ""),
+                value: num(valueByAlias(row, valueAlias, true, 0), 0),
+                line: lineAlias ? num(valueByAlias(row, lineAlias, false, 0), 0) : null,
+                target: targetAlias ? num(valueByAlias(row, targetAlias, false, 0), 0) : null
+            };
+        }).filter(function (row) { return row.x && row.series; });
+    }
+
+    function renderChartFromConfig() {
+        if (!state.rows.length) return showEmpty("No chart data");
+        var rows = normalizeChartRows();
+        if (!rows.length) return showEmpty("No chart data");
+
+        var title = getTitle("");
+        var valueFormat = getConfig("Chart.ValueFormat", getConfig("ValueFormat", "raw"));
+        var valueSuffix = getConfig("Chart.ValueSuffix", getConfig("ValueSuffix", ""));
+        var valuePrefix = getConfig("Chart.ValuePrefix", getConfig("ValuePrefix", ""));
+        var xAxisTitle = getConfig("Chart.XAxisTitle", getConfig("XAxisTitle", ""));
+        var yAxisTitle = getConfig("Chart.YAxisTitle", getConfig("YAxisTitle", ""));
+        var y2AxisTitle = getConfig("Chart.LineAxisTitle", getConfig("LineAxisTitle", ""));
+        var lineValueFormat = getConfig("Chart.LineValueFormat", getConfig("LineValueFormat", "integer"));
+        var lineValuePrefix = getConfig("Chart.LineValuePrefix", getConfig("LineValuePrefix", ""));
+        var lineValueSuffix = getConfig("Chart.LineValueSuffix", getConfig("LineValueSuffix", ""));
+        var lineLabel = getConfig("Chart.LineLabel", getConfig("LineLabel", "Line"));
+        var targetLabel = getConfig("Chart.TargetLabel", getConfig("TargetLabel", "Target"));
+        var maxPeriods = Number(getConfig("Chart.MaxPeriods", getConfig("MaxPeriods", 0)) || 0);
+        var legendPosition = String(getConfig("Chart.LegendPosition", "top-right") || "top-right").toLowerCase();
+        var legendSize = String(getConfig("Chart.LegendSize", "compact") || "compact").toLowerCase();
+        var rotate = Number(getConfig("Chart.XAxisRotate", -90));
+        var yAxisMode = String(getConfig("Chart.YAxisMode", "auto") || "auto").toLowerCase();
+        var configuredYMax = Number(getConfig("Chart.YAxisMax", 0) || 0);
+        var yHeadroom = Number(getConfig("Chart.YAxisHeadroom", 0.10));
+
+        var showLine = rows.some(function (r) { return r.line != null && isFinite(r.line) && r.line !== 0; });
+        var showTarget = rows.some(function (r) { return r.target != null && isFinite(r.target) && r.target !== 0; });
+        var periods = uniqueSorted(rows, "x", "xSort");
+        if (maxPeriods > 0 && periods.length > maxPeriods) {
+            var keep = periods.slice(periods.length - maxPeriods);
+            var keepMap = {};
+            keep.forEach(function (p) { keepMap[p] = true; });
+            rows = rows.filter(function (r) { return keepMap[r.x]; });
+            periods = keep;
+        }
+
+        var series = uniqueSorted(rows, "series", "seriesSort");
+        var visibleSeries = series.filter(legendVisible);
+        var w = Math.max(260, root.clientWidth);
+        var h = Math.max(170, root.clientHeight);
+        var margin = {
+            top: Number(getConfig("Chart.Grid.Top", 8)),
+            right: Number(getConfig("Chart.Grid.Right", showLine ? 54 : 14)),
+            bottom: Number(getConfig("Chart.Grid.Bottom", rotate ? 58 : 42)),
+            left: Number(getConfig("Chart.Grid.Left", 50))
+        };
+        var chartW = Math.max(140, w - margin.left - margin.right - 2);
+        var chartH = Math.max(110, h - margin.top - margin.bottom - 10);
+
+        var byPeriod = {};
+        periods.forEach(function (period) { byPeriod[period] = { stackTotal: 0, line: 0, target: 0, seriesValues: {} }; });
+        rows.forEach(function (row) {
+            var bucket = byPeriod[row.x];
+            if (!bucket) return;
+            bucket.seriesValues[row.series] = (bucket.seriesValues[row.series] || 0) + row.value;
+            if (legendVisible(row.series)) bucket.stackTotal += row.value;
+            if (row.line != null) bucket.line = Math.max(bucket.line, row.line);
+            if (row.target != null) bucket.target = Math.max(bucket.target, row.target);
+        });
+
+        var maxStack = Math.max.apply(null, periods.map(function (p) { return byPeriod[p].stackTotal; }));
+        var maxTarget = Math.max.apply(null, periods.map(function (p) { return byPeriod[p].target || 0; }));
+        var observedYMax = Math.max(maxStack, maxTarget, 0);
+        var yMax;
+
+        if ((yAxisMode === "fixed" || yAxisMode === "percent100") && configuredYMax > 0) {
+            yMax = configuredYMax;
+        } else if (yAxisMode === "percent100") {
+            yMax = 100;
+        } else {
+            yMax = niceMax(Math.max(1, observedYMax * (1 + Math.max(0, yHeadroom))));
+        }
+        var maxLineRaw = Math.max.apply(null, periods.map(function (p) { return byPeriod[p].line || 0; })) || 0;
+        var y2Max = niceMax(maxLineRaw * 1.10 || 1);
+        var bandW = chartW / Math.max(1, periods.length);
+        var plotRight = margin.left + chartW;
+        var plotBottom = margin.top + chartH;
+        var barW = Math.max(18, Math.min(96, bandW * .58));
+
+        function xFor(index) { return margin.left + bandW * (index + 0.5); }
+        function yFor(value) { return margin.top + chartH - (num(value, 0) / yMax) * chartH; }
+        function yForLine(value) { return showLine ? margin.top + chartH - (num(value, 0) / y2Max) * chartH : yFor(value); }
+
+        var svg = [];
+        svg.push('<div class="cx-orb"></div>');
+        svg.push('<h2 class="cx-title">' + esc(title) + '</h2>');
+        svg.push('<div class="cx-chart-wrap"><svg class="cx-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none">');
+        for (var gy = 0; gy <= 4; gy++) {
+            var val = yMax * gy / 4;
+            var y = yFor(val);
+            svg.push('<line class="cx-grid-line" x1="' + margin.left + '" y1="' + y + '" x2="' + plotRight + '" y2="' + y + '"></line>');
+            svg.push('<text class="cx-y-label" x="' + (margin.left - 16) + '" y="' + (y + 4) + '" text-anchor="end">' + esc(formatValue(val, valueFormat, valuePrefix, valueSuffix)) + '</text>');
+        }
+        svg.push('<line class="cx-axis" x1="' + margin.left + '" y1="' + margin.top + '" x2="' + margin.left + '" y2="' + plotBottom + '"></line>');
+        svg.push('<line class="cx-axis" x1="' + margin.left + '" y1="' + plotBottom + '" x2="' + plotRight + '" y2="' + plotBottom + '"></line>');
+        if (yAxisTitle) svg.push('<text class="cx-y-title" transform="rotate(-90 22 ' + (margin.top + chartH / 2) + ')" x="22" y="' + (margin.top + chartH / 2) + '" text-anchor="middle">' + esc(yAxisTitle) + '</text>');
+
+        if (showLine) {
+            svg.push('<line class="cx-axis" x1="' + plotRight + '" y1="' + margin.top + '" x2="' + plotRight + '" y2="' + plotBottom + '"></line>');
+            for (var gy2 = 0; gy2 <= 4; gy2++) {
+                var lineVal = y2Max * gy2 / 4;
+                var lineY = yForLine(lineVal);
+                svg.push('<line class="cx-axis" x1="' + plotRight + '" y1="' + lineY + '" x2="' + (plotRight + 4) + '" y2="' + lineY + '"></line>');
+                svg.push('<text class="cx-y-label" x="' + (plotRight + 8) + '" y="' + (lineY + 4) + '" text-anchor="start">' + esc(formatValue(lineVal, lineValueFormat, lineValuePrefix, lineValueSuffix)) + '</text>');
+            }
+            if (y2AxisTitle) {
+                var y2TitleX = Math.min(w - 8, plotRight + Math.max(48, margin.right - 8));
+                var y2TitleY = margin.top + chartH / 2;
+                svg.push('<text class="cx-y-title" transform="rotate(90 ' + y2TitleX + ' ' + y2TitleY + ')" x="' + y2TitleX + '" y="' + y2TitleY + '" text-anchor="middle">' + esc(y2AxisTitle) + '</text>');
+            }
+        }
+
+        periods.forEach(function (period, periodIndex) {
+            var x = xFor(periodIndex);
+            var running = 0;
+            visibleSeries.forEach(function (seriesName, seriesIndex) {
+                var v = byPeriod[period].seriesValues[seriesName] || 0;
+                var y1 = yFor(running + v);
+                var y0 = yFor(running);
+                var rh = Math.max(0, y0 - y1);
+                if (rh > 0) svg.push('<rect class="cx-bar" x="' + (x - barW / 2) + '" y="' + y1 + '" width="' + barW + '" height="' + rh + '" rx="4" fill="' + colorForName(seriesName, seriesIndex) + '" data-tip="<b>' + attr(period) + '</b><br>' + attr(seriesName) + ': ' + attr(formatValue(v, valueFormat, valuePrefix, valueSuffix)) + '"></rect>');
+                running += v;
+            });
+            svg.push('<line class="cx-axis" x1="' + x + '" y1="' + plotBottom + '" x2="' + x + '" y2="' + (plotBottom + 4) + '"></line>');
+            var tx = x - 2;
+            var ty = plotBottom + 6;
+            var transform = rotate ? ' transform="rotate(' + rotate + ' ' + tx + ' ' + ty + ')"' : "";
+            svg.push('<text class="cx-axis-label" x="' + tx + '" y="' + ty + '" text-anchor="end"' + transform + '>' + esc(period) + '</text>');
+        });
+
+        if (showLine && legendVisible("__line__")) drawLine(svg, periods, byPeriod, xFor, yForLine, "line", lineLabel, "#8ea0bf", lineValueFormat, lineValuePrefix, lineValueSuffix);
+        if (showTarget && legendVisible("__target__")) drawLine(svg, periods, byPeriod, xFor, yFor, "target", targetLabel, "#090563", valueFormat, valuePrefix, valueSuffix);
+        if (xAxisTitle) svg.push('<text class="cx-x-title" x="' + (margin.left + chartW / 2) + '" y="' + (h - 6) + '" text-anchor="middle">' + esc(xAxisTitle) + '</text>');
+        svg.push('</svg></div>');
+
+        var legendClass = 'cx-legend cx-legend-' + esc(legendPosition) + (legendSize === "compact" ? ' cx-legend-compact' : '');
+        svg.push('<div class="' + legendClass + '">');
+        series.forEach(function (seriesName, seriesIndex) {
+            svg.push('<span class="cx-legend-item' + (legendVisible(seriesName) ? "" : " off") + '" data-legend="' + attr(seriesName) + '"><span class="cx-legend-swatch" style="background:' + colorForName(seriesName, seriesIndex) + '"></span><span>' + esc(seriesName) + '</span></span>');
+        });
+        if (showLine) svg.push('<span class="cx-legend-item' + (legendVisible("__line__") ? "" : " off") + '" data-legend="__line__"><span class="cx-legend-line" style="background:#8ea0bf"></span><span>' + esc(lineLabel) + '</span></span>');
+        if (showTarget) svg.push('<span class="cx-legend-item' + (legendVisible("__target__") ? "" : " off") + '" data-legend="__target__"><span class="cx-legend-line" style="background:#090563"></span><span>' + esc(targetLabel) + '</span></span>');
+        svg.push('</div>');
+        setHtml(svg.join(""));
+    }
+
+    function drawLine(svg, periods, byPeriod, xFor, yFor, prop, label, color, valueFormat, valuePrefix, valueSuffix) {
+        var points = periods.map(function (period, index) { return { x: xFor(index), y: yFor(byPeriod[period][prop] || 0), label: period, value: byPeriod[period][prop] || 0 }; });
+        var path = points.map(function (pt, i) { return (i ? "L" : "M") + pt.x + "," + pt.y; }).join(" ");
+        svg.push('<path class="cx-line" d="' + path + '" stroke="' + color + '"></path>');
+        points.forEach(function (pt) { svg.push('<circle class="cx-point" cx="' + pt.x + '" cy="' + pt.y + '" r="4.5" fill="' + color + '" data-tip="<b>' + attr(pt.label) + '</b><br>' + attr(label) + ': ' + attr(formatValue(pt.value, valueFormat, valuePrefix, valueSuffix)) + '"></circle>'); });
+    }
+
+    function renderTableFromConfig(role) {
+        if (!state.rows.length) return showEmpty("No table data");
+        var title = getTitle("");
+        var isCallPerformance = role === "cx-call-performance-table";
+        var defaultNumericFormat = isCallPerformance ? "percent" : "raw";
+        var columns = getConfig("Table.Columns", null);
+
+        if (!Array.isArray(columns) || !columns.length) {
+            columns = isCallPerformance
+                ? [
+                    { Header: "KPI", Alias: "rowLabel", Type: "text" },
+                    { HeaderAlias: "currentMonthLabel", FallbackHeader: "Current", Alias: "currentMonthValue", StatusAlias: "statusCurrent", Format: "percent" },
+                    { Header: "YTD", Alias: "ytd", StatusAlias: "statusYtd", Format: "percent" },
+                    { Header: "Target", Alias: "target", Format: "percent" }
+                ]
+                : [
+                    { Header: "Category", Alias: "rowLabel", Type: "text" },
+                    { Header: "Current", Alias: "currentMonthValue", Format: defaultNumericFormat },
+                    { Header: "Prior", Alias: "priorMonthValue", Format: defaultNumericFormat },
+                    { Header: "YTD", Alias: "ytd", Format: defaultNumericFormat }
+                ];
+        }
+        var sorted = state.rows.slice().sort(function (a, b) { return num(valueByAlias(a, "rowSort", false, 0), 0) - num(valueByAlias(b, "rowSort", false, 0), 0); });
+        var html = [];
+        html.push('<div class="cx-orb"></div><h2 class="cx-title">' + esc(title) + '</h2><div class="cx-table-wrap"><table class="cx-table"><thead><tr>');
+        columns.forEach(function (col) {
+            var header = col.Header || col.header || "";
+            var headerAlias = col.HeaderAlias || col.headerAlias || "";
+            if (!header && headerAlias && state.rows.length) header = valueByAlias(state.rows[0], headerAlias, false, "");
+            if (!header) header = col.FallbackHeader || col.fallbackHeader || col.Alias || col.alias || "";
+            html.push('<th>' + esc(header) + '</th>');
+        });
+        html.push('</tr></thead><tbody>');
+        sorted.forEach(function (row) {
+            html.push('<tr>');
+            columns.forEach(function (col, colIndex) {
+                var alias = col.Alias || col.alias;
+                var value = valueByAlias(row, alias, col.Required === true || col.required === true, "");
+                var isText = col.Type === "text" || col.type === "text" || colIndex === 0;
+                var columnFormat = col.Format || col.format || defaultNumericFormat;
+                var display = isText
+                    ? String(value == null ? "" : value)
+                    : formatValue(
+                        value,
+                        columnFormat,
+                        col.Prefix || col.prefix || "",
+                        col.Suffix || col.suffix || ""
+                    );
+
+                var secondaryAlias = col.SecondaryAlias || col.secondaryAlias || "";
+                if (!secondaryAlias && isSoePortalTable(role)) {
+                    if (alias === "currentMonthValue") secondaryAlias = "currentMonthApplications";
+                    else if (alias === "priorMonthValue") secondaryAlias = "priorMonthApplications";
+                    else if (alias === "ytd") secondaryAlias = "ytdApplications";
+                }
+                if (!isText && secondaryAlias) {
+                    var secondaryValue = valueByAlias(row, secondaryAlias, false, null);
+                    if (secondaryValue != null && secondaryValue !== "") {
+                        var secondaryDisplay = formatValue(
+                            secondaryValue,
+                            col.SecondaryFormat || col.secondaryFormat || columnFormat,
+                            col.SecondaryPrefix || col.secondaryPrefix || "",
+                            col.SecondarySuffix || col.secondarySuffix || ""
+                        );
+                        var compositeTemplate = col.CompositeTemplate || col.compositeTemplate || "{primary} ({secondary})";
+                        display = String(compositeTemplate)
+                            .replace(/\{primary\}/g, display)
+                            .replace(/\{secondary\}/g, secondaryDisplay);
+                    }
+                }
+                var statusAlias = col.StatusAlias || col.statusAlias;
+                var statusValue = statusAlias ? valueByAlias(row, statusAlias, false, "") : "";
+                var cellHtml = esc(display);
+                if (statusValue) cellHtml = '<span class="cx-cell-status"><span class="cx-mini-dot ' + statusClass(statusValue) + '"></span>' + esc(display) + '</span>';
+                html.push('<td>' + cellHtml + '</td>');
+            });
+            html.push('</tr>');
+        });
+        html.push('</tbody>');
+
+        var showTotals = isSoePortalTable(role) || getConfig("Table.ShowTotals", false) === true;
+        if (showTotals && sorted.length) {
+            var totalLabel = getConfig("Table.TotalLabel", "Total");
+            html.push('<tfoot><tr>');
+            columns.forEach(function (col, colIndex) {
+                var isText = col.Type === "text" || col.type === "text" || colIndex === 0;
+                if (isText) {
+                    html.push('<td>' + (colIndex === 0 ? esc(totalLabel) : '') + '</td>');
+                    return;
+                }
+
+                var alias = col.Alias || col.alias;
+                var total = 0;
+                var hasValue = false;
+                sorted.forEach(function (row) {
+                    var raw = valueByAlias(row, alias, false, null);
+                    if (raw === null || raw === undefined || raw === '') return;
+                    var numeric = Number(raw);
+                    if (!isFinite(numeric)) return;
+                    total += numeric;
+                    hasValue = true;
+                });
+
+                var columnFormat = col.Format || col.format || defaultNumericFormat;
+                var display = hasValue
+                    ? formatValue(total, columnFormat, col.Prefix || col.prefix || "", col.Suffix || col.suffix || "")
+                    : "";
+
+                var secondaryAlias = col.SecondaryAlias || col.secondaryAlias || "";
+                if (!secondaryAlias && isSoePortalTable(role)) {
+                    if (alias === "currentMonthValue") secondaryAlias = "currentMonthApplications";
+                    else if (alias === "priorMonthValue") secondaryAlias = "priorMonthApplications";
+                    else if (alias === "ytd") secondaryAlias = "ytdApplications";
+                }
+
+                if (secondaryAlias) {
+                    var secondaryTotal = 0;
+                    var hasSecondaryValue = false;
+                    sorted.forEach(function (row) {
+                        var rawSecondary = valueByAlias(row, secondaryAlias, false, null);
+                        if (rawSecondary === null || rawSecondary === undefined || rawSecondary === '') return;
+                        var numericSecondary = Number(rawSecondary);
+                        if (!isFinite(numericSecondary)) return;
+                        secondaryTotal += numericSecondary;
+                        hasSecondaryValue = true;
+                    });
+
+                    if (hasSecondaryValue) {
+                        var secondaryDisplay = formatValue(
+                            secondaryTotal,
+                            col.SecondaryFormat || col.secondaryFormat || columnFormat,
+                            col.SecondaryPrefix || col.secondaryPrefix || "",
+                            col.SecondarySuffix || col.secondarySuffix || ""
+                        );
+                        var compositeTemplate = col.CompositeTemplate || col.compositeTemplate || "{primary} ({secondary})";
+                        display = String(compositeTemplate)
+                            .replace(/\{primary\}/g, display)
+                            .replace(/\{secondary\}/g, secondaryDisplay);
+                    }
+                }
+
+                html.push('<td>' + esc(display) + '</td>');
+            });
+            html.push('</tr></tfoot>');
+        }
+
+        html.push('</table></div>');
+        setHtml(html.join(""));
+    }
+
+    function polar(cx, cy, r, angle) { var rad = (angle - 90) * Math.PI / 180; return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }; }
+    function donutPath(cx, cy, rOuter, rInner, start, end) {
+        var large = end - start > 180 ? 1 : 0, p1 = polar(cx, cy, rOuter, start), p2 = polar(cx, cy, rOuter, end), p3 = polar(cx, cy, rInner, end), p4 = polar(cx, cy, rInner, start);
+        return ["M", p1.x, p1.y, "A", rOuter, rOuter, 0, large, 1, p2.x, p2.y, "L", p3.x, p3.y, "A", rInner, rInner, 0, large, 0, p4.x, p4.y, "Z"].join(" ");
+    }
+
+    function renderPieFromConfig() {
+        if (!state.rows.length) return showEmpty("No pie data");
+        var title = getTitle("");
+        var nameAlias = getConfig("Pie.NameAlias", getConfig("NameAlias", "category"));
+        var valueAlias = getConfig("Pie.ValueAlias", getConfig("ValueAlias", "value"));
+        var sortAlias = getConfig("Pie.SortAlias", getConfig("SortAlias", "categorySort"));
+        var valueFormat = getConfig("Pie.ValueFormat", getConfig("ValueFormat", "raw"));
+        var valuePrefix = getConfig("Pie.ValuePrefix", getConfig("ValuePrefix", ""));
+        var valueSuffix = getConfig("Pie.ValueSuffix", getConfig("ValueSuffix", ""));
+        var rows = state.rows.map(function (row) { return { name: String(valueByAlias(row, nameAlias, true, "")), sort: valueByAlias(row, sortAlias, false, ""), value: num(valueByAlias(row, valueAlias, true, 0), 0) }; }).filter(function (row) { return row.name && row.value > 0; }).sort(function (a, b) { var an = Number(a.sort), bn = Number(b.sort); if (isFinite(an) && isFinite(bn) && an !== bn) return an - bn; return String(a.sort || a.name).localeCompare(String(b.sort || b.name)); });
+        if (!rows.length) return showEmpty("No pie data");
+        var total = rows.reduce(function (sum, row) { return sum + row.value; }, 0);
+        var showLegend = getConfig("Pie.ShowLegend", true) !== false;
+        var w = Math.max(230, root.clientWidth), h = Math.max(170, root.clientHeight), cx = w / 2, cy = h / 2, rOuter = Math.min(w, h) * .23, rInner = rOuter * .58;
+        var svg = [];
+        svg.push('<div class="cx-orb"></div><h2 class="cx-title">' + esc(title) + '</h2><div class="cx-pie-wrap"><svg class="cx-pie-svg" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="xMidYMid meet">');
+        var angle = 0;
+        rows.forEach(function (row, index) {
+            var share = row.value / total, next = angle + share * 360, color = colorForName(row.name, index);
+            svg.push('<path class="cx-slice" d="' + donutPath(cx, cy, rOuter, rInner, angle, next) + '" fill="' + color + '" data-tip="<b>' + attr(row.name) + '</b><br>' + attr(formatValue(row.value, valueFormat, valuePrefix, valueSuffix)) + ' (' + attr(fmt(share * 100, 1)) + '%)"></path>');
+            var mid = (angle + next) / 2, labelPoint = polar(cx, cy, rOuter + 36, mid);
+            if (share >= .045) svg.push('<text class="cx-pie-label" x="' + labelPoint.x + '" y="' + labelPoint.y + '">' + esc(formatValue(row.value, valueFormat, valuePrefix, valueSuffix)) + ' (' + esc(fmt(share * 100, 1)) + '%)</text>');
+            angle = next;
+        });
+        svg.push('<circle class="cx-pie-center" cx="' + cx + '" cy="' + cy + '" r="' + (rInner - 3) + '"></circle>');
+        svg.push('<text class="cx-pie-total" x="' + cx + '" y="' + (cy - 5) + '">' + esc(formatValue(total, valueFormat, valuePrefix, valueSuffix)) + '</text>');
+        svg.push('<text class="cx-pie-total-label" x="' + cx + '" y="' + (cy + 17) + '">' + esc(getConfig("Pie.TotalLabel", "TOTAL")) + '</text>');
+        svg.push('</svg></div>');
+        if (showLegend) {
+            svg.push('<div class="cx-pie-legend">');
+            rows.forEach(function (row, index) {
+                svg.push('<span class="cx-pie-legend-item"><span class="cx-pie-legend-swatch" style="background:' + colorForName(row.name, index) + '"></span><span>' + esc(row.name) + '</span></span>');
+            });
+            svg.push('</div>');
+        }
+        setHtml(svg.join(""));
+    }
+
+    function isSoePortalTable(role) {
+        var roleText = String(role || "").toLowerCase();
+        if (roleText === "cx-soe-table") return true;
+
+        var first = state.rows[0] || {};
+        var visualKey = String(
+            rawValue(first, ["visual_key", "visualKey"]) ||
+            getConfig("Key", "") ||
+            getConfig("TemplateId", "") ||
+            ""
+        ).toLowerCase();
+        var objectName = String(
+            getConfig("Object", "") ||
+            getConfig("Obj", "") ||
+            state.payload && rawValue(state.payload, ["obj", "object", "Object"]) ||
+            ""
+        ).toLowerCase();
+
+        if (visualKey === "cx_soe_portal_table" || objectName === "vw_cx_soe_portal_table_latest") return true;
+
+        return rawValue(first, [
+            "current_month_applications", "currentMonthApplications",
+            "prior_month_applications", "priorMonthApplications",
+            "ytd_applications", "ytdApplications"
+        ]) !== undefined;
+    }
+
+    function isSoePie(role) {
+        var roleText = String(role || "").toLowerCase();
+        if (roleText === "cx-soe-pie") return true;
+        var first = state.rows[0] || {};
+        var visualKey = String(rawValue(first, ["visual_key", "visualKey"]) || getConfig("Key", "") || "").toLowerCase();
+        return visualKey === "cx_soe_unique_customer_applicants_pie" ||
+               visualKey === "cx_soe_applications_by_customer_type_pie";
+    }
+
+    function inferRole() {
+        var configuredRole = String(getConfig("Role", "") || "");
+        if (isSoePortalTable(configuredRole)) return "cx-soe-table";
+        if (isSoePie(configuredRole)) return "cx-soe-pie";
+        if (configuredRole) return configuredRole;
+        var first = state.rows[0] || {};
+        var visualKey = String(rawValue(first, ["visual_key", "visualKey"]) || getConfig("Key", "") || "").toLowerCase();
+        var keys = Object.keys(first).map(scrub).join("|");
+        if (visualKey.indexOf("pie") >= 0) return "cx-pie";
+        if (visualKey.indexOf("table") >= 0 || keys.indexOf("currentmonthvalue") >= 0) return "cx-table";
+        if (keys.indexOf("targetvalue") >= 0 && keys.indexOf("category") >= 0) return "cx-stacked-chart";
+        if (keys.indexOf("value") >= 0 || keys.indexOf("valuetext") >= 0) return "cx-kpi-card";
+        return "";
+    }
+
+    function applySkin(role) {
+        var skin = "cx-skin-kpi";
+        if (role === "cx-stacked-chart" || role === "cx-engagements-target" || role === "cx-response-time-buckets") skin = "cx-skin-engagement";
+        if (role === "cx-table" || role === "cx-soe-table" || role === "cx-call-performance-table") skin = "cx-skin-table";
+        if (role === "cx-pie" || role === "cx-soe-pie") skin = "cx-skin-pie";
+        root.className = "cx-root " + skin;
+    }
+
+    function renderSafe() { try { render(); } catch (error) { showError(error); } }
+    function render() {
+        var role = inferRole();
+        if (!role) {
+            // Configuration can arrive before rows. Keep the visual blank while the
+            // valid payload is still loading instead of flashing a false error.
+            if (!state.rows.length) {
+                stage.className = "cx-loading";
+                stage.textContent = "";
+                return;
+            }
+            return showError("Cannot infer visual role. Rows: " + state.rows.length);
+        }
+        applySkin(role);
+        if (role === "cx-kpi-card" || role === "cx-call-volume-card") return renderKpiFromConfig();
+        if (role === "cx-stacked-chart" || role === "cx-engagements-target" || role === "cx-response-time-buckets") return renderChartFromConfig();
+        if (role === "cx-table" || role === "cx-soe-table" || role === "cx-call-performance-table") return renderTableFromConfig(role);
+        if (role === "cx-pie" || role === "cx-soe-pie") return renderPieFromConfig();
+        showError("Unsupported role: " + role);
+    }
+
+    function ingest(payload) {
+        var parsed = parseMaybeJson(payload);
+        state.payload = isPlainObject(parsed) ? parsed : {};
+        state.config = {};
+        mergeConfig(state.payload);
+        var rows = extractRows(state.payload);
+        state.rows = Array.isArray(rows) ? rows : [];
+        state.rendered = true;
+        renderSafe();
+    }
+
+    root.addEventListener("click", function (event) {
+        var legend = event.target.closest("[data-legend]");
+        if (!legend) return;
+        toggleLegend(legend.getAttribute("data-legend"));
+    });
+
+    root.addEventListener("mousemove", function (event) {
+        var el = event.target.closest("[data-tip]");
+        if (!el) { tooltip.style.display = "none"; return; }
+        tooltip.innerHTML = el.getAttribute("data-tip");
+        tooltip.style.display = "block";
+        var pad = 14, rect = tooltip.getBoundingClientRect();
+        var x = Math.min(window.innerWidth - rect.width - pad, event.clientX + 14);
+        var y = Math.min(window.innerHeight - rect.height - pad, event.clientY + 14);
+        tooltip.style.left = Math.max(pad, x) + "px";
+        tooltip.style.top = Math.max(pad, y) + "px";
+    });
+
+    root.addEventListener("mouseleave", function () { tooltip.style.display = "none"; });
+
+    window.addEventListener("message", function (event) {
+        var incoming = parseMaybeJson(event.data);
+        if (!incoming) return;
+        if (incoming.payload) ingest(incoming.payload);
+        else ingest(incoming);
+    });
+
+    window.addEventListener("resize", function () { if (state.rendered) renderSafe(); });
+    window.renderCxVisual = ingest;
+    window.renderCustomHtml = ingest;
+    window.cxRender = ingest;
+
+    function readInitialPayload() {
+        var params = new URLSearchParams(window.location.search);
+        var keys = ["payload", "data", "config", "model", "template"];
+        for (var i = 0; i < keys.length; i++) {
+            var value = params.get(keys[i]);
+            if (!value) continue;
+            var parsed = parseMaybeJson(value);
+            if (parsed && typeof parsed === "object") return parsed;
+        }
+        var scriptPayload = document.getElementById("cx-initial-payload");
+        if (scriptPayload && scriptPayload.textContent) {
+            var parsedScript = parseMaybeJson(scriptPayload.textContent);
+            if (parsedScript && typeof parsedScript === "object") return parsedScript;
+        }
+        return null;
+    }
+
+    var initial = readInitialPayload();
+    if (initial) ingest(initial);
+
+    try { window.parent.postMessage({ type: "cx-visual-ready", ready: true }, "*"); } catch (e) { }
+    setTimeout(function () { if (!state.rendered) { stage.className = "cx-loading"; stage.textContent = "Waiting for data"; } }, 450);
+})();</script>
+</body>
+</html>
