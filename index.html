@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocChat — RAG Assistant Demo</title>
+  <meta name="description" content="Document-chat RAG demo. Static HTML + ECharts + Groq-ready AI.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236366F1'/%3E%3Ctext x='50' y='66' text-anchor='middle' font-family='Arial' font-weight='800' font-size='52' fill='white'%3ED%3C/text%3E%3C/svg%3E">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/styles.css?v=20260726">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ════════════════════════ TOPBAR ════════════════════════ -->
+  <header class="topbar">
+    <a class="brand" href="#">
+      <div class="brand-mark">D</div>
+      <div class="brand-text">
+        <span class="brand-name">DocChat</span>
+        <span class="brand-sub">RAG · Demo Build</span>
+      </div>
+    </a>
+
+    <div class="topbar-actions">
+      <span class="pill pill--ok" id="providerPill">
+        <span class="pill-dot"></span>
+        <span id="providerLabel">Demo</span>
+      </span>
+      <a class="btn btn--ghost btn--icon" href="https://github.com" target="_blank" rel="noopener" title="View on GitHub">
+        <i class="fa-brands fa-github"></i>
+      </a>
+      <button class="btn btn--ghost btn--icon" id="btnSettings" title="Settings" aria-label="Settings">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ════════════════════════ HERO ════════════════════════ -->
+  <section class="hero">
+    <canvas class="hero-canvas" id="heroCanvas"></canvas>
+    <div class="hero-content">
+      <div>
+        <span class="hero-eyebrow">
+          <span class="dot"></span>
+          <span>Powered by Groq · Llama 3.3 70B</span>
+        </span>
+        <h1>Ask your documents.<br>Get cited answers.</h1>
+        <p class="lead">
+          A retrieval-augmented chat demo running entirely on static JSON + GitHub Pages.
+          Drop in a <strong>Groq API key</strong> for real streaming responses, or run it
+          as-is in demo mode with simulated retrieval over pre-indexed sample documents.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn--primary" onclick="document.getElementById('chatInput').focus()">
+            <i class="fa-solid fa-comments"></i> Try the chat
+          </button>
+          <button class="btn btn--ghost" id="btnSettingsHero">
+            <i class="fa-solid fa-key"></i> Add Groq key
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="label">Documents</div>
+          <div class="value" id="statDocs">0</div>
+          <div class="delta">+3 this week</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Total chunks</div>
+          <div class="value" id="statChunks">0</div>
+          <div class="delta">+248 indexed</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Queries run</div>
+          <div class="value" id="statQueries">0</div>
+          <div class="delta">+64 last week</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Est. cost</div>
+          <div class="value">$<span id="statCost">0.00</span></div>
+          <div class="delta">Groq free tier</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════ MAIN GRID: Library | Chat ════════════════════════ -->
+  <div class="grid-main">
+
+    <!-- ─── Document Library ─── -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-title">
+          <i class="fa-solid fa-folder-tree"></i>
+          Document Library
+        </div>
+        <div class="card-actions">
+          <button class="btn btn--ghost btn--icon" id="btnRefreshDocs" title="Refresh">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <div class="dz-title">Drop files or click to upload</div>
+        <div class="dz-hint">PDF · DOCX · XLSX — demo mode simulates chunking</div>
+        <input type="file" id="dropzoneInput" multiple accept=".pdf,.docx,.xlsx,.txt" hidden>
+      </div>
+
+      <ul class="doc-list" id="docList"></ul>
+    </section>
+
+    <!-- ─── Chat ─── -->
+    <section class="card card--flush">
+      <div class="card-head">
+        <div class="card-title">
+          <i class="fa-solid fa-robot"></i>
+          Ask the docs
+        </div>
+        <div class="card-actions">
+          <button class="btn btn--ghost btn--icon" id="btnClearChat" title="Clear conversation">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="chat-shell">
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <div style="padding: 0 22px; display:flex; flex-wrap:wrap; gap:6px;">
+          <button class="pill chat-prompt-chip" data-q="What was Q1 2026 total revenue?">Q1 revenue?</button>
+          <button class="pill chat-prompt-chip" data-q="What is the FCR target for customer service?">FCR target?</button>
+          <button class="pill chat-prompt-chip" data-q="How is the AR aging distributed in March 2026?">AR aging?</button>
+          <button class="pill chat-prompt-chip" data-q="What is the Severity 1 incident response target?">Severity 1?</button>
+          <button class="pill chat-prompt-chip" data-q="What is the current phishing click rate?">Phishing rate?</button>
+        </div>
+
+        <div class="chat-composer">
+          <div class="chat-input-row">
+            <textarea class="chat-input" id="chatInput" placeholder="Ask anything about your documents…" rows="1"></textarea>
+            <button class="chat-send" id="chatSend" disabled title="Send">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+          <div class="chat-meta-row">
+            <span><kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for newline</span>
+            <span id="composerStatus">Demo mode</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ════════════════════════ ANALYTICS ════════════════════════ -->
+  <h2 class="section-title">
+    Analytics
+    <span class="small">last 7 days</span>
+  </h2>
+
+  <div class="grid-analytics">
+
+    <div class="chart-card span-3">
+      <div class="chart-head">
+        <span class="chart-title">System Health</span>
+        <span class="chart-value">live</span>
+      </div>
+      <div class="gauge-wrap">
+        <div class="gauge-host" id="chartHealth"></div>
+        <div class="gauge-caption">All services operational</div>
+      </div>
+    </div>
+
+    <div class="chart-card span-3">
+      <div class="chart-head">
+        <span class="chart-title">Avg Confidence</span>
+        <span class="chart-value">retrieval</span>
+      </div>
+      <div class="chart-host" id="chartConfidence"></div>
+    </div>
+
+    <div class="chart-card span-6">
+      <div class="chart-head">
+        <span class="chart-title">Document Types</span>
+        <span class="chart-value">12 docs</span>
+      </div>
+      <div class="chart-host" id="chartDocTypes"></div>
+    </div>
+
+    <div class="chart-card span-6">
+      <div class="chart-head">
+        <span class="chart-title">Uploads — past 7 days</span>
+        <span class="chart-value">+32 files</span>
+      </div>
+      <div class="chart-host" id="chartUploads"></div>
+    </div>
+
+    <div class="chart-card span-6">
+      <div class="chart-head">
+        <span class="chart-title">Query Activity by Hour</span>
+        <span class="chart-value">peak 14:00</span>
+      </div>
+      <div class="chart-host" id="chartHeatmap"></div>
+    </div>
+
+    <div class="chart-card span-6">
+      <div class="chart-head">
+        <span class="chart-title">Chunks per Document</span>
+        <span class="chart-value">top 8</span>
+      </div>
+      <div class="chart-host tall" id="chartChunks"></div>
+    </div>
+
+    <div class="chart-card span-8">
+      <div class="chart-head">
+        <span class="chart-title">Weekly Trend — Queries & Tokens</span>
+        <span class="chart-value">7 weeks</span>
+      </div>
+      <div class="chart-host" id="chartWeekly"></div>
+    </div>
+
+    <div class="chart-card span-4">
+      <div class="chart-head">
+        <span class="chart-title">Model Usage</span>
+        <span class="chart-value">277 reqs</span>
+      </div>
+      <div id="modelUsageLegend" style="display:flex;flex-direction:column;gap:8px;padding:12px 0"></div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════ FOOTER ════════════════════════ -->
+  <footer class="footer">
+    DocChat demo · static HTML + ECharts + Groq-ready · <code>v1.0.0</code><br>
+    Fork it, drop your <code>.json</code> data in <code>/data</code>, deploy to GitHub Pages.
+  </footer>
+
+</div>
+
+<!-- ════════════════════════ SETTINGS MODAL ════════════════════════ -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal-head">
+      <div class="modal-title" id="settingsTitle">
+        <i class="fa-solid fa-sliders"></i> Settings
+      </div>
+      <button class="btn btn--ghost btn--icon" id="settingsClose">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-field">
+        <label>AI Provider</label>
+        <div class="provider-toggle">
+          <button data-provider="demo" class="is-active"><i class="fa-solid fa-flask"></i> Demo (canned)</button>
+          <button data-provider="groq"><i class="fa-solid fa-bolt"></i> Groq (live)</button>
+        </div>
+        <div class="hint">Demo mode returns deterministic answers from the local JSON store. Switch to Groq for real streaming LLM responses.</div>
+      </div>
+
+      <div class="form-field">
+        <label>Groq API Key</label>
+        <input class="form-input" type="password" id="setGroqKey" placeholder="gsk_...">
+        <div class="hint">Stored in your browser localStorage only. Get one at <a href="https://console.groq.com" target="_blank">console.groq.com</a>.</div>
+      </div>
+
+      <div class="form-field">
+        <label>Groq Model</label>
+        <select class="form-select" id="setGroqModel">
+          <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile · default</option>
+          <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant · fast</option>
+          <option value="mixtral-8x7b-32768">Mixtral 8x7B · 32K context</option>
+          <option value="gemma2-9b-it">Gemma 2 9B IT</option>
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Ollama Base URL (optional fallback)</label>
+        <input class="form-input" type="text" id="setOllamaBase" placeholder="http://localhost:11434">
+      </div>
+
+      <div class="form-field">
+        <label>Ollama Chat Model</label>
+        <input class="form-input" type="text" id="setOllamaModel" placeholder="gemma3:1b">
+      </div>
+
+      <hr style="border-color:var(--card-border); margin: 4px 0">
+
+      <div class="form-field">
+        <label>GitHub Repo (for write-back via Contents API)</label>
+        <input class="form-input" type="text" id="setGhRepo" placeholder="owner/repo">
+        <div class="hint">Leave blank for demo mode (writes only update the in-memory cache).</div>
+      </div>
+
+      <div class="form-field">
+        <label>GitHub Branch</label>
+        <input class="form-input" type="text" id="setGhBranch" placeholder="main">
+      </div>
+
+      <div class="form-field">
+        <label>GitHub PAT (classic, <code>repo</code> scope)</label>
+        <input class="form-input" type="password" id="setGhToken" placeholder="ghp_...">
+        <div class="hint">Enables CRUD writes that commit back to the repo, with full git history as audit trail.</div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn--ghost" id="settingsCancel">Cancel</button>
+      <button class="btn btn--primary" id="settingsSave">Save settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ TOAST STACK ════════════════════════ -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ════════════════════════ SCRIPTS ════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts-liquidfill@3/dist/echarts-liquidfill.min.js"></script>
+<script src="./js/api.js?v=20260726"></script>
+<script src="./js/charts.js?v=20260726"></script>
+<script src="./js/app.js?v=20260726"></script>
+
+<script>
+  // Wire the secondary "Add Groq key" button under hero to open settings
+  document.getElementById('btnSettingsHero').addEventListener('click', () => {
+    document.getElementById('btnSettings').click();
+  });
+  document.getElementById('btnRefreshDocs').addEventListener('click', () => location.reload());
+  document.getElementById('btnClearChat').addEventListener('click', () => {
+    if (!confirm('Clear conversation?')) return;
+    document.getElementById('chatMessages').innerHTML = '';
+  });
+</script>
+
+</body>
+</html>
