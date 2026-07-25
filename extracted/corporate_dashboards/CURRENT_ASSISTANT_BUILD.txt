@@ -1,0 +1,12 @@
+Dashboard Assistant build: assistant-v8-direct-v217-contract
+
+Version 217 is routed before the generic catalog.
+Question verified by source contract:
+  how much was paid by credit card since april 2026
+Expected plan:
+  Measure: payment_value
+  Filter: payment_type = Credit Card
+  Period: Apr 2026 through last completed month
+  Aggregation: Sum
+  Grouping: none
+  Output: metric plus narrative, no graph

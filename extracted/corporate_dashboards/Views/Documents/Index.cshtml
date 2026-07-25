@@ -1,0 +1,103 @@
+@model List<corporate_dashboards.Models.Document>
+
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<div class="container py-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="mb-0">Documents</h2>
+            <div class="text-muted small">Upload, index, and browse your document library.</div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a class="btn btn-primary" asp-controller="Documents" asp-action="Upload">+ Upload</a>
+            <a class="btn btn-outline-secondary" asp-controller="Chat" asp-action="Index">Ask</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="min-width: 260px;">File</th>
+                        <th style="width: 140px;">Status</th>
+                        <th class="text-end" style="width: 120px;">Size</th>
+                        <th style="width: 220px;">Uploaded</th>
+                        <th class="text-end" style="width: 120px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (Model == null || Model.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            No documents yet.
+                            <div class="mt-2">
+                                <a class="btn btn-sm btn-primary" asp-controller="Documents" asp-action="Upload">Upload your first document</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var d in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold text-truncate" style="max-width: 520px;" title="@d.FileName">@d.FileName</div>
+                                <div class="text-muted small text-truncate" style="max-width: 520px;" title="@d.StoredPath">@d.StoredPath</div>
+                                @if (!string.IsNullOrWhiteSpace(d.ErrorMessage))
+                                {
+                                    <div class="text-danger small mt-1 text-truncate" style="max-width: 520px;" title="@d.ErrorMessage">@d.ErrorMessage</div>
+                                }
+                            </td>
+
+                            <td>
+                                <span class="badge @StatusClass(d.Status)">@(!string.IsNullOrWhiteSpace(d.Status) ? d.Status : "Unknown")</span>
+                            </td>
+
+                            <td class="text-end text-muted">@FmtBytes(d.SizeBytes)</td>
+                            <td class="text-nowrap text-muted">@d.UploadedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Documents"
+                                   asp-action="Details"
+                                   asp-route-id="@d.Id">
+                                    Details
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@functions {
+    string FmtBytes(long b)
+    {
+        double x = b;
+        string[] u = new[] { "B", "KB", "MB", "GB" };
+        int i = 0;
+        while (x >= 1024 && i < u.Length - 1) { x /= 1024; i++; }
+        return $"{x:0.##} {u[i]}";
+    }
+
+    string StatusClass(string? s)
+    {
+        var v = (s ?? "").Trim();
+        if (v.Equals("Ready", StringComparison.OrdinalIgnoreCase)) return "text-bg-success";
+        if (v.Equals("Queued", StringComparison.OrdinalIgnoreCase)) return "text-bg-secondary";
+        if (v.Equals("Processing", StringComparison.OrdinalIgnoreCase)) return "text-bg-warning";
+        if (v.Equals("Failed", StringComparison.OrdinalIgnoreCase)) return "text-bg-danger";
+        return "text-bg-light";
+    }
+}

@@ -1,0 +1,833 @@
+/* ═══════════════════════════════════════════════════════════════
+   BRAND PALETTE
+   Electric Blue  #0808EE   R8   G8   B238  Pantone 286C
+   Teal           #09C698   R9   G198 B152  Pantone 808C
+   Navy           #171777   R23  G23  B119  Pantone 662C
+   Electric Green #BBFF05   R187 G255 B5    Pantone 375C
+   Dark Gray      #212121   R33  G33  B33   Pantone 433C
+   Medium Gray    #C9C9C9   R201 G201 B201  Cool Gray 2 XGC
+   Light Gray     #D4D4D9                   5%
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+    /* Brand */
+    --blue: #0808EE;
+    --teal: #09C698;
+    --navy: #171777;
+    --green: #BBFF05;
+    --dark-gray: #212121;
+    --mid-gray: #C9C9C9;
+    --light-gray: #D4D4D9;
+    /* Derived harmonising tones */
+    --blue-deep: #054EBB;
+    --blue-dim: #4B3FD4;
+    --teal-deep: #06A67F;
+    --navy-muted: #5C5C8A;
+    --cyan: #00C2E0;
+    /* Glow tokens */
+    --glow-blue: 0 0 18px rgba(8,8,238,0.35);
+    --glow-teal: 0 0 18px rgba(9,198,152,0.35);
+    --glow-navy: 0 0 14px rgba(23,23,119,0.45);
+    --glow-green: 0 0 18px rgba(187,255,5,0.40);
+    /* App surfaces */
+    --bg: #f0f2f8;
+    --card: #ffffff;
+    --ink: var(--dark-gray);
+    --muted: var(--navy-muted);
+    --border: rgba(23,23,119,0.12);
+    --visual-resize-opacity: 0.018;
+    --visual-resize-hover-opacity: 0.08;
+    --visual-resize-active-opacity: 0.25;
+    --visual-focus-opacity: 0.22;
+    --visual-focus-hover-opacity: 0.55;
+    --visual-focus-active-opacity: 0.85;
+}
+
+/* ── Base ── */
+body {
+    background: var(--bg);
+    color: var(--ink);
+}
+
+/* ── Topbar ── */
+.topbar {
+    background: linear-gradient(90deg, var(--dark-gray) 0%, var(--navy) 100%);
+    color: #fff;
+}
+
+.brand {
+    text-decoration: none;
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    font-size: 1.15rem;
+}
+
+.navlink {
+    text-decoration: none;
+    color: rgba(255,255,255,0.85);
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+    .navlink:hover {
+        background: rgba(255,255,255,0.10);
+        color: #fff;
+    }
+
+/* ── Utility ── */
+.rounded-4 {
+    border-radius: 1.25rem !important;
+}
+
+/* ── Cards ── */
+.mini-card {
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 14px;
+    background: #fff;
+    height: 100%;
+    transition: box-shadow .2s ease;
+}
+
+    .mini-card:hover {
+        box-shadow: 0 4px 24px rgba(8,8,238,0.10);
+    }
+
+.mini-title {
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.mini-text {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* ── Code ── */
+.codebox {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: var(--dark-gray);
+    color: var(--light-gray);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 0.85rem;
+}
+
+/* ── Content blocks ── */
+.chunk {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    background: #fff;
+}
+
+.source-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.prewrap {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.answer-box {
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* ── Dashboard tile dropdowns ── */
+.tile .topbar .form-select.form-select-sm {
+    font-size: 11px;
+    line-height: 1.1;
+    padding: 2px 26px 2px 10px;
+    min-height: 28px;
+}
+
+    .tile .topbar .form-select.form-select-sm option {
+        font-size: 11px;
+    }
+
+/* ── User pill — small, frosted glass ── */
+.user-pill {
+    position: fixed;
+    top: 10px;
+    right: 14px;
+    z-index: 2000;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    background: rgba(23,23,119,0.55);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.80);
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 1;
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    box-shadow: 0 1px 6px rgba(23,23,119,0.20);
+}
+
+    .user-pill i {
+        font-size: 10px;
+        opacity: .5;
+    }
+
+    .user-pill span {
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+/* ═══════════════════════════════════════════════════════════════
+   AGING BUCKET — semantic classes & badges
+   ═══════════════════════════════════════════════════════════════ */
+.age-0 {
+    background: var(--blue);
+    color: #fff;
+}
+
+.age-1 {
+    background: var(--green);
+    color: var(--dark-gray);
+}
+
+.age-2 {
+    background: var(--teal);
+    color: #fff;
+}
+
+.age-3 {
+    background: var(--navy);
+    color: #fff;
+}
+
+.age-0-text {
+    color: var(--blue);
+}
+
+.age-1-text {
+    color: #7a9900;
+}
+
+.age-2-text {
+    color: var(--teal);
+}
+
+.age-3-text {
+    color: var(--navy);
+}
+
+.age-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.age-badge--0 {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: var(--glow-blue);
+}
+
+.age-badge--1 {
+    background: var(--green);
+    color: var(--dark-gray);
+    box-shadow: var(--glow-green);
+}
+
+.age-badge--2 {
+    background: var(--teal);
+    color: #fff;
+    box-shadow: var(--glow-teal);
+}
+
+.age-badge--3 {
+    background: var(--navy);
+    color: #fff;
+    box-shadow: var(--glow-navy);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIZ SHELL
+   ═══════════════════════════════════════════════════════════════ */
+.viz-shell {
+    background: linear-gradient(145deg, #ffffff 0%, #f2f3fb 100%);
+    position: relative;
+    transition: box-shadow .25s ease;
+}
+
+.tile:hover .viz-shell {
+    box-shadow: 0 0 0 1.5px rgba(8,8,238,0.20), 0 4px 28px rgba(8,8,238,0.10);
+}
+
+.tile--live .viz-shell {
+    animation: livePulse 3s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%,100% {
+        box-shadow: 0 0 0 1.5px rgba(9,198,152,0.20);
+    }
+
+    50% {
+        box-shadow: 0 0 16px 2px rgba(9,198,152,0.55);
+    }
+}
+
+.tile--loading .viz-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent 0%, rgba(8,8,238,0.05) 35%, rgba(9,198,152,0.07) 65%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer .9s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 200% 0;
+    }
+
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KPI CARD
+   ═══════════════════════════════════════════════════════════════ */
+.kpi-card {
+    position: relative;
+}
+
+    .kpi-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 12px;
+        right: 12px;
+        height: 3px;
+        border-radius: 0 0 4px 4px;
+        background: linear-gradient(90deg, var(--blue), var(--teal), var(--navy));
+        opacity: .85;
+    }
+
+.kpi-big {
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .3s ease;
+}
+
+.kpi--flash .kpi-big {
+    animation: kpiFlash .45s ease-out;
+}
+
+@keyframes kpiFlash {
+    0% {
+        color: var(--teal);
+        transform: scale(1.12);
+    }
+
+    100% {
+        color: inherit;
+        transform: scale(1);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(8,8,238,0.22);
+    border-radius: 99px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(8,8,238,0.45);
+    }
+
+/* =========================================================
+   Dashboard visual chrome — safe global version
+   ========================================================= */
+
+.ui-resizable-handle,
+.ui-resizable-handle::before,
+.ui-resizable-handle::after,
+.ui-resizable-handle *,
+.ui-resizable-handle *::before,
+.ui-resizable-handle *::after {
+    opacity: var(--visual-resize-opacity) !important;
+    background: transparent !important;
+    background-image: none !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: transparent !important;
+    text-shadow: none !important;
+    outline: none !important;
+    transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.ui-resizable-handle {
+    pointer-events: auto !important;
+    z-index: 100 !important;
+}
+
+.grid-stack-item:hover .ui-resizable-handle,
+.react-grid-item:hover .ui-resizable-handle,
+.dashboard-tile:hover .ui-resizable-handle,
+.dashboard-visual:hover .ui-resizable-handle,
+.visual-tile:hover .ui-resizable-handle,
+.report-tile:hover .ui-resizable-handle,
+.card:hover .ui-resizable-handle,
+.tile:hover .ui-resizable-handle {
+    opacity: var(--visual-resize-hover-opacity) !important;
+}
+
+.ui-resizable-handle:hover,
+.ui-resizable-handle:focus-visible {
+    opacity: var(--visual-resize-active-opacity) !important;
+    transform: scale(1.04);
+}
+
+.ui-resizable-se,
+.ui-resizable-sw,
+.ui-resizable-ne,
+.ui-resizable-nw,
+.ui-resizable-e,
+.ui-resizable-w,
+.ui-resizable-s,
+.ui-resizable-n {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent !important;
+}
+
+/* ---------------------------------------------------------
+   Presentation / focus / expand icon
+   --------------------------------------------------------- */
+
+.presentation-icon,
+.present-icon,
+.focus-icon,
+.expand-icon,
+.fullscreen-icon,
+.tile-present,
+.tile-focus,
+.tile-expand,
+.visual-present,
+.visual-focus,
+.visual-expand,
+[data-role="present"],
+[data-role="focus"],
+[data-role="expand"],
+[data-role="fullscreen"] {
+    opacity: var(--visual-focus-opacity) !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    transform: scale(0.82);
+    transform-origin: center;
+    transition: opacity 140ms ease, transform 140ms ease, filter 140ms ease;
+}
+
+.grid-stack-item:hover .presentation-icon,
+.grid-stack-item:hover .present-icon,
+.grid-stack-item:hover .focus-icon,
+.grid-stack-item:hover .expand-icon,
+.grid-stack-item:hover .fullscreen-icon,
+.grid-stack-item:hover .tile-present,
+.grid-stack-item:hover .tile-focus,
+.grid-stack-item:hover .tile-expand,
+.grid-stack-item:hover .visual-present,
+.grid-stack-item:hover .visual-focus,
+.grid-stack-item:hover .visual-expand,
+.grid-stack-item:hover [data-role="present"],
+.grid-stack-item:hover [data-role="focus"],
+.grid-stack-item:hover [data-role="expand"],
+.grid-stack-item:hover [data-role="fullscreen"],
+.react-grid-item:hover .presentation-icon,
+.react-grid-item:hover .present-icon,
+.react-grid-item:hover .focus-icon,
+.react-grid-item:hover .expand-icon,
+.react-grid-item:hover .fullscreen-icon,
+.react-grid-item:hover .tile-present,
+.react-grid-item:hover .tile-focus,
+.react-grid-item:hover .tile-expand,
+.react-grid-item:hover .visual-present,
+.react-grid-item:hover .visual-focus,
+.react-grid-item:hover .visual-expand,
+.react-grid-item:hover [data-role="present"],
+.react-grid-item:hover [data-role="focus"],
+.react-grid-item:hover [data-role="expand"],
+.react-grid-item:hover [data-role="fullscreen"],
+.dashboard-tile:hover .presentation-icon,
+.dashboard-tile:hover .present-icon,
+.dashboard-tile:hover .focus-icon,
+.dashboard-tile:hover .expand-icon,
+.dashboard-tile:hover .fullscreen-icon,
+.dashboard-tile:hover .tile-present,
+.dashboard-tile:hover .tile-focus,
+.dashboard-tile:hover .tile-expand,
+.dashboard-tile:hover .visual-present,
+.dashboard-tile:hover .visual-focus,
+.dashboard-tile:hover .visual-expand,
+.dashboard-tile:hover [data-role="present"],
+.dashboard-tile:hover [data-role="focus"],
+.dashboard-tile:hover [data-role="expand"],
+.dashboard-tile:hover [data-role="fullscreen"],
+.dashboard-visual:hover .presentation-icon,
+.dashboard-visual:hover .present-icon,
+.dashboard-visual:hover .focus-icon,
+.dashboard-visual:hover .expand-icon,
+.dashboard-visual:hover .fullscreen-icon,
+.dashboard-visual:hover .tile-present,
+.dashboard-visual:hover .tile-focus,
+.dashboard-visual:hover .tile-expand,
+.dashboard-visual:hover .visual-present,
+.dashboard-visual:hover .visual-focus,
+.dashboard-visual:hover .visual-expand,
+.dashboard-visual:hover [data-role="present"],
+.dashboard-visual:hover [data-role="focus"],
+.dashboard-visual:hover [data-role="expand"],
+.dashboard-visual:hover [data-role="fullscreen"],
+.visual-tile:hover .presentation-icon,
+.visual-tile:hover .present-icon,
+.visual-tile:hover .focus-icon,
+.visual-tile:hover .expand-icon,
+.visual-tile:hover .fullscreen-icon,
+.visual-tile:hover .tile-present,
+.visual-tile:hover .tile-focus,
+.visual-tile:hover .tile-expand,
+.visual-tile:hover .visual-present,
+.visual-tile:hover .visual-focus,
+.visual-tile:hover .visual-expand,
+.visual-tile:hover [data-role="present"],
+.visual-tile:hover [data-role="focus"],
+.visual-tile:hover [data-role="expand"],
+.visual-tile:hover [data-role="fullscreen"],
+.report-tile:hover .presentation-icon,
+.report-tile:hover .present-icon,
+.report-tile:hover .focus-icon,
+.report-tile:hover .expand-icon,
+.report-tile:hover .fullscreen-icon,
+.report-tile:hover .tile-present,
+.report-tile:hover .tile-focus,
+.report-tile:hover .tile-expand,
+.report-tile:hover .visual-present,
+.report-tile:hover .visual-focus,
+.report-tile:hover .visual-expand,
+.report-tile:hover [data-role="present"],
+.report-tile:hover [data-role="focus"],
+.report-tile:hover [data-role="expand"],
+.report-tile:hover [data-role="fullscreen"],
+.card:hover .presentation-icon,
+.card:hover .present-icon,
+.card:hover .focus-icon,
+.card:hover .expand-icon,
+.card:hover .fullscreen-icon,
+.card:hover .tile-present,
+.card:hover .tile-focus,
+.card:hover .tile-expand,
+.card:hover .visual-present,
+.card:hover .visual-focus,
+.card:hover .visual-expand,
+.card:hover [data-role="present"],
+.card:hover [data-role="focus"],
+.card:hover [data-role="expand"],
+.card:hover [data-role="fullscreen"],
+.tile:hover .presentation-icon,
+.tile:hover .present-icon,
+.tile:hover .focus-icon,
+.tile:hover .expand-icon,
+.tile:hover .fullscreen-icon,
+.tile:hover .tile-present,
+.tile:hover .tile-focus,
+.tile:hover .tile-expand,
+.tile:hover .visual-present,
+.tile:hover .visual-focus,
+.tile:hover .visual-expand,
+.tile:hover [data-role="present"],
+.tile:hover [data-role="focus"],
+.tile:hover [data-role="expand"],
+.tile:hover [data-role="fullscreen"] {
+    opacity: var(--visual-focus-hover-opacity) !important;
+    transform: scale(0.9);
+}
+
+.presentation-icon:hover,
+.present-icon:hover,
+.focus-icon:hover,
+.expand-icon:hover,
+.fullscreen-icon:hover,
+.tile-present:hover,
+.tile-focus:hover,
+.tile-expand:hover,
+.visual-present:hover,
+.visual-focus:hover,
+.visual-expand:hover,
+[data-role="present"]:hover,
+[data-role="focus"]:hover,
+[data-role="expand"]:hover,
+[data-role="fullscreen"]:hover,
+.presentation-icon:focus-visible,
+.present-icon:focus-visible,
+.focus-icon:focus-visible,
+.expand-icon:focus-visible,
+.fullscreen-icon:focus-visible,
+.tile-present:focus-visible,
+.tile-focus:focus-visible,
+.tile-expand:focus-visible,
+.visual-present:focus-visible,
+.visual-focus:focus-visible,
+.visual-expand:focus-visible,
+[data-role="present"]:focus-visible,
+[data-role="focus"]:focus-visible,
+[data-role="expand"]:focus-visible,
+[data-role="fullscreen"]:focus-visible {
+    opacity: var(--visual-focus-active-opacity) !important;
+    transform: scale(0.96);
+}
+
+/* =========================================================
+   Presentation-mode icon: smaller, translucent, still clickable
+   ========================================================= */
+
+.presentation-mode .presentation-icon,
+.presentation-mode .present-icon,
+.presentation-mode .focus-icon,
+.presentation-mode .expand-icon,
+.presentation-mode .fullscreen-icon,
+.presentation-mode .tile-present,
+.presentation-mode .tile-focus,
+.presentation-mode .tile-expand,
+.presentation-mode [data-role="present"],
+.presentation-mode [data-role="focus"],
+.presentation-mode [data-role="expand"],
+.presentation-mode [data-role="fullscreen"],
+.presentation-mode [aria-label*="present" i],
+.presentation-mode [title*="present" i],
+.presentation-mode [aria-label*="focus" i],
+.presentation-mode [title*="focus" i],
+.presentation-mode [aria-label*="fullscreen" i],
+.presentation-mode [title*="fullscreen" i],
+.present-mode .presentation-icon,
+.present-mode .present-icon,
+.present-mode .focus-icon,
+.present-mode .expand-icon,
+.present-mode .fullscreen-icon,
+.present-mode .tile-present,
+.present-mode .tile-focus,
+.present-mode .tile-expand,
+.present-mode [data-role="present"],
+.present-mode [data-role="focus"],
+.present-mode [data-role="expand"],
+.present-mode [data-role="fullscreen"],
+.present-mode [aria-label*="present" i],
+.present-mode [title*="present" i],
+.present-mode [aria-label*="focus" i],
+.present-mode [title*="focus" i],
+.present-mode [aria-label*="fullscreen" i],
+.present-mode [title*="fullscreen" i],
+.is-presenting .presentation-icon,
+.is-presenting .present-icon,
+.is-presenting .focus-icon,
+.is-presenting .expand-icon,
+.is-presenting .fullscreen-icon,
+.is-presenting .tile-present,
+.is-presenting .tile-focus,
+.is-presenting .tile-expand,
+.is-presenting [data-role="present"],
+.is-presenting [data-role="focus"],
+.is-presenting [data-role="expand"],
+.is-presenting [data-role="fullscreen"],
+.is-presenting [aria-label*="present" i],
+.is-presenting [title*="present" i],
+.is-presenting [aria-label*="focus" i],
+.is-presenting [title*="focus" i],
+.is-presenting [aria-label*="fullscreen" i],
+.is-presenting [title*="fullscreen" i] {
+    opacity: 0.18 !important;
+    transform: scale(0.72) !important;
+    transform-origin: center !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    transition: opacity 140ms ease, transform 140ms ease, filter 140ms ease;
+}
+
+    .presentation-mode .presentation-icon:hover,
+    .presentation-mode .present-icon:hover,
+    .presentation-mode .focus-icon:hover,
+    .presentation-mode .expand-icon:hover,
+    .presentation-mode .fullscreen-icon:hover,
+    .presentation-mode .tile-present:hover,
+    .presentation-mode .tile-focus:hover,
+    .presentation-mode .tile-expand:hover,
+    .presentation-mode [data-role="present"]:hover,
+    .presentation-mode [data-role="focus"]:hover,
+    .presentation-mode [data-role="expand"]:hover,
+    .presentation-mode [data-role="fullscreen"]:hover,
+    .presentation-mode [aria-label*="present" i]:hover,
+    .presentation-mode [title*="present" i]:hover,
+    .presentation-mode [aria-label*="focus" i]:hover,
+    .presentation-mode [title*="focus" i]:hover,
+    .presentation-mode [aria-label*="fullscreen" i]:hover,
+    .presentation-mode [title*="fullscreen" i]:hover,
+    .present-mode .presentation-icon:hover,
+    .present-mode .present-icon:hover,
+    .present-mode .focus-icon:hover,
+    .present-mode .expand-icon:hover,
+    .present-mode .fullscreen-icon:hover,
+    .present-mode .tile-present:hover,
+    .present-mode .tile-focus:hover,
+    .present-mode .tile-expand:hover,
+    .present-mode [data-role="present"]:hover,
+    .present-mode [data-role="focus"]:hover,
+    .present-mode [data-role="expand"]:hover,
+    .present-mode [data-role="fullscreen"]:hover,
+    .present-mode [aria-label*="present" i]:hover,
+    .present-mode [title*="present" i]:hover,
+    .present-mode [aria-label*="focus" i]:hover,
+    .present-mode [title*="focus" i]:hover,
+    .present-mode [aria-label*="fullscreen" i]:hover,
+    .present-mode [title*="fullscreen" i]:hover,
+    .is-presenting .presentation-icon:hover,
+    .is-presenting .present-icon:hover,
+    .is-presenting .focus-icon:hover,
+    .is-presenting .expand-icon:hover,
+    .is-presenting .fullscreen-icon:hover,
+    .is-presenting .tile-present:hover,
+    .is-presenting .tile-focus:hover,
+    .is-presenting .tile-expand:hover,
+    .is-presenting [data-role="present"]:hover,
+    .is-presenting [data-role="focus"]:hover,
+    .is-presenting [data-role="expand"]:hover,
+    .is-presenting [data-role="fullscreen"]:hover,
+    .is-presenting [aria-label*="present" i]:hover,
+    .is-presenting [title*="present" i]:hover,
+    .is-presenting [aria-label*="focus" i]:hover,
+    .is-presenting [title*="focus" i]:hover,
+    .is-presenting [aria-label*="fullscreen" i]:hover,
+    .is-presenting [title*="fullscreen" i]:hover {
+        opacity: 0.55 !important;
+        transform: scale(0.82) !important;
+    }
+
+/* =========================================================
+   SHARED AGING / CSR NAV — EXACT LOCAL LOOK + BOOTSTRAP BEHAVIOR
+   Keep at VERY END of remote site.css.
+   Do not add .navbar-collapse / .navbar-toggler display overrides.
+   Bootstrap controls collapse.
+   ========================================================= */
+
+.app-nav {
+    background: linear-gradient(135deg, #263746 0%, #31495a 52%, #405d69 100%);
+    min-height: 56px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, .12);
+}
+
+    .app-nav .navbar-brand {
+        color: #f8fafc;
+        letter-spacing: .01em;
+    }
+
+        .app-nav .navbar-brand:hover,
+        .app-nav .navbar-brand:focus {
+            color: #ffffff;
+        }
+
+    .app-nav .nav-link {
+        color: rgba(255,255,255,.78);
+        font-size: .88rem;
+        font-weight: 500;
+        padding: .5rem .72rem;
+        border-radius: .65rem;
+        transition: background-color .15s ease, color .15s ease;
+    }
+
+        .app-nav .nav-link:hover,
+        .app-nav .nav-link:focus,
+        .app-nav .nav-link.active {
+            color: #ffffff;
+            background: rgba(255,255,255,.12);
+        }
+
+/* Suite mode background only */
+.suite-nav-mode {
+    background: #f5f7f6;
+}
+
+/* Body-only / chromeless mode */
+.body-only {
+    background: transparent;
+}
+
+    .body-only main,
+    .body-only .container-fluid {
+        padding: 0 !important;
+    }
+
+/* Hide only remote app chrome when launched through Aging suite nav */
+body.suite-nav-mode .user-pill,
+body.suite-nav-mode .topbar,
+body.suite-nav-mode .footer {
+    display: none !important;
+}
+
+/* Keep remote content spacing aligned under the shared Aging nav */
+body.suite-nav-mode main.container-fluid {
+    padding: .85rem 1rem !important;
+    margin-top: 0 !important;
+}
+
+/* Optional gear positioning if a layout uses it */
+.local-suite-nav-shell {
+    position: relative;
+}
+
+.local-suite-gear {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,.85);
+    width: 2rem;
+    height: 2rem;
+    border-radius: .6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+    .local-suite-gear:hover,
+    .local-suite-gear:focus {
+        color: #fff;
+        background: rgba(255,255,255,.12);
+    }

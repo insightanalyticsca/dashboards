@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aging Forecast Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#fff;
+      --line:#d4d4d9;
+      --text:#171777;
+      --muted:#c9c9c9;
+      --blue:#0808EE;
+      --cyan:#4F63F7;
+      --teal:#09C698;
+      --shadow:0 8px 20px rgba(23,52,82,.07);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text)}
+    .app{height:100%;padding:8px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:8px}
+    .card{background:linear-gradient(180deg,#fff,#ffffff);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;min-height:0;overflow:hidden}
+    .header{padding:10px 12px;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.88fr);gap:8px}
+    .eyebrow{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#c9c9c9}
+    .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 0 3px rgba(68,99,255,.12)}
+    .title{margin:4px 0 4px;font-size:17px;font-weight:800;line-height:1.05}
+    .subtitle{margin:0;font-size:10px;line-height:1.3;color:var(--muted)}
+    .filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+    .filter label{display:block;margin:0 0 3px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#c9c9c9}
+    .filter select{width:100%;border:1px solid var(--line);background:#ffffff;border-radius:10px;padding:6px 9px;font-size:11px;color:var(--text);outline:none}
+    .mode-strip{margin-top:7px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center}
+    .mode-toggle{display:inline-flex;gap:4px;padding:3px;border:1px solid var(--line);border-radius:999px;background:#ffffff}
+    .mode-btn{border:0;background:transparent;color:#c9c9c9;font-size:10px;font-weight:700;padding:5px 10px;border-radius:999px;cursor:pointer;line-height:1}
+    .mode-btn.active{background:linear-gradient(135deg,rgba(8,8,238,.13),rgba(79,99,247,.13));color:#171777;box-shadow:inset 0 0 0 1px rgba(8,8,238,.18)}
+    .mode-note{font-size:10px;line-height:1.3;color:#c9c9c9;min-width:0}
+    .mode-note b{color:#171777}
+    .status-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .mini{position:relative;padding:9px 10px}
+    .mini::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--teal))}
+    .k{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:#c9c9c9}
+    .v{margin-top:6px;font-size:15px;font-weight:800;line-height:1.03}
+    .s{margin-top:4px;font-size:10px;color:var(--muted)}
+    .metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+    .board{min-height:0;display:grid;grid-template-columns:minmax(0,2.4fr) minmax(270px,.82fr);gap:8px}
+    .chart-panel{padding:10px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:7px}
+    .head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+    .panel-title{margin:0;font-size:13px;font-weight:800}
+    .panel-sub{margin-top:3px;font-size:10px;line-height:1.25;color:var(--muted)}
+    .badge{padding:5px 8px;border:1px solid var(--line);background:#ffffff;border-radius:999px;font-size:10px;color:#c9c9c9;white-space:nowrap}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+    .pill-legend{display:flex;gap:6px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 9px;font-size:10px;color:#171777;cursor:pointer;user-select:none;transition:.15s ease}
+    .pill.off{opacity:.45;background:#ffffff}
+    .pill .c{width:9px;height:9px;border-radius:50%}
+    .pill .label{line-height:1}
+    .toolbar-note{font-size:10px;color:var(--muted)}
+    .chart-wrap{height:100%;min-height:0;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+    #mainChart{width:100%;height:100%}
+    .side{padding:8px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:7px}
+    .tabs{display:flex;gap:6px;justify-content:flex-end}
+    .tab{border:1px solid var(--line);background:#ffffff;color:#c9c9c9;font-size:10px;padding:5px 8px;border-radius:999px;cursor:pointer}
+    .tab.active{background:rgba(68,99,255,.08);border-color:#d4d4d9;color:#171777;font-weight:700}
+    .pane{display:none;min-height:0}
+    .pane.active{display:grid}
+    .readout{grid-template-rows:repeat(10,minmax(0,1fr));gap:6px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--line);background:#ffffff;border-radius:11px}
+    .rk{font-size:10px;color:#c9c9c9}
+    .rv{font-size:10px;font-weight:700;color:#171777;white-space:nowrap}
+    .note{padding:9px 10px;border:1px solid var(--line);background:#ffffff;border-radius:12px;font-size:10px;line-height:1.35;color:#171777}
+    .narrative-wrap{display:grid;grid-template-rows:minmax(0,1fr) auto auto;gap:6px;min-height:0}
+    .narrative-card{min-height:0;overflow:auto;padding:9px 10px;border:1px solid var(--line);background:#ffffff;border-radius:12px;font-size:10px;line-height:1.45;color:#171777}
+    .narrative-card p{margin:.2rem 0 .45rem}
+    .narrative-card ul{margin:.2rem 0 .4rem 1rem;padding:0}
+    .narrative-card li{margin:.15rem 0}
+    .copilot-box{padding:8px 9px;border:1px solid var(--line);background:#fff;border-radius:12px;font-size:10px;line-height:1.35;color:#171777}
+    .prompt-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .prompt-chip{display:inline-flex;align-items:center;padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#ffffff;color:#c9c9c9;font-size:10px}
+    .diag{font-size:9px;color:#c9c9c9}
+    .v,.rv,.s,.badge,.toolbar-note,.diag,.mode-note,.subtitle,.title{transition:color 220ms linear}
+    @media (max-width: 1280px){
+      html,body{overflow:auto}
+      .app{height:auto;min-height:100%}
+      .header,.board{grid-template-columns:1fr}
+      .filter-grid,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+  
+    /* Dashboard Builder responsive host scaling */
+    html,body{min-width:0;min-height:0;}
+    .app{transform-origin:top left; width:calc(100% / var(--dash-scale, 1)); height:calc(100% / var(--dash-scale, 1)); transform:scale(var(--dash-scale, 1));}
+    #healthHost > *{transform-origin:top left;}
+    @media (max-width: 760px), (max-height: 520px){
+      .header,.hero{grid-template-columns:1fr !important;}
+      .filter-grid,.meta,.status-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+      .title{font-size:14px !important;}
+      .subtitle{font-size:9px !important;}
+    }
+  </style>
+
+  <script>
+  (function(){
+    function fit(){
+      var w = Math.max(320, window.innerWidth || document.documentElement.clientWidth || 0);
+      var h = Math.max(220, window.innerHeight || document.documentElement.clientHeight || 0);
+      var baseW = 1180, baseH = 650;
+      var scale = Math.min(1.18, Math.max(0.68, Math.min(w / baseW, h / baseH) || 1));
+      document.documentElement.style.setProperty('--dash-scale', String(scale));
+      window.dispatchEvent(new Event('dashboard-custom-html:local-resize'));
+    }
+    window.addEventListener('resize', fit, {passive:true});
+    window.addEventListener('message', function(e){ if(e && e.data && e.data.type === 'dashboard-custom-html:resize') fit(); });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fit); else fit();
+  })();
+  </script>
+</head>
+<body>
+<div class="app">
+  <section class="card header">
+    <div>
+      <div class="eyebrow"><span class="dot"></span><span>Hourly retrain • Aging forecast intelligence</span></div>
+      <div class="title" id="title">Aging forecast duel</div>
+      <p class="subtitle" id="subtitle">Daily trailing-year view with compact live filtering. This HTML reads from the appsettings-wired latest-run points and summary views. The right deck and copilot use the overall latest summary row; the chart still responds to current filters.</p>
+      <div class="filter-grid">
+        <div class="filter"><label>Service</label><select id="serviceFilter"></select></div>
+        <div class="filter"><label>Category</label><select id="categoryFilter"></select></div>
+        <div class="filter"><label>CategoryGroup</label><select id="categoryGroupFilter"></select></div>
+        <div class="filter"><label>AgingBucket</label><select id="agingBucketFilter"></select></div>
+      </div>
+      <div class="mode-strip">
+        <div class="mode-toggle" aria-label="Forecast mode">
+          <button class="mode-btn active" id="modeNormalBtn" type="button">Normal</button>
+          <button class="mode-btn" id="modeFastBtn" type="button">Fast</button>
+        </div>
+        <div class="mode-note" id="modeNote">Normal mode uses the original full forecast views. Fast mode uses the optimized fast-run views.</div>
+      </div>
+    </div>
+    <div class="status-grid">
+      <article class="card mini"><div class="k">Winner</div><div class="v" id="winnerValue">—</div><div class="s">Filtered holdout comparison</div></article>
+      <article class="card mini"><div class="k">S2 confidence</div><div class="v" id="s2ConfValue">—</div><div class="s">Holdout confidence score</div></article>
+      <article class="card mini"><div class="k">RMSE lift</div><div class="v" id="rmseLiftValue">—</div><div class="s">Lower is better</div></article>
+      <article class="card mini"><div class="k">Refresh</div><div class="v" id="refreshValue">120s</div><div class="s">Default live refresh</div></article>
+    </div>
+  </section>
+
+  <section class="metrics">
+    <article class="card mini"><div class="k">Actual avg</div><div class="v" id="actualAvgValue">—</div><div class="s">Recent observed level</div></article>
+    <article class="card mini"><div class="k">30D wo S2</div><div class="v" id="woAvgValue">—</div><div class="s" id="woTrendValue">Trend —</div></article>
+    <article class="card mini"><div class="k">30D with S2</div><div class="v" id="withAvgValue">—</div><div class="s" id="withTrendValue">Trend —</div></article>
+    <article class="card mini"><div class="k">Baseline RMSE</div><div class="v" id="woRmseValue">—</div><div class="s" id="woConfValue">Conf —</div></article>
+    <article class="card mini"><div class="k">S2 RMSE</div><div class="v" id="withRmseValue">—</div><div class="s" id="withConfValue">Conf —</div></article>
+    <article class="card mini"><div class="k">Weighted WAPE lift</div><div class="v" id="wapeLiftValue">—</div><div class="s">Filtered holdout metric</div></article>
+  </section>
+
+  <section class="board">
+    <section class="card chart-panel">
+      <div class="head">
+        <div>
+          <h2 class="panel-title">Forecast comparison</h2>
+          <div class="panel-sub">The chart opens on a recent daily window. X-axis hierarchy is derived from each actual date value, and month/year labels appear on the first visible anchor inside each month so they stay readable on load.</div>
+        </div>
+        <div class="badge" id="rangeBadge">—</div>
+      </div>
+      <div class="toolbar">
+        <div class="pill-legend">
+          <button class="pill" id="pillActual" type="button"><span class="c" style="background:#09C698"></span><span class="label">Actual</span></button>
+          <button class="pill" id="pillWo" type="button"><span class="c" style="background:#0808EE"></span><span class="label">Without S2</span></button>
+          <button class="pill" id="pillS2" type="button"><span class="c" style="background:#4F63F7"></span><span class="label">With S2</span></button>
+        </div>
+        <div class="toolbar-note" id="toolbarNote">Auto-refresh every 120s by default.</div>
+      </div>
+      <div class="chart-wrap"><div id="mainChart"></div></div>
+    </section>
+
+    <aside class="card side">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div class="k">Insight deck</div>
+        <div class="tabs">
+          <button class="tab active" data-tab="readout" type="button">Readout</button>
+          <button class="tab" data-tab="copilot" type="button">Copilot</button>
+        </div>
+      </div>
+
+      <div class="pane readout active" data-pane="readout">
+        <div class="row"><div class="rk">Baseline weighted WAPE</div><div class="rv" id="woWapeRow">—</div></div>
+        <div class="row"><div class="rk">S2 weighted WAPE</div><div class="rv" id="s2WapeRow">—</div></div>
+        <div class="row"><div class="rk">Baseline R²</div><div class="rv" id="woR2Row">—</div></div>
+        <div class="row"><div class="rk">S2 R²</div><div class="rv" id="s2R2Row">—</div></div>
+        <div class="row"><div class="rk">Directional accuracy</div><div class="rv" id="dirAccRow">—</div></div>
+        <div class="row"><div class="rk">Coverage 95</div><div class="rv" id="coverageRow">—</div></div>
+        <div class="row"><div class="rk">Recommended S2 mode</div><div class="rv" id="modeRow">—</div></div>
+        <div class="row"><div class="rk">Data mode</div><div class="rv" id="modeSourceRow">—</div></div>
+        <div class="row"><div class="rk">RunId</div><div class="rv" id="runIdRow">Loading…</div></div>
+        <div class="row"><div class="rk">Run time</div><div class="rv" id="runTimeRow">Loading…</div></div>
+      </div>
+
+      <div class="pane" data-pane="copilot">
+        <div class="narrative-wrap">
+          <div class="copilot-box">
+            <div><b>Overall latest-run brief</b></div>
+            <div id="copilotSummary">Loading latest overall summary…</div>
+            <div class="prompt-row">
+              <span class="prompt-chip">Explain S2 lift</span>
+              <span class="prompt-chip">Summarize risk</span>
+              <span class="prompt-chip">Compare buckets</span>
+            </div>
+          </div>
+          <div class="narrative-card" id="narrativeHtml">Loading latest SQL narrative…</div>
+          <div class="diag" id="diag">Waiting for first live fetch…</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+</div>
+
+<script>
+(function(){
+  const state = {
+    payload: { summary: {}, points: [] },
+    config: {},
+    meta: {},
+    filters: { service: "All", category: "All", categoryGroup: "All", agingBucket: "All" },
+    selected: { actual: true, wo: true, s2: true },
+    chart: null,
+    timer: null,
+    requestSeq: 0,
+    activeAbort: null,
+    lastSource: null,
+    lockedSource: null,
+    activeMode: "normal",
+    firstPaintDone: false,
+    chartSignature: "",
+    summarySignature: "",
+    displayedNumbers: {},
+    tweens: {}
+  };
+
+  const $ = id => document.getElementById(id);
+  const els = {
+    title:$("title"), subtitle:$("subtitle"), winnerValue:$("winnerValue"), s2ConfValue:$("s2ConfValue"),
+    rmseLiftValue:$("rmseLiftValue"), refreshValue:$("refreshValue"), actualAvgValue:$("actualAvgValue"),
+    woAvgValue:$("woAvgValue"), withAvgValue:$("withAvgValue"), woTrendValue:$("woTrendValue"),
+    withTrendValue:$("withTrendValue"), woRmseValue:$("woRmseValue"), woConfValue:$("woConfValue"),
+    withRmseValue:$("withRmseValue"), withConfValue:$("withConfValue"), wapeLiftValue:$("wapeLiftValue"),
+    woWapeRow:$("woWapeRow"), s2WapeRow:$("s2WapeRow"), woR2Row:$("woR2Row"), s2R2Row:$("s2R2Row"),
+    dirAccRow:$("dirAccRow"), coverageRow:$("coverageRow"), modeRow:$("modeRow"), modeSourceRow:$("modeSourceRow"), runIdRow:$("runIdRow"), runTimeRow:$("runTimeRow"),
+    rangeBadge:$("rangeBadge"), toolbarNote:$("toolbarNote"), diag:$("diag"), modeNote:$("modeNote"),
+    narrativeHtml:$("narrativeHtml"), copilotSummary:$("copilotSummary")
+  };
+  const selects = {
+    service:$("serviceFilter"), category:$("categoryFilter"),
+    categoryGroup:$("categoryGroupFilter"), agingBucket:$("agingBucketFilter")
+  };
+
+  const keyVal = (row, keys) => { for (const k of keys) { if (row && row[k] != null) return row[k]; } return null; };
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const fmPct = (v,d=1) => Number.isFinite(Number(v)) ? `${(Number(v)*100).toFixed(d)}%` : "—";
+  const fmNum = (v,d=3) => Number.isFinite(Number(v)) ? Number(v).toFixed(d) : "—";
+  const fmMoney = v => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return "—";
+    const a = Math.abs(n), s = n < 0 ? "-" : "";
+    if (a >= 1e9) return `${s}$${(a/1e9).toFixed(1)}B`;
+    if (a >= 1e6) return `${s}$${(a/1e6).toFixed(1)}M`;
+    if (a >= 1e3) return `${s}$${(a/1e3).toFixed(1)}K`;
+    return `${s}$${a.toFixed(0)}`;
+  };
+
+  function setText(node, value){
+    if (!node) return;
+    const next = String(value ?? "");
+    if (node.textContent !== next) node.textContent = next;
+  }
+
+  function setHtml(node, value){
+    if (!node) return;
+    const next = String(value ?? "");
+    if (node.innerHTML !== next) node.innerHTML = next;
+  }
+
+  function easeOutCubic(t){
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function parseMoneyText(text){
+    const s = String(text || "").replace(/,/g, "").trim();
+    if (!s || s === "—") return NaN;
+    const sign = s.startsWith("-") ? -1 : 1;
+    const clean = s.replace(/[^0-9.]/g, "");
+    const n = Number(clean);
+    if (!Number.isFinite(n)) return NaN;
+    if (/B\b/i.test(s)) return sign * n * 1e9;
+    if (/M\b/i.test(s)) return sign * n * 1e6;
+    if (/K\b/i.test(s)) return sign * n * 1e3;
+    return sign * n;
+  }
+
+  function animateValue(key, node, target, formatter, immediate){
+    if (!node) return;
+    const end = Number(target);
+    if (!Number.isFinite(end)) {
+      setText(node, formatter(target));
+      return;
+    }
+
+    const current = Number.isFinite(state.displayedNumbers[key])
+      ? state.displayedNumbers[key]
+      : parseMoneyText(node.textContent);
+
+    const start = Number.isFinite(current) ? current : end;
+
+    if (state.tweens[key]) {
+      cancelAnimationFrame(state.tweens[key]);
+      delete state.tweens[key];
+    }
+
+    if (immediate || Math.abs(start - end) < 0.0001) {
+      state.displayedNumbers[key] = end;
+      setText(node, formatter(end));
+      return;
+    }
+
+    const started = performance.now();
+    const duration = 900;
+
+    function frame(now){
+      const t = Math.min(1, (now - started) / duration);
+      const value = start + (end - start) * easeOutCubic(t);
+      state.displayedNumbers[key] = value;
+      setText(node, formatter(value));
+      if (t < 1) {
+        state.tweens[key] = requestAnimationFrame(frame);
+      } else {
+        state.displayedNumbers[key] = end;
+        setText(node, formatter(end));
+        delete state.tweens[key];
+      }
+    }
+
+    state.tweens[key] = requestAnimationFrame(frame);
+  }
+  const avg = arr => { const c = arr.filter(v => Number.isFinite(v)); return c.length ? c.reduce((a,b)=>a+b,0)/c.length : NaN; };
+
+function formatRunTime(value){
+  if (!value) return "—";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  return d.toLocaleString("en-CA", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+}
+
+
+  const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
+  const niceDate = v => v ? new Date(v).toLocaleDateString("en-CA",{year:"numeric",month:"short",day:"numeric"}) : "—";
+  const dateKey = v => {
+    if (!v) return "";
+    const d = new Date(v);
+    if (Number.isNaN(d.getTime())) return String(v).slice(0, 10);
+    return d.toISOString().slice(0, 10);
+  };
+  const compareDateKeys = (a, b) => String(a || "").slice(0, 10).localeCompare(String(b || "").slice(0, 10));
+
+  function readBool(v){
+    if (typeof v === "boolean") return v;
+    if (typeof v === "number") return v !== 0;
+    const s = String(v ?? "").trim().toLowerCase();
+    return s === "1" || s === "true" || s === "yes";
+  }
+
+  function toNumber(v){
+    if (v == null || v === "") return NaN;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : NaN;
+  }
+
+  function extractContext(source){
+    const base = source || window.DashVisualContext || {};
+    const payload = base.payload || {};
+    const rule = payload.rule || base.rule || {};
+    const selection = payload.selection || base.selection || {};
+
+    // Parent Multi.cshtml may send the appsettings rule as top-level rule.
+    // Read it here so one shared HTML can follow either the normal or fast JSON rule.
+    const config = Object.assign(
+      {},
+      rule || {},
+      payload.config || {},
+      base.config || {}
+    );
+
+    const meta = Object.assign(
+      {},
+      {
+        schema: selection.schema || config.schema || config.Schema || base.schema || "",
+        obj: selection.obj || config.obj || config.object || config.Object || base.obj || "",
+        chartType: selection.chartType || config.chartType || config.ChartType || base.chartType || ""
+      },
+      payload.meta || {},
+      base.meta || {}
+    );
+
+    return {
+      model: payload.model || base.model || {},
+      config,
+      meta
+    };
+  }
+
+  function hasOwnKeys(obj){
+    return obj && typeof obj === "object" && Object.keys(obj).length > 0;
+  }
+
+  function mergeNonEmpty(base, incoming){
+    if (!hasOwnKeys(incoming)) return base || {};
+    return Object.assign({}, base || {}, incoming || {});
+  }
+
+  function applyContextOnly(source){
+    const ctx = extractContext(source);
+    state.config = mergeNonEmpty(state.config, ctx.config);
+    state.meta = mergeNonEmpty(state.meta, ctx.meta);
+
+    try {
+      const saved = "";
+      const desired = firstNonBlank(
+        state.config.defaultMode,
+        state.config.DefaultMode,
+        state.config.defaultForecastMode,
+        state.config.DefaultForecastMode
+      ).toLowerCase();
+      if (!saved && (desired === "fast" || desired === "normal")) {
+        state.activeMode = desired;
+      }
+    } catch {}
+
+    if (typeof updateModeUi === "function") updateModeUi();
+  }
+
+  function fillSelect(node, values, current){
+    const items = ["All", ...Array.from(new Set(values.filter(v => v != null && String(v).trim() !== "").map(v => String(v).trim()))).sort()];
+    const sig = items.join("\u001f");
+
+    if (node.dataset.optionSignature !== sig) {
+      const oldValue = node.value || current || "All";
+      node.innerHTML = items.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+      node.dataset.optionSignature = sig;
+      node.value = items.includes(oldValue) ? oldValue : (items.includes(current) ? current : "All");
+    } else {
+      node.value = items.includes(current) ? current : "All";
+    }
+  }
+
+  function populateDropdowns(points){
+    fillSelect(selects.service, points.map(p => keyVal(p, ["Service","service"])), state.filters.service);
+    fillSelect(selects.category, points.map(p => keyVal(p, ["Category","category"])), state.filters.category);
+    fillSelect(selects.categoryGroup, points.map(p => keyVal(p, ["CategoryGroup","categoryGroup","category_group"])), state.filters.categoryGroup);
+    fillSelect(selects.agingBucket, points.map(p => keyVal(p, ["AgingBucket","agingBucket","aging_bucket"])), state.filters.agingBucket);
+    state.filters.service = selects.service.value || "All";
+    state.filters.category = selects.category.value || "All";
+    state.filters.categoryGroup = selects.categoryGroup.value || "All";
+    state.filters.agingBucket = selects.agingBucket.value || "All";
+  }
+
+  function filterRows(points){
+    return points.filter(p =>
+      (state.filters.service === "All" || String(keyVal(p, ["Service","service"]) || "") === state.filters.service) &&
+      (state.filters.category === "All" || String(keyVal(p, ["Category","category"]) || "") === state.filters.category) &&
+      (state.filters.categoryGroup === "All" || String(keyVal(p, ["CategoryGroup","categoryGroup","category_group"]) || "") === state.filters.categoryGroup) &&
+      (state.filters.agingBucket === "All" || String(keyVal(p, ["AgingBucket","agingBucket","aging_bucket"]) || "") === state.filters.agingBucket)
+    );
+  }
+
+  function aggregateDaily(rows, summary){
+    const byDate = new Map();
+    const lastActualCutoff = getSummaryLastActualDate(summary || {});
+
+    rows.forEach(p => {
+      const pointDate = dateKey(keyVal(p, ["PointDate","pointDate","point_date"]));
+      if (!pointDate) return;
+      if (!byDate.has(pointDate)) {
+        byDate.set(pointDate, {
+          PointDate: pointDate,
+          ActualNonZeroSum: 0,
+          ActualNonZeroCount: 0,
+          PredictedAmountWithoutS2: 0,
+          PredictedAmountWithS2: 0,
+          LowerWithoutS2: 0,
+          UpperWithoutS2: 0,
+          LowerWithS2: 0,
+          UpperWithS2: 0,
+          AnyForecast: false,
+          IsHoldout: false
+        });
+      }
+
+      const r = byDate.get(pointDate);
+      const horizon = toNumber(keyVal(p, ["HorizonDay","horizonDay","horizon_day"]));
+      const isForecastFlag = readBool(keyVal(p, ["IsForecast","isForecast","is_forecast"]));
+      const beyondLastActual = !!lastActualCutoff && compareDateKeys(pointDate, lastActualCutoff) > 0;
+      const isForecast = isForecastFlag || (Number.isFinite(horizon) && horizon > 0) || beyondLastActual;
+      const actual = toNumber(keyVal(p, ["ActualAmount","actualAmount","actual_amount"]));
+      const wo = toNumber(keyVal(p, ["PredictedAmountWithoutS2","predictedAmountWithoutS2","predicted_amount_without_s2"]));
+      const s2 = toNumber(keyVal(p, ["PredictedAmountWithS2","predictedAmountWithS2","predicted_amount_with_s2"]));
+      const woL = toNumber(keyVal(p, ["LowerWithoutS2","lowerWithoutS2","lower_without_s2"]));
+      const woU = toNumber(keyVal(p, ["UpperWithoutS2","upperWithoutS2","upper_without_s2"]));
+      const s2L = toNumber(keyVal(p, ["LowerWithS2","lowerWithS2","lower_with_s2"]));
+      const s2U = toNumber(keyVal(p, ["UpperWithS2","upperWithS2","upper_with_s2"]));
+
+      // Only draw actuals for true historical rows. Forecast rows often carry NULL/0/placeholder
+      // ActualAmount; never let those create an actual curve beyond LastActualDate.
+      if (!isForecast && Number.isFinite(actual) && Math.abs(actual) > 1e-9) {
+        r.ActualNonZeroSum += actual;
+        r.ActualNonZeroCount += 1;
+      }
+
+      r.PredictedAmountWithoutS2 += Number.isFinite(wo) ? wo : 0;
+      r.PredictedAmountWithS2 += Number.isFinite(s2) ? s2 : 0;
+      r.LowerWithoutS2 += Number.isFinite(woL) ? woL : 0;
+      r.UpperWithoutS2 += Number.isFinite(woU) ? woU : 0;
+      r.LowerWithS2 += Number.isFinite(s2L) ? s2L : 0;
+      r.UpperWithS2 += Number.isFinite(s2U) ? s2U : 0;
+      r.AnyForecast = r.AnyForecast || isForecast;
+      r.IsHoldout = r.IsHoldout || (!isForecast && readBool(keyVal(p, ["IsHoldout","isHoldout","is_holdout"])));
+    });
+
+    return Array.from(byDate.values())
+      .sort((a,b) => a.PointDate.localeCompare(b.PointDate))
+      .map(r => {
+        const hasActual = r.ActualNonZeroCount > 0;
+        return {
+          PointDate: r.PointDate,
+          ActualAmount: hasActual ? r.ActualNonZeroSum : null,
+          PredictedAmountWithoutS2: r.PredictedAmountWithoutS2,
+          PredictedAmountWithS2: r.PredictedAmountWithS2,
+          LowerWithoutS2: r.LowerWithoutS2,
+          UpperWithoutS2: r.UpperWithoutS2,
+          LowerWithS2: r.LowerWithS2,
+          UpperWithS2: r.UpperWithS2,
+          IsForecast: r.AnyForecast,
+          HasActual: hasActual,
+          IsHoldout: r.IsHoldout
+        };
+      });
+  }
+
+  function rmse(a,p){ return Math.sqrt(a.reduce((s,v,i)=>s+Math.pow(v-p[i],2),0)/Math.max(a.length,1)); }
+  function wape(a,p){ const d=a.reduce((s,v)=>s+Math.abs(v),0); if (d<=1e-9) return NaN; return a.reduce((s,v,i)=>s+Math.abs(v-p[i]),0)/d; }
+  function safeR2(a,p){ if (a.length < 2) return NaN; const m=avg(a); const ssTot=a.reduce((s,v)=>s+Math.pow(v-m,2),0); if (ssTot===0) return NaN; const ssRes=a.reduce((s,v,i)=>s+Math.pow(v-p[i],2),0); return 1-ssRes/ssTot; }
+  function dirAcc(a,p){ if (a.length < 2) return 1; let ok=0,total=0; for(let i=1;i<a.length;i++){ ok += Math.sign(a[i]-a[i-1])===Math.sign(p[i]-p[i-1]) ? 1 : 0; total++; } return total ? ok/total : 1; }
+  function cov95(a,l,u){ if (!a.length) return 0; let ok=0; for(let i=0;i<a.length;i++){ if (a[i] >= l[i] && a[i] <= u[i]) ok++; } return ok / a.length; }
+  function std(x){ const c=x.filter(v=>Number.isFinite(v)); if (!c.length) return 0; const m=avg(c); return Math.sqrt(c.reduce((s,v)=>s+Math.pow(v-m,2),0)/c.length); }
+  function confScore(w,cv,da,a,p){
+    const err = clamp(1 - (Number.isFinite(w) ? w : 1), 0, 1);
+    const cover = clamp(1 - Math.abs(cv - .95)/.95, 0, 1);
+    const ad = a.slice(1).map((v,i)=>v-a[i]);
+    const pd = p.slice(1).map((v,i)=>v-p[i]);
+    const av = std(ad), pv = std(pd);
+    const stab = (av <= 1e-9 && pv <= 1e-9) ? 1 : clamp(1 - Math.abs(av-pv)/Math.max(av,pv,1e-9), 0, 1);
+    return 100 * (0.45*err + 0.25*cover + 0.15*da + 0.15*stab);
+  }
+
+
+function summaryNumber(summary, keys){
+  for (const key of keys) {
+    const v = summary && summary[key];
+    const n = Number(v);
+    if (Number.isFinite(n)) return n;
+  }
+  return NaN;
+}
+
+function summaryText(summary, keys){
+  for (const key of keys) {
+    const v = summary && summary[key];
+    if (v != null && String(v).trim() !== "") return String(v).trim();
+  }
+  return "";
+}
+
+function getSummaryLastActualDate(summary){
+  return dateKey(summaryText(summary, ["LastActualDate", "lastActualDate", "last_actual_date"]));
+}
+
+function buildOverallSummary(summary){
+  const winner = summaryText(summary, ["AggregateWinner","aggregateWinner"]) || "Winner unavailable";
+  const mode = summaryText(summary, ["RecommendedS2Mode","recommendedS2Mode","S2StrategyChosen","s2StrategyChosen"]) || "n/a";
+  const rmseLift = summaryNumber(summary, ["RMSELiftPct","rmseLiftPct"]);
+  const wapeLift = summaryNumber(summary, ["WAPELiftPct","wapeLiftPct","MedianGroupWAPELiftPct","medianGroupWAPELiftPct"]);
+  const confLift = summaryNumber(summary, ["ConfidenceLiftPct","confidenceLiftPct"]);
+  const s2Wins = summaryNumber(summary, ["GroupsWonByS2","groupsWonByS2"]);
+  const groups = summaryNumber(summary, ["GroupsProcessed","groupsProcessed"]);
+  const horizon = summaryNumber(summary, ["ForecastHorizonDays","forecastHorizonDays"]);
+  const parts = [];
+
+  parts.push(`<div><b>${esc(winner)}</b>${Number.isFinite(groups) && Number.isFinite(s2Wins) ? ` • S2 wins ${s2Wins}/${groups} groups` : ""}</div>`);
+  parts.push(`<div>Recommended mode: <b>${esc(mode)}</b>${Number.isFinite(horizon) ? ` • Horizon <b>${horizon}D</b>` : ""}</div>`);
+
+  const lifts = [];
+  if (Number.isFinite(rmseLift)) lifts.push(`RMSE lift <b>${fmPct(rmseLift, 1)}</b>`);
+  if (Number.isFinite(wapeLift)) lifts.push(`WAPE lift <b>${fmPct(wapeLift, 1)}</b>`);
+  if (Number.isFinite(confLift)) lifts.push(`confidence lift <b>${fmPct(confLift, 1)}</b>`);
+  if (lifts.length) parts.push(`<div>${lifts.join(" • ")}</div>`);
+
+  return parts.join("");
+}
+
+function buildNarrativeHtml(summary){
+  const rawHtml = String(summary.NarrativeHtml || summary.narrativeHtml || "").trim();
+  if (rawHtml) return rawHtml;
+
+  const english = String(summary.EnglishNarrative || summary.englishNarrative || "").trim();
+  const math = String(summary.MathNarrative || summary.mathNarrative || "").trim();
+
+  const parts = [];
+  if (english) parts.push(`<p>${esc(english)}</p>`);
+  if (math) parts.push(`<p><b>Math</b>: ${esc(math)}</p>`);
+  if (!parts.length) parts.push('<p>No latest-run narrative was supplied by the summary view.</p>');
+  return parts.join("");
+}
+
+  function computeMetrics(daily){
+    const hist = daily.filter(r => !r.IsForecast && Number.isFinite(r.ActualAmount));
+    const hold = daily.filter(r => !r.IsForecast && r.IsHoldout && Number.isFinite(r.ActualAmount));
+    const fc = daily.filter(r => r.IsForecast);
+
+    const a = hold.map(r => r.ActualAmount);
+    const wo = hold.map(r => r.PredictedAmountWithoutS2);
+    const s2 = hold.map(r => r.PredictedAmountWithS2);
+    const woL = hold.map(r => r.LowerWithoutS2);
+    const woU = hold.map(r => r.UpperWithoutS2);
+    const s2L = hold.map(r => r.LowerWithS2);
+    const s2U = hold.map(r => r.UpperWithS2);
+
+    const woW = wape(a, wo), s2W = wape(a, s2);
+    const woR = rmse(a, wo), s2R = rmse(a, s2);
+    const woD = dirAcc(a, wo), s2D = dirAcc(a, s2);
+    const woC = cov95(a, woL, woU), s2C = cov95(a, s2L, s2U);
+    const woConf = confScore(woW, woC, woD, a, wo);
+    const s2Conf = confScore(s2W, s2C, s2D, a, s2);
+
+    const fwo = fc.map(r => r.PredictedAmountWithoutS2);
+    const fs2 = fc.map(r => r.PredictedAmountWithS2);
+
+    return {
+      winner: Number.isFinite(s2W) && Number.isFinite(woW) ? (s2W <= woW ? "With S2" : "Without S2") : (s2Conf >= woConf ? "With S2" : "Without S2"),
+      actualAvg: avg(hist.slice(-Math.min(30, hist.length)).map(r => r.ActualAmount)),
+      woAvg: avg(fwo),
+      s2Avg: avg(fs2),
+      woTrend: fwo.length ? (fwo[fwo.length-1]-fwo[0])/Math.max(Math.abs(fwo[0]),1e-9) : NaN,
+      s2Trend: fs2.length ? (fs2[fs2.length-1]-fs2[0])/Math.max(Math.abs(fs2[0]),1e-9) : NaN,
+      woW, s2W, woR, s2R, woR2: safeR2(a,wo), s2R2: safeR2(a,s2), woD, s2D, woC, s2C, woConf, s2Conf
+    };
+  }
+
+  function buildHierarchyLabel(dateString){
+    const d = new Date(dateString);
+    if (Number.isNaN(d.getTime())) return String(dateString || "");
+
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = d.toLocaleDateString("en-US", { month: "short" });
+    const yy = String(d.getFullYear());
+
+    const showMonth = d.getDate() === 1;
+    const showYear = d.getDate() === 1 && d.getMonth() === 0;
+
+    return `${dd}\n${showMonth ? mm : " "}\n${showYear ? yy : " "}`;
+  }
+
+  function renderChart(daily){
+    const chart = state.chart || echarts.init($("mainChart"), null, {renderer:"canvas"});
+    state.chart = chart;
+
+    const x = daily.map(r => r.PointDate);
+    const actual = daily.map(r => r.HasActual && Number.isFinite(r.ActualAmount) ? r.ActualAmount : null);
+    const wo = daily.map(r => r.PredictedAmountWithoutS2);
+    const s2 = daily.map(r => r.PredictedAmountWithS2);
+    const woL = daily.map(r => r.LowerWithoutS2);
+    const woU = daily.map((r,i) => r.UpperWithoutS2 - woL[i]);
+    const s2L = daily.map(r => r.LowerWithS2);
+    const s2U = daily.map((r,i) => r.UpperWithS2 - s2L[i]);
+    const forecastStart = daily.findIndex(r => r.IsForecast && !r.HasActual);
+    const visibleDays = Math.min(100, daily.length);
+    const startPct = daily.length > visibleDays ? ((daily.length - visibleDays) / daily.length) * 100 : 0;
+
+    const series = [
+      { id:"actual", name:"Actual", type:"line", data: state.selected.actual ? actual : actual.map(()=>null), showSymbol:false, connectNulls:false, smooth:.12, lineStyle:{width:2.2,color:"#09C698"}, z:6 },
+      { id:"woBandLow", name:"Without S2 band low", type:"line", data: state.selected.wo ? woL : woL.map(()=>null), lineStyle:{opacity:0}, symbol:"none", stack:"wo", areaStyle:{opacity:0}, tooltip:{show:false}, z:1 },
+      { id:"woBandHigh", name:"Without S2 band high", type:"line", data: state.selected.wo ? woU : woU.map(()=>null), lineStyle:{opacity:0}, symbol:"none", stack:"wo", areaStyle:{color:"rgba(68,99,255,.10)"}, tooltip:{show:false}, z:1 },
+      { id:"wo", name:"Without S2", type:"line", data: state.selected.wo ? wo : wo.map(()=>null), showSymbol:false, smooth:.18, lineStyle:{width:2.0,color:"#0808EE"}, markArea: forecastStart >= 0 ? {silent:true,itemStyle:{color:"rgba(80,100,130,.04)"},data:[[{xAxis:x[forecastStart]},{xAxis:x[x.length-1]}]]} : undefined, z:4 },
+      { id:"s2BandLow", name:"With S2 band low", type:"line", data: state.selected.s2 ? s2L : s2L.map(()=>null), lineStyle:{opacity:0}, symbol:"none", stack:"s2", areaStyle:{opacity:0}, tooltip:{show:false}, z:2 },
+      { id:"s2BandHigh", name:"With S2 band high", type:"line", data: state.selected.s2 ? s2U : s2U.map(()=>null), lineStyle:{opacity:0}, symbol:"none", stack:"s2", areaStyle:{color:"rgba(26,174,243,.10)"}, tooltip:{show:false}, z:2 },
+      { id:"s2", name:"With S2", type:"line", data: state.selected.s2 ? s2 : s2.map(()=>null), showSymbol:false, smooth:.18, lineStyle:{width:2.2,color:"#4F63F7"}, markLine: forecastStart >= 0 ? {silent:true,symbol:["none","none"],lineStyle:{color:"rgba(110,130,160,.45)",type:"dashed"},label:{color:"#c9c9c9",fontSize:9,formatter:"Forecast start"},data:[{xAxis:x[forecastStart]}]} : undefined, z:5 }
+    ];
+
+    const optionKey = JSON.stringify({x, series: series.map(s => s.data), selected: state.selected, forecastStart});
+    if (optionKey === state.chartSignature) return;
+    state.chartSignature = optionKey;
+
+    const staticOption = {
+      animation: true,
+      animationDuration: 350,
+      animationDurationUpdate: 900,
+      animationEasingUpdate: "cubicOut",
+      legend: { show: false },
+      grid: {left:50,right:12,top:12,bottom:72},
+      dataZoom: [
+        { type:"inside", start:startPct, end:100, filterMode:"none" },
+        { type:"slider", height:16, bottom:8, start:startPct, end:100, brushSelect:false, borderColor:"#d4d4d9", fillerColor:"rgba(68,99,255,.08)" }
+      ],
+      tooltip: {
+        trigger:"axis",
+        backgroundColor:"rgba(255,255,255,.98)",
+        borderColor:"#d4d4d9",
+        textStyle:{color:"#171777",fontSize:10},
+        formatter: params => {
+          const row = daily[params[0].dataIndex];
+          return `<div style="font-weight:700;margin-bottom:6px">${niceDate(row.PointDate)}</div>
+            <div style="display:grid;gap:4px;min-width:190px">
+              <div>Actual: <b>${row.HasActual && Number.isFinite(row.ActualAmount) ? fmMoney(row.ActualAmount) : "—"}</b></div>
+              <div>Without S2: <b>${fmMoney(row.PredictedAmountWithoutS2)}</b></div>
+              <div>With S2: <b>${fmMoney(row.PredictedAmountWithS2)}</b></div>
+              <div>Forecast: <b>${row.IsForecast ? "Yes" : "No"}</b>${row.IsHoldout ? " · Holdout" : ""}</div>
+            </div>`;
+        }
+      },
+      xAxis: {
+        type:"category",
+        data:x,
+        boundaryGap:false,
+        axisLine:{lineStyle:{color:"#d4d4d9"}},
+        axisTick:{show:false},
+        axisLabel:{
+          interval:0,
+          margin:8,
+          color:"#c9c9c9",
+          fontSize:9,
+          formatter: function(value, index){
+            const isAnchor = index % 7 === 0 || index === 0 || index === daily.length - 1;
+            if (!isAnchor) return "";
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return String(value || "");
+            let prevAnchorDate = null;
+            for (let i = index - 1; i >= 0; i--) {
+              if (i % 7 === 0 || i === 0) {
+                const pd = new Date(daily[i].PointDate);
+                if (!Number.isNaN(pd.getTime())) prevAnchorDate = pd;
+                break;
+              }
+            }
+            const dd = String(d.getDate()).padStart(2, "0");
+            const mm = d.toLocaleDateString("en-US", { month: "short" });
+            const yy = String(d.getFullYear());
+            const showMonth = !prevAnchorDate || d.getMonth() !== prevAnchorDate.getMonth() || d.getFullYear() !== prevAnchorDate.getFullYear() || d.getDate() <= 7 || index === 0;
+            const showYear = !prevAnchorDate || d.getFullYear() !== prevAnchorDate.getFullYear() || (showMonth && d.getMonth() === 0);
+            return `${dd}\n${showMonth ? mm : " "}\n${showYear ? yy : " "}`;
+          }
+        }
+      },
+      yAxis: {
+        type:"value",
+        axisLine:{show:false},
+        axisTick:{show:false},
+        axisLabel:{color:"#c9c9c9",fontSize:9,formatter:v => Math.abs(v) >= 1e6 ? `${(v/1e6).toFixed(0)}M` : `${Math.round(v)}`},
+        splitLine:{lineStyle:{color:"rgba(125,150,180,.12)"}}
+      },
+      series
+    };
+
+    if (!state.firstPaintDone) {
+      chart.setOption(staticOption, { notMerge: true, lazyUpdate: false });
+    } else {
+      chart.setOption({
+        xAxis: { data:x },
+        dataZoom: staticOption.dataZoom,
+        series
+      }, { notMerge: false, lazyUpdate: true });
+    }
+  }
+
+  function getModeProfiles(){
+    const c = cfg ? cfg() : {};
+    const raw = state.config || {};
+    const baseSchema = firstNonBlank(c.schema, raw.Schema, raw.schema, "dbo") || "dbo";
+    const refreshSeconds = Number.isFinite(c.refreshSeconds) && c.refreshSeconds > 0 ? c.refreshSeconds : 120;
+
+    return {
+      normal: {
+        id: "normal",
+        label: "Normal",
+        chip: "Normal/full",
+        refreshSeconds,
+        pointsSchema: firstNonBlank(raw.normalPointsSchema, raw.NormalPointsSchema, baseSchema, "dbo"),
+        pointsObject: firstNonBlank(raw.normalPointsObject, raw.NormalPointsObject, "vw_connector_aging_forecast_points_latest"),
+        summarySchema: firstNonBlank(raw.normalSummarySchema, raw.NormalSummarySchema, baseSchema, "dbo"),
+        summaryObject: firstNonBlank(raw.normalSummaryObject, raw.NormalSummaryObject, "vw_connector_aging_forecast_summary_latest"),
+        description: "Normal mode reads the original latest-run forecast views. Use it as the benchmark/full-quality run for validation and comparison."
+      },
+      fast: {
+        id: "fast",
+        label: "Fast",
+        chip: "Fast/optimized",
+        refreshSeconds,
+        pointsSchema: firstNonBlank(raw.fastPointsSchema, raw.FastPointsSchema, baseSchema, "dbo"),
+        pointsObject: firstNonBlank(raw.fastPointsObject, raw.FastPointsObject, "vw_connector_aging_forecast_points_latest_fast"),
+        summarySchema: firstNonBlank(raw.fastSummarySchema, raw.FastSummarySchema, baseSchema, "dbo"),
+        summaryObject: firstNonBlank(raw.fastSummaryObject, raw.FastSummaryObject, "vw_connector_aging_forecast_summary_latest_fast"),
+        description: "Fast mode reads the separate fast-run views. It is meant for quicker retraining/live monitoring; metrics may differ because the training path is optimized for speed."
+      }
+    };
+  }
+
+  function getActiveModeProfile(){
+    const profiles = getModeProfiles();
+    return profiles[state.activeMode] || profiles.normal;
+  }
+
+  function setActiveMode(mode){
+    state.activeMode = mode === "fast" ? "fast" : "normal";
+    stopLivePoll();
+    state.requestSeq += 1;
+    if (state.activeAbort) {
+      try { state.activeAbort.abort(); } catch {}
+      state.activeAbort = null;
+    }
+    state.payload = { summary: {}, points: [] };
+    updateModeUi();
+    showLoadingState();
+    fetchLiveData().catch(err => console.warn("Aging mode fetch failed", err));
+    scheduleLivePoll();
+  }
+
+  function updateModeUi(){
+    const profile = getActiveModeProfile();
+    const normalBtn = $("modeNormalBtn");
+    const fastBtn = $("modeFastBtn");
+    if (normalBtn) normalBtn.classList.toggle("active", state.activeMode === "normal");
+    if (fastBtn) fastBtn.classList.toggle("active", state.activeMode === "fast");
+    if (els.modeNote) {
+      els.modeNote.innerHTML = `<b>${esc(profile.label)} mode</b>: ${esc(profile.description)}`;
+    }
+  }
+
+  function renderSummary(filteredPoints, daily, m){
+    const summary = state.payload.summary || {};
+    const immediate = !state.firstPaintDone;
+    const suffix = [
+      state.filters.service !== "All" ? `Service ${state.filters.service}` : null,
+      state.filters.category !== "All" ? `Category ${state.filters.category}` : null,
+      state.filters.categoryGroup !== "All" ? `CategoryGroup ${state.filters.categoryGroup}` : null,
+      state.filters.agingBucket !== "All" ? `Bucket ${state.filters.agingBucket}` : null
+    ].filter(Boolean).join(" • ");
+
+    const profile = getActiveModeProfile();
+    const summaryS2Confidence = summaryNumber(summary, ["S2Confidence","s2Confidence"]);
+    const summaryBaselineConfidence = summaryNumber(summary, ["BaselineConfidence","baselineConfidence"]);
+    const summaryRmseLift = summaryNumber(summary, ["RMSELiftPct","rmseLiftPct"]);
+
+    setText(els.title, `Aging forecast duel • ${profile.label} mode • ${m.winner} leads`);
+    setText(els.subtitle, suffix ? `Filtered view: ${suffix}. Data source: ${profile.description}` : `All filters selected by default. Data source: ${profile.description}`);
+    setText(els.winnerValue, m.winner);
+    animateValue("s2ConfValue", els.s2ConfValue, Number.isFinite(summaryS2Confidence) ? summaryS2Confidence : m.s2Conf / 100, v => fmPct(v, 1), immediate);
+    animateValue("rmseLiftValue", els.rmseLiftValue, Number.isFinite(summaryRmseLift) ? summaryRmseLift : (m.woR - m.s2R) / Math.max(Math.abs(m.woR),1e-9), v => fmPct(v, 1), immediate);
+    setText(els.refreshValue, `${Math.max(1, Number(profile.refreshSeconds || 120))}s`);
+    animateValue("actualAvgValue", els.actualAvgValue, m.actualAvg, fmMoney, immediate);
+    animateValue("woAvgValue", els.woAvgValue, m.woAvg, fmMoney, immediate);
+    animateValue("withAvgValue", els.withAvgValue, m.s2Avg, fmMoney, immediate);
+    animateValue("woTrendValue", els.woTrendValue, m.woTrend, v => `Trend ${fmPct(v, 1)}`, immediate);
+    animateValue("withTrendValue", els.withTrendValue, m.s2Trend, v => `Trend ${fmPct(v, 1)}`, immediate);
+    animateValue("woRmseValue", els.woRmseValue, m.woR, fmMoney, immediate);
+    setText(els.woConfValue, Number.isFinite(summaryBaselineConfidence) ? `Conf ${fmPct(summaryBaselineConfidence, 1)}` : `Conf ${fmPct(m.woConf / 100, 1)}`);
+    animateValue("withRmseValue", els.withRmseValue, m.s2R, fmMoney, immediate);
+    setText(els.withConfValue, Number.isFinite(summaryS2Confidence) ? `Conf ${fmPct(summaryS2Confidence, 1)}` : `Conf ${fmPct(m.s2Conf / 100, 1)}`);
+    animateValue("wapeLiftValue", els.wapeLiftValue, (m.woW - m.s2W) / Math.max(Math.abs(m.woW),1e-9), v => fmPct(v, 1), immediate);
+
+    const baselineWape = summaryNumber(summary, ["BaselineWAPE","baselineWAPE","BaselineMedianGroupWAPE","baselineMedianGroupWAPE"]);
+    const s2Wape = summaryNumber(summary, ["S2WAPE","s2WAPE","S2MedianGroupWAPE","s2MedianGroupWAPE"]);
+    const baselineR2 = summaryNumber(summary, ["BaselineR2","baselineR2"]);
+    const s2R2 = summaryNumber(summary, ["S2R2","s2R2"]);
+    const baselineDir = summaryNumber(summary, ["BaselineDirectionalAccuracy","baselineDirectionalAccuracy"]);
+    const s2Dir = summaryNumber(summary, ["S2DirectionalAccuracy","s2DirectionalAccuracy"]);
+    const baselineCov = summaryNumber(summary, ["BaselineCoverage95","baselineCoverage95"]);
+    const s2Cov = summaryNumber(summary, ["S2Coverage95","s2Coverage95"]);
+
+    animateValue("woWapeRow", els.woWapeRow, Number.isFinite(baselineWape) ? baselineWape : m.woW, v => fmPct(v, 1), immediate);
+    animateValue("s2WapeRow", els.s2WapeRow, Number.isFinite(s2Wape) ? s2Wape : m.s2W, v => fmPct(v, 1), immediate);
+    animateValue("woR2Row", els.woR2Row, Number.isFinite(baselineR2) ? baselineR2 : m.woR2, v => fmNum(v, 3), immediate);
+    animateValue("s2R2Row", els.s2R2Row, Number.isFinite(s2R2) ? s2R2 : m.s2R2, v => fmNum(v, 3), immediate);
+    setText(els.dirAccRow, Number.isFinite(baselineDir) && Number.isFinite(s2Dir) ? `${fmPct(baselineDir, 1)} → ${fmPct(s2Dir, 1)}` : `${fmPct(m.woD, 1)} → ${fmPct(m.s2D, 1)}`);
+    setText(els.coverageRow, Number.isFinite(baselineCov) && Number.isFinite(s2Cov) ? `${fmPct(baselineCov, 1)} → ${fmPct(s2Cov, 1)}` : `${fmPct(m.woC, 1)} → ${fmPct(m.s2C, 1)}`);
+    setText(els.modeRow, summaryText(summary, ["RecommendedS2Mode","recommendedS2Mode","S2StrategyChosen","s2StrategyChosen"]) || "residual_shrink");
+    if (els.modeSourceRow) setText(els.modeSourceRow, profile.chip);
+    setText(els.runIdRow, summaryText(summary, ["RunId","runId"]) || "—");
+    setText(els.runTimeRow, formatRunTime(summary.RunDateTime || summary.runDateTime || summary.RuntimeUtc || summary.runtimeUtc || ""));
+
+    const lastActualFromSummary = getSummaryLastActualDate(summary);
+    const lastActual = daily.filter(r => !r.IsForecast && Number.isFinite(r.ActualAmount)).slice(-1)[0];
+    const horizon = Number(summary.ForecastHorizonDays || summary.forecastHorizonDays || 30);
+    setText(els.rangeBadge, `${niceDate(lastActualFromSummary || (lastActual && lastActual.PointDate))} last actual • ${horizon}D forecast`);
+    setText(els.toolbarNote, `${profile.label} mode • auto-refresh every ${Math.max(1, Number(profile.refreshSeconds || 120))}s.`);
+    setHtml(els.narrativeHtml, `<div class="note" style="margin-bottom:6px"><b>${esc(profile.label)} mode</b>: ${esc(profile.description)}</div>` + buildNarrativeHtml(summary));
+    setHtml(els.copilotSummary, `<div><b>${esc(profile.label)} mode</b> • ${esc(profile.description)}</div>` + buildOverallSummary(summary));
+
+    const source = state.lastSource || {};
+    const sourceLabel = source.pointsObject && source.summaryObject ? ` • points ${source.pointsSchema}.${source.pointsObject} • summary ${source.summarySchema}.${source.summaryObject}` : "";
+    setText(els.diag, `Rows ${state.payload.points.length}${sourceLabel} • datapoints ${new Date().toLocaleTimeString()} • endpoint ${resolveDashboardUrl("GetCustomHtmlLiveData")} • summary run ${summaryText(summary, ["RunId","runId"]) || "—"} @ ${formatRunTime(summary.RunDateTime || summary.runDateTime || summary.RuntimeUtc || summary.runtimeUtc || "")}`);
+  }
+
+  function render(){
+    const points = Array.isArray(state.payload.points) ? state.payload.points : [];
+    populateDropdowns(points);
+    const filtered = filterRows(points);
+    const daily = aggregateDaily(filtered, state.payload.summary || {});
+    const metrics = computeMetrics(daily);
+    renderSummary(filtered, daily, metrics);
+    renderChart(daily);
+    updatePills();
+    if (!state.firstPaintDone && state.chart) state.chart.resize();
+    state.firstPaintDone = true;
+  }
+
+  function updatePills(){
+    $("pillActual").classList.toggle("off", !state.selected.actual);
+    $("pillWo").classList.toggle("off", !state.selected.wo);
+    $("pillS2").classList.toggle("off", !state.selected.s2);
+  }
+
+  
+
+function trimSlash(s){
+  return String(s || "").replace(/\/+$/,"");
+}
+
+function getAppBasePath(){
+  const explicit = trimSlash(
+    state.config.appBasePath ||
+    state.config.pathBase ||
+    state.meta.pathBase ||
+    ""
+  );
+  if (explicit) return explicit;
+
+  const currentPath = String(window.location.pathname || "");
+  const knownBases = [
+    String(state.config.htmlBasePath || ""),
+    String(state.config.customHtmlBasePath || ""),
+    "/custom-html",
+    "/dashboard-html"
+  ].map(trimSlash).filter(Boolean);
+
+  for (const base of knownBases) {
+    const idx = currentPath.toLowerCase().indexOf(base.toLowerCase());
+    if (idx > 0) {
+      return currentPath.substring(0, idx);
+    }
+    if (idx == 0) {
+      return "";
+    }
+  }
+
+  const parts = currentPath.split("/").filter(Boolean);
+  if (parts.length > 1) {
+    return "/" + parts.slice(0, -2).join("/");
+  }
+
+  return "";
+}
+
+function resolveDashboardUrl(actionName){
+  const explicit = trimSlash(
+    state.config.liveDataBaseUrl ||
+    state.config.dashboardBaseUrl ||
+    ""
+  );
+  if (explicit) {
+    return `${explicit}/${actionName}`;
+  }
+
+  const appBase = trimSlash(getAppBasePath());
+  return `${window.location.origin}${appBase}/Dashboard/${actionName}`;
+}
+
+  function showLoadingState(){
+    els.runIdRow.textContent = "Loading…";
+    els.runTimeRow.textContent = "Loading…";
+    els.copilotSummary.textContent = "Loading latest overall summary…";
+    els.narrativeHtml.innerHTML = "Loading latest SQL narrative…";
+    const profile = getActiveModeProfile ? getActiveModeProfile() : null;
+    els.diag.textContent = profile ? `Waiting for ${profile.label} mode data…` : "Waiting for first live fetch…";
+  }
+
+  function firstNonBlank(){
+    for (const value of arguments) {
+      if (value == null) continue;
+      const s = String(value).trim();
+      if (s) return s;
+    }
+    return "";
+  }
+
+  function cfg(){
+    const c = state.config || {};
+    const m = state.meta || {};
+    const out = {};
+
+    out.key = firstNonBlank(c.key, c.Key, m.key, m.Key);
+    out.schema = firstNonBlank(c.schema, c.Schema, m.schema, m.Schema, "dbo");
+    out.object = firstNonBlank(c.obj, c.object, c.Object, m.obj, m.object, m.Object);
+    out.payloadMode = firstNonBlank(c.payloadMode, c.PayloadMode, "agingForecastMonitor");
+    out.refreshSeconds = Number(firstNonBlank(c.refreshSeconds, c.RefreshSeconds, 120));
+
+    out.pointsSchema = firstNonBlank(c.pointsSchema, c.PointsSchema, out.schema, "dbo");
+    out.pointsObject = firstNonBlank(c.pointsObject, c.PointsObject);
+    out.summarySchema = firstNonBlank(c.summarySchema, c.SummarySchema, out.schema, "dbo");
+    out.summaryObject = firstNonBlank(c.summaryObject, c.SummaryObject);
+
+    return out;
+  }
+
+  function swapWord(value, fromWord, toWord){
+    return String(value || "").replace(new RegExp(fromWord, "ig"), match => {
+      return match[0] === match[0].toUpperCase() ? toWord[0].toUpperCase() + toWord.slice(1) : toWord;
+    });
+  }
+
+  function buildAgingSourceFromConfig(){
+    const profile = getActiveModeProfile();
+    return {
+      profile: profile.id,
+      refreshSeconds: profile.refreshSeconds,
+      pointsSchema: profile.pointsSchema,
+      pointsObject: profile.pointsObject,
+      summarySchema: profile.summarySchema,
+      summaryObject: profile.summaryObject
+    };
+  }
+
+  function resolveAgingSources(){
+    return buildAgingSourceFromConfig();
+  }
+
+  function hasConfiguredSource(){
+    return true;
+  }
+
+
+function wireUi(){
+    Object.entries(selects).forEach(([key,node]) => {
+      node.onchange = () => {
+        state.filters[key] = node.value || "All";
+        render();
+      };
+    });
+
+    $("pillActual").onclick = () => { state.selected.actual = !state.selected.actual; render(); };
+    $("pillWo").onclick = () => { state.selected.wo = !state.selected.wo; render(); };
+    $("pillS2").onclick = () => { state.selected.s2 = !state.selected.s2; render(); };
+    $("modeNormalBtn").onclick = () => setActiveMode("normal");
+    $("modeFastBtn").onclick = () => setActiveMode("fast");
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.onclick = () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === btn));
+        document.querySelectorAll(".pane").forEach(p => p.classList.toggle("active", p.dataset.pane === tab));
+        if (state.chart) state.chart.resize();
+      };
+    });
+
+    if (typeof ResizeObserver !== "undefined") {
+      new ResizeObserver(() => { if (state.chart) state.chart.resize(); }).observe(document.body);
+    }
+  }
+
+  async function fetchLiveData(){
+    // Do not re-read window.DashVisualContext here. It may still contain
+    // default/old view names and can overwrite the appsettings message.
+    const source = resolveAgingSources();
+    if (!source) {
+      els.diag.textContent = "Waiting for appsettings visual config before first live fetch…";
+      return;
+    }
+
+    const seq = ++state.requestSeq;
+    if (state.activeAbort) {
+      try { state.activeAbort.abort(); } catch {}
+    }
+    state.activeAbort = new AbortController();
+
+    const endpoint = resolveDashboardUrl("GetCustomHtmlLiveData");
+    const body = {
+      schema: source.pointsSchema,
+      obj: source.pointsObject,
+      payloadMode: "agingForecastMonitor",
+      filters: {},
+      summarySchema: source.summarySchema,
+      summaryObject: source.summaryObject,
+      pointsSchema: source.pointsSchema,
+      pointsObject: source.pointsObject
+    };
+
+    els.diag.textContent = `Loading ${source.profile} profile • points ${source.pointsSchema}.${source.pointsObject} • summary ${source.summarySchema}.${source.summaryObject}`;
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+      credentials: "same-origin",
+      cache: "no-cache",
+      signal: state.activeAbort.signal,
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) throw new Error(`Aging live fetch failed: ${response.status}`);
+    const data = await response.json();
+
+    if (seq !== state.requestSeq) return;
+
+    const nextPayload = {
+      summary: (data.summaryRows || [])[0] || {},
+      points: Array.isArray(data.pointRows) ? data.pointRows : []
+    };
+
+    const nextSig = JSON.stringify({
+      source,
+      summary: nextPayload.summary,
+      points: nextPayload.points,
+      filters: state.filters,
+      selected: state.selected
+    });
+
+    if (nextSig === state.summarySignature) {
+      setText(els.diag, `Rows ${nextPayload.points.length} • unchanged ${new Date().toLocaleTimeString()}`);
+      return;
+    }
+
+    state.summarySignature = nextSig;
+    state.lastSource = source;
+    state.payload = nextPayload;
+    render();
+  }
+
+  function stopLivePoll(){
+    if (state.timer){
+      clearTimeout(state.timer);
+      state.timer = null;
+    }
+  }
+
+  function scheduleLivePoll(){
+    stopLivePoll();
+    const source = resolveAgingSources();
+    const refreshMs = Math.max(1000, Number((source && source.refreshSeconds) || 120) * 1000);
+    state.timer = setTimeout(async () => {
+      try { await fetchLiveData(); }
+      catch (err) { console.warn("Aging auto-refresh failed", err); }
+      finally { scheduleLivePoll(); }
+    }, refreshMs);
+  }
+
+  window.addEventListener("message", ev => {
+    const data = ev.data || {};
+    if (data.type === "dashboard-custom-html:init" || data.type === "dashboard-custom-html:update") {
+      applyContextOnly(data);
+      fetchLiveData().catch(err => console.warn("Aging live fetch failed", err));
+    } else if (data.type === "dashboard-custom-html:resize") {
+      if (state.chart) state.chart.resize();
+    }
+  });
+
+  window.addEventListener("beforeunload", stopLivePoll);
+
+  wireUi();
+  applyContextOnly(window.DashVisualContext || {});
+  updateModeUi();
+  showLoadingState();
+  fetchLiveData().catch(err => console.warn("Aging bootstrap live fetch failed", err));
+  scheduleLivePoll();
+})();
+</script>
+</body>
+</html>

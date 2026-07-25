@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+
+<style>
+:root{
+  --blue:#0808EE; --green:#09C698; --navy:#171777; --gray:#c9c9c9; --gray2:#d4d4d9; --lime:#BBFF05;
+  --tile:#ffffff; --ink:#171777; --muted:#56627f; --grid:#ececf1; --border:#d5d7e0;
+}
+html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Arial,Helvetica,sans-serif;color:var(--ink)}
+*{box-sizing:border-box}
+.tile{
+  width:100%;height:100%;background:var(--tile);border:1px solid var(--border);position:relative;
+  display:grid;grid-template-rows:auto auto minmax(0,1fr);
+}
+.head{padding:8px 12px 2px 12px}
+.title{font-size:12px;line-height:1.15;font-weight:800;color:var(--navy);letter-spacing:.1px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:6px 12px 2px 14px;color:#5d6b86;font-size:10px;font-weight:600}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.menu{position:absolute;top:36px;right:10px;color:#d3d4dc;font-size:16px;line-height:1}
+.chart-wrap{position:relative;padding:0 4px 0 2px}
+#chart{width:100%;height:100%}
+.empty{height:100%;display:grid;place-items:center;color:#6d7590;font-size:13px;font-weight:700}
+</style>
+
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+const CORPORATE=["#0808EE","#09C698","#171777","#c9c9c9","#d4d4d9","#BBFF05","#4F63F7","#12DDB8","#635BCB","#DDF76D"];
+function n(v){ if (typeof v === 'number') return Number.isFinite(v) ? v : 0; const s=String(v??'').replace(/[$,%\s,]/g,''); const x=Number(s); return Number.isFinite(x) ? x : 0; }
+function rowsOf(v){
+  if (Array.isArray(v)) return v;
+  if (!v) return [];
+  if (Array.isArray(v.rows)) return v.rows;
+  if (Array.isArray(v.data)) return v.data;
+  if (Array.isArray(v.items)) return v.items;
+  if (Array.isArray(v.result)) return v.result;
+  if (Array.isArray(v.result?.rows)) return v.result.rows;
+  if (Array.isArray(v.result?.data)) return v.result.data;
+  if (Array.isArray(v.payload?.rows)) return v.payload.rows;
+  if (Array.isArray(v.payload?.data)) return v.payload.data;
+  if (Array.isArray(v.model?.rows)) return v.model.rows;
+  if (Array.isArray(v.model?.data)) return v.model.data;
+  return [];
+}
+function extract(source){
+  const base = source || window.DashVisualContext || {};
+  const payload = base.payload || {};
+  const model = payload.model || base.model || {};
+  const config = payload.config || base.config || {};
+  const meta = payload.meta || base.meta || {};
+  const rows = rowsOf(model).length ? rowsOf(model) : rowsOf(payload).length ? rowsOf(payload) : rowsOf(base);
+  return { base, payload, model, config, meta, rows };
+}
+function keyOf(obj, keys){
+  if (!obj) return '';
+  const map = {};
+  Object.keys(obj).forEach(k => map[k.toLowerCase()] = k);
+  for (const name of keys){ const hit = map[String(name).toLowerCase()]; if (hit) return hit; }
+  return '';
+}
+function pick(obj, keys, fallback=''){ const k = keyOf(obj, keys); return k ? obj[k] : fallback; }
+function monthStart(v){ const d = v instanceof Date ? v : new Date(v); return Number.isFinite(d.getTime()) ? new Date(d.getFullYear(), d.getMonth(), 1) : null; }
+function shortFmt(value, digits=0){
+  const abs = Math.abs(n(value));
+  if (abs >= 1000000) return (n(value)/1000000).toFixed(abs >= 10000000 ? 0 : 1).replace(/\.0$/,'') + 'M';
+  if (abs >= 1000) return (n(value)/1000).toFixed(abs >= 100000 ? 0 : 1).replace(/\.0$/,'') + 'K';
+  return n(value).toLocaleString(undefined,{maximumFractionDigits:digits,minimumFractionDigits:digits});
+}
+function intFmt(value){ return n(value).toLocaleString(undefined,{maximumFractionDigits:0}); }
+function pctFmt(value){ const x=n(value); return (x>=0?'+':'') + x.toFixed(2); }
+function periodLabel(v){
+  const d = new Date(v);
+  if (!Number.isFinite(d.getTime())) return String(v ?? '');
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function onDashMessages(render, resize){
+  function handle(source){ try{ render(source); } catch(err){ console.warn('custom html render failed', err); } }
+  window.addEventListener('message', ev => {
+    const type = String(ev?.data?.type || '');
+    if (!type.startsWith('dashboard-custom-html:')) return;
+    if (type.endsWith(':resize')) { if (resize) resize(); return; }
+    if (type.endsWith(':init') || type.endsWith(':update')) handle(ev.data);
+  });
+  window.addEventListener('resize', ()=>{ if (resize) resize(); });
+  handle(window.DashVisualContext || {});
+}
+function normalizeBucket(raw){
+  const s=String(raw ?? '').trim().toLowerCase();
+  if (!s) return '';
+  if (['current','0-30','0 to 30','0_30','0–30'].includes(s)) return '0-30';
+  if (['31-60','31 to 60','31_60','31–60'].includes(s)) return '31-60';
+  if (['61-90','61 to 90','61_90','61–90'].includes(s)) return '61-90';
+  if (['>90','91+','90+','91 and over','over 90','91-999'].includes(s)) return '>90';
+  return String(raw).trim();
+}
+</script>
+
+<script>
+let chart;
+const TITLE = "Electric Residential - Rolling 13 Months - EoM, True Debt, Active Accounts";
+function buildSeries(rows){
+  const monthKey = rows.length ? (keyOf(rows[0], ['SelectedDate','Period','Month','Date','SnapshotDate']) || '') : '';
+  const bucketKey = rows.length ? (keyOf(rows[0], ['AgingBucket','Bucket','BucketName','Label']) || '') : '';
+  const amountKey = rows.length ? (keyOf(rows[0], ['Amount','Value','Total','Balance']) || '') : '';
+  if (!monthKey || !bucketKey || !amountKey) return null;
+  const byMonth = new Map();
+  rows.forEach(r => {
+    const month = monthStart(pick(r,[monthKey]));
+    if (!month) return;
+    const monthMs = month.getTime();
+    if (!byMonth.has(monthMs)) byMonth.set(monthMs, {'0-30':0,'31-60':0,'61-90':0,'>90':0});
+    const bucket = normalizeBucket(pick(r,[bucketKey]));
+    if (!(bucket in byMonth.get(monthMs))) return;
+    byMonth.get(monthMs)[bucket] += n(pick(r,[amountKey]));
+  });
+  const months = Array.from(byMonth.keys()).sort((a,b)=>a-b).slice(-13);
+  const labels = months.map(ms => new Date(Number(ms)).toLocaleDateString(undefined,{month:'short'}));
+  const yearBreaks = [];
+  months.forEach((ms, index) => {
+    const d = new Date(Number(ms));
+    if (index === 0 || d.getFullYear() !== new Date(Number(months[index-1])).getFullYear()) {
+      yearBreaks.push({ index, year: String(d.getFullYear()) });
+    }
+  });
+  const s0 = months.map(m => byMonth.get(m)['0-30'] || 0);
+  const s1 = months.map(m => byMonth.get(m)['31-60'] || 0);
+  const s2 = months.map(m => byMonth.get(m)['61-90'] || 0);
+  const s3 = months.map(m => byMonth.get(m)['>90'] || 0);
+  const total = months.map((m, i) => s0[i] + s1[i] + s2[i] + s3[i]);
+  return {labels, yearBreaks, s0, s1, s2, s3, total};
+}
+function buildYearGraphics(model){
+  if (!model || !model.labels.length) return [];
+  const count = model.labels.length;
+  return model.yearBreaks.map((b, idx) => {
+    const next = idx + 1 < model.yearBreaks.length ? model.yearBreaks[idx+1].index : count;
+    const startPct = count === 1 ? 50 : (b.index / (count - 1)) * 100;
+    const endPct = count === 1 ? 50 : ((next - 1) / (count - 1)) * 100;
+    const mid = (startPct + endPct) / 2;
+    return {
+      type:'text',
+      left: `${mid}%`,
+      bottom: 2,
+      style: { text: b.year, fill: '#67728d', font: '700 11px Segoe UI, Arial, sans-serif', textAlign:'center' }
+    };
+  });
+}
+function render(source){
+  const {rows} = extract(source);
+  document.getElementById('root').innerHTML = `
+    <div class="tile">
+      <div class="head"><div class="title">${TITLE}</div></div>
+      <div class="menu">≡</div>
+      <div class="legend">
+        <span><span class="dot" style="background:#0808EE"></span>0-30</span>
+        <span><span class="dot" style="background:#09C698"></span>31-60</span>
+        <span><span class="dot" style="background:#BBFF05"></span>61-90</span>
+        <span><span class="dot" style="background:#171777"></span>&gt;90</span>
+        <span><span class="dot" style="background:#111111"></span>Total</span>
+      </div>
+      <div class="chart-wrap"><div id="chart"></div></div>
+    </div>`;
+  const model = buildSeries(rows);
+  const target = document.getElementById('chart');
+  if (!model || !model.labels.length) {
+    target.outerHTML = '<div class="empty">No SQL data.</div>';
+    if (chart) { chart.dispose(); chart = null; }
+    return;
+  }
+  chart = chart || echarts.init(document.getElementById('chart'));
+  chart.setOption({
+    animationDuration: 250,
+    color: ['#0808EE','#09C698','#BBFF05','#171777','#111111'],
+    tooltip: {
+      trigger:'axis',
+      axisPointer:{type:'shadow'},
+      backgroundColor:'#ffffff',
+      borderColor:'#d5d7e0',
+      textStyle:{color:'#171777',fontWeight:600},
+      valueFormatter: v => intFmt(v)
+    },
+    legend: { show:false },
+    grid: { left: 46, right: 18, top: 6, bottom: 42 },
+    graphic: buildYearGraphics(model),
+    xAxis: {
+      type:'category',
+      data:model.labels,
+      axisTick:{show:false},
+      axisLine:{lineStyle:{color:'#cfcfd6'}},
+      axisLabel:{color:'#53607d',fontSize:10,fontWeight:600,margin:8}
+    },
+    yAxis: {
+      type:'value',
+      axisTick:{show:false},
+      axisLine:{show:false},
+      splitLine:{lineStyle:{color:'#ececf1'}},
+      axisLabel:{color:'#53607d',fontSize:10,fontWeight:600,formatter: value => shortFmt(value,0)}
+    },
+    series:[
+      {name:'0-30',type:'bar',stack:'aging',barWidth:22,itemStyle:{color:'#0808EE'},data:model.s0},
+      {name:'31-60',type:'bar',stack:'aging',barWidth:22,itemStyle:{color:'#09C698'},data:model.s1},
+      {name:'61-90',type:'bar',stack:'aging',barWidth:22,itemStyle:{color:'#BBFF05'},data:model.s2},
+      {name:'>90',type:'bar',stack:'aging',barWidth:22,itemStyle:{color:'#171777'},data:model.s3},
+      {name:'Total',type:'line',symbol:'none',smooth:false,lineStyle:{color:'#111111',width:3},z:10,data:model.total}
+    ]
+  }, true);
+  chart.resize();
+}
+onDashMessages(render, ()=>chart && chart.resize());
+</script>
+</body>
+</html>

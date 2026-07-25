@@ -1,0 +1,1378 @@
+﻿// Views/Dashboard/Multi.cshtml
+@using System
+@using System.Linq
+@using System.Collections.Generic
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+    var xsrf = tokens?.RequestToken ?? "";
+    var defaultSchema = Convert.ToString(ViewBag.DefaultSchema) ?? "";
+}
+
+<meta name="request-verification-token" content="@xsrf" />
+
+<div class="container-fluid py-3">
+    <div class="tile shadow-sm">
+        <div class="tile-head">
+            <div class="head-left">
+                <div class="title">Dashboard Builder</div>
+                <div class="sub">Drag fields into Rows / Columns / Values, then Run.</div>
+            </div>
+
+            <div class="head-right">
+                <div class="ctl">
+                    <label class="ctl-label">Schema</label>
+                    <select id="schemaSel" class="form-select form-select-sm" style="min-width:200px"></select>
+                </div>
+                <div class="ctl">
+                    <label class="ctl-label">Object</label>
+                    <select id="objSel" class="form-select form-select-sm" style="min-width:260px"></select>
+                </div>
+
+                <div class="ctl">
+                    <label class="ctl-label">Agg</label>
+                    <select id="aggSel" class="form-select form-select-sm" style="min-width:140px">
+                        <option>Sum</option>
+                        <option>Average</option>
+                        <option>Count</option>
+                        <option>Minimum</option>
+                        <option>Maximum</option>
+                    </select>
+                </div>
+
+                <button id="runBtn" class="btn btn-sm btn-primary">Run</button>
+                <button id="clearBtn" class="btn btn-sm btn-outline-secondary">Clear</button>
+
+                <button id="toggleSideBtn" class="btn btn-sm btn-outline-secondary" title="Toggle side panel">
+                    <span class="mono">☰</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="tile-grid">
+            <!-- MAIN -->
+            <div class="tile-main">
+                <div id="errBox" class="alert alert-danger py-2 px-3" style="display:none"></div>
+
+                <div class="builder">
+                    <div class="builder-left">
+                        <div class="section">
+                            <div class="sec-head">
+                                <div class="sec-title">Fields</div>
+                                <div class="sec-actions">
+                                    <input id="fieldSearch" class="form-control form-control-sm" placeholder="Search fields" style="width:220px" />
+                                </div>
+                            </div>
+
+                            <div class="field-groups">
+                                <div class="fg">
+                                    <div class="fg-title">Dimensions</div>
+                                    <div id="fields-dim" class="field-list"></div>
+                                </div>
+                                <div class="fg">
+                                    <div class="fg-title">Dates</div>
+                                    <div id="fields-date" class="field-list"></div>
+                                </div>
+                                <div class="fg">
+                                    <div class="fg-title">Measures</div>
+                                    <div id="fields-meas" class="field-list"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="builder-right">
+                        <div class="section">
+                            <div class="sec-head">
+                                <div class="sec-title">Layout</div>
+                                <div class="sec-actions">
+                                    <span class="hint">Drop fields or click “+”.</span>
+                                </div>
+                            </div>
+
+                            <div class="wells">
+                                <div class="well-box">
+                                    <div class="well-title">Rows</div>
+                                    <div id="wellRows" class="well" data-well="rows">
+                                        <div class="well-empty">Drop a dimension/date here</div>
+                                    </div>
+                                </div>
+                                <div class="well-box">
+                                    <div class="well-title">Columns</div>
+                                    <div id="wellCols" class="well" data-well="cols">
+                                        <div class="well-empty">Drop a dimension/date here</div>
+                                    </div>
+                                </div>
+                                <div class="well-box">
+                                    <div class="well-title">Values</div>
+                                    <div id="wellVals" class="well" data-well="values">
+                                        <div class="well-empty">Drop a measure here (or use Count)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section mt-3">
+                                <div class="sec-head">
+                                    <div class="sec-title">Chart</div>
+                                    <div class="sec-actions">
+                                        <select id="chartTypeSel" class="form-select form-select-sm" style="width:160px">
+                                            <option value="bar">Bar</option>
+                                            <option value="line">Line</option>
+                                            <option value="area">Area</option>
+                                            <option value="scatter">Scatter</option>
+                                            <option value="customHtml">Custom HTML</option>
+                                        </select>
+                                        <button id="explainBtn" class="btn btn-sm btn-outline-primary" title="Generate plain-English notes">Explain</button>
+                                    </div>
+                                </div>
+
+                                <div id="chartWrap" class="chart-wrap">
+                                    <div id="chart" class="chart"></div>
+                                    <div id="chartEmpty" class="chart-empty">
+                                        Pick an object, add fields, then Run.
+                                    </div>
+                                </div>
+
+                                <div id="customHtmlWrap" class="section mt-2 d-none">
+                                    <div class="sec-head">
+                                        <div class="sec-title">Custom HTML</div>
+                                        <div class="sec-actions">
+                                            <button id="customHtmlDefaultBtn" class="btn btn-sm btn-outline-primary" type="button">Load default</button>
+                                            <button id="customHtmlExpandBtn" class="btn btn-sm btn-outline-secondary" type="button">Expand</button>
+                                            <button id="customHtmlCollapseBtn" class="btn btn-sm btn-outline-secondary" type="button">Collapse</button>
+                                        </div>
+                                    </div>
+                                    <div id="customHtmlEditorShell">
+                                      <textarea id="customHtmlEditor" class="form-control" style="min-height:180px;font:12px/1.45 Consolas, Monaco, monospace;background:#0f172a;color:#eef2ff;"></textarea>
+                                    </div>
+                                </div>
+                                <div id="customHtmlModal" class="modalx" style="display:none" aria-hidden="true">
+                                    <div class="modalx-backdrop"></div>
+                                    <div class="modalx-card" style="width:min(1100px, calc(100vw - 32px)); height:min(85vh, 900px); display:flex; flex-direction:column;">
+                                        <div class="modalx-head">
+                                            <div class="modalx-title">Custom HTML / JS Editor</div>
+                                            <button id="customHtmlModalClose" class="btn btn-sm btn-outline-secondary">✕</button>
+                                        </div>
+                                        <div class="modalx-body" style="flex:1; min-height:0;">
+                                            <textarea id="customHtmlEditorModal" class="form-control" style="height:100%;min-height:420px;border:0;border-radius:0;font:12px/1.45 Consolas, Monaco, monospace;background:#0f172a;color:#eef2ff;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="section mt-3">
+                                <div class="sec-head">
+                                    <div class="sec-title">Data</div>
+                                    <div class="sec-actions">
+                                        <div class="small text-muted" id="rowCount"></div>
+                                    </div>
+                                </div>
+                                <div class="grid-wrap">
+                                    <table class="table table-sm table-striped align-middle mb-0" id="gridTbl">
+                                        <thead></thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIDE -->
+            <div id="sidePanel" class="tile-side">
+                <div class="side-head">
+                    <div class="side-title">Filters & Notes</div>
+                    <div class="side-actions">
+                        <button id="collapseSideBtn" class="btn btn-sm btn-outline-secondary" title="Collapse">
+                            <span class="mono">⟷</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="side-tabs">
+                    <button class="tab-btn active" data-tab="filters">Filters</button>
+                    <button class="tab-btn" data-tab="notes">Notes</button>
+                </div>
+
+                <div class="side-body">
+                    <div id="tab-filters" class="tab-pane active">
+                        <div class="side-block">
+                            <div class="side-block-title">Active filters</div>
+                            <div id="filtersList" class="filters-list">
+                                <div class="muted">No filters yet. Click a field pill and choose “Filter”.</div>
+                            </div>
+                        </div>
+
+                        <div class="side-block">
+                            <div class="side-block-title">Quick tips</div>
+                            <ul class="small text-muted mb-0">
+                                <li>Rows/Columns accept Dimensions & Dates.</li>
+                                <li>Values accepts Measures (or use Count).</li>
+                                <li>Click a pill → Filter / Group date / Remove.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="tab-notes" class="tab-pane">
+                        <div class="side-block">
+                            <div class="side-block-title">AI explanation</div>
+                            <div id="aiBox" class="ai-box">
+                                <div class="muted">Press Explain after you run a chart.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Context menu -->
+<div id="ctx" class="ctx" style="display:none">
+    <button class="ctx-item" data-act="add-rows">+ Rows</button>
+    <button class="ctx-item" data-act="add-cols">+ Columns</button>
+    <button class="ctx-item" data-act="add-values">+ Values</button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item" data-act="filter">Filter…</button>
+    <button class="ctx-item" data-act="dategroup">Date group…</button>
+    <div class="ctx-sep"></div>
+    <button class="ctx-item danger" data-act="remove">Remove</button>
+</div>
+
+<!-- Filter modal -->
+<div id="modal" class="modalx" style="display:none" aria-hidden="true">
+    <div class="modalx-backdrop"></div>
+    <div class="modalx-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modalx-head">
+            <div id="modalTitle" class="modalx-title">Filter</div>
+            <button id="modalClose" class="btn btn-sm btn-outline-secondary">✕</button>
+        </div>
+        <div class="modalx-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-6">
+                    <label class="form-label small">Mode</label>
+                    <select id="filterMode" class="form-select form-select-sm">
+                        <option value="in">Include</option>
+                        <option value="notin">Exclude</option>
+                        <option value="isnull">Is Null</option>
+                        <option value="notnull">Is Not Null</option>
+                        <option value="range">Range (dates)</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label small">Search</label>
+                    <input id="filterSearch" class="form-control form-control-sm" placeholder="Find values" />
+                </div>
+            </div>
+
+            <div id="rangeBox" class="row g-2 mt-2" style="display:none">
+                <div class="col-6">
+                    <label class="form-label small">From</label>
+                    <input id="rangeFrom" class="form-control form-control-sm" type="datetime-local" />
+                </div>
+                <div class="col-6">
+                    <label class="form-label small">To (exclusive)</label>
+                    <input id="rangeTo" class="form-control form-control-sm" type="datetime-local" />
+                </div>
+            </div>
+
+            <div id="valuesBox" class="mt-2">
+                <div class="values-head">
+                    <div class="small text-muted" id="valuesHint">Select values:</div>
+                    <button id="valuesClear" class="btn btn-sm btn-outline-secondary">Clear</button>
+                </div>
+                <div id="valuesList" class="values-list"></div>
+            </div>
+        </div>
+        <div class="modalx-foot">
+            <button id="modalCancel" class="btn btn-sm btn-outline-secondary">Cancel</button>
+            <button id="modalSave" class="btn btn-sm btn-primary">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Date group modal -->
+<div id="dgModal" class="modalx" style="display:none" aria-hidden="true">
+    <div class="modalx-backdrop"></div>
+    <div class="modalx-card" role="dialog" aria-modal="true" aria-labelledby="dgTitle">
+        <div class="modalx-head">
+            <div id="dgTitle" class="modalx-title">Date Group</div>
+            <button id="dgClose" class="btn btn-sm btn-outline-secondary">✕</button>
+        </div>
+        <div class="modalx-body">
+            <div class="small text-muted mb-2">Choose how to group this date field when it is used in Rows or Columns.</div>
+            <select id="dgSel" class="form-select form-select-sm">
+                <option value="Day">Day</option>
+                <option value="Month" selected>Month</option>
+                <option value="Quarter">Quarter</option>
+                <option value="Year">Year</option>
+            </select>
+        </div>
+        <div class="modalx-foot">
+            <button id="dgCancel" class="btn btn-sm btn-outline-secondary">Cancel</button>
+            <button id="dgSave" class="btn btn-sm btn-primary">Save</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tile { border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid rgba(0,0,0,.06); }
+
+    .tile-head {
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid rgba(0,0,0,.08);
+        background: linear-gradient(to bottom, #ffffff, #fbfbfc);
+    }
+
+    .head-left { min-width: 0; }
+    .title { font-weight: 700; font-size: 16px; line-height: 1.2; }
+    .sub { color: #6b7280; font-size: 12px; }
+
+    .head-right { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
+    .ctl { display: flex; flex-direction: column; gap: 2px; }
+    .ctl-label { font-size: 11px; color: #6b7280; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    .tile-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; height: calc(100vh - 120px); }
+
+    .tile-main { padding: 12px; min-width: 0; overflow: auto; background: #fff; }
+
+    .tile-side {
+        border-left: 1px solid rgba(0,0,0,.08);
+        background: #fbfbfc;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        transition: width .18s ease;
+    }
+
+    .tile-side.collapsed { width: 56px; }
+    .tile-side.collapsed .side-tabs,
+    .tile-side.collapsed .side-body,
+    .tile-side.collapsed .side-title { display: none; }
+
+    .side-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 10px; border-bottom: 1px solid rgba(0,0,0,.08); }
+    .side-title { font-weight: 700; font-size: 13px; }
+    .side-tabs { display: flex; gap: 6px; padding: 8px 8px; border-bottom: 1px solid rgba(0,0,0,.08); }
+    .tab-btn {
+        border: 1px solid rgba(0,0,0,.12);
+        background: #fff;
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        flex: 1;
+    }
+
+    .tab-btn.active { border-color: rgba(0,0,0,.22); background: #f3f4f6; font-weight: 600; }
+    .side-body { padding: 10px; overflow: auto; }
+
+    .builder { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 12px; align-items: start; }
+
+    .section { border: 1px solid rgba(0,0,0,.08); border-radius: 14px; overflow: hidden; background: #fff; }
+
+    .sec-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(0,0,0,.08);
+        background: #fbfbfc;
+    }
+
+    .sec-title { font-weight: 700; font-size: 13px; }
+    .sec-actions { display: flex; align-items: center; gap: 8px; }
+    .hint { font-size: 12px; color: #6b7280; }
+
+    .field-groups { padding: 10px; display: grid; gap: 10px; }
+    .fg-title { font-size: 12px; color: #6b7280; margin-bottom: 6px; font-weight: 700; }
+    .field-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(0,0,0,.14);
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        background: #fff;
+        cursor: grab;
+        user-select: none;
+        max-width: 100%;
+    }
+
+    .pill:active { cursor: grabbing; }
+    .pill .tag { font-size: 10px; color: #6b7280; padding: 1px 6px; border-radius: 999px; background: #f3f4f6; }
+    .pill .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px; }
+
+    .wells { padding: 10px; display: grid; gap: 10px; }
+    .well-box { display: grid; gap: 6px; }
+    .well-title { font-weight: 700; font-size: 12px; color: #374151; }
+
+    .well {
+        border: 2px dashed rgba(0,0,0,.14);
+        border-radius: 14px;
+        min-height: 56px;
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-content: flex-start;
+        background: #fcfcfd;
+    }
+
+    .well.dragover { border-color: rgba(0,0,0,.28); background: #f8fafc; }
+
+    .well-empty { color: #9ca3af; font-size: 12px; padding: 6px 4px; }
+
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(0,0,0,.14);
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        background: #fff;
+        cursor: pointer;
+        user-select: none;
+        max-width: 100%;
+    }
+
+    .chip .x { color: #6b7280; font-weight: 700; margin-left: 2px; }
+
+    .chart-wrap { position: relative; }
+    .chart { height: 420px; width: 100%; }
+    .chart-empty {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-size: 13px;
+        pointer-events: none;
+    }
+
+    .grid-wrap { overflow: auto; max-height: 320px; }
+
+    .side-block { border: 1px solid rgba(0,0,0,.08); border-radius: 14px; background: #fff; padding: 10px; margin-bottom: 10px; }
+    .side-block-title { font-weight: 700; font-size: 12px; margin-bottom: 8px; color: #374151; }
+
+    .filters-list { display: grid; gap: 8px; }
+    .filter-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: start;
+        border: 1px solid rgba(0,0,0,.10);
+        border-radius: 12px;
+        padding: 8px;
+        background: #fff;
+    }
+
+    .filter-row .f-title { font-weight: 700; font-size: 12px; }
+    .filter-row .f-sub { font-size: 12px; color: #6b7280; white-space: pre-wrap; }
+
+    .ai-box { font-size: 13px; line-height: 1.35; white-space: pre-wrap; }
+    .muted { color: #6b7280; font-size: 12px; }
+
+    /* Context menu */
+    .ctx {
+        position: fixed;
+        z-index: 9999;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,.12);
+        border-radius: 12px;
+        overflow: hidden;
+        min-width: 160px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.14);
+    }
+
+    .ctx-item { width: 100%; text-align: left; border: 0; background: transparent; padding: 8px 10px; font-size: 12px; cursor: pointer; }
+    .ctx-item:hover { background: #f3f4f6; }
+    .ctx-item.danger { color: #b91c1c; }
+    .ctx-sep { height: 1px; background: rgba(0,0,0,.08); }
+
+    /* Modals */
+    .modalx { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; }
+    .modalx-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.28); }
+    .modalx-card { position: relative; background: #fff; border-radius: 16px; width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 24px); overflow: hidden; border: 1px solid rgba(0,0,0,.12); box-shadow: 0 20px 60px rgba(0,0,0,.20); }
+    .modalx-head { display:flex; align-items:center; justify-content:space-between; padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,.08); background: #fbfbfc; }
+    .modalx-title { font-weight: 800; font-size: 13px; }
+    .modalx-body { padding: 12px; overflow: auto; max-height: calc(100vh - 190px); }
+    .modalx-foot { display:flex; justify-content:flex-end; gap: 8px; padding: 10px 12px; border-top: 1px solid rgba(0,0,0,.08); background: #fbfbfc; }
+
+    .values-head { display:flex; align-items:center; justify-content:space-between; gap: 8px; }
+    .values-list { margin-top: 8px; border: 1px solid rgba(0,0,0,.10); border-radius: 12px; max-height: 320px; overflow: auto; }
+    .val-item { display:flex; align-items:center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid rgba(0,0,0,.06); }
+    .val-item:last-child { border-bottom: 0; }
+    .val-item label { font-size: 12px; }
+
+    @@media (max-width: 1200px) {
+        .tile-grid { grid-template-columns: 1fr; height: auto; }
+        .tile-side { border-left: 0; border-top: 1px solid rgba(0,0,0,.08); }
+        .builder { grid-template-columns: 1fr; }
+        .chart { height: 360px; }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script src="~/js/corporate-dashboard-visuals.js"></script>
+
+<script>
+(() => {
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    const token = document.querySelector('meta[name="request-verification-token"]')?.getAttribute('content') || '';
+    const hdrs = () => token ? { 'RequestVerificationToken': token } : {};
+
+    const state = {
+        schema: '',
+        obj: '',
+        fields: [], // {name, systemType, userType, category}
+        wells: { rows: [], cols: [], values: [] },
+        agg: 'Sum',
+        dateGroups: {},
+        filters: {},
+        lastResult: null,
+        chart: null,
+        chartSeriesCache: null,
+        ctxField: null,
+        customHtml: (window.DashHtmlVisuals?.defaultCustomHtmlTemplate?.() || '')
+    };
+
+    const errBox = $('#errBox');
+    const showErr = (msg) => { errBox.style.display = ''; errBox.textContent = msg; };
+    const clearErr = () => { errBox.style.display = 'none'; errBox.textContent = ''; };
+
+    function emptyHtml(message = 'No data') {
+        return `<div class="chart-empty" style="display:flex">${esc(message)}</div>`;
+    }
+
+    function toggleCustomHtmlEditor() {
+        const wrap = $('#customHtmlWrap');
+        if (!wrap) return;
+        wrap.classList.toggle('d-none', $('#chartTypeSel').value !== 'customHtml');
+    }
+
+    function formatHierarchyLabel(value) {
+        return window.DashHtmlVisuals?.hierarchyLabel ? window.DashHtmlVisuals.hierarchyLabel(value) : String(value ?? '');
+    }
+
+    function buildCustomHtmlModel(result) {
+        const data = result?.data || [];
+        const first = data.length ? (data[0] || {}) : {};
+        const scoreField = Object.prototype.hasOwnProperty.call(first, 'health_score') ? 'health_score' : ((result?.valueFields || [])[0] || null);
+        const scoreHistory = scoreField ? data.map(r => Number(r?.[scoreField])).filter(v => Number.isFinite(v)).slice(-12) : [];
+        return {
+            ...first,
+            snapshot_time: first.snapshot_time || '',
+            remote_server: first.remote_server || first.server_name || '',
+            remote_database: first.remote_database || first.database_name || '',
+            health_score: Number(first.health_score ?? scoreHistory[scoreHistory.length - 1] ?? 0),
+            health_status: first.health_status || result?.agg || 'Snapshot',
+            blocker_sessions: Number(first.blocker_sessions || 0),
+            blocked_sessions: Number(first.blocked_sessions || 0),
+            long_running_requests: Number(first.long_running_requests || 0),
+            waiting_sessions: Number(first.waiting_sessions || 0),
+            max_wait_ms: Number(first.max_wait_ms || 0),
+            avg_wait_ms: Number(first.avg_wait_ms || 0),
+            max_elapsed_ms: Number(first.max_elapsed_ms || 0),
+            avg_elapsed_ms: Number(first.avg_elapsed_ms || 0),
+            total_user_sessions: Number(first.total_user_sessions || data.length || 0),
+            active_requests: Number(first.active_requests || 0),
+            sessions_with_open_txn: Number(first.sessions_with_open_txn || 0),
+            top_wait_type: first.top_wait_type || '',
+            top_wait_count: Number(first.top_wait_count || 0),
+            score_history: scoreHistory
+        };
+    }
+
+    function renderCustomHtml(result) {
+        clearChart();
+        $('#chartEmpty').style.display = 'none';
+        const host = document.createElement('div');
+        host.style.width = '100%';
+        host.style.height = '100%';
+        $('#chart').appendChild(host);
+        const tpl = (state.customHtml || window.DashHtmlVisuals?.defaultCustomHtmlTemplate?.() || '').trim();
+        if (!tpl) {
+            $('#chart').innerHTML = emptyHtml('Custom HTML is empty.');
+            return;
+        }
+        const model = buildCustomHtmlModel(result);
+        if (window.DashHtmlVisuals?.renderCustomHtml) {
+            window.DashHtmlVisuals.renderCustomHtml(host, tpl, { model, data: result?.data || [], result });
+        } else {
+            host.innerHTML = tpl;
+        }
+        state.chartSeriesCache = null;
+    }
+
+    // ---------- UI helpers
+    function pillHtml(f) {
+        const tag = f.category === 'measure' ? 'MEAS' : (f.category === 'date' ? 'DATE' : 'DIM');
+        return `<div class="pill" draggable="true" data-field="${esc(f.name)}" data-cat="${esc(f.category)}" title="${esc(f.systemType)}">
+                    <span class="name">${esc(f.name)}</span>
+                    <span class="tag">${tag}</span>
+                </div>`;
+    }
+
+    function esc(s) {
+        return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    function setEmptyWell(wellEl) {
+        const empty = wellEl.querySelector('.well-empty');
+        const chips = wellEl.querySelectorAll('.chip');
+        if (!empty) return;
+        empty.style.display = chips.length ? 'none' : '';
+    }
+
+    function renderWells() {
+        ['rows','cols','values'].forEach(w => {
+            const el = w === 'rows' ? $('#wellRows') : w === 'cols' ? $('#wellCols') : $('#wellVals');
+            el.querySelectorAll('.chip').forEach(x => x.remove());
+            state.wells[w].forEach(field => {
+                const f = state.fields.find(x => eq(x.name, field));
+                const cat = f?.category || 'dimension';
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.dataset.field = field;
+                chip.dataset.cat = cat;
+                chip.innerHTML = `<span class="name">${esc(field)}</span><span class="tag">${cat === 'measure' ? 'MEAS' : (cat === 'date' ? 'DATE' : 'DIM')}</span><span class="x" title="Remove">×</span>`;
+                chip.addEventListener('click', (e) => {
+                    const x = e.target;
+                    if (x && x.classList.contains('x')) {
+                        removeFromAllWells(field);
+                        renderWells();
+                        return;
+                    }
+                    openCtxForChip(chip, e);
+                });
+                el.appendChild(chip);
+            });
+            setEmptyWell(el);
+        });
+    }
+
+    function eq(a,b){ return String(a).toLowerCase() === String(b).toLowerCase(); }
+
+    function removeFromAllWells(field) {
+        ['rows','cols','values'].forEach(w => {
+            state.wells[w] = state.wells[w].filter(x => !eq(x, field));
+        });
+        // if removed from everywhere, keep filter/dateGroup as-is (user may re-add later)
+    }
+
+    function addToWell(well, field) {
+        const f = state.fields.find(x => eq(x.name, field));
+        if (!f) return;
+
+        if (well === 'values') {
+            if (f.category !== 'measure') { showErr(`'${field}' is not a measure. Values can only take measures (or use Count).`); return; }
+        } else {
+            if (f.category === 'measure') { showErr(`'${field}' is a measure. Rows/Columns can only take dimensions/dates.`); return; }
+        }
+
+        clearErr();
+
+        // avoid duplicates across wells
+        removeFromAllWells(field);
+        state.wells[well].push(field);
+        renderWells();
+    }
+
+    // ---------- Drag and drop
+    function wireDnD(container) {
+        container.addEventListener('dragstart', (e) => {
+            const pill = e.target.closest('.pill');
+            if (!pill) return;
+            e.dataTransfer.setData('text/plain', pill.dataset.field);
+            e.dataTransfer.effectAllowed = 'copy';
+        });
+    }
+
+    function wireWellDnD(wellEl) {
+        wellEl.addEventListener('dragover', (e) => { e.preventDefault(); wellEl.classList.add('dragover'); });
+        wellEl.addEventListener('dragleave', () => { wellEl.classList.remove('dragover'); });
+        wellEl.addEventListener('drop', (e) => {
+            e.preventDefault();
+            wellEl.classList.remove('dragover');
+            const field = e.dataTransfer.getData('text/plain');
+            const well = wellEl.dataset.well;
+            if (field && well) addToWell(well, field);
+        });
+    }
+
+    // ---------- Context menu
+    const ctx = $('#ctx');
+
+    function hideCtx() {
+        ctx.style.display = 'none';
+        state.ctxField = null;
+    }
+
+    function openCtx(x, y, field) {
+        state.ctxField = field;
+        ctx.style.left = Math.max(8, Math.min(x, window.innerWidth - 180)) + 'px';
+        ctx.style.top = Math.max(8, Math.min(y, window.innerHeight - 220)) + 'px';
+        ctx.style.display = '';
+    }
+
+    function openCtxForChip(chip, e) {
+        e.preventDefault();
+        const r = chip.getBoundingClientRect();
+        openCtx(r.left + 10, r.bottom + 6, chip.dataset.field);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (ctx.style.display !== 'none') {
+            if (!e.target.closest('#ctx')) hideCtx();
+        }
+    });
+
+    ctx.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.ctx-item');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        const field = state.ctxField;
+        hideCtx();
+
+        if (!field) return;
+
+        if (act === 'add-rows') addToWell('rows', field);
+        if (act === 'add-cols') addToWell('cols', field);
+        if (act === 'add-values') addToWell('values', field);
+        if (act === 'remove') { removeFromAllWells(field); renderWells(); }
+        if (act === 'filter') openFilterModal(field);
+        if (act === 'dategroup') openDateGroupModal(field);
+    });
+
+    // ---------- Tabs
+    $$('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            $$('.tab-btn').forEach(x => x.classList.remove('active'));
+            btn.classList.add('active');
+            const t = btn.dataset.tab;
+            $$('.tab-pane').forEach(p => p.classList.remove('active'));
+            $('#tab-' + t).classList.add('active');
+        });
+    });
+
+    // ---------- Side collapse
+    $('#collapseSideBtn').addEventListener('click', () => {
+        $('#sidePanel').classList.toggle('collapsed');
+    });
+    $('#toggleSideBtn').addEventListener('click', () => {
+        $('#sidePanel').classList.toggle('collapsed');
+    });
+
+    // ---------- Field search
+    $('#fieldSearch').addEventListener('input', () => {
+        const q = ($('#fieldSearch').value || '').trim().toLowerCase();
+        $$('.pill').forEach(p => {
+            const name = (p.dataset.field || '').toLowerCase();
+            p.style.display = (!q || name.includes(q)) ? '' : 'none';
+        });
+    });
+
+    // ---------- Schema/Object/Fields loading
+    async function apiGet(url) {
+        const r = await fetch(url, { headers: hdrs() });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return await r.json();
+    }
+
+    async function loadSchemas() {
+        clearErr();
+        const schemas = await apiGet('/Dashboard/GetSchemas');
+        const sel = $('#schemaSel');
+        sel.innerHTML = '';
+        schemas.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            sel.appendChild(opt);
+        });
+
+        // pick default
+            // inside loadSchemas()
+    const want = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(defaultSchema ?? "")); // JS string
+    const wantNorm = String(want || "").trim().toLowerCase();
+
+    if (wantNorm) {
+      const match = (schemas || []).find(x => String(x || "").trim().toLowerCase() === wantNorm);
+      if (match) sel.value = match;
+    }
+
+    state.schema = sel.value || (schemas[0] || '');
+    }
+
+    async function loadObjects() {
+        clearErr();
+        const schema = $('#schemaSel').value;
+        state.schema = schema;
+        const objs = await apiGet('/Dashboard/GetObjects?schema=' + encodeURIComponent(schema));
+        const sel = $('#objSel');
+        sel.innerHTML = '';
+        objs.forEach(o => {
+            const opt = document.createElement('option');
+            opt.value = o.name;
+            opt.textContent = `${o.type}: ${o.name}`;
+            sel.appendChild(opt);
+        });
+        state.obj = sel.value || (objs[0]?.name || '');
+    }
+
+    async function loadColumns() {
+        clearErr();
+        const schema = $('#schemaSel').value;
+        const obj = $('#objSel').value;
+        state.schema = schema;
+        state.obj = obj;
+
+        const cols = await apiGet('/Dashboard/GetColumns?schema=' + encodeURIComponent(schema) + '&obj=' + encodeURIComponent(obj));
+        state.fields = cols;
+
+        $('#fields-dim').innerHTML = cols.filter(c => c.category === 'dimension').map(pillHtml).join('');
+        $('#fields-date').innerHTML = cols.filter(c => c.category === 'date').map(pillHtml).join('');
+        $('#fields-meas').innerHTML = cols.filter(c => c.category === 'measure').map(pillHtml).join('');
+
+        // wire pill right-click / click
+        $$('.pill').forEach(p => {
+            p.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                openCtx(e.clientX, e.clientY, p.dataset.field);
+            });
+            p.addEventListener('dblclick', () => {
+                // smart default: dims->rows, dates->rows, measures->values
+                const cat = p.dataset.cat;
+                if (cat === 'measure') addToWell('values', p.dataset.field);
+                else addToWell('rows', p.dataset.field);
+            });
+        });
+
+        // allow DnD from any field list
+        wireDnD($('#fields-dim'));
+        wireDnD($('#fields-date'));
+        wireDnD($('#fields-meas'));
+
+        // reset builder state on object change
+        state.wells = { rows: [], cols: [], values: [] };
+        state.filters = {};
+        state.dateGroups = {};
+        state.lastResult = null;
+        renderWells();
+        renderFilters();
+        clearGrid();
+        clearChart();
+    }
+
+    // ---------- Filters
+    const modal = $('#modal');
+    const valuesList = $('#valuesList');
+    const valuesHint = $('#valuesHint');
+    let modalField = null;
+    let modalValues = []; // raw values (as strings)
+    let modalSelected = new Set();
+
+    function openModal(el) { el.style.display = ''; el.setAttribute('aria-hidden', 'false'); }
+    function closeModal(el) { el.style.display = 'none'; el.setAttribute('aria-hidden', 'true'); }
+
+    function openFilterModal(field) {
+        const f = state.fields.find(x => eq(x.name, field));
+        if (!f) return;
+        if (f.category === 'measure') { showErr(`'${field}' is a measure and cannot be filtered here.`); return; }
+
+        clearErr();
+        modalField = field;
+        $('#modalTitle').textContent = `Filter: ${field}`;
+        $('#filterSearch').value = '';
+
+        const existing = state.filters[field];
+        const mode = existing?.mode || 'in';
+        $('#filterMode').value = mode;
+
+        // range defaults
+        $('#rangeFrom').value = '';
+        $('#rangeTo').value = '';
+        if (mode === 'range') {
+            if (existing?.fromUtc) $('#rangeFrom').value = toLocalInput(existing.fromUtc);
+            if (existing?.toUtc) $('#rangeTo').value = toLocalInput(existing.toUtc);
+        }
+
+        modalSelected = new Set((existing?.values || []).filter(x => x != null).map(x => String(x)));
+
+        openModal(modal);
+        refreshModeUI();
+        loadDistinctValues(field);
+    }
+
+    function refreshModeUI() {
+        const mode = $('#filterMode').value;
+        const f = state.fields.find(x => eq(x.name, modalField));
+        const isDate = f?.category === 'date';
+
+        const isRange = mode === 'range';
+        $('#rangeBox').style.display = isRange ? '' : 'none';
+        $('#valuesBox').style.display = (mode === 'isnull' || mode === 'notnull' || isRange) ? 'none' : '';
+
+        if (mode === 'range' && !isDate) {
+            $('#valuesHint').textContent = 'Range mode is meant for date fields.';
+        } else {
+            $('#valuesHint').textContent = 'Select values:';
+        }
+    }
+
+    function toLocalInput(isoOrDate) {
+        try {
+            const dt = new Date(isoOrDate);
+            const pad = (n) => String(n).padStart(2,'0');
+            return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+        } catch { return ''; }
+    }
+
+    async function loadDistinctValues(field) {
+        valuesList.innerHTML = '<div class="p-2 muted">Loading…</div>';
+        try {
+            const schema = state.schema;
+            const obj = state.obj;
+            const search = ($('#filterSearch').value || '').trim();
+            const url = '/Dashboard/GetDistinctValues?schema=' + encodeURIComponent(schema) + '&obj=' + encodeURIComponent(obj) + '&field=' + encodeURIComponent(field) + '&take=500' + (search ? '&search=' + encodeURIComponent(search) : '');
+            const res = await apiGet(url);
+            modalValues = (res.values || []).map(v => v === null ? null : String(v));
+            renderDistinctList();
+        } catch (e) {
+            valuesList.innerHTML = '<div class="p-2 text-danger">Failed to load values.</div>';
+        }
+    }
+
+    function renderDistinctList() {
+        const mode = $('#filterMode').value;
+        if (mode === 'isnull' || mode === 'notnull' || mode === 'range') return;
+
+        const q = ($('#filterSearch').value || '').trim().toLowerCase();
+        const rows = modalValues
+            .filter(v => v !== null)
+            .filter(v => !q || String(v).toLowerCase().includes(q))
+            .slice(0, 500);
+
+        if (rows.length === 0) {
+            valuesList.innerHTML = '<div class="p-2 muted">No values found.</div>';
+            return;
+        }
+
+        valuesList.innerHTML = '';
+        rows.forEach(v => {
+            const id = 'v_' + Math.random().toString(36).slice(2);
+            const wrap = document.createElement('div');
+            wrap.className = 'val-item';
+            wrap.innerHTML = `<input type="checkbox" id="${id}" ${modalSelected.has(String(v)) ? 'checked' : ''} />
+                              <label for="${id}" class="mb-0">${esc(v)}</label>`;
+            const cb = wrap.querySelector('input');
+            cb.addEventListener('change', () => {
+                if (cb.checked) modalSelected.add(String(v));
+                else modalSelected.delete(String(v));
+            });
+            valuesList.appendChild(wrap);
+        });
+    }
+
+    function renderFilters() {
+        const list = $('#filtersList');
+        const keys = Object.keys(state.filters || {});
+        if (keys.length === 0) {
+            list.innerHTML = '<div class="muted">No filters yet. Click a field pill and choose “Filter”.</div>';
+            return;
+        }
+
+        list.innerHTML = '';
+        keys.sort((a,b) => a.localeCompare(b)).forEach(field => {
+            const spec = state.filters[field];
+            const mode = spec?.mode || 'in';
+            let summary = '';
+            if (mode === 'isnull') summary = 'is null';
+            else if (mode === 'notnull') summary = 'is not null';
+            else if (mode === 'range') summary = `range: ${spec.fromUtc || '(from)'} → ${spec.toUtc || '(to)'}`;
+            else {
+                const n = (spec.values || []).filter(x => x != null).length;
+                summary = `${mode} (${n} value${n===1?'':'s'})`;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'filter-row';
+            row.innerHTML = `<div>
+                                <div class="f-title">${esc(field)}</div>
+                                <div class="f-sub">${esc(summary)}</div>
+                             </div>
+                             <div style="display:flex; gap:6px;">
+                                <button class="btn btn-sm btn-outline-secondary" data-act="edit">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger" data-act="del">Del</button>
+                             </div>`;
+
+            row.querySelector('[data-act="edit"]').addEventListener('click', () => openFilterModal(field));
+            row.querySelector('[data-act="del"]').addEventListener('click', () => { delete state.filters[field]; renderFilters(); });
+
+            list.appendChild(row);
+        });
+    }
+
+    $('#filterMode').addEventListener('change', () => {
+        refreshModeUI();
+        renderDistinctList();
+    });
+
+    $('#filterSearch').addEventListener('input', () => {
+        // reload for server-side narrowing for large cardinality
+        if (!modalField) return;
+        loadDistinctValues(modalField);
+    });
+
+    $('#valuesClear').addEventListener('click', () => {
+        modalSelected = new Set();
+        renderDistinctList();
+    });
+
+    $('#modalClose').addEventListener('click', () => closeModal(modal));
+    $('#modalCancel').addEventListener('click', () => closeModal(modal));
+
+    $('#modalSave').addEventListener('click', () => {
+        if (!modalField) return;
+        const mode = $('#filterMode').value;
+
+        const spec = { mode: mode, values: [], fromUtc: null, toUtc: null };
+
+        if (mode === 'range') {
+            const from = $('#rangeFrom').value;
+            const to = $('#rangeTo').value;
+            spec.fromUtc = from ? new Date(from).toISOString() : null;
+            spec.toUtc = to ? new Date(to).toISOString() : null;
+        } else if (mode === 'isnull' || mode === 'notnull') {
+            // nothing
+        } else {
+            spec.values = Array.from(modalSelected);
+        }
+
+        state.filters[modalField] = spec;
+        renderFilters();
+        closeModal(modal);
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modalx-backdrop')) closeModal(modal);
+    });
+
+    // ---------- Date grouping
+    const dgModal = $('#dgModal');
+    let dgField = null;
+
+    function openDateGroupModal(field) {
+        const f = state.fields.find(x => eq(x.name, field));
+        if (!f || f.category !== 'date') { showErr('Date group only applies to date fields.'); return; }
+        clearErr();
+        dgField = field;
+        $('#dgTitle').textContent = `Date Group: ${field}`;
+        $('#dgSel').value = state.dateGroups[field] || 'Month';
+        openModal(dgModal);
+    }
+
+    $('#dgClose').addEventListener('click', () => closeModal(dgModal));
+    $('#dgCancel').addEventListener('click', () => closeModal(dgModal));
+    $('#dgSave').addEventListener('click', () => {
+        if (!dgField) return;
+        state.dateGroups[dgField] = $('#dgSel').value;
+        closeModal(dgModal);
+    });
+    dgModal.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modalx-backdrop')) closeModal(dgModal);
+    });
+
+    // ---------- Chart + grid
+    function clearGrid() {
+        $('#gridTbl thead').innerHTML = '';
+        $('#gridTbl tbody').innerHTML = '';
+        $('#rowCount').textContent = '';
+    }
+
+    function clearChart() {
+        $('#chartEmpty').style.display = '';
+        if (state.chart) {
+            try { state.chart.dispose(); } catch {}
+        }
+        state.chart = null;
+        state.chartSeriesCache = null;
+        const el = $('#chart');
+        el.innerHTML = '';
+    }
+
+    function ensureChart() {
+        if (!state.chart) {
+            state.chart = echarts.init($('#chart'), 'vivid');
+            window.addEventListener('resize', () => { try { state.chart.resize(); } catch {} });
+        }
+        return state.chart;
+    }
+
+    function fillGrid(result) {
+        const data = result.data || [];
+        const cols = data.length ? Object.keys(data[0]) : [];
+
+        $('#rowCount').textContent = data.length ? `${data.length.toLocaleString()} row(s)` : '';
+
+        const thead = $('#gridTbl thead');
+        const tbody = $('#gridTbl tbody');
+        thead.innerHTML = cols.length ? '<tr>' + cols.map(c => `<th class="small">${esc(c)}</th>`).join('') + '</tr>' : '';
+        tbody.innerHTML = '';
+
+        data.slice(0, 500).forEach(r => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = cols.map(c => `<td class="small">${esc(r[c])}</td>`).join('');
+            tbody.appendChild(tr);
+        });
+
+        if (data.length > 500) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="${cols.length}" class="small text-muted">Showing first 500 rows.</td>`;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function buildSeries(result) {
+        const rows = result.data || [];
+        const rowFields = result.rowFields || [];
+        const colFields = result.colFields || [];
+        const valueFields = result.valueFields || [];
+
+        // create x labels by rowFields
+        const xLabels = [];
+        const xKeySet = new Set();
+
+        // maps: seriesKey -> map(xKey -> value)
+        const seriesMap = new Map();
+
+        const rowKey = (r) => rowFields.length ? rowFields.map(f => String(r[f] ?? '')).join(' • ') : '__all__';
+        const colKey = (r) => colFields.length ? colFields.map(f => String(r[f] ?? '')).join(' • ') : '__series__';
+
+        rows.forEach(r => {
+            const rk = rowKey(r);
+            if (!xKeySet.has(rk)) { xKeySet.add(rk); xLabels.push(rk); }
+
+            const ck = colKey(r);
+            valueFields.forEach(vf => {
+                const sk = (colFields.length ? ck : (valueFields.length > 1 ? vf : 'Value')) + (colFields.length && valueFields.length > 1 ? ` · ${vf}` : '');
+                if (!seriesMap.has(sk)) seriesMap.set(sk, new Map());
+                const m = seriesMap.get(sk);
+                const val = r[vf];
+                const num = (val === null || val === undefined || val === '') ? null : Number(val);
+                m.set(rk, Number.isFinite(num) ? num : null);
+            });
+        });
+
+        const series = [];
+        const chartType = $('#chartTypeSel').value;
+
+        for (const [name, m] of seriesMap.entries()) {
+            const data = xLabels.map(k => m.has(k) ? m.get(k) : null);
+            const s = {
+                name,
+                type: (chartType === 'area') ? 'line' : chartType,
+                data
+            };
+            if (chartType === 'area') {
+                s.areaStyle = {};
+                s.stack = 'stack';
+            }
+            series.push(s);
+        }
+
+        return { xLabels, series };
+    }
+
+    function renderChart(result) {
+        const data = result.data || [];
+        if ($('#chartTypeSel').value === 'customHtml') {
+            renderCustomHtml(result);
+            return;
+        }
+        if (!data.length) {
+            clearChart();
+            $('#chart').innerHTML = emptyHtml('No data');
+            return;
+        }
+
+        const { xLabels, series } = buildSeries(result);
+        state.chartSeriesCache = { x: xLabels, series };
+
+        $('#chartEmpty').style.display = 'none';
+        const chart = ensureChart();
+
+        const chartType = $('#chartTypeSel').value;
+        const opt = {
+            tooltip: { trigger: 'axis' },
+            legend: { type: 'scroll' },
+            grid: { left: 48, right: 18, top: 42, bottom: 40, containLabel: true },
+            xAxis: chartType === 'scatter'
+                ? { type: 'value' }
+                : { type: 'category', data: xLabels, axisLabel: { hideOverlap: false, formatter: v => formatHierarchyLabel(v) } },
+            yAxis: { type: 'value' },
+            series: chartType === 'scatter'
+                ? series.map(s => ({ name: s.name, type: 'scatter', data: s.data.map((y, i) => [i, y]) }))
+                : series
+        };
+
+        chart.setOption(opt, true);
+    }
+
+    // ---------- Run
+    async function run() {
+        clearErr();
+        if (!state.schema || !state.obj) { showErr('Pick a schema and object first.'); return; }
+
+        const req = {
+            schema: state.schema,
+            obj: state.obj,
+            rows: state.wells.rows,
+            cols: state.wells.cols,
+            values: state.wells.values,
+            agg: $('#aggSel').value,
+            dateGroups: state.dateGroups,
+            filters: state.filters,
+            maxCells: 50000
+        };
+
+        $('#runBtn').disabled = true;
+        $('#runBtn').textContent = 'Running…';
+
+        try {
+            const r = await fetch('/Dashboard/Aggregate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...hdrs() },
+                body: JSON.stringify(req)
+            });
+            const txt = await r.text();
+            if (!r.ok) throw new Error(txt || `HTTP ${r.status}`);
+            const result = JSON.parse(txt);
+
+            state.lastResult = result;
+            fillGrid(result);
+            renderChart(result);
+            $('#aiBox').innerHTML = '<div class="muted">Press Explain after you run a chart.</div>';
+        } catch (e) {
+            clearErr();
+            clearGrid();
+            clearChart();
+            $('#chart').innerHTML = emptyHtml('No data available for the current selection.');
+            $('#aiBox').innerHTML = '<div class="muted">Press Explain after you run a chart.</div>';
+        } finally {
+            $('#runBtn').disabled = false;
+            $('#runBtn').textContent = 'Run';
+        }
+    }
+
+    // ---------- Explain
+    async function explain() {
+        clearErr();
+        if (!state.lastResult || !state.chartSeriesCache) { showErr('Run a chart first.'); return; }
+
+        const payload = {
+            title: `${state.schema}.${state.obj}`,
+            chartType: $('#chartTypeSel').value,
+            x: state.chartSeriesCache.x,
+            series: (state.chartSeriesCache.series || []).map(s => ({ name: s.name, type: s.type, yAxisIndex: 0, data: s.data }))
+        };
+
+        $('#aiBox').textContent = 'Thinking…';
+        try {
+            const r = await fetch('/Dashboard/Explain', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...hdrs() },
+                body: JSON.stringify(payload)
+            });
+            const res = await r.json();
+            if (!res.ok) throw new Error(res.error || 'Explain failed');
+            $('#aiBox').textContent = res.text;
+            // switch tab
+            $$('.tab-btn').forEach(x => x.classList.remove('active'));
+            $('.tab-btn[data-tab="notes"]').classList.add('active');
+            $$('.tab-pane').forEach(p => p.classList.remove('active'));
+            $('#tab-notes').classList.add('active');
+        } catch (e) {
+            $('#aiBox').innerHTML = `<div class="text-danger small">${esc(e.message || e)}</div>`;
+        }
+    }
+
+    // ---------- Wire base events
+    $('#schemaSel').addEventListener('change', async () => {
+        try {
+            await loadObjects();
+            await loadColumns();
+        } catch (e) { clearErr(); $('#chart').innerHTML = emptyHtml('No data available.'); }
+    });
+
+    $('#objSel').addEventListener('change', async () => {
+        try { await loadColumns(); } catch (e) { clearErr(); clearChart(); $('#chart').innerHTML = emptyHtml('No data available.'); }
+    });
+
+    $('#aggSel').addEventListener('change', () => state.agg = $('#aggSel').value);
+
+    $('#runBtn').addEventListener('click', run);
+    $('#clearBtn').addEventListener('click', () => {
+        clearErr();
+        state.wells = { rows: [], cols: [], values: [] };
+        state.filters = {};
+        state.dateGroups = {};
+        state.lastResult = null;
+        renderWells();
+        renderFilters();
+        clearGrid();
+        clearChart();
+        $('#aiBox').innerHTML = '<div class="muted">Press Explain after you run a chart.</div>';
+    });
+
+    $('#chartTypeSel').addEventListener('change', () => {
+        toggleCustomHtmlEditor();
+        if (state.lastResult) renderChart(state.lastResult);
+    });
+    $('#customHtmlEditor').value = state.customHtml;
+    $('#customHtmlEditor').addEventListener('input', () => { state.customHtml = $('#customHtmlEditor').value; if ($('#chartTypeSel').value === 'customHtml' && state.lastResult) renderChart(state.lastResult); });
+    $('#customHtmlDefaultBtn').addEventListener('click', () => { state.customHtml = window.DashHtmlVisuals?.defaultCustomHtmlTemplate?.() || ''; $('#customHtmlEditor').value = state.customHtml; const m=$('#customHtmlEditorModal'); if(m) m.value=state.customHtml; if ($('#chartTypeSel').value === 'customHtml' && state.lastResult) renderChart(state.lastResult); });
+    $('#customHtmlExpandBtn')?.addEventListener('click',()=>{ $('#customHtmlEditorModal').value = $('#customHtmlEditor').value || ''; $('#customHtmlModal').style.display=''; });
+    $('#customHtmlModalClose')?.addEventListener('click',()=>{ $('#customHtmlEditor').value = $('#customHtmlEditorModal').value || ''; state.customHtml=$('#customHtmlEditor').value; $('#customHtmlModal').style.display='none'; if ($('#chartTypeSel').value === 'customHtml' && state.lastResult) renderChart(state.lastResult); });
+    $('#customHtmlCollapseBtn')?.addEventListener('click',()=>{ $('#customHtmlEditorShell').style.display = $('#customHtmlEditorShell').style.display==='none' ? '' : 'none'; });
+    $('#customHtmlEditorModal')?.addEventListener('input',()=>{ $('#customHtmlEditor').value = $('#customHtmlEditorModal').value || ''; state.customHtml=$('#customHtmlEditor').value; });
+    toggleCustomHtmlEditor();
+
+    $('#explainBtn').addEventListener('click', explain);
+
+    wireWellDnD($('#wellRows'));
+    wireWellDnD($('#wellCols'));
+    wireWellDnD($('#wellVals'));
+
+    // ---------- Boot
+    (async () => {
+        try {
+            await loadSchemas();
+            await loadObjects();
+            await loadColumns();
+            renderWells();
+            renderFilters();
+        } catch (e) {
+            showErr(String(e.message || e));
+        }
+    })();
+
+})();
+</script>

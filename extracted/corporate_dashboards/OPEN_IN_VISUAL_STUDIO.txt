@@ -1,0 +1,4 @@
+Open: corporate_dashboards.sln
+Run profile: corporate_dashboards
+URL: https://localhost:49582/Dashboard/Multi?layoutVersionId=217
+Expected assistant build shown in the modal: assistant-v8-direct-v217-contract

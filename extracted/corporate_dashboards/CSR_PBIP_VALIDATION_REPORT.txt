@@ -1,0 +1,92 @@
+CSR COMPONENT REBUILD V2 VALIDATION
+===================================
+
+Scope
+-----
+CSR rendering only. CX, aging, ITS, and all other custom-HTML paths remain unchanged.
+No SQL script was created or executed. Existing SQL layout JSON remains untouched.
+
+Configuration parity
+--------------------
+PASS: 21 CSR page templates found.
+PASS: 88 CSR visual templates found.
+PASS: all CSR pages reference csr-page.html.
+PASS: all CSR visuals reference csr-visual.html.
+PASS: all 109 original CSR template hashes match when HtmlFile is excluded.
+PASS: every original visual position, role, filter, sort, top-N, option and source definition is unchanged.
+PASS: every configured CSR visual type is registered by the shared runtime.
+PASS: appsettings.json parses as valid JSON.
+
+Actual visual inventory
+-----------------------
+PASS: 28 slicers.
+PASS: 13 tables.
+PASS: 11 column charts.
+PASS: 8 text boxes.
+PASS: 7 matrices/pivots.
+PASS: 7 stacked-column/line combo charts.
+PASS: 6 line charts.
+PASS: 3 multi-row cards.
+PASS: 2 maps.
+PASS: 1 card.
+PASS: 1 horizontal bar chart.
+PASS: 1 action button.
+
+Component architecture
+----------------------
+PASS: dedicated column-chart component.
+PASS: dedicated stacked-column component.
+PASS: dedicated horizontal-bar component.
+PASS: dedicated stacked-horizontal-bar component.
+PASS: dedicated line-chart component.
+PASS: dedicated stacked-column/line-combo component.
+PASS: pie and donut components available for future CSR configuration.
+PASS: dedicated table, matrix, KPI, slicer, map, text and action components.
+PASS: shared CSR component CSS is isolated in one stylesheet.
+PASS: CSR sources load independently with Promise.allSettled.
+PASS: per-source loading/error refresh is retained.
+PASS: table lazy/load-more behavior is retained.
+PASS: internal visual drag/resize and layout-change messaging are retained.
+PASS: visual fullscreen/presentation mode is retained.
+PASS: automatic chart resizing is retained.
+
+Chart compatibility
+-------------------
+PASS: all 25 existing CSR chart visuals generate valid chart options in the runtime test.
+PASS: all combo primary Y series are stacked on axis 0.
+PASS: all combo Y2 series are lines on axis 1.
+PASS: version 199 multi-Y queue-spectrum combos use stacked segments.
+PASS: category labels use zero rotation.
+PASS: long category labels split at spaces into literal multiline values.
+PASS: bar axes include zero.
+PASS: stacked-axis extents use stack totals.
+PASS: line axes use actual-range scaling.
+PASS: small tiles retain plot area and minimum visible bar height.
+PASS: single-series legends are hidden.
+PASS: xTitle, yTitle and y2Title configuration is applied.
+
+Style and palette compatibility
+-------------------------------
+PASS: shared CSS was extracted from the original CSR runtime.
+PASS: existing visual geometry and style configuration is unchanged.
+PASS: original chart series order is retained.
+PASS: ordinary red/pink palette slots are replaced by vivid blue/cyan.
+PASS: semantic red for bad/error states remains present.
+PASS: theme circle and icon are reduced in size.
+
+HTML cleanup
+------------
+PASS: one shared CSR page shell remains.
+PASS: one shared CSR standalone-visual shell remains.
+PASS: 109 legacy named/hash CSR HTML wrappers were removed.
+PASS: no configured template points at a removed file.
+
+Static validation
+-----------------
+PASS: JavaScript passes node --check.
+PASS: tools/validate_csr_runtime.js passes for all existing chart visuals.
+PASS: tools/validate_csr_component_architecture.py passes.
+
+Build limitation
+----------------
+The execution environment does not contain the .NET SDK, so a .NET compilation could not be run here. Build the solution in Visual Studio or the normal .NET 8 build agent before deployment.

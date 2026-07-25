@@ -1,0 +1,31 @@
+{
+  "profiles": {
+    "corporate_dashboards": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_BROWSER_LINK": "false"
+      },
+      "applicationUrl": "https://localhost:49582;http://localhost:49583",
+      "launchUrl": "Dashboard/Multi?layoutVersionId=217"
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_BROWSER_LINK": "false"
+      },
+      "launchUrl": "Dashboard/Multi?layoutVersionId=217"
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:65582/",
+      "sslPort": 44582
+    }
+  }
+}

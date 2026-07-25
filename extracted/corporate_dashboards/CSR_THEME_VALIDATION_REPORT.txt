@@ -1,0 +1,24 @@
+CSR PBIP THEME + VERSION VALIDATION
+
+Validated successfully:
+- 21 CSR custom HTML page files are present.
+- 21 manifest pages are present.
+- Version IDs are contiguous from 192 through 212.
+- Every CSR page references ../js/csr-dashboard-runtime.js.
+- Dashboard/Multi contains the persistent moon/sun theme toggle.
+- The shell sends the selected theme to each custom HTML iframe after load.
+- CSR runtime supports both light and dark ECharts/table/card/map styling.
+- Theme selection persists under localStorage key its-dashboard-csr-theme.
+- Standalone CSR HTML pages expose their own toggle outside the app shell.
+- appsettings.json parsed successfully.
+- csr-pages.manifest.json parsed successfully.
+- csr-dashboard-runtime.js passed node --check.
+- Theme-controller JavaScript extracted from Multi.cshtml passed node --check.
+- SQL contains 21 DashboardLayoutVersion records for IDs 192-212.
+- SQL targets the existing dbo.DashboardLayoutVersion table and does not create or alter it.
+- SQL refuses to overwrite an ID owned by another UserName/Page.
+- SQL wraps IDENTITY_INSERT in TRY/CATCH cleanup.
+- Final zip integrity test passed.
+
+Not executed:
+- dotnet build, because the current environment does not contain the .NET SDK.

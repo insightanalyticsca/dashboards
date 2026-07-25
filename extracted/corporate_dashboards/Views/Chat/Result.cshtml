@@ -1,0 +1,74 @@
+@using corporate_dashboards.Services
+@{
+  ViewData["Title"] = "Answer";
+
+  var q = (string)(ViewBag.Question ?? "");
+  var a = (string)(ViewBag.Answer ?? "");
+  var chatModel = (string)(ViewBag.ChatModel ?? "");
+  var embModel = (string)(ViewBag.EmbeddingModel ?? "");
+  var sources = (List<RetrievedChunk>)(ViewBag.Sources ?? new List<RetrievedChunk>());
+}
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4 p-lg-5">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+          <div>
+            <div class="text-muted small">Question</div>
+            <h4 class="fw-bold mb-0">@q</h4>
+          </div>
+          <div class="text-end">
+            <div class="badge text-bg-light border">@chatModel</div>
+            <div class="badge text-bg-light border ms-1">@embModel</div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="text-muted small mb-1">Answer</div>
+        <div class="answer-box">@a</div>
+
+        <div class="mt-4">
+          <a class="btn btn-outline-secondary rounded-3" asp-controller="Chat" asp-action="Index">Ask another</a>
+          <a class="btn btn-outline-secondary rounded-3 ms-2" asp-controller="Documents" asp-action="Index">Documents</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <h6 class="fw-semibold mb-3">Retrieved sources</h6>
+
+        @if (sources.Count == 0)
+        {
+          <div class="text-muted">No chunks met the similarity threshold.</div>
+        }
+        else
+        {
+          <div class="d-grid gap-3">
+            @for (int i = 0; i < sources.Count; i++)
+            {
+              var s = sources[i];
+              <div class="source-card">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="fw-semibold">Source @(i + 1)</div>
+                  <span class="text-muted small">@($"{s.Similarity:0.000}")</span>
+                </div>
+                <div class="text-muted small">@s.FileName</div>
+                <div class="text-muted small mt-1">@s.SourceLabel</div>
+                <div class="text-muted small mt-2 prewrap">@Trim(s.Text, 260)</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@functions{
+  string Trim(string s, int n) => string.IsNullOrEmpty(s) ? "" : (s.Length <= n ? s : s.Substring(0, n) + "…");
+}

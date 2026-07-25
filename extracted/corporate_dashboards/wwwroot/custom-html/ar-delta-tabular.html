@@ -1,0 +1,660 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        :root {
+            --ink: #171777;
+            --header: #171777;
+            --grid: #d7daea;
+            --body: #f7f7fb;
+            --alt: #ffffff;
+            --white: #ffffff;
+            --neg: #09C698;
+            --pos: #ff2a2a;
+            --muted: #6d7590;
+            --border: #d5d7e0;
+        }
+
+        html, body, #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: Segoe UI,Arial,Helvetica,sans-serif;
+            color: var(--ink)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .tile {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: grid;
+            grid-template-rows: auto minmax(0,1fr);
+            overflow: hidden
+        }
+
+        .head {
+            padding: 8px 12px 4px 12px
+        }
+
+        .title {
+            font-size: 13px;
+            line-height: 1.1;
+            font-weight: 900;
+            color: var(--ink)
+        }
+
+        .subtitle {
+            font-size: 10px;
+            line-height: 1.1;
+            font-weight: 800;
+            color: #59617d;
+            margin-top: 3px
+        }
+
+        .table-wrap {
+            min-height: 0;
+            overflow: hidden
+        }
+
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            table-layout: fixed
+        }
+
+        th, td {
+            border: 1px solid var(--grid);
+            padding: 8px 10px;
+            font-size: 11px;
+            line-height: 1.1;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        thead th {
+            background: var(--header);
+            color: var(--white);
+            font-weight: 900
+        }
+
+            thead th:first-child {
+                width: 22%;
+                text-align: left
+            }
+
+            thead th:not(:first-child),
+            tbody td:not(:first-child) {
+                width: calc(78% / 7)
+            }
+
+        tbody td {
+            background: var(--body);
+            color: var(--ink)
+        }
+
+        tbody tr:nth-child(even) td {
+            background: var(--alt)
+        }
+
+        tbody td:first-child {
+            width: 22%;
+            font-weight: 900;
+            text-align: left;
+            color: var(--ink)
+        }
+
+        td.pos {
+            color: var(--pos);
+            font-weight: 900
+        }
+
+        td.neg {
+            color: var(--neg);
+            font-weight: 900
+        }
+
+        td.zero {
+            color: var(--ink);
+            font-weight: 900
+        }
+
+        .state {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            background: #fff
+        }
+
+        .state-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--muted);
+            max-width: 94%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .spin {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #d9dbe6;
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .75s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .error-box {
+            width: 100%;
+            height: 100%;
+            background: #fff7f7;
+            color: #9b1c1c;
+            padding: 8px;
+            overflow: auto;
+            font-size: 10px;
+            line-height: 1.35;
+            font-weight: 700;
+            white-space: pre-wrap
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script>
+        (function () {
+            let gotData = false;
+
+            function root() { return document.getElementById("root") }
+            function esc(v) { return String(v ?? "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch])) }
+            function showLoader(t) { root().innerHTML = '<div class="state"><div class="state-inner"><span class="spin"></span><span>' + esc(t || "loading") + '</span></div></div>' }
+            function showNoData(t) { root().innerHTML = '<div class="state"><div class="state-inner"><span>' + esc(t || "no data") + '</span></div></div>' }
+            function showError(err) { root().innerHTML = '<div class="error-box">' + esc(err && err.stack ? err.stack : String(err || "Unknown error")) + '</div>' }
+
+            function parseMaybeJson(v) {
+                if (typeof v !== "string") return v;
+                const s = v.trim();
+                if (!s || ("[".indexOf(s[0]) < 0 && "{".indexOf(s[0]) < 0)) return v;
+                try { return JSON.parse(s) } catch { return v }
+            }
+
+            function ciGet(row, name) {
+                if (!row || typeof row !== "object") return undefined;
+                const t = String(name).toLowerCase();
+                for (const k of Object.keys(row)) {
+                    if (String(k).toLowerCase() === t) return row[k];
+                }
+                return undefined;
+            }
+
+            function first(row, names) {
+                for (const nm of names) {
+                    const v = ciGet(row, nm);
+                    if (v !== undefined) return v;
+                }
+                return undefined;
+            }
+
+            function n(v) {
+                if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+                const x = Number(String(v ?? "").replace(/[$,%\s,]/g, ""));
+                return Number.isFinite(x) ? x : 0;
+            }
+
+            function isNil(v) { return v === null || v === undefined || v === "" }
+
+            function currentArValue(row) {
+                /*
+                  Important: prefer the cache-table total used by the Bucket view.
+                  CurrentAR can be stale/shifted in some payloads.
+                */
+                return first(row, [
+                    "TotalAR",
+                    "Total AR",
+                    "TotalAR_Field",
+                    "Total",
+                    "Bucket_Sum",
+                    "BucketSum",
+                    "Bucket Sum",
+                    "CurrentAR",
+                    "Current AR",
+                    "Amount"
+                ]);
+            }
+
+            function looksLikeDeltaRow(row) {
+                return row && typeof row === "object" && (
+                    currentArValue(row) !== undefined ||
+                    first(row, ["M1AR", "M2AR", "PrevWeekAR", "Y1AR"]) !== undefined
+                );
+            }
+
+            function isDeltaRows(v) {
+                return Array.isArray(v) && v.length && v.some(looksLikeDeltaRow);
+            }
+
+            function findRows(v, d, s) {
+                d = d || 0; s = s || []; v = parseMaybeJson(v);
+                if (isDeltaRows(v)) return v;
+                if (!v || typeof v !== "object" || d > 16) return [];
+                if (s.includes(v)) return [];
+                s.push(v);
+
+                for (const k of ["data", "rows", "records", "items", "payload", "model", "result", "response", "body", "raw", "source", "detail", "value", "values", "context"]) {
+                    if (Object.prototype.hasOwnProperty.call(v, k)) {
+                        const f = findRows(v[k], d + 1, s);
+                        if (f.length) return f;
+                    }
+                }
+
+                for (const k of Object.keys(v)) {
+                    const f = findRows(v[k], d + 1, s);
+                    if (f.length) return f;
+                }
+
+                return [];
+            }
+
+            function findContext(v, d, s) {
+                d = d || 0; s = s || []; v = parseMaybeJson(v);
+                if (!v || typeof v !== "object" || d > 10) return {};
+                if (s.includes(v)) return {};
+                s.push(v);
+
+                if (ciGet(v, "title") || ciGet(v, "label") || ciGet(v, "key") || ciGet(v, "filters")) return v;
+
+                for (const k of ["config", "widget", "payload", "model", "context", "request"]) {
+                    if (v[k]) {
+                        const c = findContext(v[k], d + 1, s);
+                        if (Object.keys(c).length) return c;
+                    }
+                }
+
+                return {};
+            }
+
+            function dateObj(raw) {
+                if (!raw) return null;
+                const s = String(raw).trim();
+                const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+                const d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(s);
+                return Number.isFinite(d.getTime()) ? new Date(d.getFullYear(), d.getMonth(), d.getDate()) : null;
+            }
+
+            function addDays(d, days) { const x = new Date(d); x.setDate(x.getDate() + days); return x }
+            function keyDate(d) { return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` : "" }
+            function mmddyyyy(d) { return d ? `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}/${d.getFullYear()}` : "" }
+
+            function money(v) {
+                if (isNil(v)) return "—";
+                const x = n(v), a = Math.abs(x), sg = x < 0 ? "-" : "";
+                if (a >= 1e6) return sg + (a / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(/\.0$/, "") + "M";
+                if (a >= 1e3) return sg + Math.round(a / 1e3).toLocaleString("en-US") + "K";
+                return sg + Math.round(a).toLocaleString("en-US");
+            }
+
+            function pct(v) {
+                if (isNil(v)) return "—";
+                const x = n(v) * 100;
+                return (x > 0 ? "+" : "") + x.toFixed(1) + "%";
+            }
+
+            function change(v) {
+                if (isNil(v)) return "—";
+                const x = n(v);
+                return (x > 0 ? "+" : "") + money(x);
+            }
+
+            function cls(v) {
+                if (isNil(v)) return "";
+                const x = n(v);
+                if (x > 0.000001) return "pos";
+                if (x < -0.000001) return "neg";
+                return "zero";
+            }
+
+            function periodOrder(key, label, sortOrder) {
+                const k = String(key || "").toUpperCase();
+
+                if (k === "M_2") return 10;
+                if (k === "M_1") return 20;
+                if (k === "PREV_WEEK") return 30;
+                if (k === "CURRENT") return 40;
+                if (k === "Y_1") return 90;
+
+                const so = Number(sortOrder);
+
+                if (Number.isFinite(so)) {
+                    /*
+                      Existing views often SortOrder:
+                      CURRENT=0, PREV=1, M1=2, M2=3, Y1=4.
+                      Delta table renders oldest -> current.
+                    */
+                    if (so === 3) return 10;
+                    if (so === 2) return 20;
+                    if (so === 1) return 30;
+                    if (so === 0) return 40;
+                    if (so === 4) return 90;
+                    return so;
+                }
+
+                return 50;
+            }
+
+            function sumRows(rows) {
+                const out = {
+                    current: 0,
+                    currentSeen: false,
+                    ly: 0,
+                    lySeen: false,
+                    dates: [],
+                    sortOrder: null,
+                    periodKey: "",
+                    periodLabel: ""
+                };
+
+                rows.forEach(r => {
+                    const cur = currentArValue(r);
+
+                    if (!isNil(cur)) {
+                        out.current += n(cur);
+                        out.currentSeen = true;
+                    }
+
+                    const ly = first(r, [
+                        "SameWeekLYAR",
+                        "Same Week LY AR",
+                        "Y1AR",
+                        "Y-1 AR"
+                    ]);
+
+                    if (!isNil(ly)) {
+                        out.ly += n(ly);
+                        out.lySeen = true;
+                    }
+
+                    const d = dateObj(first(r, ["PeriodDate", "SelectedDate", "CurrentDate"]));
+                    if (d) out.dates.push(d);
+
+                    if (out.sortOrder === null && ciGet(r, "SortOrder") !== undefined) out.sortOrder = ciGet(r, "SortOrder");
+                    if (!out.periodKey && ciGet(r, "PeriodKey")) out.periodKey = String(ciGet(r, "PeriodKey"));
+                    if (!out.periodLabel && ciGet(r, "PeriodLabel")) out.periodLabel = String(ciGet(r, "PeriodLabel"));
+                });
+
+                return out;
+            }
+
+            function hasPeriodRows(rows) {
+                return rows.some(r => ciGet(r, "PeriodKey") !== undefined || ciGet(r, "PeriodDate") !== undefined || ciGet(r, "PeriodLabel") !== undefined);
+            }
+
+            function buildFromPeriodRows(rows) {
+                const by = new Map();
+
+                rows.forEach(r => {
+                    const d = dateObj(first(r, ["PeriodDate", "SelectedDate", "CurrentDate"]));
+                    const key = String(ciGet(r, "PeriodKey") || "");
+                    const mapKey = (key ? key.toUpperCase() : "") || keyDate(d);
+
+                    if (!mapKey) return;
+
+                    if (!by.has(mapKey)) by.set(mapKey, []);
+                    by.get(mapKey).push(r);
+                });
+
+                const all = Array.from(by.entries()).map(([k, rs]) => {
+                    const s = sumRows(rs);
+                    const d = s.dates[0] || null;
+
+                    return {
+                        key: k,
+                        periodKey: s.periodKey || k,
+                        periodLabel: s.periodLabel || "",
+                        sortOrder: s.sortOrder,
+                        date: d,
+                        current: s.currentSeen ? s.current : null,
+                        ly: s.lySeen ? s.ly : null,
+                        order: periodOrder(s.periodKey || k, s.periodLabel, s.sortOrder)
+                    };
+                });
+
+                const y1 = all.find(x => String(x.periodKey || x.key).toUpperCase() === "Y_1");
+
+                const display = all
+                    .filter(x => String(x.periodKey || x.key).toUpperCase() !== "Y_1")
+                    .sort((a, b) => a.order - b.order || ((a.date || 0) - (b.date || 0)))
+                    .filter(x => ["M_2", "M_1", "PREV_WEEK", "CURRENT"].includes(String(x.periodKey || x.key).toUpperCase()) || x.current !== null)
+                    .slice(-4);
+
+                display.forEach((x, i) => {
+                    const prev = display[i - 1];
+
+                    x.prev = i === 0 ? null : (prev ? prev.current : null);
+                    x.wow = (x.current !== null && x.prev !== null) ? x.current - x.prev : null;
+                    x.wowPct = (x.current !== null && x.prev !== null && x.prev !== 0) ? x.wow / x.prev : null;
+
+                    /*
+                      Snip-style:
+                      Y-1 comparison appears on the current row unless the row explicitly has its own LY.
+                      Since y1.current now also prefers TotalAR, YoY uses the same cache total.
+                    */
+                    if ((String(x.periodKey || x.key).toUpperCase() === "CURRENT" || i === display.length - 1) && x.ly === null && y1 && y1.current !== null) {
+                        x.ly = y1.current;
+                    }
+
+                    x.yoy = (x.current !== null && x.ly !== null) ? x.current - x.ly : null;
+                    x.yoyPct = (x.current !== null && x.ly !== null && x.ly !== 0) ? x.yoy / x.ly : null;
+                    x.isToday = String(x.periodKey || x.key).toUpperCase() === "CURRENT" || i === display.length - 1;
+                });
+
+                return display;
+            }
+
+            function buildFromWideRows(rows) {
+                const agg = {
+                    current: 0,
+                    prev: 0,
+                    m1: 0,
+                    m2: 0,
+                    y1: 0,
+                    curSeen: false,
+                    prevSeen: false,
+                    m1Seen: false,
+                    m2Seen: false,
+                    y1Seen: false
+                };
+
+                let sample = rows[0] || {};
+
+                rows.forEach(r => {
+                    const cur = currentArValue(r);
+                    if (!isNil(cur)) {
+                        agg.current += n(cur);
+                        agg.curSeen = true;
+                    }
+
+                    const prev = first(r, ["PrevWeekAR", "Prev Week AR"]);
+                    if (!isNil(prev)) {
+                        agg.prev += n(prev);
+                        agg.prevSeen = true;
+                    }
+
+                    const m1 = first(r, ["M1AR", "M-1 AR"]);
+                    if (!isNil(m1)) {
+                        agg.m1 += n(m1);
+                        agg.m1Seen = true;
+                    }
+
+                    const m2 = first(r, ["M2AR", "M-2 AR"]);
+                    if (!isNil(m2)) {
+                        agg.m2 += n(m2);
+                        agg.m2Seen = true;
+                    }
+
+                    const y1 = first(r, ["Y1AR", "Y-1 AR", "SameWeekLYAR", "Same Week LY AR"]);
+                    if (!isNil(y1)) {
+                        agg.y1 += n(y1);
+                        agg.y1Seen = true;
+                    }
+                });
+
+                const currentDate = dateObj(first(sample, ["CurrentDate", "SelectedDate"])) || new Date();
+                const prevDate = dateObj(first(sample, ["PrevWeekDate"])) || addDays(currentDate, -7);
+                const m1Date = dateObj(first(sample, ["M1Date"])) || addDays(prevDate, -7);
+                const m2Date = dateObj(first(sample, ["M2Date"])) || addDays(m1Date, -30);
+
+                const display = [
+                    { periodKey: "M_2", date: m2Date, current: agg.m2Seen ? agg.m2 : null, ly: null, isToday: false },
+                    { periodKey: "M_1", date: m1Date, current: agg.m1Seen ? agg.m1 : null, ly: null, isToday: false },
+                    { periodKey: "PREV_WEEK", date: prevDate, current: agg.prevSeen ? agg.prev : null, ly: null, isToday: false },
+                    { periodKey: "CURRENT", date: currentDate, current: agg.curSeen ? agg.current : null, ly: agg.y1Seen ? agg.y1 : null, isToday: true }
+                ];
+
+                display.forEach((x, i) => {
+                    const prev = display[i - 1];
+
+                    x.prev = i === 0 ? null : (prev ? prev.current : null);
+                    x.wow = (x.current !== null && x.prev !== null) ? x.current - x.prev : null;
+                    x.wowPct = (x.current !== null && x.prev !== null && x.prev !== 0) ? x.wow / x.prev : null;
+                    x.yoy = (x.current !== null && x.ly !== null) ? x.current - x.ly : null;
+                    x.yoyPct = (x.current !== null && x.ly !== null && x.ly !== 0) ? x.yoy / x.ly : null;
+                });
+
+                return display;
+            }
+
+            function buildModel(rows) {
+                return hasPeriodRows(rows) ? buildFromPeriodRows(rows) : buildFromWideRows(rows);
+            }
+
+            function getTitle(ctx, rows) {
+                const title = ciGet(ctx, "title") || ciGet(ctx, "label");
+
+                if (title) return String(title);
+
+                const cg = ciGet(rows[0] || {}, "CategoryGroup");
+
+                if (String(cg || "").toLowerCase().includes("commercial")) return "Commercial, Delta %";
+
+                return "Residential, Delta %";
+            }
+
+            function getSubtitle(title) {
+                const cls = String(title).toLowerCase().includes("commercial") ? "Commercial" : "Residential";
+                return cls + " AR - WoW - Active, True Debt";
+            }
+
+            function rowLabel(r) {
+                return (r.isToday ? "Today’s date" : "Prev week") + " (" + mmddyyyy(r.date) + ")";
+            }
+
+            function draw(source) {
+                try {
+                    const rows = findRows(source);
+
+                    if (!rows.length) {
+                        if (!gotData) showNoData("no data");
+                        return;
+                    }
+
+                    const ctx = findContext(source);
+                    const title = getTitle(ctx, rows);
+                    const model = buildModel(rows);
+
+                    if (!model.length) throw new Error("No renderable AR model. Rows found: " + rows.length);
+
+                    let html = '<div class="tile"><div class="head"><div class="title">' + esc(title) + '</div><div class="subtitle">' + esc(getSubtitle(title)) + '</div></div><div class="table-wrap"><table>';
+
+                    html += '<thead><tr><th>Week</th><th>Current AR</th><th>Prev Week</th><th>WoW Chg</th><th>WoW Chg %</th><th>YOY</th><th>YoY Change</th><th>YoY%</th></tr></thead><tbody>';
+
+                    model.forEach(r => {
+                        html += '<tr><td>' + esc(rowLabel(r)) + '</td>';
+                        html += '<td>' + esc(money(r.current)) + '</td>';
+                        html += '<td>' + esc(money(r.prev)) + '</td>';
+                        html += '<td class="' + cls(r.wow) + '">' + esc(change(r.wow)) + '</td>';
+                        html += '<td class="' + cls(r.wowPct) + '">' + esc(pct(r.wowPct)) + '</td>';
+                        html += '<td>' + esc(money(r.ly)) + '</td>';
+                        html += '<td class="' + cls(r.yoy) + '">' + esc(change(r.yoy)) + '</td>';
+                        html += '<td class="' + cls(r.yoyPct) + '">' + esc(pct(r.yoyPct)) + '</td></tr>';
+                    });
+
+                    html += '</tbody></table></div></div>';
+
+                    root().innerHTML = html;
+                    gotData = true;
+                } catch (err) {
+                    showError(err);
+                }
+            }
+
+            function receive(source) {
+                try {
+                    const rows = findRows(source);
+
+                    if (rows.length) {
+                        draw(source);
+                        return;
+                    }
+
+                    if (gotData) return;
+
+                    const v = parseMaybeJson(source);
+
+                    if (v && typeof v === "object" && (Array.isArray(v.data) && v.data.length === 0 || Array.isArray(v.rows) && v.rows.length === 0)) {
+                        showNoData("no data");
+                    }
+                } catch (err) {
+                    showError(err);
+                }
+            }
+
+            showLoader("loading");
+
+            window.addEventListener("message", ev => {
+                const data = ev && ev.data ? ev.data : {};
+                const type = String(data.type || "");
+
+                if (type.startsWith("dashboard-custom-html:") && type.endsWith(":resize")) return;
+
+                receive(data);
+            });
+
+            window.update = receive;
+            window.init = receive;
+            window.setData = receive;
+            window.onData = receive;
+            window.drawArDelta = receive;
+
+            if (window.DashVisualContext) receive(window.DashVisualContext);
+            else if (window.__DashVisualContext) receive(window.__DashVisualContext);
+            else if (window.__DASH_VISUAL_CONTEXT__) receive(window.__DASH_VISUAL_CONTEXT__);
+        })();
+    </script>
+</body>
+</html>
