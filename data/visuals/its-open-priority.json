@@ -1,0 +1,142 @@
+{
+  "title": "ITS Open Tickets \u2014 By Priority",
+  "asOfLabel": "Period: Mar 2026",
+  "charts": [
+    {
+      "id": "open-priority-pie",
+      "title": "Open Tickets Distribution",
+      "kind": "pie",
+      "categories": [
+        "P1 Critical",
+        "P2 High",
+        "P3 Medium",
+        "P4 Low"
+      ],
+      "series": [
+        {
+          "name": "Count",
+          "type": "pie",
+          "data": [
+            4,
+            18,
+            62,
+            142
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-age-bar",
+      "title": "Avg Age (Days) by Priority",
+      "kind": "bar",
+      "categories": [
+        "P1 Critical",
+        "P2 High",
+        "P3 Medium",
+        "P4 Low"
+      ],
+      "leftAxisTitle": "Days",
+      "series": [
+        {
+          "name": "Avg Age",
+          "type": "bar",
+          "data": [
+            2.5,
+            4.8,
+            9.2,
+            18.4
+          ],
+          "color": "#0808ee"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "open-tickets-detail",
+      "title": "Open Tickets \u2014 All Priorities",
+      "columns": [
+        "Ticket #",
+        "Priority",
+        "Category",
+        "Assigned",
+        "Age (Days)",
+        "SLA %"
+      ],
+      "formats": [
+        null,
+        null,
+        null,
+        null,
+        "decimal",
+        "percent"
+      ],
+      "rows": [
+        [
+          "INC-10241",
+          "P1",
+          "Network Outage",
+          "J. Patel",
+          0.4,
+          92.0
+        ],
+        [
+          "INC-10238",
+          "P1",
+          "Database Down",
+          "M. Chen",
+          1.8,
+          65.0
+        ],
+        [
+          "INC-10234",
+          "P2",
+          "Email Delivery",
+          "S. Rivera",
+          2.4,
+          78.0
+        ],
+        [
+          "INC-10229",
+          "P2",
+          "VPN Auth Failure",
+          "T. Nguyen",
+          4.1,
+          84.0
+        ],
+        [
+          "INC-10218",
+          "P3",
+          "Account Locked",
+          "K. Williams",
+          6.2,
+          92.0
+        ],
+        [
+          "INC-10205",
+          "P3",
+          "Printer Queue",
+          "L. Garcia",
+          8.8,
+          96.0
+        ],
+        [
+          "REQ-09874",
+          "P4",
+          "Software Install",
+          "B. Kim",
+          12.4,
+          99.0
+        ],
+        [
+          "REQ-09841",
+          "P4",
+          "Hardware Request",
+          "B. Kim",
+          21.2,
+          95.0
+        ]
+      ]
+    }
+  ]
+}

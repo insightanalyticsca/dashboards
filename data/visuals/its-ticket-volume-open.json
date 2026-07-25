@@ -1,0 +1,94 @@
+{
+  "title": "ITS Ticket Volume \u2014 Open vs Closed",
+  "asOfLabel": "13-week rolling \u00b7 Mar 2026",
+  "charts": [
+    {
+      "id": "tickets-open-line",
+      "title": "Weekly Open vs Closed Tickets",
+      "kind": "line",
+      "categories": [
+        "01/06",
+        "01/13",
+        "01/20",
+        "01/27",
+        "02/03",
+        "02/10",
+        "02/17",
+        "02/24",
+        "03/03",
+        "03/10",
+        "03/17",
+        "03/24",
+        "03/31"
+      ],
+      "series": [
+        {
+          "name": "Opened",
+          "type": "line",
+          "data": [
+            142,
+            138,
+            156,
+            148,
+            162,
+            154,
+            168,
+            144,
+            158,
+            152,
+            166,
+            148,
+            160
+          ],
+          "color": "#0808ee",
+          "smooth": true
+        },
+        {
+          "name": "Closed",
+          "type": "line",
+          "data": [
+            128,
+            134,
+            142,
+            152,
+            158,
+            148,
+            162,
+            158,
+            154,
+            162,
+            158,
+            156,
+            164
+          ],
+          "color": "#09c698",
+          "smooth": true
+        }
+      ]
+    },
+    {
+      "id": "tickets-by-priority-bar",
+      "title": "Open Tickets by Priority",
+      "kind": "bar",
+      "categories": [
+        "P1 Critical",
+        "P2 High",
+        "P3 Medium",
+        "P4 Low"
+      ],
+      "series": [
+        {
+          "name": "Count",
+          "type": "bar",
+          "data": [
+            4,
+            18,
+            62,
+            142
+          ],
+          "color": "#0808ee"
+        }
+      ]
+    }
+  ]
+}

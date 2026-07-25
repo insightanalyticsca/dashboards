@@ -1,0 +1,74 @@
+{
+  "title": "Commercial Electric Arrears \u2014 13wk Rolling",
+  "asOfLabel": "Period: Mar 2026",
+  "charts": [
+    {
+      "id": "elec-comm-rolling",
+      "title": "Commercial Electric Arrears Trend (CAD \u00d71000)",
+      "kind": "line",
+      "categories": [
+        "01/06",
+        "01/13",
+        "01/20",
+        "01/27",
+        "02/03",
+        "02/10",
+        "02/17",
+        "02/24",
+        "03/03",
+        "03/10",
+        "03/17",
+        "03/24",
+        "03/31"
+      ],
+      "leftAxisTitle": "CAD (\u00d71000)",
+      "series": [
+        {
+          "name": "Current Period",
+          "type": "line",
+          "data": [
+            2400,
+            2450,
+            2500,
+            2480,
+            2520,
+            2540,
+            2560,
+            2580,
+            2570,
+            2590,
+            2600,
+            2580,
+            2600
+          ],
+          "color": "#0808ee",
+          "smooth": true
+        },
+        {
+          "name": "Prior Year",
+          "type": "line",
+          "data": [
+            2100,
+            2150,
+            2200,
+            2180,
+            2220,
+            2250,
+            2280,
+            2300,
+            2290,
+            2320,
+            2340,
+            2330,
+            2350
+          ],
+          "color": "#c9c9c9",
+          "smooth": true,
+          "lineStyle": {
+            "type": "dashed"
+          }
+        }
+      ]
+    }
+  ]
+}

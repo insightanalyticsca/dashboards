@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visuals Gallery — DocChat Demo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230808ee'/%3E%3Ctext x='50' y='66' text-anchor='middle' font-family='Arial' font-weight='800' font-size='52' fill='white'%3EV%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="./css/visuals-gallery.css?v=20260726">
+</head>
+<body>
+
+<header class="gallery-topbar">
+  <a class="gallery-brand" href="./index.html">
+    <span class="gallery-brand-mark">D</span>
+    DocChat · Visuals
+  </a>
+  <div class="gallery-topbar-actions">
+    <a href="./index.html"><i class="fa-solid fa-arrow-left"></i> Back to chat</a>
+    <a href="https://github.com/insightanalyticsca/dashboards" target="_blank" rel="noopener">
+      <i class="fa-brands fa-github"></i> Source
+    </a>
+  </div>
+</header>
+
+<section class="gallery-hero">
+  <h1>Visuals Gallery</h1>
+  <p>Cloned from the <code>corporate_dashboards</code> .NET MVC app — 15 visuals across 3 sectors
+     (Executive, CSR, ITS), each rendered with the original CSS and ECharts. Click any tile to open the visual.</p>
+  <div class="gallery-hero-meta">
+    <div class="gallery-hero-stat">
+      <span class="label">Total visuals</span>
+      <span class="value">15</span>
+    </div>
+    <div class="gallery-hero-stat">
+      <span class="label">Executive (v213)</span>
+      <span class="value">5</span>
+    </div>
+    <div class="gallery-hero-stat">
+      <span class="label">CSR</span>
+      <span class="value">5</span>
+    </div>
+    <div class="gallery-hero-stat">
+      <span class="label">ITS</span>
+      <span class="value">5</span>
+    </div>
+    <div class="gallery-hero-stat">
+      <span class="label">Clone source</span>
+      <span class="value" style="font-size:14px">v213/v217</span>
+    </div>
+  </div>
+</section>
+
+<div class="gallery-filters">
+  <button class="gallery-filter is-active" data-filter="all">All <span class="count">15</span></button>
+  <button class="gallery-filter" data-filter="executive">Executive <span class="count">5</span></button>
+  <button class="gallery-filter" data-filter="csr">CSR <span class="count">5</span></button>
+  <button class="gallery-filter" data-filter="its">ITS <span class="count">5</span></button>
+  <span style="flex:1"></span>
+  <span style="font-size:11px;color:var(--vg-muted);font-weight:600">All visuals use fake demo data</span>
+</div>
+
+<!-- ════════════ EXECUTIVE (v213) ════════════ -->
+<section class="gallery-section" data-sector="executive">
+  <h2 class="gallery-section-title">
+    Executive Dashboards
+    <span class="meta">Version 213 · 5 visuals</span>
+  </h2>
+  <div class="gallery-grid">
+
+    <a class="gallery-tile" data-sector="executive" href="./visuals/executive-ar-portfolio.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon executive"><i class="fa-solid fa-wallet"></i></div>
+        <span class="gallery-tile-sector executive">Executive</span>
+      </div>
+      <h3 class="gallery-tile-title">AR Portfolio</h3>
+      <p class="gallery-tile-desc">Total receivables, aging buckets, top accounts, DSO trends — executive overview.</p>
+      <div class="gallery-tile-foot">
+        <span>v213 · KPIs + 3 charts + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="executive" href="./visuals/executive-customer-payments.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon executive"><i class="fa-solid fa-money-bill-transfer"></i></div>
+        <span class="gallery-tile-sector executive">Executive</span>
+      </div>
+      <h3 class="gallery-tile-title">Customer Payments</h3>
+      <p class="gallery-tile-desc">Payment volume, methods, auto-pay adoption, days-to-pay by segment.</p>
+      <div class="gallery-tile-foot">
+        <span>v213 · 4 KPIs + 3 charts</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="executive" href="./visuals/executive-disconnects-bankruptcies.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon executive"><i class="fa-solid fa-plug-circle-xmark"></i></div>
+        <span class="gallery-tile-sector executive">Executive</span>
+      </div>
+      <h3 class="gallery-tile-title">Disconnects & Bankruptcies</h3>
+      <p class="gallery-tile-desc">Disconnect counts, reconnect rates, bankruptcy filings, balance at risk.</p>
+      <div class="gallery-tile-foot">
+        <span>v213 · 4 KPIs + 3 charts</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="executive" href="./visuals/executive-ebill-performance.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon executive"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <span class="gallery-tile-sector executive">Executive</span>
+      </div>
+      <h3 class="gallery-tile-title">E-Bill Performance</h3>
+      <p class="gallery-tile-desc">Paperless adoption trends, drivers, segment gap-to-target analysis.</p>
+      <div class="gallery-tile-foot">
+        <span>v213 · 4 KPIs + 3 charts</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="executive" href="./visuals/executive-final-bill-recovery.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon executive"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+        <span class="gallery-tile-sector executive">Executive</span>
+      </div>
+      <h3 class="gallery-tile-title">Final Bill Recovery</h3>
+      <p class="gallery-tile-desc">Recovery rates by segment, recovery methods, average days-to-recover.</p>
+      <div class="gallery-tile-foot">
+        <span>v213 · 4 KPIs + 3 charts</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════ CSR ════════════ -->
+<section class="gallery-section" data-sector="csr">
+  <h2 class="gallery-section-title">
+    CSR · Customer Service & Aging
+    <span class="meta">5 visuals</span>
+  </h2>
+  <div class="gallery-grid">
+
+    <a class="gallery-tile" data-sector="csr" href="./visuals/aging-bankruptcies.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon csr"><i class="fa-solid fa-chart-column"></i></div>
+        <span class="gallery-tile-sector csr">CSR</span>
+      </div>
+      <h3 class="gallery-tile-title">Aging Bankruptcies</h3>
+      <p class="gallery-tile-desc">13-week rolling bankruptcies by customer type (commercial / residential / industrial).</p>
+      <div class="gallery-tile-foot">
+        <span>Stacked bar + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="csr" href="./visuals/aging-disconnects-reconnects.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon csr"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+        <span class="gallery-tile-sector csr">CSR</span>
+      </div>
+      <h3 class="gallery-tile-title">Disconnects vs Reconnects</h3>
+      <p class="gallery-tile-desc">Weekly disconnect/reconnect counts plus rolling 4-week reconnect rate trend.</p>
+      <div class="gallery-tile-foot">
+        <span>Bar + line + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="csr" href="./visuals/ar-buckets-stacked.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon csr"><i class="fa-solid fa-layer-group"></i></div>
+        <span class="gallery-tile-sector csr">CSR</span>
+      </div>
+      <h3 class="gallery-tile-title">AR Buckets Stacked</h3>
+      <p class="gallery-tile-desc">13-week AR balance by aging bucket — 0-30, 31-60, 61-90, 90+ days stacked.</p>
+      <div class="gallery-tile-foot">
+        <span>Stacked bar</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="csr" href="./visuals/aging-electric-commercial-rolling13.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon csr"><i class="fa-solid fa-bolt"></i></div>
+        <span class="gallery-tile-sector csr">CSR</span>
+      </div>
+      <h3 class="gallery-tile-title">Commercial Electric Arrears</h3>
+      <p class="gallery-tile-desc">13-week rolling commercial electric arrears with prior-year comparison.</p>
+      <div class="gallery-tile-foot">
+        <span>Line chart · YoY</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="csr" href="./visuals/aging-forecast-monitor.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon csr"><i class="fa-solid fa-chart-line"></i></div>
+        <span class="gallery-tile-sector csr">CSR</span>
+      </div>
+      <h3 class="gallery-tile-title">Aging Forecast Monitor</h3>
+      <p class="gallery-tile-desc">90-day AR balance forecast with 80% prediction interval — ARIMA(2,1,1).</p>
+      <div class="gallery-tile-foot">
+        <span>Forecast + confidence band</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ════════════ ITS ════════════ -->
+<section class="gallery-section" data-sector="its">
+  <h2 class="gallery-section-title">
+    ITS · IT Service & Security
+    <span class="meta">5 visuals</span>
+  </h2>
+  <div class="gallery-grid">
+
+    <a class="gallery-tile" data-sector="its" href="./visuals/its-uptime.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon its"><i class="fa-solid fa-server"></i></div>
+        <span class="gallery-tile-sector its">ITS</span>
+      </div>
+      <h3 class="gallery-tile-title">ITS Uptime Report</h3>
+      <p class="gallery-tile-desc">Service uptime by category, SLA target compliance, marginal/breach detail.</p>
+      <div class="gallery-tile-foot">
+        <span>Bar + detail table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="its" href="./visuals/its-ticket-volume-open.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon its"><i class="fa-solid fa-ticket"></i></div>
+        <span class="gallery-tile-sector its">ITS</span>
+      </div>
+      <h3 class="gallery-tile-title">Ticket Volume — Open vs Closed</h3>
+      <p class="gallery-tile-desc">Weekly opened vs closed ticket counts plus priority distribution.</p>
+      <div class="gallery-tile-foot">
+        <span>Line + bar</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="its" href="./visuals/its-kb4-phish-mom.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon its"><i class="fa-solid fa-fish"></i></div>
+        <span class="gallery-tile-sector its">ITS</span>
+      </div>
+      <h3 class="gallery-tile-title">KB4 Phishing MoM</h3>
+      <p class="gallery-tile-desc">KnowBe4 phishing simulation click rate trend, by department, with summary.</p>
+      <div class="gallery-tile-foot">
+        <span>Bar + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="its" href="./visuals/its-open-priority.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon its"><i class="fa-solid fa-list-check"></i></div>
+        <span class="gallery-tile-sector its">ITS</span>
+      </div>
+      <h3 class="gallery-tile-title">Open Tickets by Priority</h3>
+      <p class="gallery-tile-desc">Distribution of open tickets (P1-P4) with avg age and SLA compliance detail.</p>
+      <div class="gallery-tile-foot">
+        <span>Pie + bar + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+    <a class="gallery-tile" data-sector="its" href="./visuals/its-ocsf-report.html">
+      <div class="gallery-tile-head">
+        <div class="gallery-tile-icon its"><i class="fa-solid fa-shield-halved"></i></div>
+        <span class="gallery-tile-sector its">ITS</span>
+      </div>
+      <h3 class="gallery-tile-title">OCSF Security Events</h3>
+      <p class="gallery-tile-desc">Open Cybersecurity Schema Framework event counts by severity & category.</p>
+      <div class="gallery-tile-foot">
+        <span>Line + pie + table</span>
+        <i class="fa-solid fa-arrow-right arrow"></i>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<footer style="text-align:center;padding:40px 32px;color:var(--vg-muted);font-size:12px;">
+  Visuals Gallery · cloned from <code>corporate_dashboards</code> .NET MVC · v213/v217<br>
+  All data is fabricated for demo purposes only.
+</footer>
+
+<script>
+  // Filter pills
+  document.querySelectorAll('.gallery-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.gallery-filter').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const filter = btn.dataset.filter;
+      document.querySelectorAll('.gallery-tile').forEach(tile => {
+        if (filter === 'all' || tile.dataset.sector === filter) {
+          tile.style.display = '';
+        } else {
+          tile.style.display = 'none';
+        }
+      });
+      document.querySelectorAll('.gallery-section').forEach(section => {
+        if (filter === 'all' || section.dataset.sector === filter) {
+          section.style.display = '';
+        } else {
+          section.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

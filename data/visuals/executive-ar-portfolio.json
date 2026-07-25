@@ -1,0 +1,254 @@
+{
+  "title": "AR Portfolio Executive Summary",
+  "version": "213",
+  "asOfLabel": "Period: Mar 2026",
+  "notes": [
+    "Receivables balance decreased $0.4M MoM driven by commercial collections.",
+    "91+ day bucket elevated due to 3 large bankruptcy filings \u2014 see bankruptcy visual."
+  ],
+  "kpis": [
+    {
+      "label": "Total AR",
+      "value": 14800000,
+      "format": "currency",
+      "delta": -2.6,
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    },
+    {
+      "label": "Current % (0-30d)",
+      "value": 62.2,
+      "format": "percent",
+      "delta": 1.4,
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "label": "91+ Days",
+      "value": 820000,
+      "format": "currency",
+      "delta": 18.3,
+      "deltaMode": "percent",
+      "positiveIsGood": false
+    },
+    {
+      "label": "DSO",
+      "value": 41,
+      "format": "number",
+      "delta": -2,
+      "deltaMode": "number",
+      "positiveIsGood": true
+    }
+  ],
+  "charts": [
+    {
+      "id": "ar-buckets-trend",
+      "title": "AR Aging Bucket Trend (CAD)",
+      "kind": "stackedbar",
+      "categories": [
+        "Jan 2026",
+        "Jan 2026",
+        "Mar 2026",
+        "Apr 2026",
+        "May 2026",
+        "May 2026",
+        "Jun 2026"
+      ],
+      "leftAxisTitle": "CAD (\u00d71000)",
+      "series": [
+        {
+          "name": "0-30 days",
+          "type": "stackedbar",
+          "stack": "aging",
+          "data": [
+            8200,
+            8800,
+            9200,
+            9050,
+            9100,
+            9200,
+            9200
+          ],
+          "color": "#0808ee"
+        },
+        {
+          "name": "31-60 days",
+          "type": "stackedbar",
+          "stack": "aging",
+          "data": [
+            3400,
+            3200,
+            3100,
+            3150,
+            3100,
+            3100,
+            3100
+          ],
+          "color": "#09c698"
+        },
+        {
+          "name": "61-90 days",
+          "type": "stackedbar",
+          "stack": "aging",
+          "data": [
+            1900,
+            1800,
+            1700,
+            1750,
+            1700,
+            1700,
+            1700
+          ],
+          "color": "#635BCB"
+        },
+        {
+          "name": "90+ days",
+          "type": "stackedbar",
+          "stack": "aging",
+          "data": [
+            600,
+            700,
+            800,
+            750,
+            800,
+            800,
+            820
+          ],
+          "color": "#BBFF05"
+        }
+      ]
+    },
+    {
+      "id": "ar-collections-line",
+      "title": "Collections vs New AR (CAD \u00d71000)",
+      "kind": "line",
+      "categories": [
+        "Jan 2026",
+        "Jan 2026",
+        "Mar 2026",
+        "Apr 2026",
+        "May 2026",
+        "May 2026",
+        "Jun 2026"
+      ],
+      "leftAxisTitle": "CAD (\u00d71000)",
+      "series": [
+        {
+          "name": "New AR",
+          "type": "line",
+          "data": [
+            5200,
+            5400,
+            5100,
+            5300,
+            4900,
+            5100,
+            4900
+          ],
+          "color": "#0808ee",
+          "smooth": true
+        },
+        {
+          "name": "Collections",
+          "type": "line",
+          "data": [
+            4900,
+            5200,
+            5400,
+            5100,
+            5300,
+            5400,
+            5500
+          ],
+          "color": "#09c698",
+          "smooth": true
+        }
+      ]
+    },
+    {
+      "id": "ar-segment-pie",
+      "title": "AR by Customer Type",
+      "kind": "pie",
+      "categories": [
+        "Commercial",
+        "Residential",
+        "Industrial"
+      ],
+      "series": [
+        {
+          "name": "AR",
+          "type": "pie",
+          "data": [
+            9200,
+            4500,
+            1100
+          ]
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "ar-top-customers",
+      "title": "Top 5 Commercial Accounts (CAD)",
+      "columns": [
+        "Customer",
+        "Balance",
+        "0-30",
+        "31-60",
+        "61-90",
+        "90+"
+      ],
+      "formats": [
+        null,
+        "currency",
+        "currency",
+        "currency",
+        "currency",
+        "currency"
+      ],
+      "rows": [
+        [
+          "Acme Industrial Group",
+          1240000,
+          890000,
+          210000,
+          95000,
+          45000
+        ],
+        [
+          "Northern Logistics Co.",
+          980000,
+          720000,
+          180000,
+          58000,
+          24000
+        ],
+        [
+          "Pacific Trade Holdings",
+          760000,
+          540000,
+          130000,
+          62000,
+          28000
+        ],
+        [
+          "EastGate Manufacturing",
+          620000,
+          480000,
+          95000,
+          32000,
+          13000
+        ],
+        [
+          "Lakeshore Properties Ltd",
+          540000,
+          410000,
+          88000,
+          28000,
+          6000
+        ]
+      ]
+    }
+  ]
+}
