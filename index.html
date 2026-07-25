@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="./css/styles.css?v=20260726">
+  <link rel="stylesheet" href="./css/styles.css?v=20260726b">
 </head>
 <body>
 
@@ -37,7 +37,7 @@
         <span class="pill-dot"></span>
         <span id="providerLabel">Demo</span>
       </span>
-      <a class="btn btn--ghost btn--icon" href="https://github.com" target="_blank" rel="noopener" title="View on GitHub">
+      <a class="btn btn--ghost btn--icon" href="https://github.com/insightanalyticsca/dashboards" target="_blank" rel="noopener" title="View on GitHub">
         <i class="fa-brands fa-github"></i>
       </a>
       <button class="btn btn--ghost btn--icon" id="btnSettings" title="Settings" aria-label="Settings">
@@ -46,8 +46,26 @@
     </div>
   </header>
 
+  <!-- ════════════════════════ SECTION NAV ════════════════════════ -->
+  <nav class="section-nav">
+    <a href="#overview" class="section-nav__item is-active" data-target="overview">
+      <i class="fa-solid fa-gauge-high"></i> Overview
+    </a>
+    <a href="#analytics" class="section-nav__item" data-target="analytics">
+      <i class="fa-solid fa-chart-pie"></i> Analytics
+    </a>
+    <a href="#chat" class="section-nav__item" data-target="chat">
+      <i class="fa-solid fa-robot"></i> Chat
+    </a>
+    <a href="#library" class="section-nav__item" data-target="library">
+      <i class="fa-solid fa-folder-tree"></i> Library
+    </a>
+    <span class="section-nav__spacer"></span>
+    <span class="section-nav__hint"><kbd>/</kbd> focus chat</span>
+  </nav>
+
   <!-- ════════════════════════ HERO ════════════════════════ -->
-  <section class="hero">
+  <section class="hero hero--compact" id="overview">
     <canvas class="hero-canvas" id="heroCanvas"></canvas>
     <div class="hero-content">
       <div>
@@ -62,12 +80,12 @@
           as-is in demo mode with simulated retrieval over pre-indexed sample documents.
         </p>
         <div class="hero-cta">
-          <button class="btn btn--primary" onclick="document.getElementById('chatInput').focus()">
+          <a class="btn btn--primary" href="#analytics">
+            <i class="fa-solid fa-chart-pie"></i> See the visuals
+          </a>
+          <a class="btn btn--ghost" href="#chat">
             <i class="fa-solid fa-comments"></i> Try the chat
-          </button>
-          <button class="btn btn--ghost" id="btnSettingsHero">
-            <i class="fa-solid fa-key"></i> Add Groq key
-          </button>
+          </a>
         </div>
       </div>
 
@@ -96,35 +114,91 @@
     </div>
   </section>
 
-  <!-- ════════════════════════ MAIN GRID: Library | Chat ════════════════════════ -->
-  <div class="grid-main">
+  <!-- ════════════════════════ ANALYTICS (moved up) ════════════════════════ -->
+  <section id="analytics">
+    <h2 class="section-title">
+      <i class="fa-solid fa-chart-pie section-title-icon"></i>
+      Analytics Suite
+      <span class="small">7 live visuals · last 7 days</span>
+    </h2>
 
-    <!-- ─── Document Library ─── -->
-    <section class="card">
-      <div class="card-head">
-        <div class="card-title">
-          <i class="fa-solid fa-folder-tree"></i>
-          Document Library
+    <div class="grid-analytics">
+
+      <div class="chart-card span-3">
+        <div class="chart-head">
+          <span class="chart-title">System Health</span>
+          <span class="chart-value">live</span>
         </div>
-        <div class="card-actions">
-          <button class="btn btn--ghost btn--icon" id="btnRefreshDocs" title="Refresh">
-            <i class="fa-solid fa-rotate"></i>
-          </button>
+        <div class="gauge-wrap">
+          <div class="gauge-host" id="chartHealth"></div>
+          <div class="gauge-caption">All services operational</div>
         </div>
       </div>
 
-      <div class="dropzone" id="dropzone">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
-        <div class="dz-title">Drop files or click to upload</div>
-        <div class="dz-hint">PDF · DOCX · XLSX — demo mode simulates chunking</div>
-        <input type="file" id="dropzoneInput" multiple accept=".pdf,.docx,.xlsx,.txt" hidden>
+      <div class="chart-card span-3">
+        <div class="chart-head">
+          <span class="chart-title">Avg Confidence</span>
+          <span class="chart-value">retrieval</span>
+        </div>
+        <div class="chart-host" id="chartConfidence"></div>
       </div>
 
-      <ul class="doc-list" id="docList"></ul>
-    </section>
+      <div class="chart-card span-6">
+        <div class="chart-head">
+          <span class="chart-title">Document Types</span>
+          <span class="chart-value">12 docs</span>
+        </div>
+        <div class="chart-host" id="chartDocTypes"></div>
+      </div>
 
-    <!-- ─── Chat ─── -->
-    <section class="card card--flush">
+      <div class="chart-card span-6">
+        <div class="chart-head">
+          <span class="chart-title">Uploads — past 7 days</span>
+          <span class="chart-value">+32 files</span>
+        </div>
+        <div class="chart-host" id="chartUploads"></div>
+      </div>
+
+      <div class="chart-card span-6">
+        <div class="chart-head">
+          <span class="chart-title">Query Activity by Hour</span>
+          <span class="chart-value">peak 14:00</span>
+        </div>
+        <div class="chart-host" id="chartHeatmap"></div>
+      </div>
+
+      <div class="chart-card span-6">
+        <div class="chart-head">
+          <span class="chart-title">Chunks per Document</span>
+          <span class="chart-value">top 8</span>
+        </div>
+        <div class="chart-host tall" id="chartChunks"></div>
+      </div>
+
+      <div class="chart-card span-8">
+        <div class="chart-head">
+          <span class="chart-title">Weekly Trend — Queries & Tokens</span>
+          <span class="chart-value">7 weeks</span>
+        </div>
+        <div class="chart-host" id="chartWeekly"></div>
+      </div>
+
+      <div class="chart-card span-4">
+        <div class="chart-head">
+          <span class="chart-title">Model Usage</span>
+          <span class="chart-value">277 reqs</span>
+        </div>
+        <div id="modelUsageLegend" style="display:flex;flex-direction:column;gap:8px;padding:12px 0"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════ CHAT + LIBRARY ════════════════════════ -->
+  <div class="grid-main" id="library-chat">
+
+    <!-- ─── Chat (left, primary) ─── -->
+    <section class="card card--flush" id="chat">
       <div class="card-head">
         <div class="card-title">
           <i class="fa-solid fa-robot"></i>
@@ -156,95 +230,42 @@
             </button>
           </div>
           <div class="chat-meta-row">
-            <span><kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for newline</span>
+            <span><kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for newline · <kbd>/</kbd> to focus</span>
             <span id="composerStatus">Demo mode</span>
           </div>
         </div>
       </div>
     </section>
 
-  </div>
-
-  <!-- ════════════════════════ ANALYTICS ════════════════════════ -->
-  <h2 class="section-title">
-    Analytics
-    <span class="small">last 7 days</span>
-  </h2>
-
-  <div class="grid-analytics">
-
-    <div class="chart-card span-3">
-      <div class="chart-head">
-        <span class="chart-title">System Health</span>
-        <span class="chart-value">live</span>
+    <!-- ─── Document Library (right) ─── -->
+    <section class="card" id="library">
+      <div class="card-head">
+        <div class="card-title">
+          <i class="fa-solid fa-folder-tree"></i>
+          Document Library
+        </div>
+        <div class="card-actions">
+          <button class="btn btn--ghost btn--icon" id="btnRefreshDocs" title="Refresh">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+        </div>
       </div>
-      <div class="gauge-wrap">
-        <div class="gauge-host" id="chartHealth"></div>
-        <div class="gauge-caption">All services operational</div>
-      </div>
-    </div>
 
-    <div class="chart-card span-3">
-      <div class="chart-head">
-        <span class="chart-title">Avg Confidence</span>
-        <span class="chart-value">retrieval</span>
+      <div class="dropzone dropzone--compact" id="dropzone">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <div class="dz-title">Drop files or click to upload</div>
+        <div class="dz-hint">PDF · DOCX · XLSX — demo mode simulates chunking</div>
+        <input type="file" id="dropzoneInput" multiple accept=".pdf,.docx,.xlsx,.txt" hidden>
       </div>
-      <div class="chart-host" id="chartConfidence"></div>
-    </div>
 
-    <div class="chart-card span-6">
-      <div class="chart-head">
-        <span class="chart-title">Document Types</span>
-        <span class="chart-value">12 docs</span>
-      </div>
-      <div class="chart-host" id="chartDocTypes"></div>
-    </div>
-
-    <div class="chart-card span-6">
-      <div class="chart-head">
-        <span class="chart-title">Uploads — past 7 days</span>
-        <span class="chart-value">+32 files</span>
-      </div>
-      <div class="chart-host" id="chartUploads"></div>
-    </div>
-
-    <div class="chart-card span-6">
-      <div class="chart-head">
-        <span class="chart-title">Query Activity by Hour</span>
-        <span class="chart-value">peak 14:00</span>
-      </div>
-      <div class="chart-host" id="chartHeatmap"></div>
-    </div>
-
-    <div class="chart-card span-6">
-      <div class="chart-head">
-        <span class="chart-title">Chunks per Document</span>
-        <span class="chart-value">top 8</span>
-      </div>
-      <div class="chart-host tall" id="chartChunks"></div>
-    </div>
-
-    <div class="chart-card span-8">
-      <div class="chart-head">
-        <span class="chart-title">Weekly Trend — Queries & Tokens</span>
-        <span class="chart-value">7 weeks</span>
-      </div>
-      <div class="chart-host" id="chartWeekly"></div>
-    </div>
-
-    <div class="chart-card span-4">
-      <div class="chart-head">
-        <span class="chart-title">Model Usage</span>
-        <span class="chart-value">277 reqs</span>
-      </div>
-      <div id="modelUsageLegend" style="display:flex;flex-direction:column;gap:8px;padding:12px 0"></div>
-    </div>
+      <ul class="doc-list" id="docList"></ul>
+    </section>
 
   </div>
 
   <!-- ════════════════════════ FOOTER ════════════════════════ -->
   <footer class="footer">
-    DocChat demo · static HTML + ECharts + Groq-ready · <code>v1.0.0</code><br>
+    DocChat demo · static HTML + ECharts + Groq-ready · <code>v1.1.0</code><br>
     Fork it, drop your <code>.json</code> data in <code>/data</code>, deploy to GitHub Pages.
   </footer>
 
@@ -331,19 +352,49 @@
 <!-- ════════════════════════ SCRIPTS ════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts-liquidfill@3/dist/echarts-liquidfill.min.js"></script>
-<script src="./js/api.js?v=20260726"></script>
-<script src="./js/charts.js?v=20260726"></script>
-<script src="./js/app.js?v=20260726"></script>
+<script src="./js/api.js?v=20260726b"></script>
+<script src="./js/charts.js?v=20260726b"></script>
+<script src="./js/app.js?v=20260726b"></script>
 
 <script>
-  // Wire the secondary "Add Groq key" button under hero to open settings
-  document.getElementById('btnSettingsHero').addEventListener('click', () => {
-    document.getElementById('btnSettings').click();
-  });
+  // Wire secondary hero CTA + utility buttons
   document.getElementById('btnRefreshDocs').addEventListener('click', () => location.reload());
   document.getElementById('btnClearChat').addEventListener('click', () => {
     if (!confirm('Clear conversation?')) return;
     document.getElementById('chatMessages').innerHTML = '';
+  });
+
+  // Smooth scroll for section nav
+  document.querySelectorAll('.section-nav__item').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.getElementById(link.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Active section nav highlight on scroll
+  const sections = ['overview', 'analytics', 'chat', 'library'];
+  const navItems = document.querySelectorAll('.section-nav__item');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navItems.forEach(n => n.classList.toggle('is-active', n.dataset.target === id));
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  // Global "/" shortcut to focus chat input
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('chatInput').focus();
+    }
   });
 </script>
 
