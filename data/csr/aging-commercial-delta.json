@@ -11,126 +11,477 @@
   "valueFields": [],
   "data": [
     {
+      "Bucket": "0-30",
+      "Period": "2026-01-06",
       "PeriodDate": "2026-01-06",
-      "PeriodKey": "W_1",
-      "SortOrder": 1,
-      "CategoryGroup": "Commercial",
       "Amount": 5200,
-      "PriorAmount": 4900,
-      "Delta": 300
-    },
-    {
-      "PeriodDate": "2026-01-13",
-      "PeriodKey": "W_2",
-      "SortOrder": 2,
-      "CategoryGroup": "Commercial",
-      "Amount": 5220,
-      "PriorAmount": 4925,
-      "Delta": 295
-    },
-    {
-      "PeriodDate": "2026-01-20",
-      "PeriodKey": "W_3",
-      "SortOrder": 3,
-      "CategoryGroup": "Commercial",
-      "Amount": 5240,
-      "PriorAmount": 4950,
-      "Delta": 290
-    },
-    {
-      "PeriodDate": "2026-01-27",
-      "PeriodKey": "W_4",
-      "SortOrder": 4,
-      "CategoryGroup": "Commercial",
-      "Amount": 5260,
-      "PriorAmount": 4975,
-      "Delta": 285
-    },
-    {
-      "PeriodDate": "2026-02-03",
-      "PeriodKey": "W_5",
-      "SortOrder": 5,
-      "CategoryGroup": "Commercial",
-      "Amount": 5280,
-      "PriorAmount": 5000,
-      "Delta": 280
-    },
-    {
-      "PeriodDate": "2026-02-10",
-      "PeriodKey": "W_6",
-      "SortOrder": 6,
-      "CategoryGroup": "Commercial",
-      "Amount": 5300,
-      "PriorAmount": 5025,
-      "Delta": 275
-    },
-    {
-      "PeriodDate": "2026-02-17",
-      "PeriodKey": "W_7",
-      "SortOrder": 7,
-      "CategoryGroup": "Commercial",
-      "Amount": 5320,
-      "PriorAmount": 5050,
-      "Delta": 270
-    },
-    {
-      "PeriodDate": "2026-02-24",
-      "PeriodKey": "W_8",
-      "SortOrder": 8,
-      "CategoryGroup": "Commercial",
-      "Amount": 5340,
-      "PriorAmount": 5075,
-      "Delta": 265
-    },
-    {
-      "PeriodDate": "2026-03-03",
-      "PeriodKey": "W_9",
-      "SortOrder": 9,
-      "CategoryGroup": "Commercial",
-      "Amount": 5360,
-      "PriorAmount": 5100,
-      "Delta": 260
-    },
-    {
-      "PeriodDate": "2026-03-10",
-      "PeriodKey": "W_10",
-      "SortOrder": 10,
-      "CategoryGroup": "Commercial",
-      "Amount": 5380,
-      "PriorAmount": 5125,
-      "Delta": 255
-    },
-    {
-      "PeriodDate": "2026-03-17",
-      "PeriodKey": "W_11",
-      "SortOrder": 11,
-      "CategoryGroup": "Commercial",
-      "Amount": 5400,
-      "PriorAmount": 5150,
-      "Delta": 250
-    },
-    {
-      "PeriodDate": "2026-03-24",
-      "PeriodKey": "W_12",
-      "SortOrder": 12,
-      "CategoryGroup": "Commercial",
-      "Amount": 5420,
-      "PriorAmount": 5175,
-      "Delta": 245
-    },
-    {
-      "PeriodDate": "2026-03-31",
-      "PeriodKey": "W_13",
-      "SortOrder": 13,
-      "CategoryGroup": "Commercial",
-      "Amount": 5440,
       "PriorAmount": 5200,
-      "Delta": 240
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 2400,
+      "PriorAmount": 2400,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 1200,
+      "PriorAmount": 1200,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 400,
+      "PriorAmount": 400,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 5400,
+      "PriorAmount": 5350,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 2300,
+      "PriorAmount": 2250,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 1150,
+      "PriorAmount": 1100,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 450,
+      "PriorAmount": 400,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 5100,
+      "PriorAmount": 5050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 2200,
+      "PriorAmount": 2150,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 1100,
+      "PriorAmount": 1050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 500,
+      "PriorAmount": 450,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 5300,
+      "PriorAmount": 5250,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 2150,
+      "PriorAmount": 2100,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 1050,
+      "PriorAmount": 1000,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 550,
+      "PriorAmount": 500,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 4900,
+      "PriorAmount": 4850,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 600,
+      "PriorAmount": 550,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 5100,
+      "PriorAmount": 5050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 600,
+      "PriorAmount": 550,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 4900,
+      "PriorAmount": 4850,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 600,
+      "PriorAmount": 550,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 5300,
+      "PriorAmount": 5250,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 2150,
+      "PriorAmount": 2100,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 1050,
+      "PriorAmount": 1000,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 600,
+      "PriorAmount": 550,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 5200,
+      "PriorAmount": 5150,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 600,
+      "PriorAmount": 550,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 5400,
+      "PriorAmount": 5350,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 2050,
+      "PriorAmount": 2000,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 620,
+      "PriorAmount": 570,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 5100,
+      "PriorAmount": 5050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 620,
+      "PriorAmount": 570,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 5300,
+      "PriorAmount": 5250,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 2150,
+      "PriorAmount": 2100,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 1050,
+      "PriorAmount": 1000,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 620,
+      "PriorAmount": 570,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 4900,
+      "PriorAmount": 4850,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 2100,
+      "PriorAmount": 2050,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 1000,
+      "PriorAmount": 950,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 620,
+      "PriorAmount": 570,
+      "Delta": 50,
+      "CategoryGroup": "Commercial"
     }
   ],
   "debug": {
     "source": "dbo.vw_aging_commercial_delta",
-    "returnedRows": 13,
+    "returnedRows": 52,
     "requestedMaxRows": 50000
   }
 }

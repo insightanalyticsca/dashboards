@@ -11,126 +11,477 @@
   "valueFields": [],
   "data": [
     {
+      "Bucket": "0-30",
+      "Period": "2026-01-06",
       "PeriodDate": "2026-01-06",
-      "PeriodKey": "W_1",
-      "SortOrder": 1,
-      "CategoryGroup": "Residential",
       "Amount": 3100,
-      "PriorAmount": 2950,
-      "Delta": 150
-    },
-    {
-      "PeriodDate": "2026-01-13",
-      "PeriodKey": "W_2",
-      "SortOrder": 2,
-      "CategoryGroup": "Residential",
-      "Amount": 3112,
-      "PriorAmount": 2965,
-      "Delta": 147
-    },
-    {
-      "PeriodDate": "2026-01-20",
-      "PeriodKey": "W_3",
-      "SortOrder": 3,
-      "CategoryGroup": "Residential",
-      "Amount": 3124,
-      "PriorAmount": 2980,
-      "Delta": 144
-    },
-    {
-      "PeriodDate": "2026-01-27",
-      "PeriodKey": "W_4",
-      "SortOrder": 4,
-      "CategoryGroup": "Residential",
-      "Amount": 3136,
-      "PriorAmount": 2995,
-      "Delta": 141
-    },
-    {
-      "PeriodDate": "2026-02-03",
-      "PeriodKey": "W_5",
-      "SortOrder": 5,
-      "CategoryGroup": "Residential",
-      "Amount": 3148,
-      "PriorAmount": 3010,
-      "Delta": 138
-    },
-    {
-      "PeriodDate": "2026-02-10",
-      "PeriodKey": "W_6",
-      "SortOrder": 6,
-      "CategoryGroup": "Residential",
-      "Amount": 3160,
-      "PriorAmount": 3025,
-      "Delta": 135
-    },
-    {
-      "PeriodDate": "2026-02-17",
-      "PeriodKey": "W_7",
-      "SortOrder": 7,
-      "CategoryGroup": "Residential",
-      "Amount": 3172,
-      "PriorAmount": 3040,
-      "Delta": 132
-    },
-    {
-      "PeriodDate": "2026-02-24",
-      "PeriodKey": "W_8",
-      "SortOrder": 8,
-      "CategoryGroup": "Residential",
-      "Amount": 3184,
-      "PriorAmount": 3055,
-      "Delta": 129
-    },
-    {
-      "PeriodDate": "2026-03-03",
-      "PeriodKey": "W_9",
-      "SortOrder": 9,
-      "CategoryGroup": "Residential",
-      "Amount": 3196,
-      "PriorAmount": 3070,
-      "Delta": 126
-    },
-    {
-      "PeriodDate": "2026-03-10",
-      "PeriodKey": "W_10",
-      "SortOrder": 10,
-      "CategoryGroup": "Residential",
-      "Amount": 3208,
-      "PriorAmount": 3085,
-      "Delta": 123
-    },
-    {
-      "PeriodDate": "2026-03-17",
-      "PeriodKey": "W_11",
-      "SortOrder": 11,
-      "CategoryGroup": "Residential",
-      "Amount": 3220,
       "PriorAmount": 3100,
-      "Delta": 120
+      "Delta": 30,
+      "CategoryGroup": "Residential"
     },
     {
+      "Bucket": "31-60",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 1400,
+      "PriorAmount": 1400,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 680,
+      "PriorAmount": 680,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-06",
+      "PeriodDate": "2026-01-06",
+      "Amount": 220,
+      "PriorAmount": 220,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 3150,
+      "PriorAmount": 3120,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 1380,
+      "PriorAmount": 1350,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 660,
+      "PriorAmount": 630,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-13",
+      "PeriodDate": "2026-01-13",
+      "Amount": 230,
+      "PriorAmount": 200,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 3200,
+      "PriorAmount": 3170,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 1360,
+      "PriorAmount": 1330,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 640,
+      "PriorAmount": 610,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-20",
+      "PeriodDate": "2026-01-20",
+      "Amount": 240,
+      "PriorAmount": 210,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 3250,
+      "PriorAmount": 3220,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 1340,
+      "PriorAmount": 1310,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 620,
+      "PriorAmount": 590,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-01-27",
+      "PeriodDate": "2026-01-27",
+      "Amount": 250,
+      "PriorAmount": 220,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 3300,
+      "PriorAmount": 3270,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 1320,
+      "PriorAmount": 1290,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 600,
+      "PriorAmount": 570,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-03",
+      "PeriodDate": "2026-02-03",
+      "Amount": 260,
+      "PriorAmount": 230,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 3350,
+      "PriorAmount": 3320,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 1300,
+      "PriorAmount": 1270,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 580,
+      "PriorAmount": 550,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-10",
+      "PeriodDate": "2026-02-10",
+      "Amount": 270,
+      "PriorAmount": 240,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 3400,
+      "PriorAmount": 3370,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 1280,
+      "PriorAmount": 1250,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 560,
+      "PriorAmount": 530,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-17",
+      "PeriodDate": "2026-02-17",
+      "Amount": 280,
+      "PriorAmount": 250,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 3450,
+      "PriorAmount": 3420,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 1260,
+      "PriorAmount": 1230,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 540,
+      "PriorAmount": 510,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-02-24",
+      "PeriodDate": "2026-02-24",
+      "Amount": 290,
+      "PriorAmount": 260,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 3500,
+      "PriorAmount": 3470,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 1240,
+      "PriorAmount": 1210,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 520,
+      "PriorAmount": 490,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-03",
+      "PeriodDate": "2026-03-03",
+      "Amount": 300,
+      "PriorAmount": 270,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 3550,
+      "PriorAmount": 3520,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 1220,
+      "PriorAmount": 1190,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 500,
+      "PriorAmount": 470,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-10",
+      "PeriodDate": "2026-03-10",
+      "Amount": 310,
+      "PriorAmount": 280,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 3600,
+      "PriorAmount": 3570,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 1200,
+      "PriorAmount": 1170,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 480,
+      "PriorAmount": 450,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-17",
+      "PeriodDate": "2026-03-17",
+      "Amount": 320,
+      "PriorAmount": 290,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-24",
       "PeriodDate": "2026-03-24",
-      "PeriodKey": "W_12",
-      "SortOrder": 12,
-      "CategoryGroup": "Residential",
-      "Amount": 3232,
-      "PriorAmount": 3115,
-      "Delta": 117
+      "Amount": 3650,
+      "PriorAmount": 3620,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
     },
     {
+      "Bucket": "31-60",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 1180,
+      "PriorAmount": 1150,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 460,
+      "PriorAmount": 430,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-24",
+      "PeriodDate": "2026-03-24",
+      "Amount": 330,
+      "PriorAmount": 300,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "0-30",
+      "Period": "2026-03-31",
       "PeriodDate": "2026-03-31",
-      "PeriodKey": "W_13",
-      "SortOrder": 13,
-      "CategoryGroup": "Residential",
-      "Amount": 3244,
-      "PriorAmount": 3130,
-      "Delta": 114
+      "Amount": 3700,
+      "PriorAmount": 3670,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "31-60",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 1160,
+      "PriorAmount": 1130,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": "61-90",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 440,
+      "PriorAmount": 410,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
+    },
+    {
+      "Bucket": ">90",
+      "Period": "2026-03-31",
+      "PeriodDate": "2026-03-31",
+      "Amount": 340,
+      "PriorAmount": 310,
+      "Delta": 30,
+      "CategoryGroup": "Residential"
     }
   ],
   "debug": {
     "source": "dbo.vw_aging_residential_delta",
-    "returnedRows": 13,
+    "returnedRows": 52,
     "requestedMaxRows": 50000
   }
 }
