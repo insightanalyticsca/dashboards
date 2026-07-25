@@ -1,0 +1,159 @@
+{
+  "title": "Aging Forecast Monitor (90-day)",
+  "asOfLabel": "Updated: Mar 2026",
+  "notes": [
+    "Forecast model: ARIMA(2,1,1) trained on trailing 52 weeks.",
+    "Confidence band represents 80% prediction interval."
+  ],
+  "charts": [
+    {
+      "id": "forecast-line",
+      "title": "AR Balance Forecast (CAD \u00d71000)",
+      "kind": "line",
+      "categories": [
+        "01/06",
+        "01/13",
+        "01/20",
+        "01/27",
+        "02/03",
+        "02/10",
+        "02/17",
+        "02/24",
+        "03/03",
+        "03/10",
+        "03/17",
+        "03/24",
+        "03/31",
+        "04/06",
+        "04/13",
+        "04/20",
+        "04/27",
+        "05/04",
+        "05/11"
+      ],
+      "leftAxisTitle": "CAD (\u00d71000)",
+      "series": [
+        {
+          "name": "Actual",
+          "type": "line",
+          "data": [
+            14200,
+            14300,
+            14100,
+            14400,
+            14500,
+            14600,
+            14700,
+            14650,
+            14750,
+            14800,
+            14750,
+            14800,
+            14800,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "color": "#0808ee",
+          "smooth": true
+        },
+        {
+          "name": "Forecast",
+          "type": "line",
+          "data": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            14800,
+            14920,
+            15050,
+            15100,
+            15200,
+            15300
+          ],
+          "color": "#09c698",
+          "smooth": true,
+          "lineStyle": {
+            "type": "dashed"
+          }
+        },
+        {
+          "name": "Upper Bound",
+          "type": "line",
+          "data": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            14800,
+            15050,
+            15280,
+            15420,
+            15600,
+            15780
+          ],
+          "color": "#635BCB",
+          "smooth": true,
+          "lineStyle": {
+            "opacity": 0.5
+          },
+          "areaStyle": {
+            "opacity": 0.1
+          }
+        },
+        {
+          "name": "Lower Bound",
+          "type": "line",
+          "data": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            14800,
+            14790,
+            14820,
+            14780,
+            14800,
+            14820
+          ],
+          "color": "#635BCB",
+          "smooth": true,
+          "lineStyle": {
+            "opacity": 0.5
+          }
+        }
+      ]
+    }
+  ]
+}

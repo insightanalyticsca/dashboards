@@ -1,0 +1,189 @@
+{
+  "title": "Final Bill Recovery",
+  "version": "213",
+  "asOfLabel": "Period: Mar 2026",
+  "notes": [
+    "Final bill recovery rate improved 2.1pts MoM via enhanced deposit application workflow.",
+    "Average recovery time reduced from 47 to 38 days."
+  ],
+  "kpis": [
+    {
+      "label": "Recovery Rate",
+      "value": 64.8,
+      "format": "percent",
+      "delta": 2.1,
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "label": "Recovered (CAD)",
+      "value": 920000,
+      "format": "currency",
+      "delta": 8.4,
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    },
+    {
+      "label": "Avg Days to Recover",
+      "value": 38,
+      "format": "number",
+      "delta": -9,
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    },
+    {
+      "label": "Write-offs",
+      "value": 480000,
+      "format": "currency",
+      "delta": -3.2,
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    }
+  ],
+  "charts": [
+    {
+      "id": "recovery-trend",
+      "title": "Recovery Rate Trend (6mo)",
+      "kind": "line",
+      "categories": [
+        "Jan 2026",
+        "Jan 2026",
+        "Mar 2026",
+        "Apr 2026",
+        "May 2026",
+        "May 2026",
+        "Jun 2026"
+      ],
+      "leftAxisTitle": "% Recovered",
+      "series": [
+        {
+          "name": "Commercial",
+          "type": "line",
+          "data": [
+            58.2,
+            60.1,
+            61.4,
+            62.8,
+            63.9,
+            64.3,
+            64.8
+          ],
+          "color": "#4338ca",
+          "smooth": true
+        },
+        {
+          "name": "Residential",
+          "type": "line",
+          "data": [
+            52.1,
+            53.8,
+            55.0,
+            56.4,
+            57.2,
+            58.1,
+            59.0
+          ],
+          "color": "#2dd4bf",
+          "smooth": true
+        }
+      ]
+    },
+    {
+      "id": "recovery-methods-bar",
+      "title": "Recovery Methods",
+      "kind": "bar",
+      "categories": [
+        "Deposit Applied",
+        "Payment Plan",
+        "Collection Agency",
+        "Legal Action",
+        "Write-off"
+      ],
+      "series": [
+        {
+          "name": "CAD",
+          "type": "bar",
+          "data": [
+            420000,
+            280000,
+            145000,
+            75000,
+            48000
+          ],
+          "color": "#4338ca"
+        }
+      ]
+    },
+    {
+      "id": "recovery-aging-pie",
+      "title": "Recovery by Aging Bucket",
+      "kind": "pie",
+      "categories": [
+        "0-30 days",
+        "31-60 days",
+        "61-90 days",
+        "90+ days"
+      ],
+      "series": [
+        {
+          "name": "Recovered",
+          "type": "pie",
+          "data": [
+            380000,
+            240000,
+            180000,
+            120000
+          ]
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "recovery-by-segment",
+      "title": "Recovery Performance by Segment",
+      "columns": [
+        "Segment",
+        "Final Bills Issued",
+        "Recovered (CAD)",
+        "Recovery %",
+        "Avg Days",
+        "Write-offs"
+      ],
+      "formats": [
+        null,
+        "number",
+        "currency",
+        "percent",
+        "number",
+        "currency"
+      ],
+      "rows": [
+        [
+          "Commercial",
+          845,
+          580000,
+          68.6,
+          34,
+          28000
+        ],
+        [
+          "Residential",
+          2480,
+          1540000,
+          62.1,
+          41,
+          320000
+        ],
+        [
+          "Industrial",
+          95,
+          68000,
+          71.6,
+          29,
+          4800
+        ]
+      ]
+    }
+  ]
+}

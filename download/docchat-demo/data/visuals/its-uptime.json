@@ -1,0 +1,146 @@
+{
+  "title": "ITS Uptime Report \u2014 Last Completed Month",
+  "asOfLabel": "Feb 2026",
+  "notes": [
+    "Total services monitored: 24 \u00b7 Met SLA: 22 \u00b7 Watch: 2",
+    "Overall uptime: 99.974% \u2014 within 99.95% SLA target"
+  ],
+  "charts": [
+    {
+      "id": "uptime-bar",
+      "title": "Service Uptime % by Category",
+      "kind": "bar",
+      "categories": [
+        "Email",
+        "Web Portal",
+        "API Gateway",
+        "VPN",
+        "Database",
+        "Storage",
+        "DNS",
+        "Backup"
+      ],
+      "leftAxisTitle": "Uptime %",
+      "series": [
+        {
+          "name": "This Month",
+          "type": "bar",
+          "data": [
+            99.98,
+            99.94,
+            99.99,
+            99.91,
+            99.97,
+            100.0,
+            100.0,
+            99.98
+          ],
+          "color": "#0808ee"
+        },
+        {
+          "name": "Last Month",
+          "type": "bar",
+          "data": [
+            99.95,
+            99.92,
+            99.97,
+            99.88,
+            99.94,
+            99.99,
+            100.0,
+            99.96
+          ],
+          "color": "#c9c9c9"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "uptime-detail",
+      "title": "Service Uptime Detail",
+      "columns": [
+        "Service",
+        "Category",
+        "Uptime %",
+        "SLA Target %",
+        "Status",
+        "Incidents"
+      ],
+      "formats": [
+        null,
+        null,
+        "percent",
+        "percent",
+        null,
+        "number"
+      ],
+      "rows": [
+        [
+          "Exchange Online",
+          "Email",
+          99.98,
+          99.95,
+          "Met",
+          1
+        ],
+        [
+          "Customer Portal",
+          "Web Portal",
+          99.94,
+          99.95,
+          "Marginal",
+          2
+        ],
+        [
+          "REST API Gateway",
+          "API",
+          99.99,
+          99.95,
+          "Met",
+          0
+        ],
+        [
+          "Corporate VPN",
+          "Network",
+          99.91,
+          99.95,
+          "Breach",
+          3
+        ],
+        [
+          "SQL Server Cluster",
+          "Database",
+          99.97,
+          99.95,
+          "Met",
+          1
+        ],
+        [
+          "Object Storage",
+          "Storage",
+          100.0,
+          99.95,
+          "Met",
+          0
+        ],
+        [
+          "Internal DNS",
+          "Network",
+          100.0,
+          99.99,
+          "Met",
+          0
+        ],
+        [
+          "Backup Service",
+          "Backup",
+          99.98,
+          99.95,
+          "Met",
+          0
+        ]
+      ]
+    }
+  ]
+}

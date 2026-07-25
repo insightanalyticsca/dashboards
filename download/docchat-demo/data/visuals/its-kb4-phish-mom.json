@@ -1,0 +1,117 @@
+{
+  "title": "KB4 Phishing Simulation \u2014 MoM Trend",
+  "asOfLabel": "Period: Mar 2026",
+  "charts": [
+    {
+      "id": "kb4-phish-mom",
+      "title": "Phishing Click Rate (MoM %)",
+      "kind": "bar",
+      "categories": [
+        "Sep 2025",
+        "Oct 2025",
+        "Oct 2025",
+        "Nov 2025",
+        "Dec 2025",
+        "Jan 2026",
+        "Feb 2026"
+      ],
+      "leftAxisTitle": "Click Rate %",
+      "series": [
+        {
+          "name": "Click Rate %",
+          "type": "bar",
+          "data": [
+            18.7,
+            17.2,
+            15.8,
+            14.4,
+            13.5,
+            12.9,
+            12.3
+          ],
+          "color": "#0808ee"
+        }
+      ]
+    },
+    {
+      "id": "kb4-by-dept-bar",
+      "title": "Click Rate by Department (Q1 2026)",
+      "kind": "bar",
+      "categories": [
+        "Operations",
+        "Customer Service",
+        "Finance",
+        "HR",
+        "IT",
+        "Sales",
+        "Executive"
+      ],
+      "series": [
+        {
+          "name": "Click Rate %",
+          "type": "bar",
+          "data": [
+            21.4,
+            17.8,
+            9.2,
+            8.1,
+            4.3,
+            12.6,
+            2.1
+          ],
+          "color": "#0808ee"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "kb4-summary",
+      "title": "KB4 Simulation Summary (Q1 2026)",
+      "columns": [
+        "Metric",
+        "Q4 2025",
+        "Q1 2026",
+        "\u0394",
+        "Target"
+      ],
+      "formats": [
+        null,
+        "percent",
+        "percent",
+        "decimal",
+        "percent"
+      ],
+      "rows": [
+        [
+          "Overall Click Rate",
+          18.7,
+          12.3,
+          -6.4,
+          10.0
+        ],
+        [
+          "Report Rate",
+          22.1,
+          34.2,
+          12.1,
+          40.0
+        ],
+        [
+          "Repeat Offender Rate",
+          8.4,
+          5.2,
+          -3.2,
+          3.0
+        ],
+        [
+          "Training Completion",
+          92.1,
+          96.4,
+          4.3,
+          95.0
+        ]
+      ]
+    }
+  ]
+}

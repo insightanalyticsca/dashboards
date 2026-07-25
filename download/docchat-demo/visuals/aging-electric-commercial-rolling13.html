@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Commercial Electric Arrears</title>
+  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20260726">
+  <link rel="stylesheet" href="../css/visuals-gallery.css?v=20260726">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body data-suite="csr" data-variant="default" data-sector="csr">
+  <div class="vis-frame">
+    <header class="vis-topbar">
+      <a class="vis-back" href="../visuals.html">
+        <i class="fa-solid fa-arrow-left"></i> Gallery
+      </a>
+      <div class="vis-breadcrumb">
+        <span class="vis-sector vis-sector--csr">CSR</span>
+        <span class="vis-sep">/</span>
+        <span class="vis-name">Commercial Electric Arrears</span>
+      </div>
+      <a class="vis-gh" href="https://github.com/insightanalyticsca/dashboards" target="_blank" rel="noopener">
+        <i class="fa-brands fa-github"></i>
+      </a>
+    </header>
+
+    <div class="vis-host">
+      <div class="vis-loading" id="loading">
+        <span class="spin"></span>
+        <span>Loading dashboard data…</span>
+      </div>
+      <div id="app" style="display:none"></div>
+    </div>
+
+    <footer class="vis-foot">
+      <span>Cloned from .NET MVC <code>corporate_dashboards</code> · static demo</span>
+      <span>v213 · aging-electric-commercial-rolling13</span>
+    </footer>
+  </div>
+
+  <script src="../js/visuals-renderer.js?v=20260726"></script>
+  <script>
+    (async function() {
+      try {
+        const res = await fetch('../data/visuals/aging-electric-commercial-rolling13.json?v=20260726');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const payload = await res.json();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        window.renderVisual(payload);
+      } catch (err) {
+        document.getElementById('loading').innerHTML = '<span class="err">⚠ ' + err.message + '</span>';
+      }
+    })();
+  </script>
+</body>
+</html>
