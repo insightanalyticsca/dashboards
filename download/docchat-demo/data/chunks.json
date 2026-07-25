@@ -1,0 +1,166 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-26T10:00:00Z",
+  "chunks": [
+    {
+      "id": "chk-001",
+      "documentId": "doc-001",
+      "index": 0,
+      "text": "Q1 2026 Financial Performance Report. Total revenue reached $84.2M, representing a 12.4% year-over-year growth driven primarily by commercial segment expansion. Operating margin improved to 23.1% from 21.8% in Q1 2025.",
+      "tokens": 62,
+      "page": 1
+    },
+    {
+      "id": "chk-002",
+      "documentId": "doc-001",
+      "index": 1,
+      "text": "Commercial revenue grew 18.2% to $52.7M while residential revenue remained flat at $31.5M. The commercial segment now represents 62.6% of total revenue, up from 59.1% in the prior year period.",
+      "tokens": 48,
+      "page": 3
+    },
+    {
+      "id": "chk-003",
+      "documentId": "doc-001",
+      "index": 2,
+      "text": "EBITDA for Q1 2026 was $24.3M compared to $19.8M in Q1 2025, a 22.7% increase. EBITDA margin expanded 240 basis points to 28.9%.",
+      "tokens": 36,
+      "page": 5
+    },
+    {
+      "id": "chk-004",
+      "documentId": "doc-002",
+      "index": 0,
+      "text": "Customer Service Operations Manual v8.2. Section 1: Escalation Protocol. Tier 1 agents must escalate any customer inquiry exceeding 8 minutes or involving credit adjustments over $50 to Tier 2 supervisor.",
+      "tokens": 41,
+      "page": 4
+    },
+    {
+      "id": "chk-005",
+      "documentId": "doc-002",
+      "index": 1,
+      "text": "First Contact Resolution (FCR) target is 78% measured monthly. Average Handle Time (AHT) target is 6:42. Quality Assurance score target is 92% based on monthly call monitoring of 5 calls per agent.",
+      "tokens": 45,
+      "page": 12
+    },
+    {
+      "id": "chk-006",
+      "documentId": "doc-002",
+      "index": 2,
+      "text": "Disconnect orders require verification of identity using two-factor authentication: account number plus last 4 digits of SSN, OR account number plus PIN established at signup. Disconnects must be processed within 24 hours of request.",
+      "tokens": 52,
+      "page": 28
+    },
+    {
+      "id": "chk-007",
+      "documentId": "doc-003",
+      "index": 0,
+      "text": "AR Aging Analysis March 2026. Total receivables balance: $14.8M. Current bucket (0-30 days): $9.2M (62.2%). 31-60 day bucket: $3.1M (20.9%). 61-90 day bucket: $1.7M (11.5%). 91+ day bucket: $0.8M (5.4%).",
+      "tokens": 56,
+      "page": 1
+    },
+    {
+      "id": "chk-008",
+      "documentId": "doc-003",
+      "index": 1,
+      "text": "Commercial aging shows elevated risk in 91+ bucket at $0.6M, primarily driven by 3 large accounts in bankruptcy proceedings. Bankruptcy filings increased 23% quarter-over-quarter.",
+      "tokens": 38,
+      "page": 4
+    },
+    {
+      "id": "chk-009",
+      "documentId": "doc-004",
+      "index": 0,
+      "text": "ITS Incident Response Playbook. Severity 1 (Critical): Total system outage, customer-facing service down, or data breach in progress. Target response time: 5 minutes. Target resolution time: 1 hour. Escalation: CISO + CTO immediately.",
+      "tokens": 53,
+      "page": 6
+    },
+    {
+      "id": "chk-010",
+      "documentId": "doc-004",
+      "index": 1,
+      "text": "Severity 2 (High): Major feature degraded, partial outage affecting subset of users. Target response: 15 minutes. Target resolution: 4 hours. Escalation: On-call engineering manager.",
+      "tokens": 38,
+      "page": 7
+    },
+    {
+      "id": "chk-011",
+      "documentId": "doc-005",
+      "index": 0,
+      "text": "Strategic Roadmap 2026-2028. Pillar 1: Digital Transformation - migrate 80% of customer interactions to self-service by end of 2027. Pillar 2: Operational Excellence - reduce cost-to-serve by 18% over 3 years.",
+      "tokens": 49,
+      "page": 8
+    },
+    {
+      "id": "chk-012",
+      "documentId": "doc-005",
+      "index": 1,
+      "text": "Customer Experience initiatives target NPS improvement from 42 to 60 by Q4 2027. Key drivers: faster issue resolution (target AHT below 5 minutes), proactive outage communication, and personalized billing insights.",
+      "tokens": 46,
+      "page": 14
+    },
+    {
+      "id": "chk-013",
+      "documentId": "doc-006",
+      "index": 0,
+      "text": "E-Bill Adoption Performance Review. Current paperless adoption: 47.2% residential, 71.8% commercial. Target: 65% residential, 85% commercial by Q4 2026.",
+      "tokens": 35,
+      "page": 2
+    },
+    {
+      "id": "chk-014",
+      "documentId": "doc-006",
+      "index": 1,
+      "text": "Commercial segment adoption drivers: invoice consolidation (38%), auto-pay enrollment (29%), sustainability mandates (22%). Residential drivers: promotional incentives (45%), mobile app convenience (33%).",
+      "tokens": 41,
+      "page": 7
+    },
+    {
+      "id": "chk-015",
+      "documentId": "doc-008",
+      "index": 0,
+      "text": "KB4 Phishing Simulation Q1 2026. Overall click rate: 12.3% (down from 18.7% Q4 2025). High-risk departments: Operations (21.4%), Customer Service (17.8%), Finance (9.2%). Best performing: IT Security (2.1%).",
+      "tokens": 47,
+      "page": 3
+    },
+    {
+      "id": "chk-016",
+      "documentId": "doc-008",
+      "index": 1,
+      "text": "Repeat offenders (3+ clicks in trailing 12 months): 47 employees. Mandatory re-training completed by 89%. Phishing reporting rate via report button: 34.2% (target: 40%).",
+      "tokens": 38,
+      "page": 5
+    },
+    {
+      "id": "chk-017",
+      "documentId": "doc-011",
+      "index": 0,
+      "text": "Network Infrastructure Architecture. Core routing: dual Cisco Catalyst 9500 in HA configuration. WAN: SD-WAN via Viptela with 4 MPLS circuits and 2 internet breakouts. Wireless: Aruba 635 APs covering all corporate sites.",
+      "tokens": 47,
+      "page": 9
+    },
+    {
+      "id": "chk-018",
+      "documentId": "doc-011",
+      "index": 1,
+      "text": "Segmentation strategy: 5 VLANs (Corporate, Guest, IoT, Voice, Security-Cameras). Micro-segmentation via Cisco TrustSec for PCI-compliant systems. East-west traffic inspected via Cisco Tetration.",
+      "tokens": 41,
+      "page": 22
+    },
+    {
+      "id": "chk-019",
+      "documentId": "doc-012",
+      "index": 0,
+      "text": "Monthly Close Reconciliation Procedures. Close calendar: Day 1 begins with subledger tie-outs, Day 2-3 journal entries, Day 4 account reconciliations, Day 5 variance analysis, Day 6-7 review and sign-off.",
+      "tokens": 42,
+      "page": 3
+    },
+    {
+      "id": "chk-020",
+      "documentId": "doc-012",
+      "index": 1,
+      "text": "Materiality threshold for variance investigation: $25,000 or 5% of account balance, whichever is lower. All variances above threshold require written explanation by account owner and CFO approval.",
+      "tokens": 41,
+      "page": 8
+    }
+  ]
+}
