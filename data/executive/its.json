@@ -1,0 +1,658 @@
+{
+  "key": "its",
+  "title": "ITS Dashboard \u2014 IT Service & Security",
+  "variant": "indigo",
+  "asOfLabel": "Period: March 2026",
+  "generatedUtc": "2026-07-25T22:06:30Z",
+  "metrics": [
+    {
+      "key": "uptime",
+      "label": "Overall Uptime",
+      "value": 99.974,
+      "format": "percent2",
+      "period": "Feb 2026",
+      "mom": 0.02,
+      "yoy": 0.08,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "key": "sla-met",
+      "label": "SLA Met",
+      "value": 22,
+      "format": "number",
+      "period": "Feb 2026",
+      "mom": 1,
+      "yoy": 3,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "number",
+      "positiveIsGood": true
+    },
+    {
+      "key": "sla-watch",
+      "label": "SLA Watch",
+      "value": 2,
+      "format": "number",
+      "period": "Feb 2026",
+      "mom": -1,
+      "yoy": -2,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "number",
+      "positiveIsGood": false
+    },
+    {
+      "key": "open-tickets",
+      "label": "Open Tickets",
+      "value": 226,
+      "format": "number",
+      "period": "Mar 2026",
+      "mom": -4.2,
+      "yoy": -8.1,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    },
+    {
+      "key": "p1-tickets",
+      "label": "P1 Critical",
+      "value": 4,
+      "format": "number",
+      "period": "Mar 2026",
+      "mom": -2,
+      "yoy": -1,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "number",
+      "positiveIsGood": true
+    },
+    {
+      "key": "kb4-click-rate",
+      "label": "KB4 Click Rate",
+      "value": 12.3,
+      "format": "percent",
+      "period": "Q1 2026",
+      "mom": -6.4,
+      "yoy": -8.2,
+      "momLabel": "QoQ",
+      "yoyLabel": "YoY",
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "key": "kb4-report-rate",
+      "label": "KB4 Report Rate",
+      "value": 34.2,
+      "format": "percent",
+      "period": "Q1 2026",
+      "mom": 12.1,
+      "yoy": 18.4,
+      "momLabel": "QoQ",
+      "yoyLabel": "YoY",
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "key": "ocsf-critical",
+      "label": "OCSF Critical Events",
+      "value": 47,
+      "format": "number",
+      "period": "Mar 2026",
+      "mom": 3,
+      "yoy": -8,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "number",
+      "positiveIsGood": false
+    }
+  ],
+  "charts": [
+    {
+      "id": "uptime-bar",
+      "title": "Service Uptime % by Category",
+      "kind": "bar",
+      "width": "wide",
+      "valueFormat": "percent2",
+      "leftAxisTitle": "Uptime %",
+      "rightAxisTitle": "",
+      "categories": [
+        "Email",
+        "Web Portal",
+        "API Gateway",
+        "VPN",
+        "Database",
+        "Storage",
+        "DNS",
+        "Backup"
+      ],
+      "series": [
+        {
+          "name": "This Month",
+          "type": "bar",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": false,
+          "data": [
+            99.98,
+            99.94,
+            99.99,
+            99.91,
+            99.97,
+            100.0,
+            100.0,
+            99.98
+          ]
+        },
+        {
+          "name": "Last Month",
+          "type": "bar",
+          "axis": "left",
+          "stack": "",
+          "color": "#c9c9c9",
+          "smooth": false,
+          "data": [
+            99.95,
+            99.92,
+            99.97,
+            99.88,
+            99.94,
+            99.99,
+            100.0,
+            99.96
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ticket-volume-line",
+      "title": "Ticket Volume \u2014 Opened vs Closed (13 Week)",
+      "kind": "line",
+      "width": "wide",
+      "valueFormat": "number",
+      "leftAxisTitle": "Count",
+      "rightAxisTitle": "",
+      "categories": [
+        "01/06",
+        "01/13",
+        "01/20",
+        "01/27",
+        "02/03",
+        "02/10",
+        "02/17",
+        "02/24",
+        "03/03",
+        "03/10",
+        "03/17",
+        "03/24",
+        "03/31"
+      ],
+      "series": [
+        {
+          "name": "Opened",
+          "type": "line",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": true,
+          "data": [
+            142,
+            138,
+            156,
+            148,
+            162,
+            154,
+            168,
+            144,
+            158,
+            152,
+            166,
+            148,
+            160
+          ]
+        },
+        {
+          "name": "Closed",
+          "type": "line",
+          "axis": "left",
+          "stack": "",
+          "color": "#2dd4bf",
+          "smooth": true,
+          "data": [
+            128,
+            134,
+            142,
+            152,
+            158,
+            148,
+            162,
+            158,
+            154,
+            162,
+            158,
+            156,
+            164
+          ]
+        }
+      ]
+    },
+    {
+      "id": "open-priority-pie",
+      "title": "Open Tickets by Priority",
+      "kind": "pie",
+      "width": "narrow",
+      "valueFormat": "number",
+      "leftAxisTitle": "",
+      "rightAxisTitle": "",
+      "categories": [
+        "P1 Critical",
+        "P2 High",
+        "P3 Medium",
+        "P4 Low"
+      ],
+      "series": [
+        {
+          "name": "Count",
+          "type": "pie",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": false,
+          "data": [
+            4,
+            18,
+            62,
+            142
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kb4-click-rate-bar",
+      "title": "KB4 Phishing Click Rate (MoM %)",
+      "kind": "bar",
+      "width": "wide",
+      "valueFormat": "percent",
+      "leftAxisTitle": "Click Rate %",
+      "rightAxisTitle": "Report Rate %",
+      "categories": [
+        "Mar 25",
+        "Apr 25",
+        "May 25",
+        "Jun 25",
+        "Jul 25",
+        "Aug 25",
+        "Sep 25",
+        "Oct 25",
+        "Nov 25",
+        "Dec 25",
+        "Dec 25",
+        "Jan 26",
+        "Mar 26"
+      ],
+      "series": [
+        {
+          "name": "Click Rate %",
+          "type": "bar",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": false,
+          "data": [
+            18.7,
+            17.2,
+            15.8,
+            14.4,
+            13.5,
+            12.9,
+            12.3,
+            11.8,
+            11.2,
+            10.9,
+            10.5,
+            10.2,
+            9.9
+          ]
+        },
+        {
+          "name": "Report Rate %",
+          "type": "line",
+          "axis": "right",
+          "stack": "",
+          "color": "#2dd4bf",
+          "smooth": true,
+          "data": [
+            22.1,
+            24.5,
+            26.8,
+            28.4,
+            30.2,
+            32.5,
+            34.2,
+            35.8,
+            37.1,
+            38.4,
+            39.6,
+            40.8,
+            42.0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kb4-by-dept-bar",
+      "title": "KB4 Click Rate by Department (Q1 2026)",
+      "kind": "bar",
+      "width": "wide",
+      "valueFormat": "percent",
+      "leftAxisTitle": "Click Rate %",
+      "rightAxisTitle": "",
+      "categories": [
+        "Operations",
+        "Customer Service",
+        "Finance",
+        "HR",
+        "IT",
+        "Sales",
+        "Executive"
+      ],
+      "series": [
+        {
+          "name": "Click Rate %",
+          "type": "bar",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": false,
+          "data": [
+            21.4,
+            17.8,
+            9.2,
+            8.1,
+            4.3,
+            12.6,
+            2.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ocsf-events-line",
+      "title": "OCSF Security Events Trend (\u00d71000)",
+      "kind": "line",
+      "width": "wide",
+      "valueFormat": "number",
+      "leftAxisTitle": "Events (\u00d71000)",
+      "rightAxisTitle": "",
+      "categories": [
+        "Mar 25",
+        "Apr 25",
+        "May 25",
+        "Jun 25",
+        "Jul 25",
+        "Aug 25",
+        "Sep 25",
+        "Oct 25",
+        "Nov 25",
+        "Dec 25",
+        "Dec 25",
+        "Jan 26",
+        "Mar 26"
+      ],
+      "series": [
+        {
+          "name": "Critical",
+          "type": "line",
+          "axis": "left",
+          "stack": "",
+          "color": "#ef4444",
+          "smooth": true,
+          "data": [
+            38,
+            42,
+            45,
+            41,
+            44,
+            47,
+            47,
+            43,
+            46,
+            48,
+            45,
+            47,
+            47
+          ]
+        },
+        {
+          "name": "High",
+          "type": "line",
+          "axis": "left",
+          "stack": "",
+          "color": "#f59e0b",
+          "smooth": true,
+          "data": [
+            142,
+            158,
+            167,
+            171,
+            178,
+            181,
+            184,
+            175,
+            180,
+            188,
+            182,
+            186,
+            184
+          ]
+        },
+        {
+          "name": "Medium",
+          "type": "line",
+          "axis": "left",
+          "stack": "",
+          "color": "#4338ca",
+          "smooth": true,
+          "data": [
+            421,
+            438,
+            445,
+            462,
+            478,
+            491,
+            504,
+            488,
+            498,
+            512,
+            502,
+            510,
+            504
+          ]
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "uptime-detail",
+      "title": "Service Uptime Detail",
+      "width": "wide",
+      "kind": "table",
+      "columns": [
+        "Service",
+        "Category",
+        "Uptime %",
+        "SLA Target %",
+        "Status",
+        "Incidents"
+      ],
+      "columnGroups": [],
+      "formats": {
+        "Uptime %": "percent2",
+        "SLA Target %": "percent2",
+        "Incidents": "number"
+      },
+      "rows": [
+        {
+          "Service": "Exchange Online",
+          "Category": "Email",
+          "Uptime %": 99.98,
+          "SLA Target %": 99.95,
+          "Status": "Met",
+          "Incidents": 1
+        },
+        {
+          "Service": "Customer Portal",
+          "Category": "Web Portal",
+          "Uptime %": 99.94,
+          "SLA Target %": 99.95,
+          "Status": "Marginal",
+          "Incidents": 2
+        },
+        {
+          "Service": "REST API Gateway",
+          "Category": "API",
+          "Uptime %": 99.99,
+          "SLA Target %": 99.95,
+          "Status": "Met",
+          "Incidents": 0
+        },
+        {
+          "Service": "Corporate VPN",
+          "Category": "Network",
+          "Uptime %": 99.91,
+          "SLA Target %": 99.95,
+          "Status": "Breach",
+          "Incidents": 3
+        },
+        {
+          "Service": "SQL Server Cluster",
+          "Category": "Database",
+          "Uptime %": 99.97,
+          "SLA Target %": 99.95,
+          "Status": "Met",
+          "Incidents": 1
+        },
+        {
+          "Service": "Object Storage",
+          "Category": "Storage",
+          "Uptime %": 100.0,
+          "SLA Target %": 99.95,
+          "Status": "Met",
+          "Incidents": 0
+        },
+        {
+          "Service": "Internal DNS",
+          "Category": "Network",
+          "Uptime %": 100.0,
+          "SLA Target %": 99.99,
+          "Status": "Met",
+          "Incidents": 0
+        },
+        {
+          "Service": "Backup Service",
+          "Category": "Backup",
+          "Uptime %": 99.98,
+          "SLA Target %": 99.95,
+          "Status": "Met",
+          "Incidents": 0
+        }
+      ]
+    },
+    {
+      "id": "open-tickets-detail",
+      "title": "Open Tickets \u2014 All Priorities",
+      "width": "wide",
+      "kind": "table",
+      "columns": [
+        "Ticket #",
+        "Priority",
+        "Category",
+        "Assigned",
+        "Age (Days)",
+        "SLA %"
+      ],
+      "columnGroups": [],
+      "formats": {
+        "Age (Days)": "decimal",
+        "SLA %": "percent"
+      },
+      "rows": [
+        {
+          "Ticket #": "INC-10241",
+          "Priority": "P1",
+          "Category": "Network Outage",
+          "Assigned": "J. Patel",
+          "Age (Days)": 0.4,
+          "SLA %": 92.0
+        },
+        {
+          "Ticket #": "INC-10238",
+          "Priority": "P1",
+          "Category": "Database Down",
+          "Assigned": "M. Chen",
+          "Age (Days)": 1.8,
+          "SLA %": 65.0
+        },
+        {
+          "Ticket #": "INC-10234",
+          "Priority": "P2",
+          "Category": "Email Delivery",
+          "Assigned": "S. Rivera",
+          "Age (Days)": 2.4,
+          "SLA %": 78.0
+        },
+        {
+          "Ticket #": "INC-10229",
+          "Priority": "P2",
+          "Category": "VPN Auth Failure",
+          "Assigned": "T. Nguyen",
+          "Age (Days)": 4.1,
+          "SLA %": 84.0
+        },
+        {
+          "Ticket #": "INC-10218",
+          "Priority": "P3",
+          "Category": "Account Locked",
+          "Assigned": "K. Williams",
+          "Age (Days)": 6.2,
+          "SLA %": 92.0
+        },
+        {
+          "Ticket #": "INC-10205",
+          "Priority": "P3",
+          "Category": "Printer Queue",
+          "Assigned": "L. Garcia",
+          "Age (Days)": 8.8,
+          "SLA %": 96.0
+        },
+        {
+          "Ticket #": "REQ-09874",
+          "Priority": "P4",
+          "Category": "Software Install",
+          "Assigned": "B. Kim",
+          "Age (Days)": 12.4,
+          "SLA %": 99.0
+        },
+        {
+          "Ticket #": "REQ-09841",
+          "Priority": "P4",
+          "Category": "Hardware Request",
+          "Assigned": "B. Kim",
+          "Age (Days)": 21.2,
+          "SLA %": 95.0
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Overall uptime 99.974% \u2014 within 99.95% SLA target.",
+    "Corporate VPN breached SLA (99.91% vs 99.95% target) \u2014 3 incidents this period.",
+    "KB4 phishing click rate down 6.4pts QoQ; report rate up 12.1pts QoQ.",
+    "OCSF critical events elevated (47) \u2014 monitor authentication anomalies."
+  ]
+}

@@ -35,9 +35,9 @@
           throw new Error('CSR shared runtime did not load.');
         }
 
-        // CLONE PATCH: fetch from static JSON instead of MVC endpoint.
-        const endpoint = new URL('../data/csr/' + templateId + '.json', location.href);
-        const response = await fetch(endpoint, { cache: 'no-store' });
+        const endpoint = new URL('../Dashboard/GetCsrDefinition', location.href);
+        endpoint.searchParams.set('templateId', templateId);
+        const response = await fetch(endpoint, { credentials: 'same-origin', cache: 'no-store' });
         if (!response.ok) throw new Error((await response.text()) || ('CSR definition request failed: HTTP ' + response.status));
         const definition = await response.json();
         definition.directSourceLoading = false;

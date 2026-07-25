@@ -179,37 +179,5 @@ tbody tr.delta td.zero{color:var(--ink)}
   else if(window.__DASH_VISUAL_CONTEXT__) receive(window.__DASH_VISUAL_CONTEXT__);
 })();
 </script>
-
-
-
-<script>
-// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
-// Original .NET: data arrived via Multi.cshtml iframe postMessage. Here we self-post.
-(async function () {
-  try {
-    const res = await fetch('../data/csr/aging-commercial-delta.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const payload = await res.json();
-    // Self-post so the visual's existing message listener picks it up.
-    window.postMessage({
-      type: 'dashboard-custom-html:update',
-      payload: payload,
-      data: payload.data || payload
-    }, '*');
-    // Also try calling global entry points (some visuals expose window.init/update/setData).
-    setTimeout(function () {
-      try {
-        if (typeof window.init === 'function') window.init(payload);
-        else if (typeof window.update === 'function') window.update(payload);
-        else if (typeof window.setData === 'function') window.setData(payload);
-      } catch (_) {}
-    }, 50);
-  } catch (err) {
-    console.error('Clone bootstrap failed:', err);
-    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
-    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
-  }
-})();
-</script>
 </body>
 </html>
