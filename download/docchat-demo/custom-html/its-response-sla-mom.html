@@ -1,0 +1,821 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: transparent;
+        }
+
+        .ticket-open-shell,
+        .ticket-open-shell * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: geometricPrecision;
+        }
+
+        .ticket-open-shell {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            min-width: 0;
+            min-height: 0;
+            padding: 4px;
+            overflow: hidden !important;
+            font-family: Segoe UI,Tahoma,Arial,sans-serif;
+            color: #142032;
+        }
+
+        .ticket-open-card {
+            --statusAccent: #48B56B;
+            --statusAccent2: #86D29D;
+            --statusSoft: rgba(72,181,107,0.13);
+            --statusGlow: rgba(72,181,107,0.24);
+            --trendAccent: #DDBB1F;
+            --trendBg: rgba(221,187,31,0.12);
+            --trendBorder: rgba(221,187,31,0.30);
+            --trendGlow: rgba(221,187,31,0.22);
+            position: absolute;
+            inset: 4px;
+            overflow: hidden !important;
+            border-radius: 18px;
+            border: 1px solid #BCB8BE;
+            background: radial-gradient(circle at 92% 8%, rgba(188,237,22,.12), transparent 27%), radial-gradient(circle at 8% 12%, rgba(21,18,244,.06), transparent 29%), radial-gradient(circle at 76% 86%, var(--statusSoft), transparent 34%), linear-gradient(135deg, #FFFFFF 0%, #F3F7FB 48%, #EEF1F6 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 8px 18px rgba(33,43,60,.10);
+            display: grid;
+            grid-template-rows: auto minmax(0,1fr) auto;
+            gap: clamp(8px,1.35vw,13px);
+            padding: clamp(10px,2.2vw,18px);
+        }
+
+            .ticket-open-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 14px;
+                right: 14px;
+                height: 3px;
+                border-radius: 999px;
+                background: linear-gradient(90deg,var(--statusAccent),var(--statusAccent2),rgba(255,255,255,.95));
+                box-shadow: 0 0 8px var(--statusGlow);
+                z-index: 1;
+            }
+
+            .ticket-open-card::after {
+                content: '';
+                position: absolute;
+                right: -28px;
+                top: -28px;
+                width: 128px;
+                height: 128px;
+                border-radius: 50%;
+                background: radial-gradient(circle,var(--statusSoft) 0%,rgba(255,255,255,0) 68%);
+                pointer-events: none;
+            }
+
+        .ticket-head {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .ticket-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+        }
+
+        .ticket-dot-ring {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+            border: 1px solid rgba(20,32,50,.12);
+            box-shadow: 0 2px 6px rgba(15,23,42,.08);
+            flex-shrink: 0;
+        }
+
+        .ticket-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--statusAccent);
+            box-shadow: 0 0 7px var(--statusGlow);
+        }
+
+        .ticket-status {
+            min-width: 0;
+            color: #142032;
+            font-size: clamp(13px,2.1vw,20px);
+            line-height: 1.08;
+            font-weight: 950;
+            letter-spacing: -.025em;
+            word-break: break-word;
+        }
+
+        .ticket-pill {
+            max-width: 56%;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #FFFFFF;
+            border: 1px solid rgba(20,32,50,.10);
+            box-shadow: 0 2px 6px rgba(15,23,42,.06);
+            color: #546275;
+            font-size: clamp(8px,1.25vw,11px);
+            font-weight: 900;
+            letter-spacing: .04em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
+        }
+
+        .ticket-main {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            align-content: center;
+            gap: clamp(6px,1.15vw,11px);
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .ticket-value {
+            min-width: 0;
+            color: #101828;
+            font-size: clamp(32px,7.8vw,58px);
+            line-height: .9;
+            font-weight: 950;
+            letter-spacing: -.065em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ticket-period {
+            color: #546275;
+            font-size: clamp(11px,1.65vw,15px);
+            font-weight: 850;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ticket-trend {
+            justify-self: start;
+            max-width: 100%;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 10px;
+            border-radius: 12px;
+            background: var(--trendBg);
+            border: 1px solid var(--trendBorder);
+            color: #0F1A29;
+            font-size: clamp(10px,1.55vw,13px);
+            font-weight: 900;
+            line-height: 1.18;
+            box-shadow: 0 2px 7px rgba(15,23,42,.05);
+        }
+
+        .ticket-trend-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--trendAccent);
+            box-shadow: 0 0 6px var(--trendGlow);
+            flex-shrink: 0;
+        }
+
+        .ticket-trend-text {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .ticket-foot {
+            position: relative;
+            z-index: 2;
+            min-height: clamp(18px,2.3vw,24px);
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .ticket-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            max-width: 100%;
+            color: #1F2937;
+            font-size: clamp(9px,1.32vw,11px);
+            line-height: 1.22;
+            font-weight: 850;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0;
+        }
+
+        @keyframes ticketLineA {
+            0% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            43% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+        }
+
+        @keyframes ticketLineB {
+            0% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            52% {
+                opacity: 0;
+                transform: translateY(3px);
+            }
+
+            62% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            88% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            98% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-2px);
+            }
+        }
+
+        .ticket-line-a {
+            animation: ticketLineA 13s ease-in-out infinite;
+        }
+
+        .ticket-line-b {
+            animation: ticketLineB 13s ease-in-out infinite;
+        }
+
+        .empty {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.3;
+            font-weight: 800;
+            color: #171777;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"><div class="empty">Waiting for SQL data…</div></div>
+
+    <script>
+function rowsOf(p){
+  if(Array.isArray(p?.data)) return p.data;
+  if(Array.isArray(p?.result?.data)) return p.result.data;
+  if(Array.isArray(p?.rows)) return p.rows;
+  return [];
+}
+
+function nk(s){
+  return String(s || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function keyOf(row,names){
+  const m = {};
+  Object.keys(row || {}).forEach(k => m[nk(k)] = k);
+  for(const n of names){
+    const hit = m[nk(n)];
+    if(hit) return hit;
+  }
+  return "";
+}
+
+function raw(row,names,fb=""){
+  const k = keyOf(row,names);
+  return k ? row[k] : fb;
+}
+
+function num(v){
+  const n = Number(String(v ?? "").replace(/[^0-9.+-]/g,""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function val(row,names){
+  return num(raw(row,names,0));
+}
+
+function fmtInt(v){
+  return new Intl.NumberFormat().format(Math.round(num(v)));
+}
+
+function esc(v){
+  return String(v ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+}
+
+function roleFrom(payload){
+  return String(
+    payload?.config?.role ||
+    payload?.config?.Role ||
+    payload?.meta?.role ||
+    payload?.Role ||
+    payload?.templateId ||
+    payload?.config?.templateId ||
+    "ticket-open"
+  ).toLowerCase();
+}
+
+function monthLabel(row){
+  const txt = String(raw(row,[
+    "period_month_label",
+    "Period Month Label",
+    "PeriodMonthLabel"
+  ],"")).trim();
+
+  if(txt) return txt;
+
+  const dval = raw(row,[
+    "period_start_est",
+    "Period Start Est",
+    "PeriodStartEst",
+    "period_start",
+    "Period Start"
+  ],"");
+
+  const d = new Date(dval);
+  if(!Number.isNaN(d.getTime())){
+    return d.toLocaleDateString(undefined,{month:"short",year:"numeric"});
+  }
+
+  return "";
+}
+
+function findRows(rows){
+  let prev = null;
+  let last = null;
+  let mtd = null;
+
+  for(const r of rows){
+    const p = String(raw(r,["period_label","Period Label","PeriodLabel","Period"],"")).toLowerCase();
+    const sort = val(r,["period_sort","Period Sort","PeriodSort"]);
+
+    if(!prev && (p.includes("m-2") || p.includes("previous") || sort === 1)) prev = r;
+    if(!last && (p.includes("last") || sort === 2)) last = r;
+    if(!mtd && (p.includes("mtd") || p.includes("current") || sort === 3)) mtd = r;
+  }
+
+  return {
+    prev: prev || rows[0] || null,
+    last: last || rows[1] || rows[0] || null,
+    mtd:  mtd  || rows[2] || null
+  };
+}
+
+function created(row){
+  return val(row,[
+    "created_requests",
+    "Created Requests",
+    "CreatedRequests",
+    "sum_created_requests",
+    "created_requests_sum"
+  ]);
+}
+
+function completed(row){
+  return val(row,[
+    "completed_requests",
+    "Completed Requests",
+    "CompletedRequests",
+    "sum_completed_requests",
+    "completed_requests_sum"
+  ]);
+}
+
+function responseMet(row){
+  return val(row,[
+    "response_sla_met_requests",
+    "Response SLA Met Requests",
+    "ResponseSlaMetRequests",
+    "sum_response_sla_met_requests"
+  ]);
+}
+
+function closureMet(row){
+  return val(row,[
+    "closure_sla_met_requests",
+    "Closure SLA Met Requests",
+    "ClosureSlaMetRequests",
+    "sum_closure_sla_met_requests"
+  ]);
+}
+
+function responseViol(row){
+  return val(row,[
+    "response_sla_violation_requests",
+    "Response SLA Violation Requests",
+    "ResponseSlaViolationRequests",
+    "sum_response_sla_violation_requests"
+  ]);
+}
+
+function closureViol(row){
+  return val(row,[
+    "closure_sla_violation_requests",
+    "Closure SLA Violation Requests",
+    "ClosureSlaViolationRequests",
+    "sum_closure_sla_violation_requests"
+  ]);
+}
+
+function responseTotal(row){
+  return val(row,[
+    "response_sla_total_requests",
+    "Response SLA Total Requests",
+    "ResponseSlaTotalRequests",
+    "sum_response_sla_total_requests"
+  ]);
+}
+
+function closureTotal(row){
+  return val(row,[
+    "closure_sla_total_requests",
+    "Closure SLA Total Requests",
+    "ClosureSlaTotalRequests",
+    "sum_closure_sla_total_requests"
+  ]);
+}
+
+function avgCreated(row){
+  return val(row,[
+    "avg12_created_requests",
+    "Avg12 Created Requests",
+    "Avg12CreatedRequests",
+    "sum_avg12_created_requests",
+    "avg12_created_requests_sum"
+  ]);
+}
+
+function avgCompleted(row){
+  return val(row,[
+    "avg12_completed_requests",
+    "Avg12 Completed Requests",
+    "Avg12CompletedRequests",
+    "sum_avg12_completed_requests",
+    "avg12_completed_requests_sum"
+  ]);
+}
+
+function avgResponseMet(row){
+  return val(row,[
+    "avg12_response_sla_met_requests",
+    "Avg12 Response SLA Met Requests",
+    "Avg12ResponseSlaMetRequests",
+    "sum_avg12_response_sla_met_requests"
+  ]);
+}
+
+function avgClosureMet(row){
+  return val(row,[
+    "avg12_closure_sla_met_requests",
+    "Avg12 Closure SLA Met Requests",
+    "Avg12ClosureSlaMetRequests",
+    "sum_avg12_closure_sla_met_requests"
+  ]);
+}
+
+function metric(role,row){
+  if(!row) return 0;
+  if(role.includes("ticket-close")) return completed(row);
+  if(role.includes("response-sla")) return responseMet(row);
+  if(role.includes("closure-sla")) return closureMet(row);
+  return created(row);
+}
+
+function avgMetric(role,row){
+  if(!row) return 0;
+  if(role.includes("ticket-close")) return avgCompleted(row);
+  if(role.includes("response-sla")) return avgResponseMet(row);
+  if(role.includes("closure-sla")) return avgClosureMet(row);
+  return avgCreated(row);
+}
+
+function violationMetric(role,row){
+  if(!row) return 0;
+  if(role.includes("response-sla")) return responseViol(row);
+  if(role.includes("closure-sla")) return closureViol(row);
+  return 0;
+}
+
+function totalMetric(role,row){
+  if(!row) return 0;
+  if(role.includes("response-sla")) return responseTotal(row);
+  if(role.includes("closure-sla")) return closureTotal(row);
+  return metric(role,row);
+}
+
+function titleFor(role){
+  if(role.includes("ticket-close")) return "Ticket Volume (Close)";
+  if(role.includes("response-sla")) return "Response SLA MoM Delta";
+  if(role.includes("closure-sla")) return "Closure SLA MoM Delta";
+  return "Ticket Volume (Open)";
+}
+
+function nounFor(role){
+  if(role.includes("ticket-close")) return "closed volume";
+  if(role.includes("response-sla")) return "response SLA met";
+  if(role.includes("closure-sla")) return "closure SLA met";
+  return "open volume";
+}
+
+function mtdNounFor(role){
+  if(role.includes("ticket-close")) return "closed tickets";
+  if(role.includes("response-sla")) return "met responses";
+  if(role.includes("closure-sla")) return "met closures";
+  return "opened tickets";
+}
+
+function compareMode(role){
+  if(role.includes("response-sla") || role.includes("closure-sla")) return "mom";
+  return "avg";
+}
+
+function higherIsGood(role){
+  return role.includes("ticket-close") || role.includes("response-sla") || role.includes("closure-sla");
+}
+
+function toneByCompare(role,lastVal,baseVal){
+  if(!baseVal) return "warn";
+
+  const pct = (lastVal - baseVal) / baseVal;
+
+  if(Math.abs(pct) <= 0.05) return "stable";
+
+  if(higherIsGood(role)){
+    return pct > 0 ? "good" : "bad";
+  }
+
+  return pct > 0 ? "bad" : "good";
+}
+
+function statusDisplay(tone,lastVal,baseVal){
+  if(!baseVal) return "On average";
+  if(tone === "stable") return "Stable";
+  if(lastVal > baseVal) return "High";
+  return "Low";
+}
+
+function toneVars(tone){
+  let statusTone = tone;
+  let trendTone = tone;
+
+  if(tone === "stable"){
+    statusTone = "good";
+    trendTone = "warn";
+  }
+
+  if(tone === "warn"){
+    statusTone = "warn";
+    trendTone = "warn";
+  }
+
+  const statusMap = {
+    good:{accent:"#48B56B",accent2:"#86D29D",soft:"rgba(72,181,107,0.13)",glow:"rgba(72,181,107,0.24)"},
+    warn:{accent:"#DDBB1F",accent2:"#F1E07A",soft:"rgba(221,187,31,0.14)",glow:"rgba(221,187,31,0.24)"},
+    bad:{accent:"#C62828",accent2:"#F28B82",soft:"rgba(198,40,40,0.13)",glow:"rgba(198,40,40,0.24)"}
+  };
+
+  const trendMap = {
+    good:{accent:"#48B56B",bg:"rgba(72,181,107,0.11)",border:"rgba(72,181,107,0.28)",glow:"rgba(72,181,107,0.22)"},
+    warn:{accent:"#DDBB1F",bg:"rgba(221,187,31,0.12)",border:"rgba(221,187,31,0.30)",glow:"rgba(221,187,31,0.22)"},
+    bad:{accent:"#C62828",bg:"rgba(198,40,40,0.11)",border:"rgba(198,40,40,0.26)",glow:"rgba(198,40,40,0.22)"}
+  };
+
+  const s = statusMap[statusTone] || statusMap.good;
+  const t = trendMap[trendTone] || trendMap.warn;
+
+  return {
+    statusAccent:s.accent,
+    statusAccent2:s.accent2,
+    statusSoft:s.soft,
+    statusGlow:s.glow,
+    trendAccent:t.accent,
+    trendBg:t.bg,
+    trendBorder:t.border,
+    trendGlow:t.glow
+  };
+}
+
+function pctText(lastVal,baseVal,dec=0){
+  if(!baseVal) return "n/a";
+  const p = ((lastVal - baseVal) / baseVal) * 100;
+  return (p > 0 ? "+" : "") + p.toFixed(dec) + "%";
+}
+
+function directionText(lastVal,baseVal,label){
+  if(!baseVal) return "baseline unavailable";
+  const pct = (lastVal - baseVal) / baseVal;
+  if(Math.abs(pct) <= 0.05) return "near " + label;
+  return pct > 0 ? "above " + label : "below " + label;
+}
+
+function diffText(lastVal,baseVal){
+  return fmtInt(Math.abs(lastVal - baseVal));
+}
+
+function daysElapsedThisMonth(){
+  return Math.max(1,new Date().getDate());
+}
+
+function daysInCurrentMonth(){
+  const d = new Date();
+  return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+}
+
+function projected(mtdVal){
+  return mtdVal * daysInCurrentMonth() / daysElapsedThisMonth();
+}
+
+function render(msg){
+  const p = msg?.payload || {};
+
+  if(p?.error){
+    document.getElementById("root").innerHTML =
+      `<div class="empty">SQL error:<br>${esc(p.error)}</div>`;
+    return;
+  }
+
+  const rows = rowsOf(p);
+
+  if(!rows.length){
+    document.getElementById("root").innerHTML =
+      "<div class='empty'>No SQL rows returned.</div>";
+    return;
+  }
+
+    const role = roleFrom(p);
+    const mode = compareMode(role);
+    const rr = findRows(rows);
+
+    const prev = rr.prev;
+    const last = rr.last;
+    const mtd = rr.mtd;
+
+    const lastLabel = monthLabel(last);
+    const prevLabel = monthLabel(prev);
+    const mtdLabel = mtd ? monthLabel(mtd) : "";
+
+    const lastVal = metric(role, last);
+    const mtdVal = mtd ? metric(role, mtd) : 0;
+
+    const avgVal = avgMetric(role, last);
+    const prevVal = metric(role, prev);
+
+    const baseVal = mode === "mom" ? prevVal : avgVal;
+    const baseLabel = mode === "mom" ? "prior month" : "baseline AVG";
+
+    const tone = toneByCompare(role, lastVal, baseVal);
+    const vars = toneVars(tone);
+    const display = statusDisplay(tone, lastVal, baseVal);
+
+    const trendText = mode === "mom"
+        ? pctText(lastVal, baseVal, 1) + " MoM"
+        : pctText(lastVal, baseVal, 0) + " vs baseline AVG";
+
+    const pillText = mode === "mom"
+        ? `${prevLabel} ${fmtInt(prevVal)}`
+        : `12 month AVG ${fmtInt(avgVal)}`;
+
+    let narrative = "";
+
+    if (mode === "mom") {
+        const viol = violationMetric(role, last);
+        const total = totalMetric(role, last);
+
+        narrative =
+            `${lastLabel}: ${diffText(lastVal, baseVal)} vs ${prevLabel}; ` +
+            `${fmtInt(viol)}/${fmtInt(total)} missed.`;
+    }
+    else {
+        narrative =
+            `${lastLabel}: ${diffText(lastVal, baseVal)} vs AVG.`;
+    }
+
+    let narrative2 = "";
+
+    if (mtd) {
+        if (mode === "mom") {
+            const mtdViol = violationMetric(role, mtd);
+            narrative2 =
+                `MTD: ${fmtInt(mtdVal)} ${mtdNounFor(role)}; ${fmtInt(mtdViol)} missed.`;
+        }
+        else {
+            const proj = projected(mtdVal);
+            narrative2 =
+                `MTD: ${fmtInt(mtdVal)} ${mtdNounFor(role)}; proj ${pctText(proj, avgVal, 0)} vs AVG.`;
+        }
+    }
+
+  document.getElementById("root").innerHTML =
+    `<div class="ticket-open-shell">
+      <div class="ticket-open-card"
+        style="
+          --statusAccent:${esc(vars.statusAccent)};
+          --statusAccent2:${esc(vars.statusAccent2)};
+          --statusSoft:${esc(vars.statusSoft)};
+          --statusGlow:${esc(vars.statusGlow)};
+          --trendAccent:${esc(vars.trendAccent)};
+          --trendBg:${esc(vars.trendBg)};
+          --trendBorder:${esc(vars.trendBorder)};
+          --trendGlow:${esc(vars.trendGlow)};
+        ">
+
+        <div class="ticket-head">
+          <div class="ticket-title-wrap">
+            <div class="ticket-dot-ring">
+              <div class="ticket-dot"></div>
+            </div>
+            <div class="ticket-status">${esc(display)}</div>
+          </div>
+          <div class="ticket-pill">${esc(pillText)}</div>
+        </div>
+
+        <div class="ticket-main">
+          <div class="ticket-value">${esc(fmtInt(lastVal))}</div>
+          <div class="ticket-period">${esc(lastLabel)}</div>
+
+          <div class="ticket-trend">
+            <span class="ticket-trend-dot"></span>
+            <span class="ticket-trend-text">${esc(trendText)}</span>
+          </div>
+        </div>
+
+        <div class="ticket-foot">
+          <div class="ticket-line ticket-line-a">${esc(narrative)}</div>
+          <div class="ticket-line ticket-line-b">${esc(narrative2 || narrative)}</div>
+        </div>
+
+      </div>
+    </div>`;
+}
+
+window.addEventListener("message",e=>{
+  if(!e.data || !String(e.data.type || "").startsWith("dashboard-custom-html:")) return;
+  if(String(e.data.type).endsWith(":resize")) return;
+  render(e.data);
+});</script>
+</body>
+</html>

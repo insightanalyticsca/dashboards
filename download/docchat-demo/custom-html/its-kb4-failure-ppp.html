@@ -1,0 +1,133 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Arial,sans-serif;color:#10146F}*{box-sizing:border-box}.empty-state{width:100%;height:100%;display:grid;place-items:center;color:#65697B;font-size:10px;font-weight:850;text-align:center;background:rgba(255,255,255,.45);border-radius:10px;padding:8px}.tiny-error{color:#9f1239;font-size:10px;font-weight:800;white-space:pre-wrap;text-align:left}.ppp-card{width:100%;height:100%;min-height:186px;box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 90% 12%,rgba(188,237,22,.26),transparent 30%),linear-gradient(135deg,rgba(255,255,255,.82),rgba(226,230,236,.76));border:1px solid rgba(16,20,111,.14);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.88),0 10px 24px rgba(16,20,111,.12);padding:8px 9px;overflow:hidden;color:#10146F}.head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.title{font-size:12.5px;font-weight:900;color:#10146F;line-height:1;white-space:nowrap}.pill{font-size:9px;font-weight:900;color:#10146F;background:rgba(255,255,255,.62);border:1px solid rgba(16,20,111,.10);border-radius:999px;padding:3px 7px;white-space:nowrap}.top{display:grid;grid-template-columns:74px 1fr;gap:7px;align-items:center;margin-bottom:4px}.ppp{background:rgba(255,255,255,.58);border:1px solid rgba(16,20,111,.09);border-radius:11px;padding:6px 7px}.lab{font-size:8px;color:#65697B;font-weight:850;text-transform:uppercase;letter-spacing:.03em}.val{font-size:20px;font-weight:950;color:#10146F;line-height:1}.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}.m{background:rgba(255,255,255,.50);border-radius:9px;padding:5px 6px;border:1px solid rgba(16,20,111,.07)}.mv{font-size:13px;font-weight:950;color:#10146F;line-height:1}.chartwrap{height:104px;display:grid;grid-template-columns:24px 1fr;gap:4px;border-top:1px solid rgba(16,20,111,.10);margin-top:5px;padding-top:5px;position:relative}.yaxis{height:92px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;padding-right:3px;color:#65697B;font-size:8px;font-weight:800;line-height:1}.plot{height:92px;display:flex;align-items:flex-end;justify-content:space-around;gap:4px;position:relative;background:linear-gradient(to top,rgba(16,20,111,.08) 1px,transparent 1px) 0 100%/100% 50% no-repeat}.pppline{position:absolute;inset:0 0 11px 0;width:100%;height:81px;z-index:3;pointer-events:none;overflow:visible}.pppline polyline{fill:none;stroke:#10146F;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;opacity:.72;filter:drop-shadow(0 1px 2px rgba(16,20,111,.20))}.mcol{height:92px;flex:1;position:relative;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;z-index:4}.mcol:hover::after{content:attr(data-tip);position:absolute;left:50%;bottom:98px;transform:translateX(-50%);min-width:185px;max-width:250px;padding:6px 8px;border-radius:9px;background:rgba(16,20,111,.94);color:#fff;font-size:9px;font-weight:800;line-height:1.25;text-align:left;box-shadow:0 8px 18px rgba(16,20,111,.22);z-index:20;pointer-events:none;white-space:normal}.mcol:hover::before{content:'';position:absolute;left:50%;bottom:91px;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid rgba(16,20,111,.94);z-index:21;pointer-events:none}.barstack{width:15px;border-radius:5px 5px 2px 2px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;box-shadow:0 4px 9px rgba(16,20,111,.14)}.pppdot{position:absolute;width:7px;height:7px;border-radius:99px;background:#10146F;right:calc(50% - 12px);box-shadow:0 0 0 2px rgba(188,237,22,.95);z-index:5}.mlab{font-size:8px;color:#65697B;font-weight:800;margin-top:3px}.legend{font-size:8.5px;color:#65697B;font-weight:750;display:flex;gap:7px;margin-top:3px;white-space:nowrap}.ld{display:inline-block;width:7px;height:7px;border-radius:99px;margin-right:3px;vertical-align:-1px}.empty{width:100%;align-self:stretch;display:flex;align-items:center;justify-content:center;text-align:center;color:#65697B;font-size:10px;font-weight:850;background:rgba(255,255,255,.45);border-radius:10px;padding:8px}.foot{margin-top:3px;font-size:8px;color:#65697B;font-weight:750;display:flex;justify-content:space-between;gap:8px;white-space:nowrap}
+</style></head><body><div id="root"><div class="empty-state">Waiting for live data...</div></div>
+<script>
+(() => {
+  'use strict';
+  const root = document.getElementById('root');
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const fmt0 = v => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Number.isFinite(Number(v)) ? Number(v) : 0);
+  const fmtPct0 = v => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Number.isFinite(Number(v)) ? Number(v) : 0) + '%';
+  const fmt1 = v => (Number.isFinite(Number(v)) ? Number(v) : 0).toFixed(1);
+  const fmt3 = v => (Number.isFinite(Number(v)) ? Number(v) : 0).toFixed(3);
+  const signed0 = v => { const n = Number.isFinite(Number(v)) ? Number(v) : 0; return n > 0 ? '+' + fmt0(n) : fmt0(n); };
+  const n = (v, fb = 0) => {
+    if (v === null || v === undefined || v === '') return fb;
+    if (typeof v === 'number') return Number.isFinite(v) ? v : fb;
+    const x = Number(String(v).replace(/,/g, '').replace(/%/g, '').trim());
+    return Number.isFinite(x) ? x : fb;
+  };
+  const key = (row, names) => {
+    if (!row) return '';
+    const map = {};
+    for (const k of Object.keys(row)) map[k.toLowerCase()] = k;
+    for (const nm of names) {
+      const hit = map[String(nm).toLowerCase()];
+      if (hit) return hit;
+    }
+    return '';
+  };
+  const txt = (row, names, fb = '') => {
+    const k = key(row, names);
+    const v = k ? row[k] : fb;
+    return v === null || v === undefined ? fb : String(v);
+  };
+  const val = (row, names, fb = 0) => {
+    const k = key(row, names);
+    return k ? n(row[k], fb) : fb;
+  };
+  const rowsOf = p => {
+    if (Array.isArray(p?.data)) return p.data.filter(Boolean);
+    if (Array.isArray(p?.payload?.data)) return p.payload.data.filter(Boolean);
+    if (Array.isArray(p?.result?.data)) return p.result.data.filter(Boolean);
+    if (Array.isArray(p?.model?.data)) return p.model.data.filter(Boolean);
+    if (Array.isArray(p?.model?.rows)) return p.model.rows.filter(Boolean);
+    return [];
+  };
+  function parseDate(v) {
+    if (v instanceof Date && !Number.isNaN(v.getTime())) return v;
+    if (v === null || v === undefined || v === '') return null;
+    const s = String(v).trim();
+    const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    const d = new Date(s);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+  function monthKey(v) {
+    const d = parseDate(v);
+    if (!d) return '';
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+  function monthStartKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  function firstOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+  function endOfMonth(d) { return new Date(d.getFullYear(), d.getMonth() + 1, 0); }
+  function addMonths(d, m) { return new Date(d.getFullYear(), d.getMonth() + m, 1); }
+  function lastCompletedMonthStart(now = new Date()) { return new Date(now.getFullYear(), now.getMonth() - 1, 1); }
+  function monthLabel(d) { return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' }); }
+  function monthShort(d) { return d.toLocaleDateString(undefined, { month: 'short' }); }
+  function ymd(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function setEmpty(message) { root.innerHTML = `<div class="empty-state">${esc(message)}</div>`; }
+  function setError(err) { root.innerHTML = `<div class="empty-state tiny-error">${esc(err && err.stack ? err.stack : err)}</div>`; }
+  function receive(render) {
+    window.addEventListener('message', e => {
+      const type = String(e?.data?.type || '');
+      if (!type.startsWith('dashboard-custom-html:')) return;
+      if (type.endsWith(':resize')) return;
+      try { render(e.data.payload || e.data || {}); } catch (err) { setError(err); }
+    });
+  }
+  window.ITS_LIVE = { root, esc, fmt0, fmtPct0, fmt1, fmt3, signed0, n, key, txt, val, rowsOf, parseDate, monthKey, monthStartKey, firstOfMonth, endOfMonth, addMonths, lastCompletedMonthStart, monthLabel, monthShort, ymd, setEmpty, setError, receive };
+})();
+</script>
+
+<script>
+(() => {
+  const U = window.ITS_LIVE;
+  function render(payload) {
+    const rows = U.rowsOf(payload);
+    const reportStart = U.lastCompletedMonthStart();
+    const reportEnd = U.endOfMonth(reportStart);
+    const label = U.monthLabel(reportStart);
+    const reportKey = U.monthStartKey(reportStart);
+    const trendStart = U.addMonths(reportStart, -5);
+    const trendStartKey = U.monthStartKey(trendStart);
+    const latestData = rows.filter(r => U.monthKey(U.txt(r, ['month_start','MonthStart','monthStart'])) === reportKey);
+    const byMonth = new Map();
+    for (const r of rows) {
+      const k = U.monthKey(U.txt(r, ['month_start','MonthStart','monthStart']));
+      if (!k || k < trendStartKey || k > reportKey) continue;
+      if (!byMonth.has(k)) byMonth.set(k, { key:k, date:U.parseDate(U.txt(r, ['month_start','MonthStart','monthStart'])) || new Date(k+'-01'), clicks:0, replies:0, attach:0, ppp:0 });
+      const acc = byMonth.get(k);
+      acc.clicks += U.val(r, ['clicks','Clicks'], 0);
+      acc.replies += U.val(r, ['replies','Replies'], 0);
+      acc.attach += U.val(r, ['attachment_opened','AttachmentOpened','attachmentOpened','attach'], 0);
+      acc.ppp = Math.max(acc.ppp, U.val(r, ['calculated_ppp_pct','CalculatedPppPct','PPP','ppp'], 0));
+    }
+    const trend = [...byMonth.values()].sort((a,b) => a.key.localeCompare(b.key)).slice(-6);
+    const ppp = latestData.reduce((a,r)=>Math.max(a,U.val(r,['calculated_ppp_pct','CalculatedPppPct','PPP','ppp'],0)),0);
+    const clicks = latestData.reduce((a,r)=>a+U.val(r,['clicks','Clicks'],0),0);
+    const replies = latestData.reduce((a,r)=>a+U.val(r,['replies','Replies'],0),0);
+    const attach = latestData.reduce((a,r)=>a+U.val(r,['attachment_opened','AttachmentOpened','attachmentOpened','attach'],0),0);
+    const maxFailSafe = Math.max(1, ...trend.map(x => x.clicks + x.replies + x.attach));
+    const maxPPPSafe = Math.max(1, ...trend.map(x => x.ppp));
+    const svgPoints = trend.map((x, i) => `${40 + i * 96},${Math.round(88 - (x.ppp / maxPPPSafe) * 72)}`).join(' ');
+    let chartBody = '';
+    if (!trend.length) {
+      chartBody = `<div class="empty">No KnowBe4 phishing trend rows found for ${U.esc(label)}</div>`;
+    } else {
+      chartBody = trend.map(x => {
+        const total = x.clicks + x.replies + x.attach;
+        const h = 12 + (total / maxFailSafe) * 70;
+        const dotBottom = 8 + (x.ppp / maxPPPSafe) * 72;
+        const tip = `${U.monthShort(x.date)}: ${U.fmt0(total)} failures | Clicks ${U.fmt0(x.clicks)} | Replies ${U.fmt0(x.replies)} | Attach ${U.fmt0(x.attach)} | PPP ${U.fmt1(x.ppp)}%`;
+        return `<div class="mcol" data-tip="${U.esc(tip)}"><div class="barstack" style="height:${Math.round(h)}px;"><div style="height:${total ? (x.attach/total*100) : 0}%;background:#D2D2D8;"></div><div style="height:${total ? (x.replies/total*100) : 0}%;background:#BCED16;"></div><div style="height:${total ? (x.clicks/total*100) : 0}%;background:#1512F4;"></div></div><div class="pppdot" style="bottom:${Math.round(dotBottom)}px;"></div><div class="mlab">${U.esc(U.monthShort(x.date))}</div></div>`;
+      }).join('');
+    }
+    const line = trend.length > 1 ? `<svg class="pppline" viewBox="0 0 560 100" preserveAspectRatio="none"><polyline points="${svgPoints}"></polyline></svg>` : '';
+    U.root.innerHTML = `<div class="ppp-card"><div class="head"><div class="title">Failure Types and Phish Prone %</div><div class="pill">${U.esc(label)}</div></div><div class="top"><div class="ppp"><div class="lab">PPP</div><div class="val">${U.fmt1(ppp)}%</div></div><div class="mini"><div class="m"><div class="lab">Clicks</div><div class="mv">${U.fmt0(clicks)}</div></div><div class="m"><div class="lab">Replies</div><div class="mv">${U.fmt0(replies)}</div></div><div class="m"><div class="lab">Attach</div><div class="mv">${U.fmt0(attach)}</div></div></div></div><div class="chartwrap"><div class="yaxis"><span>${U.fmt0(maxFailSafe)}</span><span>${U.fmt0(maxFailSafe/2)}</span><span>0</span></div><div class="plot">${line}${chartBody}</div></div><div class="legend"><span><i class="ld" style="background:#1512F4"></i>Clicks</span><span><i class="ld" style="background:#BCED16"></i>Replies</span><span><i class="ld" style="background:#D2D2D8"></i>Attachment</span><span><i class="ld" style="background:#10146F"></i>PPP line</span></div><div class="foot"><span>Last completed month</span><span>${U.ymd(reportStart)} to ${U.ymd(reportEnd)}</span></div></div>`;
+  }
+  U.receive(render);
+})();
+</script></body></html>

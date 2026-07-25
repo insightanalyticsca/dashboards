@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--ink:#171777;--muted:#69708d;--border:#dfe2ef}
+html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Arial,Helvetica,sans-serif;color:var(--ink)}
+*{box-sizing:border-box}
+.tile{width:100%;height:100%;background:radial-gradient(circle at 10% 0%,rgba(187,255,5,.10),transparent 30%),radial-gradient(circle at 92% 6%,rgba(9,198,152,.10),transparent 32%),linear-gradient(180deg,#fff 0%,#fbfbff 100%);border:1px solid var(--border);border-radius:14px;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;box-shadow:0 8px 24px rgba(23,23,119,.07)}
+.head{padding:8px 12px 0 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.title{font-size:12.5px;line-height:1.1;font-weight:900;color:var(--ink);letter-spacing:.05px}
+.subtitle{margin-top:2px;font-size:9.5px;line-height:1.15;font-weight:750;color:var(--muted)}
+.badge{font-size:8.5px;font-weight:900;color:#171777;background:#DDF76D;border:1px solid rgba(23,23,119,.10);border-radius:999px;padding:2px 6px;white-space:nowrap}
+.chart{width:100%;height:100%;min-height:0}
+.state{width:100%;height:100%;display:grid;place-items:center;background:#fff}
+.state-inner{display:flex;align-items:center;gap:6px;font-size:10px;line-height:1;font-weight:800;color:var(--muted);max-width:94%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spin{width:10px;height:10px;border:2px solid #d9dbe6;border-top-color:var(--ink);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{width:100%;height:100%;background:#fff7f7;color:#9b1c1c;padding:8px;overflow:auto;font-size:10px;line-height:1.35;font-weight:700;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+let gotData=false, chart=null;
+const MAX_WEEKS=32;
+const BUCKETS=[
+  {key:"0_30",label:"0-30",aliases:["0_30","Bucket_0_30","Bucket0_30","Bucket_030","0-30","0 - 30"],colors:["#0808EE","#4F63F7"]},
+  {key:"31_60",label:"31-60",aliases:["31_60","Bucket_31_60","Bucket31_60","31-60","31 - 60"],colors:["#09C698","#12DDB8"]},
+    { key: "61_90", label: "61-90", aliases: ["61_90", "Bucket_61_90", "Bucket61_90", "61-90", "61 - 90"], colors: ["#c9c9c9","#635BCB"]},
+  {key:"90_plus",label:"90+",aliases:["90_plus","90_Plus","Bucket_90_Plus","Bucket_90_plus","Bucket90Plus","90+","90 Plus",">90","Over 90"],colors:["#BBFF05","#DDF76D"]}
+];
+function root(){return document.getElementById("root")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]))}
+function showLoader(t){root().innerHTML='<div class="state"><div class="state-inner"><span class="spin"></span><span>'+esc(t||"loading")+'</span></div></div>'}
+function showNoData(t){root().innerHTML='<div class="state"><div class="state-inner"><span>'+esc(t||"no data")+'</span></div></div>'}
+function showError(e){root().innerHTML='<div class="error-box">'+esc(e&&e.stack?e.stack:String(e||"Unknown error"))+'</div>'}
+function parseMaybeJson(v){if(typeof v!=="string")return v;const s=v.trim();if(!s||("[".indexOf(s[0])<0&&"{".indexOf(s[0])<0))return v;try{return JSON.parse(s)}catch{return v}}
+function ciGet(r,n){if(!r||typeof r!=="object")return undefined;const t=String(n).toLowerCase();for(const k of Object.keys(r)){if(String(k).toLowerCase()===t)return r[k]}return undefined}
+function first(r,names){for(const name of names){const v=ciGet(r,name);if(v!==undefined)return v}return undefined}
+function n(v){if(typeof v==="number")return Number.isFinite(v)?v:0;const x=Number(String(v??"").replace(/[$,%\s,]/g,""));return Number.isFinite(x)?x:0}
+function isNil(v){return v===null||v===undefined||v===""}
+function hasBucketWide(r){return r&&typeof r==="object"&&(BUCKETS.some(b=>first(r,b.aliases)!==undefined)||ciGet(r,"TotalAR")!==undefined||ciGet(r,"Total AR")!==undefined)}
+function hasBucketTall(r){return r&&typeof r==="object"&&ciGet(r,"AgingBucket")!==undefined&&ciGet(r,"Amount")!==undefined}
+function looks(r){return (hasBucketWide(r)||hasBucketTall(r))&&(ciGet(r,"PeriodDate")!==undefined||ciGet(r,"SelectedDate")!==undefined||ciGet(r,"CurrentDate")!==undefined)}
+function isRows(v){return Array.isArray(v)&&v.length&&v.some(looks)}
+function findRows(v,d,s){d=d||0;s=s||[];v=parseMaybeJson(v);if(isRows(v))return v;if(!v||typeof v!=="object"||d>16)return[];if(s.includes(v))return[];s.push(v);for(const k of["data","rows","records","items","payload","model","result","response","body","raw","source","detail","value","values","context"]){if(Object.prototype.hasOwnProperty.call(v,k)){const f=findRows(v[k],d+1,s);if(f.length)return f}}for(const k of Object.keys(v)){const f=findRows(v[k],d+1,s);if(f.length)return f}return[]}
+function findContext(v,d,s){d=d||0;s=s||[];v=parseMaybeJson(v);if(!v||typeof v!=="object"||d>10)return{};if(s.includes(v))return{};s.push(v);if(ciGet(v,"title")||ciGet(v,"label")||ciGet(v,"key")||ciGet(v,"filters"))return v;for(const k of["config","widget","payload","model","context","request"]){if(v[k]){const c=findContext(v[k],d+1,s);if(Object.keys(c).length)return c}}return{}}
+function dateObj(raw){if(!raw)return null;const s=String(raw).trim();const m=/^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);const d=m?new Date(+m[1],+m[2]-1,+m[3]):new Date(s);return Number.isFinite(d.getTime())?new Date(d.getFullYear(),d.getMonth(),d.getDate()):null}
+function mmdd(d){return d?`${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")}`:""}
+function keyDate(d){return d?`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`:""}
+function moneyFull(v){return Number(v||0).toLocaleString("en-US",{style:"currency",currency:"CAD",maximumFractionDigits:0})}
+function moneyShort(v){const x=n(v),a=Math.abs(x),sg=x<0?"-":"";if(a>=1e6)return sg+(a/1e6).toFixed(a>=1e7?1:2).replace(/\.0$/,"")+"M";if(a>=1e3)return sg+Math.round(a/1e3).toLocaleString("en-US")+"K";return sg+Math.round(a).toLocaleString("en-US")}
+function normBucket(v){let s=String(v??"").trim().replace(/&gt;/gi,">").replace(/\\u003e/gi,">").toLowerCase();if(["0-30","0_30","0 to 30","0 – 30"].includes(s))return"0_30";if(["31-60","31_60","31 to 60"].includes(s))return"31_60";if(["61-90","61_90","61 to 90"].includes(s))return"61_90";if([">90","90+","91+","over 90","90 plus"].includes(s))return"90_plus";return""}
+function buildModel(rows){
+  const by=new Map();
+  for(const r of rows){
+    const periodKey=String(ciGet(r,"PeriodKey")||"").toUpperCase();
+    if(periodKey==="Y_1") continue; // Do not chart last year's point as if it were another current-period week.
+    const d=dateObj(ciGet(r,"PeriodDate")??ciGet(r,"SelectedDate")??ciGet(r,"CurrentDate"));
+    if(!d)continue;
+    const k=keyDate(d);
+    if(!by.has(k))by.set(k,{date:d,sortOrder:ciGet(r,"SortOrder"),periodKey,periodLabel:ciGet(r,"PeriodLabel"),v:{},totalFromRows:0,totalSeen:false,bucketSeen:false});
+    const e=by.get(k);
+    BUCKETS.forEach(b=>{if(e.v[b.key]===undefined)e.v[b.key]=0});
+    if(e.sortOrder===undefined)e.sortOrder=ciGet(r,"SortOrder");
+    if(!e.periodKey)e.periodKey=periodKey;
+    if(!e.periodLabel)e.periodLabel=ciGet(r,"PeriodLabel");
+    if(hasBucketTall(r)){
+      const b=normBucket(ciGet(r,"AgingBucket"));
+      if(b){const val=n(ciGet(r,"Amount"));e.v[b]+=val;if(val!==0)e.bucketSeen=true}
+    }else{
+      for(const b of BUCKETS){
+        const raw=first(r,b.aliases);
+        if(!isNil(raw)){const val=n(raw);e.v[b.key]+=val;if(val!==0)e.bucketSeen=true}
+      }
+    }
+    const total=ciGet(r,"TotalAR")??ciGet(r,"Total AR")??ciGet(r,"Total");
+    if(!isNil(total)){e.totalFromRows+=n(total);e.totalSeen=true}
+  }
+  let arr=Array.from(by.values());
+  arr.forEach(e=>{
+    e.bucketTotal=BUCKETS.reduce((s,b)=>s+n(e.v[b.key]),0);
+    e.total=e.bucketTotal!==0?e.bucketTotal:(e.totalSeen?e.totalFromRows:0);
+    e.totalOnly=e.bucketTotal===0&&e.totalSeen&&e.totalFromRows!==0;
+  });
+  // Mockup order: chronological weekly dates left-to-right, last 6 current-period weeks only.
+  arr=arr.filter(x=>x.bucketSeen||x.totalSeen).sort((a,b)=>a.date-b.date).slice(-MAX_WEEKS);
+  return arr;
+}
+function getTitle(ctx,rows){const t=ciGet(ctx,"title")||ciGet(ctx,"label");if(t)return String(t);const cg=ciGet(rows[0]||{},"CategoryGroup");return String(cg||"").toLowerCase().includes("commercial")?"Commercial Arrears Distribution":"Residential Arrears Distribution"}
+function loadEcharts(){return new Promise((resolve,reject)=>{if(window.echarts){resolve(window.echarts);return}const candidates=["/lib/echarts/echarts.min.js","/js/echarts.min.js","https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"];let i=0;function next(){if(i>=candidates.length){reject(new Error("ECharts library not found. Add echarts.min.js at /lib/echarts/echarts.min.js or allow CDN."));return}const s=document.createElement("script");s.src=candidates[i++];s.onload=()=>window.echarts?resolve(window.echarts):next();s.onerror=next;document.head.appendChild(s)}next()})}
+function optionFor(model,echarts){
+  const labels=model.map(p=>mmdd(p.date));
+  const anyBuckets=model.some(p=>!p.totalOnly);
+  const series=[];
+  if(anyBuckets){
+    BUCKETS.forEach((b,i)=>series.push({name:b.label,type:"bar",stack:"aging",barWidth:"46%",emphasis:{focus:"series"},itemStyle:{borderRadius:i===BUCKETS.length-1?[7,7,0,0]:0,color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:b.colors[1]},{offset:1,color:b.colors[0]}])},data:model.map(p=>p.totalOnly?0:n(p.v[b.key]))}));
+  }else{
+    series.push({name:"Total only",type:"bar",barWidth:"44%",itemStyle:{borderRadius:[7,7,0,0],color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:"#DDF76D"},{offset:1,color:"#BBFF05"}])},data:model.map(p=>n(p.total))});
+  }
+  series.push({name:"Total",type:"line",smooth:true,symbol:"circle",symbolSize:6,lineStyle:{width:3,color:"#635BCB"},itemStyle:{color:"#635BCB",borderColor:"#fff",borderWidth:1.5},areaStyle:{opacity:.07,color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:"#635BCB"},{offset:1,color:"rgba(99,91,203,0)"}])},data:model.map(p=>n(p.total))});
+  return {
+    backgroundColor:"transparent",
+    animationDuration:850,
+    animationEasing:"cubicOut",
+    grid:{left:44,right:16,top:18,bottom:42,containLabel:true},
+    legend:{bottom:4,left:"center",itemWidth:8,itemHeight:8,icon:"roundRect",itemGap:10,textStyle:{color:"#171777",fontSize:9,fontWeight:700}},
+    tooltip:{trigger:"axis",appendToBody:true,axisPointer:{type:"shadow",shadowStyle:{color:"rgba(79,99,247,.07)"}},backgroundColor:"rgba(255,255,255,.98)",borderColor:"#dfe2ef",borderWidth:1,extraCssText:"box-shadow:0 10px 24px rgba(23,23,119,.14);border-radius:10px;",textStyle:{color:"#171777",fontSize:11,fontWeight:600},formatter:function(params){const idx=params&&params.length?params[0].dataIndex:0;const p=model[idx];let s="<b>"+labels[idx]+"</b><br/>";params.forEach(x=>{s+=x.marker+" "+x.seriesName+": <b>"+moneyFull(x.value)+"</b><br/>"});if(p&&p.totalOnly)s+="<span style='color:#69708d'>Bucket columns are zero; TotalAR shown.</span>";return s}},
+    xAxis:{type:"category",data:labels,axisTick:{show:false},axisLine:{lineStyle:{color:"#dfe2ef"}},axisLabel:{color:"#171777",fontSize:9,fontWeight:700,margin:8}},
+    yAxis:{type:"value",splitNumber:3,splitLine:{lineStyle:{color:"#eef0f8"}},axisLine:{show:false},axisTick:{show:false},axisLabel:{color:"#69708d",fontSize:9,formatter:v=>moneyShort(v)}},
+    series
+  };
+}
+async function draw(source){
+  try{
+    const rows=findRows(source);if(!rows.length){if(!gotData)showNoData("no data");return}
+    const ctx=findContext(source),title=getTitle(ctx,rows),model=buildModel(rows);
+    if(!model.length)throw new Error("No renderable bucket graph periods. Rows found: "+rows.length);
+    root().innerHTML='<div class="tile"><div class="head"><div><div class="title">'+esc(title)+'</div><div class="subtitle">Last '+model.length+' EOM · aging buckets with total AR trend</div></div><div class="badge">'+model.length+' wks</div></div><div id="chart" class="chart"></div></div>';
+    const echarts=await loadEcharts(),el=document.getElementById("chart");
+    chart=echarts.init(el,null,{renderer:"canvas"});
+    chart.setOption(optionFor(model,echarts),true);
+    setTimeout(()=>chart&&chart.resize(),50);
+    window.addEventListener("resize",()=>chart&&chart.resize());
+    gotData=true;
+  }catch(e){showError(e)}
+}
+function receive(source){try{const rows=findRows(source);if(rows.length){draw(source);return}if(gotData)return;const v=parseMaybeJson(source);if(v&&typeof v==="object"&&(Array.isArray(v.data)&&v.data.length===0||Array.isArray(v.rows)&&v.rows.length===0))showNoData("no data")}catch(e){showError(e)}}
+showLoader("loading");
+window.addEventListener("message",ev=>{const data=ev&&ev.data?ev.data:{};const type=String(data.type||"");if(type.startsWith("dashboard-custom-html:")&&type.endsWith(":resize"))return;receive(data)});
+window.update=receive;window.init=receive;window.setData=receive;window.onData=receive;window.drawArBuckets=receive;
+if(window.DashVisualContext)receive(window.DashVisualContext);else if(window.__DashVisualContext)receive(window.__DashVisualContext);else if(window.__DASH_VISUAL_CONTEXT__)receive(window.__DASH_VISUAL_CONTEXT__);
+})();
+</script>
+</body>
+</html>
