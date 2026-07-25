@@ -1,0 +1,49 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_its_open_status",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "Status": "Open",
+      "status": "Open",
+      "Count": 42,
+      "count": 42
+    },
+    {
+      "Status": "In Progress",
+      "status": "In Progress",
+      "Count": 68,
+      "count": 68
+    },
+    {
+      "Status": "Pending",
+      "status": "Pending",
+      "Count": 35,
+      "count": 35
+    },
+    {
+      "Status": "Resolved",
+      "status": "Resolved",
+      "Count": 142,
+      "count": 142
+    },
+    {
+      "Status": "Closed",
+      "status": "Closed",
+      "Count": 89,
+      "count": 89
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_its_open_status",
+    "returnedRows": 5,
+    "requestedMaxRows": 50000
+  }
+}

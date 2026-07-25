@@ -1,0 +1,110 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_its_response_sla_mom",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "month_start": "2025-03-01",
+      "MonthStart": "2025-03-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Response_Avg_Hours": 2.4
+    },
+    {
+      "month_start": "2025-04-01",
+      "MonthStart": "2025-04-01",
+      "SLA_Met": 93,
+      "SLA_Breached": 7,
+      "Response_Avg_Hours": 2.6999999999999997
+    },
+    {
+      "month_start": "2025-05-01",
+      "MonthStart": "2025-05-01",
+      "SLA_Met": 94,
+      "SLA_Breached": 6,
+      "Response_Avg_Hours": 3.0
+    },
+    {
+      "month_start": "2025-06-01",
+      "MonthStart": "2025-06-01",
+      "SLA_Met": 95,
+      "SLA_Breached": 5,
+      "Response_Avg_Hours": 2.4
+    },
+    {
+      "month_start": "2025-07-01",
+      "MonthStart": "2025-07-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Response_Avg_Hours": 2.6999999999999997
+    },
+    {
+      "month_start": "2025-08-01",
+      "MonthStart": "2025-08-01",
+      "SLA_Met": 93,
+      "SLA_Breached": 7,
+      "Response_Avg_Hours": 3.0
+    },
+    {
+      "month_start": "2025-09-01",
+      "MonthStart": "2025-09-01",
+      "SLA_Met": 94,
+      "SLA_Breached": 6,
+      "Response_Avg_Hours": 2.4
+    },
+    {
+      "month_start": "2025-10-01",
+      "MonthStart": "2025-10-01",
+      "SLA_Met": 95,
+      "SLA_Breached": 5,
+      "Response_Avg_Hours": 2.6999999999999997
+    },
+    {
+      "month_start": "2025-11-01",
+      "MonthStart": "2025-11-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Response_Avg_Hours": 3.0
+    },
+    {
+      "month_start": "2025-12-01",
+      "MonthStart": "2025-12-01",
+      "SLA_Met": 93,
+      "SLA_Breached": 7,
+      "Response_Avg_Hours": 2.4
+    },
+    {
+      "month_start": "2025-12-01",
+      "MonthStart": "2025-12-01",
+      "SLA_Met": 94,
+      "SLA_Breached": 6,
+      "Response_Avg_Hours": 2.6999999999999997
+    },
+    {
+      "month_start": "2026-01-01",
+      "MonthStart": "2026-01-01",
+      "SLA_Met": 95,
+      "SLA_Breached": 5,
+      "Response_Avg_Hours": 3.0
+    },
+    {
+      "month_start": "2026-03-01",
+      "MonthStart": "2026-03-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Response_Avg_Hours": 2.4
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_its_response_sla_mom",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}

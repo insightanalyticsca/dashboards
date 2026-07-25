@@ -1,0 +1,136 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_aging_residential_delta",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "CategoryGroup": "Residential",
+      "Amount": 3100,
+      "PriorAmount": 2950,
+      "Delta": 150
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "CategoryGroup": "Residential",
+      "Amount": 3112,
+      "PriorAmount": 2965,
+      "Delta": 147
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "CategoryGroup": "Residential",
+      "Amount": 3124,
+      "PriorAmount": 2980,
+      "Delta": 144
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "CategoryGroup": "Residential",
+      "Amount": 3136,
+      "PriorAmount": 2995,
+      "Delta": 141
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "CategoryGroup": "Residential",
+      "Amount": 3148,
+      "PriorAmount": 3010,
+      "Delta": 138
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "CategoryGroup": "Residential",
+      "Amount": 3160,
+      "PriorAmount": 3025,
+      "Delta": 135
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "CategoryGroup": "Residential",
+      "Amount": 3172,
+      "PriorAmount": 3040,
+      "Delta": 132
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "PeriodKey": "W_8",
+      "SortOrder": 8,
+      "CategoryGroup": "Residential",
+      "Amount": 3184,
+      "PriorAmount": 3055,
+      "Delta": 129
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "PeriodKey": "W_9",
+      "SortOrder": 9,
+      "CategoryGroup": "Residential",
+      "Amount": 3196,
+      "PriorAmount": 3070,
+      "Delta": 126
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "PeriodKey": "W_10",
+      "SortOrder": 10,
+      "CategoryGroup": "Residential",
+      "Amount": 3208,
+      "PriorAmount": 3085,
+      "Delta": 123
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "PeriodKey": "W_11",
+      "SortOrder": 11,
+      "CategoryGroup": "Residential",
+      "Amount": 3220,
+      "PriorAmount": 3100,
+      "Delta": 120
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "PeriodKey": "W_12",
+      "SortOrder": 12,
+      "CategoryGroup": "Residential",
+      "Amount": 3232,
+      "PriorAmount": 3115,
+      "Delta": 117
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "PeriodKey": "W_13",
+      "SortOrder": 13,
+      "CategoryGroup": "Residential",
+      "Amount": 3244,
+      "PriorAmount": 3130,
+      "Delta": 114
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_aging_residential_delta",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}

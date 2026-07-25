@@ -1,0 +1,215 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_ar_delta_stacked",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "AgingBucket": "0-30",
+      "Amount": 120
+    },
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "AgingBucket": "31-60",
+      "Amount": 40
+    },
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "AgingBucket": "61-90",
+      "Amount": 18
+    },
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "AgingBucket": ">90",
+      "Amount": 8
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "AgingBucket": "0-30",
+      "Amount": 130
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "AgingBucket": "31-60",
+      "Amount": 38
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "AgingBucket": "61-90",
+      "Amount": 20
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "AgingBucket": ">90",
+      "Amount": 9
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "AgingBucket": "0-30",
+      "Amount": 125
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "AgingBucket": "31-60",
+      "Amount": 42
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "AgingBucket": "61-90",
+      "Amount": 17
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "AgingBucket": ">90",
+      "Amount": 7
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "AgingBucket": "0-30",
+      "Amount": 135
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "AgingBucket": "31-60",
+      "Amount": 35
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "AgingBucket": "61-90",
+      "Amount": 22
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "AgingBucket": ">90",
+      "Amount": 10
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "AgingBucket": "0-30",
+      "Amount": 128
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "AgingBucket": "31-60",
+      "Amount": 45
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "AgingBucket": "61-90",
+      "Amount": 19
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "AgingBucket": ">90",
+      "Amount": 8
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "AgingBucket": "0-30",
+      "Amount": 140
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "AgingBucket": "31-60",
+      "Amount": 41
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "AgingBucket": "61-90",
+      "Amount": 21
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "AgingBucket": ">90",
+      "Amount": 9
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "AgingBucket": "0-30",
+      "Amount": 132
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "AgingBucket": "31-60",
+      "Amount": 39
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "AgingBucket": "61-90",
+      "Amount": 18
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "AgingBucket": ">90",
+      "Amount": 8
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_ar_delta_stacked",
+    "returnedRows": 28,
+    "requestedMaxRows": 50000
+  }
+}

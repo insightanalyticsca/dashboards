@@ -1,0 +1,79 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_ar_delta_tabular",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "Type": "Commercial",
+      "Metric": "Month #",
+      "Value": 12
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "Month $",
+      "Value": 95000
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "YTD #",
+      "Value": 36
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "YTD $",
+      "Value": 285000
+    },
+    {
+      "Type": "Residential",
+      "Metric": "Month #",
+      "Value": 28
+    },
+    {
+      "Type": "Residential",
+      "Metric": "Month $",
+      "Value": 56000
+    },
+    {
+      "Type": "Residential",
+      "Metric": "YTD #",
+      "Value": 84
+    },
+    {
+      "Type": "Residential",
+      "Metric": "YTD $",
+      "Value": 168000
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "Month #",
+      "Value": 2
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "Month $",
+      "Value": 14000
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "YTD #",
+      "Value": 6
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "YTD $",
+      "Value": 42000
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_ar_delta_tabular",
+    "returnedRows": 12,
+    "requestedMaxRows": 50000
+  }
+}

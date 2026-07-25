@@ -1,0 +1,79 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_ar_buckets_tabular",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "Type": "Commercial",
+      "Metric": "Month #",
+      "Value": 142
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "Month $",
+      "Value": 9200000
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "YTD #",
+      "Value": 426
+    },
+    {
+      "Type": "Commercial",
+      "Metric": "YTD $",
+      "Value": 27600000
+    },
+    {
+      "Type": "Residential",
+      "Metric": "Month #",
+      "Value": 384
+    },
+    {
+      "Type": "Residential",
+      "Metric": "Month $",
+      "Value": 4500000
+    },
+    {
+      "Type": "Residential",
+      "Metric": "YTD #",
+      "Value": 1152
+    },
+    {
+      "Type": "Residential",
+      "Metric": "YTD $",
+      "Value": 13500000
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "Month #",
+      "Value": 31
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "Month $",
+      "Value": 1100000
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "YTD #",
+      "Value": 93
+    },
+    {
+      "Type": "Industrial",
+      "Metric": "YTD $",
+      "Value": 3300000
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_ar_buckets_tabular",
+    "returnedRows": 12,
+    "requestedMaxRows": 50000
+  }
+}

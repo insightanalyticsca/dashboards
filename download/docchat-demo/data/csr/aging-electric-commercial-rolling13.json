@@ -1,0 +1,136 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_aging_electric_commercial_rolling13",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "PeriodLabel": "Wk 1",
+      "SortOrder": 1,
+      "CategoryGroup": "Commercial",
+      "Amount": 2400,
+      "PriorYearAmount": 2100
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "PeriodLabel": "Wk 2",
+      "SortOrder": 2,
+      "CategoryGroup": "Commercial",
+      "Amount": 2415,
+      "PriorYearAmount": 2120
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "PeriodLabel": "Wk 3",
+      "SortOrder": 3,
+      "CategoryGroup": "Commercial",
+      "Amount": 2430,
+      "PriorYearAmount": 2140
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "PeriodLabel": "Wk 4",
+      "SortOrder": 4,
+      "CategoryGroup": "Commercial",
+      "Amount": 2445,
+      "PriorYearAmount": 2160
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "PeriodLabel": "Wk 5",
+      "SortOrder": 5,
+      "CategoryGroup": "Commercial",
+      "Amount": 2460,
+      "PriorYearAmount": 2180
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "PeriodLabel": "Wk 6",
+      "SortOrder": 6,
+      "CategoryGroup": "Commercial",
+      "Amount": 2475,
+      "PriorYearAmount": 2200
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "PeriodLabel": "Wk 7",
+      "SortOrder": 7,
+      "CategoryGroup": "Commercial",
+      "Amount": 2490,
+      "PriorYearAmount": 2220
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "PeriodKey": "W_8",
+      "PeriodLabel": "Wk 8",
+      "SortOrder": 8,
+      "CategoryGroup": "Commercial",
+      "Amount": 2505,
+      "PriorYearAmount": 2240
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "PeriodKey": "W_9",
+      "PeriodLabel": "Wk 9",
+      "SortOrder": 9,
+      "CategoryGroup": "Commercial",
+      "Amount": 2520,
+      "PriorYearAmount": 2260
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "PeriodKey": "W_10",
+      "PeriodLabel": "Wk 10",
+      "SortOrder": 10,
+      "CategoryGroup": "Commercial",
+      "Amount": 2535,
+      "PriorYearAmount": 2280
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "PeriodKey": "W_11",
+      "PeriodLabel": "Wk 11",
+      "SortOrder": 11,
+      "CategoryGroup": "Commercial",
+      "Amount": 2550,
+      "PriorYearAmount": 2300
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "PeriodKey": "W_12",
+      "PeriodLabel": "Wk 12",
+      "SortOrder": 12,
+      "CategoryGroup": "Commercial",
+      "Amount": 2565,
+      "PriorYearAmount": 2320
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "PeriodKey": "W_13",
+      "PeriodLabel": "Wk 13",
+      "SortOrder": 13,
+      "CategoryGroup": "Commercial",
+      "Amount": 2580,
+      "PriorYearAmount": 2340
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_aging_electric_commercial_rolling13",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}

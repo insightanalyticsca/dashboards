@@ -1,0 +1,49 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_its_kb4_failure_ppp",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "FailureType": "Credential Harvesting",
+      "Clicks": 18,
+      "Reports": 24,
+      "PPP": 1.33
+    },
+    {
+      "FailureType": "Malware Link Click",
+      "Clicks": 12,
+      "Reports": 18,
+      "PPP": 1.5
+    },
+    {
+      "FailureType": "Attachment Open",
+      "Clicks": 8,
+      "Reports": 14,
+      "PPP": 1.75
+    },
+    {
+      "FailureType": "Form Submit",
+      "Clicks": 6,
+      "Reports": 9,
+      "PPP": 1.5
+    },
+    {
+      "FailureType": "Voice Phishing",
+      "Clicks": 3,
+      "Reports": 5,
+      "PPP": 1.67
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_its_kb4_failure_ppp",
+    "returnedRows": 5,
+    "requestedMaxRows": 50000
+  }
+}

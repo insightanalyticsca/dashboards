@@ -1,0 +1,110 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_its_closure_sla_mom",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "month_start": "2025-03-01",
+      "MonthStart": "2025-03-01",
+      "SLA_Met": 88,
+      "SLA_Breached": 12,
+      "Closure_Avg_Hours": 18.2
+    },
+    {
+      "month_start": "2025-04-01",
+      "MonthStart": "2025-04-01",
+      "SLA_Met": 89,
+      "SLA_Breached": 11,
+      "Closure_Avg_Hours": 19.0
+    },
+    {
+      "month_start": "2025-05-01",
+      "MonthStart": "2025-05-01",
+      "SLA_Met": 90,
+      "SLA_Breached": 10,
+      "Closure_Avg_Hours": 19.8
+    },
+    {
+      "month_start": "2025-06-01",
+      "MonthStart": "2025-06-01",
+      "SLA_Met": 91,
+      "SLA_Breached": 9,
+      "Closure_Avg_Hours": 18.2
+    },
+    {
+      "month_start": "2025-07-01",
+      "MonthStart": "2025-07-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Closure_Avg_Hours": 19.0
+    },
+    {
+      "month_start": "2025-08-01",
+      "MonthStart": "2025-08-01",
+      "SLA_Met": 88,
+      "SLA_Breached": 12,
+      "Closure_Avg_Hours": 19.8
+    },
+    {
+      "month_start": "2025-09-01",
+      "MonthStart": "2025-09-01",
+      "SLA_Met": 89,
+      "SLA_Breached": 11,
+      "Closure_Avg_Hours": 18.2
+    },
+    {
+      "month_start": "2025-10-01",
+      "MonthStart": "2025-10-01",
+      "SLA_Met": 90,
+      "SLA_Breached": 10,
+      "Closure_Avg_Hours": 19.0
+    },
+    {
+      "month_start": "2025-11-01",
+      "MonthStart": "2025-11-01",
+      "SLA_Met": 91,
+      "SLA_Breached": 9,
+      "Closure_Avg_Hours": 19.8
+    },
+    {
+      "month_start": "2025-12-01",
+      "MonthStart": "2025-12-01",
+      "SLA_Met": 92,
+      "SLA_Breached": 8,
+      "Closure_Avg_Hours": 18.2
+    },
+    {
+      "month_start": "2025-12-01",
+      "MonthStart": "2025-12-01",
+      "SLA_Met": 88,
+      "SLA_Breached": 12,
+      "Closure_Avg_Hours": 19.0
+    },
+    {
+      "month_start": "2026-01-01",
+      "MonthStart": "2026-01-01",
+      "SLA_Met": 89,
+      "SLA_Breached": 11,
+      "Closure_Avg_Hours": 19.8
+    },
+    {
+      "month_start": "2026-03-01",
+      "MonthStart": "2026-03-01",
+      "SLA_Met": 90,
+      "SLA_Breached": 10,
+      "Closure_Avg_Hours": 18.2
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_its_closure_sla_mom",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}

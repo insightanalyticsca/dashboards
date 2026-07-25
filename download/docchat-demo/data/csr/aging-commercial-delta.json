@@ -1,0 +1,136 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_aging_commercial_delta",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "PeriodKey": "W_1",
+      "SortOrder": 1,
+      "CategoryGroup": "Commercial",
+      "Amount": 5200,
+      "PriorAmount": 4900,
+      "Delta": 300
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "PeriodKey": "W_2",
+      "SortOrder": 2,
+      "CategoryGroup": "Commercial",
+      "Amount": 5220,
+      "PriorAmount": 4925,
+      "Delta": 295
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "PeriodKey": "W_3",
+      "SortOrder": 3,
+      "CategoryGroup": "Commercial",
+      "Amount": 5240,
+      "PriorAmount": 4950,
+      "Delta": 290
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "PeriodKey": "W_4",
+      "SortOrder": 4,
+      "CategoryGroup": "Commercial",
+      "Amount": 5260,
+      "PriorAmount": 4975,
+      "Delta": 285
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "PeriodKey": "W_5",
+      "SortOrder": 5,
+      "CategoryGroup": "Commercial",
+      "Amount": 5280,
+      "PriorAmount": 5000,
+      "Delta": 280
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "PeriodKey": "W_6",
+      "SortOrder": 6,
+      "CategoryGroup": "Commercial",
+      "Amount": 5300,
+      "PriorAmount": 5025,
+      "Delta": 275
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "PeriodKey": "W_7",
+      "SortOrder": 7,
+      "CategoryGroup": "Commercial",
+      "Amount": 5320,
+      "PriorAmount": 5050,
+      "Delta": 270
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "PeriodKey": "W_8",
+      "SortOrder": 8,
+      "CategoryGroup": "Commercial",
+      "Amount": 5340,
+      "PriorAmount": 5075,
+      "Delta": 265
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "PeriodKey": "W_9",
+      "SortOrder": 9,
+      "CategoryGroup": "Commercial",
+      "Amount": 5360,
+      "PriorAmount": 5100,
+      "Delta": 260
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "PeriodKey": "W_10",
+      "SortOrder": 10,
+      "CategoryGroup": "Commercial",
+      "Amount": 5380,
+      "PriorAmount": 5125,
+      "Delta": 255
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "PeriodKey": "W_11",
+      "SortOrder": 11,
+      "CategoryGroup": "Commercial",
+      "Amount": 5400,
+      "PriorAmount": 5150,
+      "Delta": 250
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "PeriodKey": "W_12",
+      "SortOrder": 12,
+      "CategoryGroup": "Commercial",
+      "Amount": 5420,
+      "PriorAmount": 5175,
+      "Delta": 245
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "PeriodKey": "W_13",
+      "SortOrder": 13,
+      "CategoryGroup": "Commercial",
+      "Amount": 5440,
+      "PriorAmount": 5200,
+      "Delta": 240
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_aging_commercial_delta",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}

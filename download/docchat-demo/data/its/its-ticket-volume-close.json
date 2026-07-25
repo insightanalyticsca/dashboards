@@ -1,0 +1,149 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_its_ticket_volume_close",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "period_sort": 1,
+      "Period Sort": 1,
+      "month_start": "2025-03-01",
+      "Opened": 142,
+      "Closed": 128,
+      "role": "closed",
+      "value": 128,
+      "Value": 128
+    },
+    {
+      "period_sort": 2,
+      "Period Sort": 2,
+      "month_start": "2025-04-01",
+      "Opened": 150,
+      "Closed": 134,
+      "role": "closed",
+      "value": 134,
+      "Value": 134
+    },
+    {
+      "period_sort": 3,
+      "Period Sort": 3,
+      "month_start": "2025-05-01",
+      "Opened": 158,
+      "Closed": 140,
+      "role": "closed",
+      "value": 140,
+      "Value": 140
+    },
+    {
+      "period_sort": 4,
+      "Period Sort": 4,
+      "month_start": "2025-06-01",
+      "Opened": 166,
+      "Closed": 146,
+      "role": "closed",
+      "value": 146,
+      "Value": 146
+    },
+    {
+      "period_sort": 5,
+      "Period Sort": 5,
+      "month_start": "2025-07-01",
+      "Opened": 142,
+      "Closed": 128,
+      "role": "closed",
+      "value": 128,
+      "Value": 128
+    },
+    {
+      "period_sort": 6,
+      "Period Sort": 6,
+      "month_start": "2025-08-01",
+      "Opened": 150,
+      "Closed": 134,
+      "role": "closed",
+      "value": 134,
+      "Value": 134
+    },
+    {
+      "period_sort": 7,
+      "Period Sort": 7,
+      "month_start": "2025-09-01",
+      "Opened": 158,
+      "Closed": 140,
+      "role": "closed",
+      "value": 140,
+      "Value": 140
+    },
+    {
+      "period_sort": 8,
+      "Period Sort": 8,
+      "month_start": "2025-10-01",
+      "Opened": 166,
+      "Closed": 146,
+      "role": "closed",
+      "value": 146,
+      "Value": 146
+    },
+    {
+      "period_sort": 9,
+      "Period Sort": 9,
+      "month_start": "2025-11-01",
+      "Opened": 142,
+      "Closed": 128,
+      "role": "closed",
+      "value": 128,
+      "Value": 128
+    },
+    {
+      "period_sort": 10,
+      "Period Sort": 10,
+      "month_start": "2025-12-01",
+      "Opened": 150,
+      "Closed": 134,
+      "role": "closed",
+      "value": 134,
+      "Value": 134
+    },
+    {
+      "period_sort": 11,
+      "Period Sort": 11,
+      "month_start": "2025-12-01",
+      "Opened": 158,
+      "Closed": 140,
+      "role": "closed",
+      "value": 140,
+      "Value": 140
+    },
+    {
+      "period_sort": 12,
+      "Period Sort": 12,
+      "month_start": "2026-01-01",
+      "Opened": 166,
+      "Closed": 146,
+      "role": "closed",
+      "value": 146,
+      "Value": 146
+    },
+    {
+      "period_sort": 13,
+      "Period Sort": 13,
+      "month_start": "2026-03-01",
+      "Opened": 142,
+      "Closed": 128,
+      "role": "closed",
+      "value": 128,
+      "Value": 128
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_its_ticket_volume_close",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}
