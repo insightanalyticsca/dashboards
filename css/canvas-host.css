@@ -27,10 +27,17 @@ html, body {
   background: var(--exec-bg);
   color: var(--exec-ink);
   font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-  /* NO overflow:hidden — allow scrolling on mobile */
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+  /* CRITICAL: override executive-dashboard-suite.css which sets height:100% + overflow:hidden */
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#app {
+  /* Override executive-dashboard-suite.css */
+  height: auto !important;
+  overflow: visible !important;
 }
 
 .canvas-page {
@@ -84,8 +91,8 @@ html, body {
   flex: 1;
   min-height: 0;
   position: relative;
-  /* Important: allow iframe to fill, but also allow tile to grow */
-  overflow: hidden;
+  /* Allow content to be visible — don't clip */
+  overflow: visible;
 }
 
 .canvas-tile-body iframe {
@@ -140,12 +147,13 @@ html, body {
   .canvas-tile {
     /* Each tile takes full width */
     grid-column: span 1 !important;
-    /* Fixed height on mobile so iframes have a defined size */
-    min-height: 360px;
+    /* Generous height so visual content fits without internal scroll */
+    min-height: 560px;
   }
 
   .canvas-tile-body iframe {
-    min-height: 300px;
+    /* Tall enough for charts + tables to be fully visible */
+    min-height: 500px;
   }
 
   .canvas-page {
@@ -165,10 +173,10 @@ html, body {
 
 @media (max-width: 480px) {
   .canvas-tile {
-    min-height: 320px;
+    min-height: 520px;
   }
 
   .canvas-tile-body iframe {
-    min-height: 260px;
+    min-height: 460px;
   }
 }
