@@ -450,6 +450,16 @@
       console.error(err);
     }
 
+    // Check if Groq config loaded after boot (async)
+    setTimeout(function() {
+      var cfg = window.DocChatAPI?.Config?.get();
+      if (cfg && cfg.provider === 'groq' && cfg.groqKey) {
+        updateProviderPill();
+        var status = document.getElementById('composerStatus');
+        if (status) status.textContent = 'Groq · live';
+      }
+    }, 2000);
+    
     wireDropzone();
     wireChat();
     wireSettings();

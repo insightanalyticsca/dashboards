@@ -410,6 +410,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
         if (!cfg) return;
         if (cfg.provider && !localStorage.getItem('docchat.provider')) {
           CONFIG.provider = cfg.provider;
+          try { localStorage.setItem('docchat.provider', cfg.provider); } catch(_){}
         }
         if (cfg.groqKey && !localStorage.getItem('docchat.groq.key')) {
           CONFIG.groqKey = cfg.groqKey;
