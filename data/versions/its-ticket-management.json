@@ -13,27 +13,39 @@
     "data": [
       {
         "Priority": "P1",
-        "Count": 4,
-        "AvgAge": 2.5,
-        "Label": "Critical"
+        "priority": "P1",
+        "Count": 3,
+        "count": 5,
+        "Label": "Critical",
+        "AvgAge": 2.8,
+        "SLA": 97
       },
       {
         "Priority": "P2",
+        "priority": "P2",
         "Count": 18,
-        "AvgAge": 4.8,
-        "Label": "High"
+        "count": 17,
+        "Label": "High",
+        "AvgAge": 4.5,
+        "SLA": 88
       },
       {
         "Priority": "P3",
-        "Count": 62,
-        "AvgAge": 9.2,
-        "Label": "Medium"
+        "priority": "P3",
+        "Count": 63,
+        "count": 67,
+        "Label": "Medium",
+        "AvgAge": 9.9,
+        "SLA": 89
       },
       {
         "Priority": "P4",
-        "Count": 142,
-        "AvgAge": 18.4,
-        "Label": "Low"
+        "priority": "P4",
+        "Count": 149,
+        "count": 145,
+        "Label": "Low",
+        "AvgAge": 18.7,
+        "SLA": 94
       }
     ],
     "debug": {
@@ -54,23 +66,28 @@
     "data": [
       {
         "Status": "Open",
+        "status": "Open",
         "Count": 42
       },
       {
         "Status": "In Progress",
-        "Count": 68
+        "status": "In Progress",
+        "Count": 73
       },
       {
         "Status": "Pending",
-        "Count": 35
+        "status": "Pending",
+        "Count": 32
       },
       {
         "Status": "Resolved",
-        "Count": 142
+        "status": "Resolved",
+        "Count": 139
       },
       {
         "Status": "Closed",
-        "Count": 89
+        "status": "Closed",
+        "Count": 88
       }
     ],
     "debug": {
@@ -92,7 +109,7 @@
       {
         "Priority": "P1",
         "Status": "Open",
-        "Count": 2
+        "Count": 1
       },
       {
         "Priority": "P1",
@@ -107,7 +124,7 @@
       {
         "Priority": "P2",
         "Status": "Open",
-        "Count": 5
+        "Count": 4
       },
       {
         "Priority": "P2",
@@ -117,7 +134,7 @@
       {
         "Priority": "P2",
         "Status": "Pending",
-        "Count": 5
+        "Count": 4
       },
       {
         "Priority": "P3",
@@ -127,27 +144,27 @@
       {
         "Priority": "P3",
         "Status": "In Progress",
-        "Count": 22
+        "Count": 20
       },
       {
         "Priority": "P3",
         "Status": "Pending",
-        "Count": 22
+        "Count": 21
       },
       {
         "Priority": "P4",
         "Status": "Open",
-        "Count": 42
+        "Count": 40
       },
       {
         "Priority": "P4",
         "Status": "In Progress",
-        "Count": 58
+        "Count": 57
       },
       {
         "Priority": "P4",
         "Status": "Pending",
-        "Count": 42
+        "Count": 41
       }
     ],
     "debug": {
@@ -168,27 +185,39 @@
     "data": [
       {
         "Priority": "P1",
+        "priority": "P1",
         "Count": 4,
-        "AvgAge": 2.5,
-        "Label": "Critical"
+        "count": 2,
+        "Label": "Critical",
+        "AvgAge": 2.6,
+        "SLA": 95
       },
       {
         "Priority": "P2",
-        "Count": 18,
-        "AvgAge": 4.8,
-        "Label": "High"
+        "priority": "P2",
+        "Count": 21,
+        "count": 15,
+        "Label": "High",
+        "AvgAge": 5.3,
+        "SLA": 87
       },
       {
         "Priority": "P3",
-        "Count": 62,
-        "AvgAge": 9.2,
-        "Label": "Medium"
+        "priority": "P3",
+        "Count": 64,
+        "count": 63,
+        "Label": "Medium",
+        "AvgAge": 8.5,
+        "SLA": 91
       },
       {
         "Priority": "P4",
-        "Count": 142,
-        "AvgAge": 18.4,
-        "Label": "Low"
+        "priority": "P4",
+        "Count": 150,
+        "count": 145,
+        "Label": "Low",
+        "AvgAge": 19.3,
+        "SLA": 98
       }
     ],
     "debug": {
@@ -198,6 +227,6 @@
   "_meta": {
     "version": "its-ticket-management",
     "title": "ITS \u2014 Ticket Management",
-    "generatedUtc": "2026-07-26T12:23:10Z"
+    "generatedUtc": "2026-07-26T16:06:41Z"
   }
 }

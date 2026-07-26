@@ -1,86 +1,4 @@
 {
-  "its-kb4-phish-mom": {
-    "found": true,
-    "mode": "rawRows",
-    "connectionName": "build",
-    "schema": "dbo",
-    "obj": "view",
-    "objectType": "view",
-    "agg": "RawRows",
-    "rowFields": [],
-    "colFields": [],
-    "valueFields": [],
-    "data": [
-      {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
-        "failure_type": "Credential Harvesting",
-        "FailureType": "Credential Harvesting",
-        "type": "Credential Harvesting",
-        "failure_count": 18,
-        "FailureCount": 18,
-        "prior_month_count": 22,
-        "PriorMonthCount": 22,
-        "mom_variance": -4,
-        "MomVariance": -4
-      },
-      {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
-        "failure_type": "Malware Link Click",
-        "FailureType": "Malware Link Click",
-        "type": "Malware Link Click",
-        "failure_count": 9,
-        "FailureCount": 9,
-        "prior_month_count": 18,
-        "PriorMonthCount": 18,
-        "mom_variance": -9,
-        "MomVariance": -9
-      },
-      {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
-        "failure_type": "Attachment Open",
-        "FailureType": "Attachment Open",
-        "type": "Attachment Open",
-        "failure_count": 5,
-        "FailureCount": 5,
-        "prior_month_count": 12,
-        "PriorMonthCount": 12,
-        "mom_variance": -7,
-        "MomVariance": -7
-      },
-      {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
-        "failure_type": "Form Submit",
-        "FailureType": "Form Submit",
-        "type": "Form Submit",
-        "failure_count": 2,
-        "FailureCount": 2,
-        "prior_month_count": 7,
-        "PriorMonthCount": 7,
-        "mom_variance": -5,
-        "MomVariance": -5
-      },
-      {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
-        "failure_type": "Voice Phishing",
-        "FailureType": "Voice Phishing",
-        "type": "Voice Phishing",
-        "failure_count": 1,
-        "FailureCount": 1,
-        "prior_month_count": 5,
-        "PriorMonthCount": 5,
-        "mom_variance": -4,
-        "MomVariance": -4
-      }
-    ],
-    "debug": {
-      "returnedRows": 5
-    }
-  },
   "its-ocsf-report": {
     "found": true,
     "mode": "rawRows",
@@ -296,7 +214,7 @@
       "returnedRows": 18
     }
   },
-  "its-kb4-training": {
+  "its-kb4-phish-mom": {
     "found": true,
     "mode": "rawRows",
     "connectionName": "build",
@@ -309,50 +227,73 @@
     "valueFields": [],
     "data": [
       {
-        "Department": "Operations",
-        "Assigned": 142,
-        "Completed": 136,
-        "Rate": 95.8
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Credential Harvesting",
+        "FailureType": "Credential Harvesting",
+        "type": "Credential Harvesting",
+        "failure_count": 17,
+        "FailureCount": 17,
+        "prior_month_count": 24,
+        "PriorMonthCount": 24,
+        "mom_variance": -7,
+        "MomVariance": -7
       },
       {
-        "Department": "Customer Service",
-        "Assigned": 217,
-        "Completed": 204,
-        "Rate": 94.0
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Malware Link Click",
+        "FailureType": "Malware Link Click",
+        "type": "Malware Link Click",
+        "failure_count": 11,
+        "FailureCount": 11,
+        "prior_month_count": 18,
+        "PriorMonthCount": 18,
+        "mom_variance": -7,
+        "MomVariance": -7
       },
       {
-        "Department": "Finance",
-        "Assigned": 83,
-        "Completed": 80,
-        "Rate": 96.4
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Attachment Open",
+        "FailureType": "Attachment Open",
+        "type": "Attachment Open",
+        "failure_count": 6,
+        "FailureCount": 6,
+        "prior_month_count": 14,
+        "PriorMonthCount": 14,
+        "mom_variance": -8,
+        "MomVariance": -8
       },
       {
-        "Department": "IT",
-        "Assigned": 95,
-        "Completed": 93,
-        "Rate": 97.9
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Form Submit",
+        "FailureType": "Form Submit",
+        "type": "Form Submit",
+        "failure_count": 6,
+        "FailureCount": 6,
+        "prior_month_count": 8,
+        "PriorMonthCount": 8,
+        "mom_variance": -2,
+        "MomVariance": -2
       },
       {
-        "Department": "HR",
-        "Assigned": 32,
-        "Completed": 31,
-        "Rate": 96.9
-      },
-      {
-        "Department": "Sales",
-        "Assigned": 123,
-        "Completed": 117,
-        "Rate": 95.1
-      },
-      {
-        "Department": "Executive",
-        "Assigned": 24,
-        "Completed": 28,
-        "Rate": 116.7
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Voice Phishing",
+        "FailureType": "Voice Phishing",
+        "type": "Voice Phishing",
+        "failure_count": 2,
+        "FailureCount": 2,
+        "prior_month_count": 4,
+        "PriorMonthCount": 4,
+        "mom_variance": -2,
+        "MomVariance": -2
       }
     ],
     "debug": {
-      "returnedRows": 7
+      "returnedRows": 5
     }
   },
   "its-kb4-failure-ppp": {
@@ -370,32 +311,32 @@
       {
         "FailureType": "Credential Harvesting",
         "Clicks": 16,
-        "Reports": 23,
-        "PPP": 1.35
+        "Reports": 24,
+        "PPP": 1.3
       },
       {
         "FailureType": "Malware Link Click",
-        "Clicks": 12,
-        "Reports": 17,
-        "PPP": 1.45
+        "Clicks": 11,
+        "Reports": 16,
+        "PPP": 1.54
       },
       {
         "FailureType": "Attachment Open",
-        "Clicks": 6,
-        "Reports": 14,
-        "PPP": 1.78
+        "Clicks": 7,
+        "Reports": 12,
+        "PPP": 1.73
       },
       {
         "FailureType": "Form Submit",
-        "Clicks": 6,
+        "Clicks": 5,
         "Reports": 9,
-        "PPP": 1.55
+        "PPP": 1.54
       },
       {
         "FailureType": "Voice Phishing",
-        "Clicks": 3,
+        "Clicks": 2,
         "Reports": 4,
-        "PPP": 1.68
+        "PPP": 1.72
       }
     ],
     "debug": {
@@ -403,8 +344,8 @@
     }
   },
   "_meta": {
-    "version": "its-security-training",
-    "title": "ITS \u2014 Security & Training",
+    "version": "its-security-posture",
+    "title": "ITS \u2014 Security Posture",
     "generatedUtc": "2026-07-26T16:06:41Z"
   }
 }

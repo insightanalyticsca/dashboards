@@ -1,16 +1,174 @@
-:root { --exec-bg: #f4f6fb; --exec-panel: #ffffff; --exec-ink: #171777; --exec-muted: #60708b; --exec-border: #d8deea; --exec-grid: #e9edf5; --exec-primary: #0808ee; --exec-secondary: #09c698; --exec-accent: #bbff05; --exec-highlight: #38bdf8; --exec-shadow: 0 8px 22px rgba(23, 23, 119, .08); }
+/* ════════════════════════════════════════════════════════════════════════════
+   canvas-host.css — Canvas host styling
+   Mirrors .NET Multi.cshtml tile layout.
+   Fixed: mobile scrolling (removed overflow:hidden, tiles stack vertically)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --exec-bg: #f4f6fb;
+  --exec-panel: #ffffff;
+  --exec-ink: #171777;
+  --exec-muted: #60708b;
+  --exec-border: #d8deea;
+  --exec-grid: #e9edf5;
+  --exec-primary: #0808ee;
+  --exec-secondary: #09c698;
+  --exec-accent: #bbff05;
+  --exec-highlight: #38bdf8;
+  --exec-shadow: 0 8px 22px rgba(23, 23, 119, .08);
+}
+
 * { box-sizing: border-box; }
-html, body { width: 100%; margin: 0; padding: 0; background: var(--exec-bg); color: var(--exec-ink); font-family: "Segoe UI", Arial, Helvetica, sans-serif; }
-.canvas-page { padding: 10px; }
-.canvas-header { min-height: 38px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 8px; }
+
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--exec-bg);
+  color: var(--exec-ink);
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  /* NO overflow:hidden — allow scrolling on mobile */
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
+
+.canvas-page {
+  padding: 10px;
+  /* Ensure page can grow with content */
+  min-height: 100vh;
+}
+
+.canvas-header {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px 8px;
+}
+
 .canvas-title { font-size: 18px; font-weight: 800; color: var(--exec-primary); }
 .canvas-asof { font-size: 12px; color: var(--exec-muted); }
-.canvas-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; }
-.canvas-tile { background: var(--exec-panel); border: 1px solid var(--exec-border); border-radius: 14px; box-shadow: var(--exec-shadow); overflow: hidden; display: flex; flex-direction: column; }
-.canvas-tile-head { padding: 8px 12px; border-bottom: 1px solid var(--exec-grid); font-size: 12px; font-weight: 800; color: var(--exec-ink); }
-.canvas-tile-body { flex: 1; min-height: 0; position: relative; }
-.canvas-tile-body iframe { width: 100%; height: 100%; min-height: 280px; }
-.canvas-notes { margin-top: 12px; padding: 10px 12px; background: var(--exec-panel); border: 1px solid var(--exec-border); border-radius: 10px; font-size: 11px; color: var(--exec-muted); line-height: 1.5; }
+
+.canvas-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
+  /* Allow grid to grow */
+  min-height: 0;
+}
+
+.canvas-tile {
+  background: var(--exec-panel);
+  border: 1px solid var(--exec-border);
+  border-radius: 14px;
+  box-shadow: var(--exec-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* Each tile grows to fit its content */
+  min-height: 280px;
+}
+
+.canvas-tile-head {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--exec-grid);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--exec-ink);
+  flex-shrink: 0;
+}
+
+.canvas-tile-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  /* Important: allow iframe to fill, but also allow tile to grow */
+  overflow: hidden;
+}
+
+.canvas-tile-body iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  border: 0;
+  background: transparent;
+  display: block;
+}
+
+.canvas-notes {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--exec-panel);
+  border: 1px solid var(--exec-border);
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--exec-muted);
+  line-height: 1.5;
+}
+
 .canvas-notes > div { padding: 2px 0; }
-.canvas-back { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #fff; border: 1px solid var(--exec-border); border-radius: 8px; text-decoration: none; color: var(--exec-ink); font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+
+.canvas-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid var(--exec-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--exec-ink);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
 .canvas-back:hover { background: var(--exec-grid); }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — mobile
+   ════════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .canvas-grid {
+    /* Stack all tiles vertically on mobile */
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-tile {
+    /* Each tile takes full width */
+    grid-column: span 1 !important;
+    /* Fixed height on mobile so iframes have a defined size */
+    min-height: 360px;
+  }
+
+  .canvas-tile-body iframe {
+    min-height: 300px;
+  }
+
+  .canvas-page {
+    padding: 8px;
+  }
+
+  .canvas-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .canvas-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-tile {
+    min-height: 320px;
+  }
+
+  .canvas-tile-body iframe {
+    min-height: 260px;
+  }
+}

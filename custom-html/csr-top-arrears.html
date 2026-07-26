@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ITS — SLA Performance</title>
+  <title>CSR — Top Arrears Accounts</title>
   <link rel="stylesheet" href="../css/canvas-host.css?v=20260727">
   <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20260727">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body data-suite="its-sla-performance" data-variant="indigo">
+<body data-suite="csr-top-arrears" data-variant="teal">
   <div class="canvas-page">
     <a class="canvas-back" href="../visuals.html">
       <i class="fa-solid fa-arrow-left"></i> Back to Gallery
     </a>
     <div id="app">
       <header class="canvas-header">
-        <div class="canvas-title">ITS — SLA Performance</div>
-        <div class="canvas-asof">13-month rolling · March 2026</div>
+        <div class="canvas-title">CSR — Top Arrears Accounts</div>
+        <div class="canvas-asof">Hourly · March 2026</div>
       </header>
       <div class="canvas-grid"></div>
       <div class="canvas-notes"></div>
@@ -24,28 +24,35 @@
   </div>
   <script>
     window.CANVAS_CONFIG = {
-  "version": "its-sla-performance",
-  "title": "ITS \u2014 SLA Performance",
-  "asOfLabel": "13-month rolling \u00b7 March 2026",
+  "version": "csr-top-arrears",
+  "title": "CSR \u2014 Top Arrears Accounts",
+  "asOfLabel": "Hourly \u00b7 March 2026",
   "visuals": [
     {
-      "id": "its-response-sla-mom",
-      "file": "its-response-sla-mom.html",
-      "title": "Response SLA MoM",
-      "w": 6,
+      "id": "ar-buckets-stacked",
+      "file": "ar-buckets-stacked.html",
+      "title": "AR Aging Buckets (13wk)",
+      "w": 12,
       "h": 380
     },
     {
-      "id": "its-closure-sla-mom",
-      "file": "its-closure-sla-mom.html",
-      "title": "Closure SLA MoM",
+      "id": "aging-bankruptcies",
+      "file": "aging-bankruptcies.html",
+      "title": "Bankruptcies",
       "w": 6,
-      "h": 380
+      "h": 320
+    },
+    {
+      "id": "aging-disconnects-reconnects",
+      "file": "aging-disconnects-reconnects.html",
+      "title": "Disconnects & Reconnects",
+      "w": 6,
+      "h": 320
     }
   ],
   "notes": [
-    "Response SLA met 92% \u2014 above 90% target.",
-    "Closure SLA met 88% \u2014 below 90% target."
+    "Top arrears accounts \u2014 hourly refresh.",
+    "Commercial segment dominates 90+ day bucket."
   ]
 };
   </script>

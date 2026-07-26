@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CSR — Electric Arrears</title>
+  <title>CSR — Aging Dynamics</title>
   <link rel="stylesheet" href="../css/canvas-host.css?v=20260727">
   <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20260727">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body data-suite="csr-electric-arrears" data-variant="teal">
+<body data-suite="csr-aging-dynamics" data-variant="teal">
   <div class="canvas-page">
     <a class="canvas-back" href="../visuals.html">
       <i class="fa-solid fa-arrow-left"></i> Back to Gallery
     </a>
     <div id="app">
       <header class="canvas-header">
-        <div class="canvas-title">CSR — Electric Arrears</div>
-        <div class="canvas-asof">13-month rolling · March 2026</div>
+        <div class="canvas-title">CSR — Aging Dynamics</div>
+        <div class="canvas-asof">Hourly · March 2026</div>
       </header>
       <div class="canvas-grid"></div>
       <div class="canvas-notes"></div>
@@ -24,21 +24,21 @@
   </div>
   <script>
     window.CANVAS_CONFIG = {
-  "version": "csr-electric-arrears",
-  "title": "CSR \u2014 Electric Arrears",
-  "asOfLabel": "13-month rolling \u00b7 March 2026",
+  "version": "csr-aging-dynamics",
+  "title": "CSR \u2014 Aging Dynamics",
+  "asOfLabel": "Hourly \u00b7 March 2026",
   "visuals": [
     {
       "id": "aging-electric-commercial-rolling13",
       "file": "aging-electric-commercial-rolling13.html",
-      "title": "Commercial Electric Arrears (13mo)",
+      "title": "Commercial Electric (13mo)",
       "w": 6,
       "h": 340
     },
     {
       "id": "aging-electric-residential-rolling13",
       "file": "aging-electric-residential-rolling13.html",
-      "title": "Residential Electric Arrears (13mo)",
+      "title": "Residential Electric (13mo)",
       "w": 6,
       "h": 340
     },
@@ -55,11 +55,18 @@
       "title": "Residential Delta",
       "w": 6,
       "h": 320
+    },
+    {
+      "id": "ar-buckets-stacked",
+      "file": "ar-buckets-stacked.html",
+      "title": "AR Buckets Stacked (13wk)",
+      "w": 12,
+      "h": 380
     }
   ],
   "notes": [
-    "Commercial electric arrears trending upward.",
-    "Residential arrears stable but elevated vs prior year."
+    "Aging dynamics \u2014 hourly refresh.",
+    "Electric arrears show seasonal pattern."
   ]
 };
   </script>

@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ITS — Service Health</title>
+  <title>ITS — Ticket Operations</title>
   <link rel="stylesheet" href="../css/canvas-host.css?v=20260727">
   <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20260727">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body data-suite="its-service-health" data-variant="indigo">
+<body data-suite="its-ticket-operations" data-variant="indigo">
   <div class="canvas-page">
     <a class="canvas-back" href="../visuals.html">
       <i class="fa-solid fa-arrow-left"></i> Back to Gallery
     </a>
     <div id="app">
       <header class="canvas-header">
-        <div class="canvas-title">ITS — Service Health</div>
+        <div class="canvas-title">ITS — Ticket Operations</div>
         <div class="canvas-asof">Period: March 2026</div>
       </header>
       <div class="canvas-grid"></div>
@@ -24,17 +24,10 @@
   </div>
   <script>
     window.CANVAS_CONFIG = {
-  "version": "its-service-health",
-  "title": "ITS \u2014 Service Health",
+  "version": "its-ticket-operations",
+  "title": "ITS \u2014 Ticket Operations",
   "asOfLabel": "Period: March 2026",
   "visuals": [
-    {
-      "id": "its-uptime",
-      "file": "its-uptime.html",
-      "title": "Uptime Report",
-      "w": 12,
-      "h": 400
-    },
     {
       "id": "its-ticket-volume-open",
       "file": "its-ticket-volume-open.html",
@@ -48,11 +41,32 @@
       "title": "Ticket Volume (Close)",
       "w": 6,
       "h": 340
+    },
+    {
+      "id": "its-open-priority",
+      "file": "its-open-priority.html",
+      "title": "Open by Priority",
+      "w": 4,
+      "h": 320
+    },
+    {
+      "id": "its-open-status",
+      "file": "its-open-status.html",
+      "title": "Open by Status",
+      "w": 4,
+      "h": 320
+    },
+    {
+      "id": "its-closed-priority",
+      "file": "its-closed-priority.html",
+      "title": "Closed by Priority",
+      "w": 4,
+      "h": 320
     }
   ],
   "notes": [
-    "Overall uptime 99.974% \u2014 within SLA.",
-    "VPN breached SLA (99.91% vs 99.95% target)."
+    "Ticket operations \u2014 full lifecycle view.",
+    "Open tickets down 4.2% MoM, closures up 8%."
   ]
 };
   </script>
