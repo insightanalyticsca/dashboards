@@ -6,6 +6,15 @@
 /* ─── LIGHT THEME (default) ─── */
 :root,
 [data-theme="light"] {
+  /* Override styles.css variables */
+  --bg-0: #e8eaf2;
+  --bg-1: #f0f2f8;
+  --bg-2: #ffffff;
+  --card: #ffffff;
+  --card-hover: #f8f9ff;
+  --card-border: rgba(23,23,119,0.12);
+  --card-border-strong: rgba(23,23,119,0.20);
+
   /* Surfaces */
   --theme-bg: #f0f2f8;
   --theme-bg-grad-1: radial-gradient(ellipse 800px 600px at 10% 5%, rgba(99,102,241,0.10), transparent 60%);
@@ -24,6 +33,19 @@
   --theme-muted: #64748b;
   --theme-muted-dim: #94a3b8;
 
+  /* Override styles.css text vars */
+  --ink: #171777;
+  --text: #1e293b;
+  --text-soft: #475569;
+  --muted: #64748b;
+  --primary: #6366f1;
+  --primary-deep: #4338ca;
+  --accent: #06b6d4;
+  --hot: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
   /* Accents — vivid */
   --theme-primary: #6366f1;
   --theme-primary-deep: #4338ca;
@@ -36,22 +58,22 @@
   /* Glow */
   --theme-glow-primary: 0 0 32px rgba(99,102,241,0.35);
   --theme-glow-accent: 0 0 28px rgba(6,182,212,0.35);
+  --glow-primary: 0 0 32px rgba(99,102,241,0.35);
+  --glow-accent: 0 0 28px rgba(6,182,212,0.35);
+  --glow-hot: 0 0 24px rgba(236,72,153,0.40);
 
   /* Shadows */
   --theme-shadow-card: 0 8px 32px rgba(23,23,119,0.08), 0 2px 8px rgba(0,0,0,0.06);
   --theme-shadow-hover: 0 16px 48px rgba(23,23,119,0.16), 0 4px 16px rgba(0,0,0,0.08);
   --theme-shadow-pop: 0 24px 64px rgba(0,0,0,0.20), 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-card: 0 8px 32px rgba(23,23,119,0.08), 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-pop: 0 24px 64px rgba(0,0,0,0.20), 0 8px 24px rgba(0,0,0,0.12);
 
-  /* ECharts chart background (for canvas-host tiles) */
+  /* ECharts */
   --theme-chart-bg: #ffffff;
   --theme-chart-text: #1e293b;
-  --theme-chart-axis: #64748b;
-  --theme-chart-grid: rgba(0,0,0,0.06);
-  --theme-chart-tooltip-bg: rgba(255,255,255,0.97);
-  --theme-chart-tooltip-border: rgba(99,102,241,0.25);
-  --theme-chart-tooltip-text: #1e293b;
 
-  /* Toggle button */
+  /* Toggle */
   --toggle-bg: rgba(99,102,241,0.15);
   --toggle-border: rgba(99,102,241,0.25);
   --toggle-color: #6366f1;
@@ -59,6 +81,15 @@
 
 /* ─── DARK THEME ─── */
 [data-theme="dark"] {
+  /* Override styles.css variables */
+  --bg-0: #060818;
+  --bg-1: #0a0e27;
+  --bg-2: #0f172a;
+  --card: rgba(255, 255, 255, 0.04);
+  --card-hover: rgba(255, 255, 255, 0.07);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-strong: rgba(255, 255, 255, 0.16);
+
   /* Surfaces */
   --theme-bg: #0a0e27;
   --theme-bg-grad-1: radial-gradient(ellipse 800px 600px at 10% 5%, rgba(99,102,241,0.18), transparent 60%);
@@ -77,7 +108,20 @@
   --theme-muted: #94a3b8;
   --theme-muted-dim: #64748b;
 
-  /* Accents — vivid */
+  /* Override styles.css text vars */
+  --ink: #818cf8;
+  --text: #f1f5f9;
+  --text-soft: #cbd5e1;
+  --muted: #94a3b8;
+  --primary: #818cf8;
+  --primary-deep: #6366f1;
+  --accent: #22d3ee;
+  --hot: #f472b6;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  /* Accents */
   --theme-primary: #818cf8;
   --theme-primary-deep: #6366f1;
   --theme-accent: #22d3ee;
@@ -89,22 +133,22 @@
   /* Glow */
   --theme-glow-primary: 0 0 32px rgba(129,140,248,0.45);
   --theme-glow-accent: 0 0 28px rgba(34,211,238,0.40);
+  --glow-primary: 0 0 32px rgba(129,140,248,0.45);
+  --glow-accent: 0 0 28px rgba(34,211,238,0.40);
+  --glow-hot: 0 0 24px rgba(244,114,182,0.40);
 
   /* Shadows */
   --theme-shadow-card: 0 8px 32px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.20);
   --theme-shadow-hover: 0 16px 48px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.25);
   --theme-shadow-pop: 0 24px 64px rgba(0,0,0,0.65), 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.20);
+  --shadow-pop: 0 24px 64px rgba(0,0,0,0.65), 0 8px 24px rgba(0,0,0,0.35);
 
-  /* ECharts chart background */
+  /* ECharts */
   --theme-chart-bg: transparent;
   --theme-chart-text: #f1f5f9;
-  --theme-chart-axis: #94a3b8;
-  --theme-chart-grid: rgba(255,255,255,0.06);
-  --theme-chart-tooltip-bg: rgba(15,23,42,0.95);
-  --theme-chart-tooltip-border: rgba(129,140,248,0.40);
-  --theme-chart-tooltip-text: #f8fafc;
 
-  /* Toggle button */
+  /* Toggle */
   --toggle-bg: rgba(255,255,255,0.08);
   --toggle-border: rgba(255,255,255,0.15);
   --toggle-color: #fbbf24;
