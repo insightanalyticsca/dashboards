@@ -2,15 +2,15 @@
   "key": "ar",
   "title": "AR Portfolio Executive Summary",
   "variant": "cyan",
-  "asOfLabel": "Period: March 2026",
-  "generatedUtc": "2026-07-26T12:23:04Z",
+  "asOfLabel": "Period: June 2026",
+  "generatedUtc": "2026-07-26T00:00:00Z",
   "metrics": [
     {
       "key": "total-ar",
       "label": "Total AR",
       "value": 14800000,
       "format": "currency",
-      "period": "Mar 2026",
+      "period": "Jun 2026",
       "mom": -2.6,
       "yoy": 4.2,
       "momLabel": "MoM",
@@ -23,7 +23,7 @@
       "label": "Current % (0-30d)",
       "value": 62.2,
       "format": "percent",
-      "period": "Mar 2026",
+      "period": "Jun 2026",
       "mom": 1.4,
       "yoy": 2.8,
       "momLabel": "MoM",
@@ -36,7 +36,7 @@
       "label": "91+ Days",
       "value": 820000,
       "format": "currency",
-      "period": "Mar 2026",
+      "period": "Jun 2026",
       "mom": 18.3,
       "yoy": -4.1,
       "momLabel": "MoM",
@@ -49,7 +49,7 @@
       "label": "DSO",
       "value": 41,
       "format": "number",
-      "period": "Mar 2026",
+      "period": "Jun 2026",
       "mom": -2,
       "yoy": -3,
       "momLabel": "MoM",
@@ -68,9 +68,6 @@
       "leftAxisTitle": "CAD",
       "rightAxisTitle": "",
       "categories": [
-        "Mar 25",
-        "Apr 25",
-        "May 25",
         "Jun 25",
         "Jul 25",
         "Aug 25",
@@ -78,9 +75,12 @@
         "Oct 25",
         "Nov 25",
         "Dec 25",
-        "Dec 25",
         "Jan 26",
-        "Mar 26"
+        "Feb 26",
+        "Mar 26",
+        "Apr 26",
+        "May 26",
+        "Jun 26"
       ],
       "series": [
         {
@@ -186,9 +186,6 @@
       "leftAxisTitle": "CAD (\u00d71000)",
       "rightAxisTitle": "",
       "categories": [
-        "Mar 25",
-        "Apr 25",
-        "May 25",
         "Jun 25",
         "Jul 25",
         "Aug 25",
@@ -196,9 +193,12 @@
         "Oct 25",
         "Nov 25",
         "Dec 25",
-        "Dec 25",
         "Jan 26",
-        "Mar 26"
+        "Feb 26",
+        "Mar 26",
+        "Apr 26",
+        "May 26",
+        "Jun 26"
       ],
       "series": [
         {

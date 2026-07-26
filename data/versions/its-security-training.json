@@ -12,8 +12,8 @@
     "valueFields": [],
     "data": [
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -25,8 +25,8 @@
         "MomVariance": -5
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -38,8 +38,8 @@
         "MomVariance": -5
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -51,8 +51,8 @@
         "MomVariance": -7
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -64,8 +64,8 @@
         "MomVariance": -4
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -77,8 +77,8 @@
         "MomVariance": -2
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -90,8 +90,8 @@
         "MomVariance": -8
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -103,8 +103,8 @@
         "MomVariance": -10
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -116,8 +116,8 @@
         "MomVariance": -11
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -129,8 +129,8 @@
         "MomVariance": -2
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -142,8 +142,8 @@
         "MomVariance": -2
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -155,8 +155,8 @@
         "MomVariance": -10
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -168,8 +168,8 @@
         "MomVariance": -8
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -181,8 +181,8 @@
         "MomVariance": -5
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -194,8 +194,8 @@
         "MomVariance": -1
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -207,8 +207,8 @@
         "MomVariance": -3
       },
       {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -220,8 +220,8 @@
         "MomVariance": -6
       },
       {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -233,8 +233,8 @@
         "MomVariance": -9
       },
       {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -246,8 +246,8 @@
         "MomVariance": -11
       },
       {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -259,8 +259,8 @@
         "MomVariance": -1
       },
       {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -272,8 +272,8 @@
         "MomVariance": 0
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -285,8 +285,8 @@
         "MomVariance": -4
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -298,8 +298,8 @@
         "MomVariance": -4
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -311,8 +311,8 @@
         "MomVariance": -9
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -324,8 +324,8 @@
         "MomVariance": -3
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -337,8 +337,8 @@
         "MomVariance": -3
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -350,8 +350,8 @@
         "MomVariance": -7
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -363,8 +363,8 @@
         "MomVariance": -7
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -376,8 +376,8 @@
         "MomVariance": -11
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -389,8 +389,8 @@
         "MomVariance": -6
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -402,8 +402,8 @@
         "MomVariance": -4
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "type": "Credential Harvesting",
@@ -415,8 +415,8 @@
         "MomVariance": -3
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "type": "Malware Link Click",
@@ -428,8 +428,8 @@
         "MomVariance": -4
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "type": "Attachment Open",
@@ -441,8 +441,8 @@
         "MomVariance": -9
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "type": "Form Submit",
@@ -454,8 +454,8 @@
         "MomVariance": -3
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "type": "Voice Phishing",
@@ -758,8 +758,8 @@
     "valueFields": [],
     "data": [
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "clicks": 14,
@@ -771,8 +771,8 @@
         "ppp": 1.5
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 10,
@@ -784,8 +784,8 @@
         "ppp": 1.8
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 7,
@@ -797,8 +797,8 @@
         "ppp": 1.43
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 4,
@@ -810,8 +810,8 @@
         "ppp": 2.25
       },
       {
-        "month_start": "2026-01-01",
-        "MonthStart": "2026-01-01",
+        "month_start": "2025-12-01",
+        "MonthStart": "2025-12-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "clicks": 1,
@@ -823,8 +823,8 @@
         "ppp": 4.0
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "clicks": 18,
@@ -836,8 +836,8 @@
         "ppp": 1.17
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 13,
@@ -849,8 +849,8 @@
         "ppp": 1.23
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 6,
@@ -862,8 +862,8 @@
         "ppp": 2.17
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 3,
@@ -875,8 +875,8 @@
         "ppp": 3.33
       },
       {
-        "month_start": "2026-02-01",
-        "MonthStart": "2026-02-01",
+        "month_start": "2026-01-01",
+        "MonthStart": "2026-01-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "clicks": 1,
@@ -888,8 +888,8 @@
         "ppp": 3.0
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "clicks": 19,
@@ -901,8 +901,8 @@
         "ppp": 1.16
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 11,
@@ -914,8 +914,8 @@
         "ppp": 1.73
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 8,
@@ -927,8 +927,8 @@
         "ppp": 2.0
       },
       {
-        "month_start": "2026-03-01",
-        "MonthStart": "2026-03-01",
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 6,
@@ -940,6 +940,71 @@
         "ppp": 1.67
       },
       {
+        "month_start": "2026-02-01",
+        "MonthStart": "2026-02-01",
+        "failure_type": "Voice Phishing",
+        "FailureType": "Voice Phishing",
+        "clicks": 4,
+        "Clicks": 4,
+        "replies": 4,
+        "Replies": 4,
+        "attach": 0,
+        "Attach": 0,
+        "ppp": 1.0
+      },
+      {
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Credential Harvesting",
+        "FailureType": "Credential Harvesting",
+        "clicks": 21,
+        "Clicks": 21,
+        "replies": 24,
+        "Replies": 24,
+        "attach": 2,
+        "Attach": 2,
+        "ppp": 1.14
+      },
+      {
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Malware Link Click",
+        "FailureType": "Malware Link Click",
+        "clicks": 12,
+        "Clicks": 12,
+        "replies": 21,
+        "Replies": 21,
+        "attach": 2,
+        "Attach": 2,
+        "ppp": 1.75
+      },
+      {
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Attachment Open",
+        "FailureType": "Attachment Open",
+        "clicks": 8,
+        "Clicks": 8,
+        "replies": 13,
+        "Replies": 13,
+        "attach": 3,
+        "Attach": 3,
+        "ppp": 1.62
+      },
+      {
+        "month_start": "2026-03-01",
+        "MonthStart": "2026-03-01",
+        "failure_type": "Form Submit",
+        "FailureType": "Form Submit",
+        "clicks": 8,
+        "Clicks": 8,
+        "replies": 10,
+        "Replies": 10,
+        "attach": 1,
+        "Attach": 1,
+        "ppp": 1.25
+      },
+      {
         "month_start": "2026-03-01",
         "MonthStart": "2026-03-01",
         "failure_type": "Voice Phishing",
@@ -957,71 +1022,6 @@
         "MonthStart": "2026-04-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
-        "clicks": 21,
-        "Clicks": 21,
-        "replies": 24,
-        "Replies": 24,
-        "attach": 2,
-        "Attach": 2,
-        "ppp": 1.14
-      },
-      {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
-        "failure_type": "Malware Link Click",
-        "FailureType": "Malware Link Click",
-        "clicks": 12,
-        "Clicks": 12,
-        "replies": 21,
-        "Replies": 21,
-        "attach": 2,
-        "Attach": 2,
-        "ppp": 1.75
-      },
-      {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
-        "failure_type": "Attachment Open",
-        "FailureType": "Attachment Open",
-        "clicks": 8,
-        "Clicks": 8,
-        "replies": 13,
-        "Replies": 13,
-        "attach": 3,
-        "Attach": 3,
-        "ppp": 1.62
-      },
-      {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
-        "failure_type": "Form Submit",
-        "FailureType": "Form Submit",
-        "clicks": 8,
-        "Clicks": 8,
-        "replies": 10,
-        "Replies": 10,
-        "attach": 1,
-        "Attach": 1,
-        "ppp": 1.25
-      },
-      {
-        "month_start": "2026-04-01",
-        "MonthStart": "2026-04-01",
-        "failure_type": "Voice Phishing",
-        "FailureType": "Voice Phishing",
-        "clicks": 4,
-        "Clicks": 4,
-        "replies": 4,
-        "Replies": 4,
-        "attach": 0,
-        "Attach": 0,
-        "ppp": 1.0
-      },
-      {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
-        "failure_type": "Credential Harvesting",
-        "FailureType": "Credential Harvesting",
         "clicks": 20,
         "Clicks": 20,
         "replies": 28,
@@ -1031,8 +1031,8 @@
         "ppp": 1.4
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 15,
@@ -1044,8 +1044,8 @@
         "ppp": 1.27
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 12,
@@ -1057,8 +1057,8 @@
         "ppp": 1.42
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 8,
@@ -1070,8 +1070,8 @@
         "ppp": 1.62
       },
       {
-        "month_start": "2026-05-01",
-        "MonthStart": "2026-05-01",
+        "month_start": "2026-04-01",
+        "MonthStart": "2026-04-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "clicks": 6,
@@ -1083,8 +1083,8 @@
         "ppp": 1.33
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "clicks": 20,
@@ -1096,8 +1096,8 @@
         "ppp": 1.3
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 16,
@@ -1109,8 +1109,8 @@
         "ppp": 1.25
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 9,
@@ -1122,8 +1122,8 @@
         "ppp": 1.89
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 10,
@@ -1135,8 +1135,8 @@
         "ppp": 1.3
       },
       {
-        "month_start": "2026-06-01",
-        "MonthStart": "2026-06-01",
+        "month_start": "2026-05-01",
+        "MonthStart": "2026-05-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "clicks": 5,
@@ -1148,8 +1148,8 @@
         "ppp": 1.8
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Credential Harvesting",
         "FailureType": "Credential Harvesting",
         "clicks": 21,
@@ -1161,8 +1161,8 @@
         "ppp": 1.43
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Malware Link Click",
         "FailureType": "Malware Link Click",
         "clicks": 16,
@@ -1174,8 +1174,8 @@
         "ppp": 1.25
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Attachment Open",
         "FailureType": "Attachment Open",
         "clicks": 10,
@@ -1187,8 +1187,8 @@
         "ppp": 2.0
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Form Submit",
         "FailureType": "Form Submit",
         "clicks": 8,
@@ -1200,8 +1200,8 @@
         "ppp": 1.5
       },
       {
-        "month_start": "2026-07-01",
-        "MonthStart": "2026-07-01",
+        "month_start": "2026-06-01",
+        "MonthStart": "2026-06-01",
         "failure_type": "Voice Phishing",
         "FailureType": "Voice Phishing",
         "clicks": 6,
@@ -1220,6 +1220,6 @@
   "_meta": {
     "version": "its-security-training",
     "title": "ITS \u2014 Security & Training",
-    "generatedUtc": "2026-07-26T17:09:23Z"
+    "generatedUtc": "2026-07-26T00:00:00Z"
   }
 }
