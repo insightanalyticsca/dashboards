@@ -42,13 +42,114 @@ html, body {
 
 .canvas-page { padding: 10px; min-height: 100vh; }
 
-.canvas-header {
-  min-height: 38px;
+/* ════════════════════════════════════════════════════════════════════════════
+   TOPBAR — shared across all pages (index, gallery, canvases)
+   Blends into background via translucent gradient, no hard rectangle
+   ════════════════════════════════════════════════════════════════════════════ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 4px 8px;
+  padding: 8px 20px;
+  background: linear-gradient(180deg, var(--theme-bg) 0%, transparent 100%);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--theme-border, var(--card-border));
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--theme-text, var(--text));
+}
+
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--theme-primary, var(--primary)) 0%, var(--theme-accent, var(--accent)) 100%);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.20);
+}
+
+/* Blend: subtle glow ring that fades into bg, no hard rectangle */
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--theme-primary, var(--primary)), var(--theme-accent, var(--accent)), var(--theme-hot, var(--hot)));
+  opacity: 0.15;
+  z-index: -1;
+  filter: blur(3px);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+  color: var(--theme-text, var(--text));
+}
+
+.brand-sub {
+  font-size: 9px;
+  color: var(--theme-muted, var(--muted));
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navlink, .topbar-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--theme-text-soft, rgba(255,255,255,0.85));
+  text-decoration: none;
+  transition: all 140ms ease;
+  border: 1px solid transparent;
+}
+
+.navlink:hover, .topbar-actions a:hover {
+  background: var(--theme-panel-hover, rgba(255,255,255,0.08));
+  border-color: var(--theme-border, var(--card-border));
+  color: var(--theme-text, var(--text));
+}
+
+.canvas-header {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 4px 6px;
 }
 
 .canvas-title { font-size: 14px; font-weight: 700; color: var(--theme-text, var(--exec-ink)); }
