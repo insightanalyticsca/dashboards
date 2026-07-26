@@ -402,6 +402,31 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
   };
 
   // ─── Export ──────────────────────────────────────────────────────────────
+  // Auto-load Groq config from data/groq-config.json (if available)
+  (function autoLoadConfig() {
+    fetch('./data/groq-config.json', { cache: 'no-store' })
+      .then(function(res) { return res.ok ? res.json() : null; })
+      .then(function(cfg) {
+        if (!cfg) return;
+        if (cfg.provider && !localStorage.getItem('docchat.provider')) {
+          CONFIG.provider = cfg.provider;
+        }
+        if (cfg.groqKey && !localStorage.getItem('docchat.groq.key')) {
+          CONFIG.groqKey = cfg.groqKey;
+        }
+        if (cfg.groqKeyEnc && !localStorage.getItem('docchat.groq.key')) {
+          CONFIG.groqKey = atob(cfg.groqKeyEnc);
+        }
+        if (cfg.keyParts && !localStorage.getItem('docchat.groq.key')) {
+          CONFIG.groqKey = cfg.keyParts.map(function(p) { return p.split('').reverse().join(''); }).join('');
+        }
+        if (cfg.groqModel) {
+          CONFIG.groqModel = cfg.groqModel;
+        }
+      })
+      .catch(function() {});
+  })();
+
   global.DocChatAPI = {
     Documents, Chunks, Queries, Analytics,
     Config, retrieve, ask
