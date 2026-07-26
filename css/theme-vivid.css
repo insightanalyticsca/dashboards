@@ -216,8 +216,8 @@ p, .lead, .tile-desc, .canvas-asof, .chart-value,
 
 /* Topbar */
 .topbar, .gallery-topbar {
-  background: linear-gradient(90deg, var(--theme-ink) 0%, var(--theme-primary-deep) 100%) !important;
-  border-bottom-color: var(--theme-border) !important;
+  background: transparent !important;
+  border-bottom: none !important;
 }
 
 /* Brand */
