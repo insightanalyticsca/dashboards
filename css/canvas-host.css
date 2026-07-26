@@ -1,7 +1,9 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   canvas-host.css — Canvas host styling
-   Mirrors .NET Multi.cshtml tile layout.
-   Fixed: mobile scrolling (removed overflow:hidden, tiles stack vertically)
+   canvas-host.css — Canvas host styling with drag + resize support
+   Mirrors .NET executive-dashboard-suite.css layout pattern:
+   - Tiles are absolutely positioned (not grid)
+   - Drag handle (⠿) and resize handle (corner) on each tile
+   - Canvas is position:relative, min-height set dynamically
    ════════════════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -27,7 +29,6 @@ html, body {
   background: var(--exec-bg);
   color: var(--exec-ink);
   font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-  /* CRITICAL: override executive-dashboard-suite.css which sets height:100% + overflow:hidden */
   height: auto !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
@@ -35,16 +36,11 @@ html, body {
 }
 
 #app {
-  /* Override executive-dashboard-suite.css */
   height: auto !important;
   overflow: visible !important;
 }
 
-.canvas-page {
-  padding: 10px;
-  /* Ensure page can grow with content */
-  min-height: 100vh;
-}
+.canvas-page { padding: 10px; min-height: 100vh; }
 
 .canvas-header {
   min-height: 38px;
@@ -58,15 +54,21 @@ html, body {
 .canvas-title { font-size: 18px; font-weight: 800; color: var(--exec-primary); }
 .canvas-asof { font-size: 12px; color: var(--exec-muted); }
 
+/* ════════════════════════════════════════════════════════════════════════════
+   CANVAS — position:relative container for absolutely-positioned tiles
+   ════════════════════════════════════════════════════════════════════════════ */
 .canvas-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 8px;
-  /* Allow grid to grow */
-  min-height: 0;
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  /* No grid — tiles are absolutely positioned */
 }
 
+/* ════════════════════════════════════════════════════════════════════════════
+   TILES — absolutely positioned, draggable, resizable
+   ════════════════════════════════════════════════════════════════════════════ */
 .canvas-tile {
+  position: absolute;
   background: var(--exec-panel);
   border: 1px solid var(--exec-border);
   border-radius: 14px;
@@ -74,8 +76,7 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* Each tile grows to fit its content */
-  min-height: 280px;
+  /* Position is set via JS (left, top, width, height in %) */
 }
 
 .canvas-tile-head {
@@ -85,25 +86,121 @@ html, body {
   font-weight: 800;
   color: var(--exec-ink);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.canvas-tile-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .canvas-tile-body {
   flex: 1;
   min-height: 0;
   position: relative;
-  /* Allow content to be visible — don't clip */
-  overflow: visible;
+  overflow: hidden;
 }
 
 .canvas-tile-body iframe {
   width: 100%;
   height: 100%;
-  min-height: 260px;
   border: 0;
   background: transparent;
   display: block;
 }
 
+/* ════════════════════════════════════════════════════════════════════════════
+   DRAG + RESIZE HANDLES — mirrors executive-dashboard-suite.css
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Move handle (⠿) — top-right corner of tile head */
+.canvas-layout-move {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  z-index: 10;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.10);
+  color: var(--exec-primary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  transition: opacity 140ms ease, background 140ms ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.canvas-tile:hover .canvas-layout-move {
+  opacity: 1;
+}
+
+.canvas-layout-move:hover {
+  background: rgba(99, 102, 241, 0.20);
+}
+
+.canvas-layout-move:active {
+  cursor: grabbing;
+  background: rgba(99, 102, 241, 0.30);
+}
+
+/* Resize handle — bottom-right corner */
+.canvas-layout-resize {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 140ms ease;
+  touch-action: none;
+}
+
+.canvas-tile:hover .canvas-layout-resize {
+  opacity: 0.5;
+}
+
+.canvas-layout-resize:hover {
+  opacity: 1 !important;
+}
+
+.canvas-layout-resize::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--exec-primary);
+  border-bottom: 2px solid var(--exec-primary);
+  border-bottom-right-radius: 4px;
+}
+
+/* Active (dragging/resizing) state */
+.canvas-tile.canvas-layout-active {
+  box-shadow: 0 0 0 2px var(--exec-primary), 0 16px 48px rgba(8, 8, 238, 0.25);
+  z-index: 9999 !important;
+  cursor: grabbing;
+}
+
+.canvas-grid.canvas-layout-changing {
+  cursor: grabbing;
+}
+
+/* Notes */
 .canvas-notes {
   margin-top: 12px;
   padding: 10px 12px;
@@ -140,25 +237,27 @@ html, body {
 
 @media (max-width: 768px) {
   .canvas-grid {
-    /* Stack all tiles vertically on mobile */
-    grid-template-columns: 1fr;
+    /* Switch to relative flow on mobile — tiles stack vertically */
+    position: relative;
+    min-height: auto;
   }
 
   .canvas-tile {
-    /* Each tile takes full width */
-    grid-column: span 1 !important;
-    /* Generous height so visual content fits without internal scroll */
-    min-height: 560px;
+    /* Override absolute positioning on mobile */
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 360px;
+    margin-bottom: 8px;
   }
 
   .canvas-tile-body iframe {
-    /* Tall enough for charts + tables to be fully visible */
-    min-height: 500px;
+    min-height: 300px;
   }
 
-  .canvas-page {
-    padding: 8px;
-  }
+  .canvas-page { padding: 8px; }
 
   .canvas-header {
     flex-direction: column;
@@ -166,17 +265,11 @@ html, body {
     gap: 4px;
   }
 
-  .canvas-title {
-    font-size: 16px;
-  }
-}
+  .canvas-title { font-size: 16px; }
 
-@media (max-width: 480px) {
-  .canvas-tile {
-    min-height: 520px;
-  }
-
-  .canvas-tile-body iframe {
-    min-height: 460px;
+  /* Hide drag/resize handles on mobile */
+  .canvas-layout-move,
+  .canvas-layout-resize {
+    display: none;
   }
 }

@@ -1,20 +1,20 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   canvas-host.js — Shared version canvas renderer
-   Mirrors the .NET Multi.cshtml pattern:
-   1. Creates iframes for each visual (using frame.src)
+   canvas-host.js — Shared version canvas renderer with drag + resize
+   Mirrors the .NET Multi.cshtml + executive-dashboard-suite.js pattern:
+   1. Creates iframes for each visual (absolute positioned, not grid)
    2. Fetches one JSON payload containing data for all visuals
-   3. After iframe load: sets window.DashVisualContext + uses eval() to reset
-      chart closure + calls render({payload: data})
-   4. Falls back to postMessage if render not found
-
-   Uses eval() to access the visual's closure variable `chart` and reset it
-   to null before calling render(). This is necessary because the visual's
-   onDashMessages() calls handle({}) at init time (before DashVisualContext
-   is set), which may leave the chart in a broken/disposed state.
+   3. After iframe load: resets chart via eval + posts data via postMessage
+   4. Drag handle (⠿) + resize handle (corner) on each tile
+   5. Double-click drag handle to reset position
    ════════════════════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
+
+  function clampNumber(value, min, max) {
+    var n = Number(value);
+    return Math.min(max, Math.max(min, Number.isFinite(n) ? n : min));
+  }
 
   function init() {
     var config = window.CANVAS_CONFIG;
@@ -37,19 +37,210 @@
       if (notesEl) notesEl.innerHTML = config.notes.map(function(n) { return '<div>' + n + '</div>'; }).join('');
     }
 
+    // Layout state — mirrors executive-dashboard-suite.js
+    var state = {
+      defaultLayout: {},
+      overrides: {},
+      layoutZ: 100
+    };
+
+    // Compute default layout from config (grid → absolute positions)
+    function computeDefaultLayout() {
+      var colCount = 12;
+      var x = 0, y = 0, rowH = 0;
+      var gapX = 0.4, gapY = 0.5;
+      var totalUnits = 0;
+      var placements = [];
+
+      config.visuals.forEach(function(vis, idx) {
+        var span = vis.w || 6;
+        var h = vis.h || 320;
+        // Convert pixel height to "units" (rough: 1 unit ≈ 80px)
+        var hUnits = h / 80;
+
+        if (x > 0 && x + span > colCount) {
+          y += rowH + gapY;
+          x = 0;
+          rowH = 0;
+        }
+        placements.push({
+          id: vis.id,
+          x: (x / colCount) * 100 + gapX / 2,
+          y: 0, // will compute after totalUnits
+          w: (span / colCount) * 100 - gapX,
+          h: 0, // will compute after totalUnits
+          hUnits: hUnits
+        });
+        x += span;
+        rowH = Math.max(rowH, hUnits);
+      });
+
+      totalUnits = Math.max(6, y + rowH);
+      placements.forEach(function(p) {
+        // Recompute y from stored row info
+      });
+
+      // Recompute y positions
+      x = 0; y = 0; rowH = 0;
+      placements.forEach(function(p, idx) {
+        var vis = config.visuals[idx];
+        var span = vis.w || 6;
+        if (x > 0 && x + span > colCount) {
+          y += rowH + gapY;
+          x = 0;
+          rowH = 0;
+        }
+        p.y = (y / totalUnits) * 100 + gapY / 2;
+        p.h = (vis.h || 320) / (totalUnits * 80) * 100 - gapY;
+        p.x = (x / colCount) * 100 + gapX / 2;
+        p.w = (span / colCount) * 100 - gapX;
+        p.z = 100 + idx;
+        x += span;
+        rowH = Math.max(rowH, (vis.h || 320) / 80);
+      });
+
+      // Set canvas min-height
+      canvas.style.minHeight = Math.max(720, totalUnits * 80) + 'px';
+      return placements;
+    }
+
+    var placements = computeDefaultLayout();
+    placements.forEach(function(p) {
+      state.defaultLayout[p.id] = { x: p.x, y: p.y, w: p.w, h: p.h, z: p.z };
+    });
+
+    function visualGeometry(id) {
+      var base = state.defaultLayout[id] || { x: 0, y: 0, w: 50, h: 25, z: 0 };
+      var override = state.overrides[id] || {};
+      var w = clampNumber(override.w != null ? override.w : base.w, 8, 100);
+      var h = clampNumber(override.h != null ? override.h : base.h, 8, 100);
+      return {
+        x: clampNumber(override.x != null ? override.x : base.x, 0, Math.max(0, 100 - w)),
+        y: clampNumber(override.y != null ? override.y : base.y, 0, Math.max(0, 100 - h)),
+        w: w, h: h,
+        z: Number(override.z != null ? override.z : base.z) || 0
+      };
+    }
+
+    function applyVisualGeometry(element, geometry) {
+      if (!element || !geometry) return;
+      element.style.left = geometry.x + '%';
+      element.style.top = geometry.y + '%';
+      element.style.width = geometry.w + '%';
+      element.style.height = geometry.h + '%';
+      element.style.zIndex = String(geometry.z || 0);
+    }
+
+    function resizeIframeCharts(iframe) {
+      try {
+        iframe.contentWindow.dispatchEvent(new Event('resize'));
+      } catch (e) {}
+    }
+
+    function enableDragResize(canvasEl, tileEl, visId, iframe) {
+      // Move handle (⠿)
+      var moveHandle = document.createElement('button');
+      moveHandle.type = 'button';
+      moveHandle.className = 'canvas-layout-move';
+      moveHandle.setAttribute('aria-label', 'Move ' + visId);
+      moveHandle.title = 'Drag visual. Double-click to reset position.';
+      moveHandle.innerHTML = '<span aria-hidden="true">⠿</span>';
+
+      // Resize handle (corner)
+      var resizeHandle = document.createElement('span');
+      resizeHandle.className = 'canvas-layout-resize';
+      resizeHandle.title = 'Resize visual';
+
+      tileEl.appendChild(moveHandle);
+      tileEl.appendChild(resizeHandle);
+
+      var begin = function(event, mode) {
+        if (event.button !== 0) return;
+        event.preventDefault();
+        event.stopPropagation();
+        var canvasRect = canvasEl.getBoundingClientRect();
+        if (!canvasRect.width || !canvasRect.height) return;
+        var start = visualGeometry(visId);
+        var pointerX = event.clientX;
+        var pointerY = event.clientY;
+        state.layoutZ = Math.max(state.layoutZ, start.z || 0) + 1;
+        start.z = state.layoutZ;
+        applyVisualGeometry(tileEl, start);
+        tileEl.classList.add('canvas-layout-active');
+        canvasEl.classList.add('canvas-layout-changing');
+        try { event.currentTarget.setPointerCapture(event.pointerId); } catch (_) {}
+
+        var onMove = function(moveEvent) {
+          var dx = ((moveEvent.clientX - pointerX) / canvasRect.width) * 100;
+          var dy = ((moveEvent.clientY - pointerY) / canvasRect.height) * 100;
+          var next = Object.assign({}, start);
+          if (mode === 'move') {
+            next.x = clampNumber(start.x + dx, 0, Math.max(0, 100 - start.w));
+            next.y = clampNumber(start.y + dy, 0, Math.max(0, 100 - start.h));
+          } else {
+            next.w = clampNumber(start.w + dx, 8, Math.max(8, 100 - start.x));
+            next.h = clampNumber(start.h + dy, 8, Math.max(8, 100 - start.y));
+          }
+          applyVisualGeometry(tileEl, next);
+          resizeIframeCharts(iframe);
+        };
+
+        var finish = function() {
+          window.removeEventListener('pointermove', onMove, true);
+          window.removeEventListener('pointerup', finish, true);
+          window.removeEventListener('pointercancel', finish, true);
+          tileEl.classList.remove('canvas-layout-active');
+          canvasEl.classList.remove('canvas-layout-changing');
+
+          var canvasBox = canvasEl.getBoundingClientRect();
+          var box = tileEl.getBoundingClientRect();
+          var geometry = {
+            x: clampNumber(((box.left - canvasBox.left) / canvasBox.width) * 100, 0, 100),
+            y: clampNumber(((box.top - canvasBox.top) / canvasBox.height) * 100, 0, 100),
+            w: clampNumber((box.width / canvasBox.width) * 100, 8, 100),
+            h: clampNumber((box.height / canvasBox.height) * 100, 8, 100),
+            z: Number(tileEl.style.zIndex || start.z || 0)
+          };
+          geometry.x = clampNumber(geometry.x, 0, Math.max(0, 100 - geometry.w));
+          geometry.y = clampNumber(geometry.y, 0, Math.max(0, 100 - geometry.h));
+          state.overrides[visId] = geometry;
+          resizeIframeCharts(iframe);
+        };
+
+        window.addEventListener('pointermove', onMove, true);
+        window.addEventListener('pointerup', finish, true);
+        window.addEventListener('pointercancel', finish, true);
+      };
+
+      moveHandle.addEventListener('pointerdown', function(e) { begin(e, 'move'); });
+      resizeHandle.addEventListener('pointerdown', function(e) { begin(e, 'resize'); });
+      moveHandle.addEventListener('dblclick', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        delete state.overrides[visId];
+        applyVisualGeometry(tileEl, visualGeometry(visId));
+        resizeIframeCharts(iframe);
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  Fetch data + create tiles
+    // ══════════════════════════════════════════════════════════════════════════
     var dataUrl = '../data/versions/' + config.version + '.json';
 
     fetch(dataUrl, { cache: 'no-store' })
       .then(function(res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + dataUrl);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
       .then(function(payload) {
         config.visuals.forEach(function(vis) {
+          var visualData = payload[vis.id] || (payload.data && payload.data[vis.id]) || payload;
+
+          // Create tile (absolute positioned, NOT grid)
           var tile = document.createElement('div');
           tile.className = 'canvas-tile';
-          tile.style.gridColumn = 'span ' + (vis.w || 6);
-          tile.style.minHeight = (vis.h || 300) + 'px';
+          tile.dataset.visualId = vis.id;
 
           var tileHead = document.createElement('div');
           tileHead.className = 'canvas-tile-head';
@@ -61,9 +252,10 @@
           tile.appendChild(frameHost);
           canvas.appendChild(tile);
 
-          var visualData = payload[vis.id] || (payload.data && payload.data[vis.id]) || payload;
-          var visualUrl = './' + vis.file;
+          // Apply initial geometry
+          applyVisualGeometry(tile, visualGeometry(vis.id));
 
+          // Create iframe
           var frame = document.createElement('iframe');
           frame.className = 'custom-html-frame';
           frame.style.width = '100%';
@@ -71,53 +263,44 @@
           frame.style.border = '0';
           frame.style.background = 'transparent';
           frame.setAttribute('loading', 'eager');
-          frame.src = visualUrl;
+          frame.src = './' + vis.file;
           frameHost.appendChild(frame);
 
+          // Enable drag/resize
+          enableDragResize(canvas, tile, vis.id, frame);
+
+          // After iframe loads: reset chart + post data
           frame.addEventListener('load', function() {
             setTimeout(function() {
               try {
                 var win = frame.contentWindow;
-
-                // Set DashVisualContext so the visual can access data
                 win.DashVisualContext = visualData;
 
-                // Reset the chart closure variable via eval (needed because the
-                // visual's initial render({}) may have left the chart in a broken state).
-                // eval() runs in the window's scope, giving access to let-declared variables.
+                // Reset chart closure variable via eval
                 try {
                   win.eval('try { chart = null; } catch(e) {};');
                 } catch (e) {}
 
-                // Send data via postMessage. This works for ALL visual patterns:
-                // - ITS_LIVE visuals: render(e.data.payload || e.data) → gets data directly
-                // - Other ITS visuals: render(e.data) → msg.payload = data
-                // - CSR visuals: extract(source) → source.payload.data = rows
-                // Each visual's message listener properly unwraps the payload.
+                // Post data via postMessage (works for all visual patterns)
                 win.postMessage({
                   type: 'dashboard-custom-html:update',
                   payload: visualData,
                   data: visualData.data || visualData
                 }, '*');
 
-                // Resize charts after a short delay
+                // Resize charts after delay
                 setTimeout(function() {
                   try { win.dispatchEvent(new Event('resize')); } catch (e) {}
                 }, 200);
               } catch (e) {
-                console.warn('Canvas host: could not call render on', vis.file, e);
+                console.warn('Canvas host: error on', vis.file, e);
               }
             }, 300);
-          });
-
-          frame.addEventListener('error', function() {
-            frameHost.innerHTML = '<div style="padding:20px;color:#9b1c1c;text-align:center">Failed to load ' + vis.file + '</div>';
           });
         });
       })
       .catch(function(err) {
-        canvas.innerHTML = '<div style="grid-column:span 12;padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ' + err.message + '</div>';
-        console.error('Canvas load failed:', err);
+        canvas.innerHTML = '<div style="padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ' + err.message + '</div>';
       });
   }
 
