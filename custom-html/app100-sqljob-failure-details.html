@@ -5,31 +5,4 @@ const U=(()=>{const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<'
 function narrate(r){const job=U.get(r,['display_name','job_name'],'SQL job');const fs=U.get(r,['failed_steps_text'],'');const msg=U.get(r,['outcome_message'],'');if(fs)return `${job} failed in ${fs.split('\n')[0]}.`;if(msg)return `${job} failed: ${msg.slice(0,180)}`;return `${job} failed. No detailed SQL Agent message was returned.`}
 function render(payload){const rows=U.rowsOf(payload).slice();if(!rows.length){document.getElementById('root').innerHTML='<div class="card"><div class="head"><div class="title">APP100 SQL Job Failure Detail</div><div class="pill">latest failures</div></div><div class="oknote"><div>No recent SQL Agent failures returned.<div class="small">View uses msdb job history; history retention may limit the lookback.</div></div></div></div>';return}rows.sort((a,b)=>U.num(U.get(a,['failure_rank']),9999)-U.num(U.get(b,['failure_rank']),9999));const list=rows.slice(0,25).map((r,i)=>{const job=U.get(r,['display_name','job_name'],'SQL job'),steps=U.get(r,['failed_steps_text'],'')||'(no failed step details)',all=U.get(r,['step_messages_text'],'')||'',msg=U.get(r,['outcome_message'],'')||'';return `<div class="fail" onclick="this.classList.toggle('open')"><div class="top"><div><div class="jn" title="${U.esc(U.get(r,['job_name']))}">${U.esc(job)}</div><div class="when">${U.esc(U.dt(U.get(r,['run_start_time'])))} · ${U.esc(U.get(r,['host_name']))}</div></div><div class="dur">${U.esc(U.get(r,['duration_text']))}</div></div><div class="narr">${U.esc(narrate(r))}</div><div class="detail"><div class="msg">FAILED STEPS\n${U.esc(steps)}\n\nSTEP DETAIL\n${U.esc(all || '(no step detail)')}\n\nJOB MESSAGE\n${U.esc(msg || '(no message returned)')}</div></div></div>`}).join('');document.getElementById('root').innerHTML=`<div class="card"><div class="head"><div class="title">APP100 SQL Job Failure Detail</div><div class="pill">${rows.length} failures in history view</div></div><div class="body">${list}</div></div>`}
 window.addEventListener('message',e=>{if(!e.data||!String(e.data.type||'').startsWith('dashboard-custom-html:')||String(e.data.type||'').endsWith(':resize'))return;render(e.data.payload||e.data||{})});
-</script>
-<script>
-// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
-(async function () {
-  try {
-    const res = await fetch('../data/its/app100-sqljob-failure-details.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const payload = await res.json();
-    window.postMessage({
-      type: 'dashboard-custom-html:update',
-      payload: payload,
-      data: payload.data || payload
-    }, '*');
-    setTimeout(function () {
-      try {
-        if (typeof window.init === 'function') window.init(payload);
-        else if (typeof window.update === 'function') window.update(payload);
-        else if (typeof window.setData === 'function') window.setData(payload);
-      } catch (_) {}
-    }, 50);
-  } catch (err) {
-    console.error('Clone bootstrap failed:', err);
-    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
-    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
-  }
-})();
-</script>
-</body></html>
+</script></body></html>

@@ -1,0 +1,236 @@
+{
+  "its-kb4-phish-mom": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "month_start": "2026-03-01",
+        "failure_type": "Credential Harvesting",
+        "failure_count": 18,
+        "prior_month_count": 24,
+        "mom_variance": -6
+      },
+      {
+        "month_start": "2026-03-01",
+        "failure_type": "Malware Link Click",
+        "failure_count": 12,
+        "prior_month_count": 19,
+        "mom_variance": -7
+      },
+      {
+        "month_start": "2026-03-01",
+        "failure_type": "Attachment Open",
+        "failure_count": 8,
+        "prior_month_count": 14,
+        "mom_variance": -6
+      },
+      {
+        "month_start": "2026-03-01",
+        "failure_type": "Form Submit",
+        "failure_count": 6,
+        "prior_month_count": 9,
+        "mom_variance": -3
+      },
+      {
+        "month_start": "2026-03-01",
+        "failure_type": "Voice Phishing",
+        "failure_count": 3,
+        "prior_month_count": 5,
+        "mom_variance": -2
+      }
+    ],
+    "debug": {
+      "returnedRows": 5
+    }
+  },
+  "its-ocsf-report": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Category": "Authentication",
+        "UploadRowCount": 384,
+        "Status": "Processed",
+        "RemediatedCount": 250,
+        "FailCount": 134,
+        "SoftFailCount": 54,
+        "RemediationStatus": "In Progress"
+      },
+      {
+        "Category": "Network Activity",
+        "UploadRowCount": 296,
+        "Status": "Processed",
+        "RemediatedCount": 192,
+        "FailCount": 104,
+        "SoftFailCount": 42,
+        "RemediationStatus": "In Progress"
+      },
+      {
+        "Category": "System Activity",
+        "UploadRowCount": 218,
+        "Status": "Processed",
+        "RemediatedCount": 142,
+        "FailCount": 76,
+        "SoftFailCount": 30,
+        "RemediationStatus": "In Progress"
+      },
+      {
+        "Category": "Application",
+        "UploadRowCount": 142,
+        "Status": "Processed",
+        "RemediatedCount": 92,
+        "FailCount": 50,
+        "SoftFailCount": 20,
+        "RemediationStatus": "In Progress"
+      },
+      {
+        "Category": "Findings",
+        "UploadRowCount": 87,
+        "Status": "Processed",
+        "RemediatedCount": 57,
+        "FailCount": 30,
+        "SoftFailCount": 12,
+        "RemediationStatus": "In Progress"
+      },
+      {
+        "Category": "Remediation",
+        "UploadRowCount": 53,
+        "Status": "Processed",
+        "RemediatedCount": 35,
+        "FailCount": 18,
+        "SoftFailCount": 7,
+        "RemediationStatus": "In Progress"
+      }
+    ],
+    "debug": {
+      "returnedRows": 6
+    }
+  },
+  "its-kb4-training": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Department": "Operations",
+        "Assigned": 142,
+        "Completed": 138,
+        "Rate": 97.2
+      },
+      {
+        "Department": "Customer Service",
+        "Assigned": 218,
+        "Completed": 208,
+        "Rate": 95.4
+      },
+      {
+        "Department": "Finance",
+        "Assigned": 84,
+        "Completed": 82,
+        "Rate": 97.6
+      },
+      {
+        "Department": "IT",
+        "Assigned": 96,
+        "Completed": 95,
+        "Rate": 99.0
+      },
+      {
+        "Department": "HR",
+        "Assigned": 32,
+        "Completed": 31,
+        "Rate": 96.9
+      },
+      {
+        "Department": "Sales",
+        "Assigned": 124,
+        "Completed": 118,
+        "Rate": 95.2
+      },
+      {
+        "Department": "Executive",
+        "Assigned": 28,
+        "Completed": 28,
+        "Rate": 100.0
+      }
+    ],
+    "debug": {
+      "returnedRows": 7
+    }
+  },
+  "its-kb4-failure-ppp": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "FailureType": "Credential Harvesting",
+        "Clicks": 18,
+        "Reports": 24,
+        "PPP": 1.33
+      },
+      {
+        "FailureType": "Malware Link Click",
+        "Clicks": 12,
+        "Reports": 18,
+        "PPP": 1.5
+      },
+      {
+        "FailureType": "Attachment Open",
+        "Clicks": 8,
+        "Reports": 14,
+        "PPP": 1.75
+      },
+      {
+        "FailureType": "Form Submit",
+        "Clicks": 6,
+        "Reports": 9,
+        "PPP": 1.5
+      },
+      {
+        "FailureType": "Voice Phishing",
+        "Clicks": 3,
+        "Reports": 5,
+        "PPP": 1.67
+      }
+    ],
+    "debug": {
+      "returnedRows": 5
+    }
+  },
+  "_meta": {
+    "version": "its-security-training",
+    "title": "ITS \u2014 Security & Training",
+    "generatedUtc": "2026-07-26T02:46:42Z"
+  }
+}

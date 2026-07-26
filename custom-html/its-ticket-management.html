@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ITS — Ticket Management</title>
+  <link rel="stylesheet" href="../css/canvas-host.css?v=20260726">
+  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20260726">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body data-suite="its-ticket-management" data-variant="indigo">
+  <div class="canvas-page">
+    <a class="canvas-back" href="../visuals.html">
+      <i class="fa-solid fa-arrow-left"></i> Back to Gallery
+    </a>
+    <div id="app">
+      <header class="canvas-header">
+        <div class="canvas-title">ITS — Ticket Management</div>
+        <div class="canvas-asof">Period: March 2026</div>
+      </header>
+      <div class="canvas-grid"></div>
+      <div class="canvas-notes"></div>
+    </div>
+  </div>
+  <script>
+    window.CANVAS_CONFIG = {
+  "version": "its-ticket-management",
+  "title": "ITS \u2014 Ticket Management",
+  "asOfLabel": "Period: March 2026",
+  "visuals": [
+    {
+      "id": "its-open-priority",
+      "file": "its-open-priority.html",
+      "title": "Open by Priority",
+      "w": 6,
+      "h": 340
+    },
+    {
+      "id": "its-open-status",
+      "file": "its-open-status.html",
+      "title": "Open by Status",
+      "w": 6,
+      "h": 340
+    },
+    {
+      "id": "its-priority-status",
+      "file": "its-priority-status.html",
+      "title": "Priority \u00d7 Status Matrix",
+      "w": 6,
+      "h": 340
+    },
+    {
+      "id": "its-closed-priority",
+      "file": "its-closed-priority.html",
+      "title": "Closed by Priority",
+      "w": 6,
+      "h": 340
+    }
+  ],
+  "notes": [
+    "Total open tickets down 4.2% MoM.",
+    "P1 critical tickets resolved within SLA."
+  ]
+};
+  </script>
+  <script src="../js/canvas-host.js?v=20260726"></script>
+</body>
+</html>

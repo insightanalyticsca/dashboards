@@ -5,31 +5,4 @@ const U=(()=>{const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<'
 function statusClass(s){s=Number(s);if(s===0)return'bad';if(s===2||s===3||s===4)return'warn';return'ok'}
 function render(payload){const rows=U.rowsOf(payload).slice();if(!rows.length){document.getElementById('root').innerHTML='<div class="empty">No SQL Agent summary rows returned.</div>';return}rows.sort((a,b)=>U.num(U.get(a,['sort_order']),9999)-U.num(U.get(b,['sort_order']),9999)||String(U.get(a,['display_name','job_name'])).localeCompare(String(U.get(b,['display_name','job_name']))));const jobs=rows.length,failedNow=rows.filter(r=>U.num(U.get(r,['last_run_status']))===0).length,avgSuccess=rows.reduce((a,r)=>a+U.num(U.get(r,['success_rate_pct']),0),0)/Math.max(1,jobs),fail50=rows.reduce((a,r)=>a+U.num(U.get(r,['failure_count']),0),0);const cards=rows.map(r=>{const sr=U.num(U.get(r,['success_rate_pct']),0),fr=U.num(U.get(r,['failure_rate_pct']),0),cls=statusClass(U.get(r,['last_run_status']));const msg=U.get(r,['last_run_failed_steps'])||U.get(r,['last_run_message'])||'';return `<div class="job ${cls}"><div class="jn" title="${U.esc(U.get(r,['job_name']))}">${U.esc(U.get(r,['display_name','job_name']))}</div><div class="meta"><span>Last</span><strong>${U.esc(U.get(r,['last_run_status_label']))}</strong><span>Success rate</span><strong>${U.pct(sr)}</strong><span>Failures / 50</span><strong>${U.fmt(U.get(r,['failure_count']))}</strong><span>Avg duration</span><strong>${U.dur(U.get(r,['avg_duration_seconds']))}</strong><span>Last run</span><strong>${U.esc(U.dt(U.get(r,['last_run_time'])))}</strong></div><div class="bar"><div class="fill" style="width:${Math.max(0,Math.min(100,sr))}%"></div></div><div class="bar"><div class="failfill" style="width:${Math.max(0,Math.min(100,fr))}%"></div></div><div class="tip">${U.esc(msg || 'No failure message on latest run.')}</div></div>`}).join('');document.getElementById('root').innerHTML=`<div class="card"><div class="head"><div class="title">APP100 SQL Job Health</div><div class="pill">last 50 runs per job</div></div><div class="kpis"><div class="kpi"><div class="kl">Jobs</div><div class="kv">${U.fmt(jobs)}</div></div><div class="kpi"><div class="kl">Failed latest</div><div class="kv bad">${U.fmt(failedNow)}</div></div><div class="kpi"><div class="kl">Avg success</div><div class="kv">${U.pct(avgSuccess)}</div></div><div class="kpi"><div class="kl">Failures checked</div><div class="kv bad">${U.fmt(fail50)}</div></div></div><div class="jobs">${cards}</div></div>`}
 window.addEventListener('message',e=>{if(!e.data||!String(e.data.type||'').startsWith('dashboard-custom-html:')||String(e.data.type||'').endsWith(':resize'))return;render(e.data.payload||e.data||{})});
-</script>
-<script>
-// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
-(async function () {
-  try {
-    const res = await fetch('../data/its/app100-sqljob-health-summary.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const payload = await res.json();
-    window.postMessage({
-      type: 'dashboard-custom-html:update',
-      payload: payload,
-      data: payload.data || payload
-    }, '*');
-    setTimeout(function () {
-      try {
-        if (typeof window.init === 'function') window.init(payload);
-        else if (typeof window.update === 'function') window.update(payload);
-        else if (typeof window.setData === 'function') window.setData(payload);
-      } catch (_) {}
-    }, 50);
-  } catch (err) {
-    console.error('Clone bootstrap failed:', err);
-    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
-    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
-  }
-})();
-</script>
-</body></html>
+</script></body></html>

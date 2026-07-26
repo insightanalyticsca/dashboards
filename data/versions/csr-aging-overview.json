@@ -1,0 +1,696 @@
+{
+  "aging-bankruptcies": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Type": "Commercial",
+        "Metric": "Month #",
+        "Value": 28
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "Month $",
+        "Value": 285000
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD #",
+        "Value": 84
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD $",
+        "Value": 855000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month #",
+        "Value": 14
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month $",
+        "Value": 78000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD #",
+        "Value": 42
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD $",
+        "Value": 234000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month #",
+        "Value": 5
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month $",
+        "Value": 165000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD #",
+        "Value": 15
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD $",
+        "Value": 495000
+      }
+    ],
+    "debug": {
+      "returnedRows": 12
+    }
+  },
+  "aging-disconnects-reconnects": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Type": "Commercial",
+        "Metric": "Month #",
+        "Value": 142
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "Month $",
+        "Value": 284000
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD #",
+        "Value": 426
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD $",
+        "Value": 852000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month #",
+        "Value": 384
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month $",
+        "Value": 768000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD #",
+        "Value": 1152
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD $",
+        "Value": 2304000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month #",
+        "Value": 31
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month $",
+        "Value": 62000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD #",
+        "Value": 93
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD $",
+        "Value": 186000
+      }
+    ],
+    "debug": {
+      "returnedRows": 12
+    }
+  },
+  "ar-buckets-stacked": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "PeriodDate": "2026-01-06",
+        "AgingBucket": "0-30",
+        "Amount": 8200,
+        "SortOrder": 1,
+        "PeriodKey": "W_1"
+      },
+      {
+        "PeriodDate": "2026-01-06",
+        "AgingBucket": "31-60",
+        "Amount": 3400,
+        "SortOrder": 1,
+        "PeriodKey": "W_1"
+      },
+      {
+        "PeriodDate": "2026-01-06",
+        "AgingBucket": "61-90",
+        "Amount": 1900,
+        "SortOrder": 1,
+        "PeriodKey": "W_1"
+      },
+      {
+        "PeriodDate": "2026-01-06",
+        "AgingBucket": ">90",
+        "Amount": 600,
+        "SortOrder": 1,
+        "PeriodKey": "W_1"
+      },
+      {
+        "PeriodDate": "2026-01-13",
+        "AgingBucket": "0-30",
+        "Amount": 8400,
+        "SortOrder": 2,
+        "PeriodKey": "W_2"
+      },
+      {
+        "PeriodDate": "2026-01-13",
+        "AgingBucket": "31-60",
+        "Amount": 3300,
+        "SortOrder": 2,
+        "PeriodKey": "W_2"
+      },
+      {
+        "PeriodDate": "2026-01-13",
+        "AgingBucket": "61-90",
+        "Amount": 1850,
+        "SortOrder": 2,
+        "PeriodKey": "W_2"
+      },
+      {
+        "PeriodDate": "2026-01-13",
+        "AgingBucket": ">90",
+        "Amount": 650,
+        "SortOrder": 2,
+        "PeriodKey": "W_2"
+      },
+      {
+        "PeriodDate": "2026-01-20",
+        "AgingBucket": "0-30",
+        "Amount": 8600,
+        "SortOrder": 3,
+        "PeriodKey": "W_3"
+      },
+      {
+        "PeriodDate": "2026-01-20",
+        "AgingBucket": "31-60",
+        "Amount": 3200,
+        "SortOrder": 3,
+        "PeriodKey": "W_3"
+      },
+      {
+        "PeriodDate": "2026-01-20",
+        "AgingBucket": "61-90",
+        "Amount": 1800,
+        "SortOrder": 3,
+        "PeriodKey": "W_3"
+      },
+      {
+        "PeriodDate": "2026-01-20",
+        "AgingBucket": ">90",
+        "Amount": 700,
+        "SortOrder": 3,
+        "PeriodKey": "W_3"
+      },
+      {
+        "PeriodDate": "2026-01-27",
+        "AgingBucket": "0-30",
+        "Amount": 8800,
+        "SortOrder": 4,
+        "PeriodKey": "W_4"
+      },
+      {
+        "PeriodDate": "2026-01-27",
+        "AgingBucket": "31-60",
+        "Amount": 3150,
+        "SortOrder": 4,
+        "PeriodKey": "W_4"
+      },
+      {
+        "PeriodDate": "2026-01-27",
+        "AgingBucket": "61-90",
+        "Amount": 1750,
+        "SortOrder": 4,
+        "PeriodKey": "W_4"
+      },
+      {
+        "PeriodDate": "2026-01-27",
+        "AgingBucket": ">90",
+        "Amount": 750,
+        "SortOrder": 4,
+        "PeriodKey": "W_4"
+      },
+      {
+        "PeriodDate": "2026-02-03",
+        "AgingBucket": "0-30",
+        "Amount": 9000,
+        "SortOrder": 5,
+        "PeriodKey": "W_5"
+      },
+      {
+        "PeriodDate": "2026-02-03",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 5,
+        "PeriodKey": "W_5"
+      },
+      {
+        "PeriodDate": "2026-02-03",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 5,
+        "PeriodKey": "W_5"
+      },
+      {
+        "PeriodDate": "2026-02-03",
+        "AgingBucket": ">90",
+        "Amount": 800,
+        "SortOrder": 5,
+        "PeriodKey": "W_5"
+      },
+      {
+        "PeriodDate": "2026-02-10",
+        "AgingBucket": "0-30",
+        "Amount": 9100,
+        "SortOrder": 6,
+        "PeriodKey": "W_6"
+      },
+      {
+        "PeriodDate": "2026-02-10",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 6,
+        "PeriodKey": "W_6"
+      },
+      {
+        "PeriodDate": "2026-02-10",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 6,
+        "PeriodKey": "W_6"
+      },
+      {
+        "PeriodDate": "2026-02-10",
+        "AgingBucket": ">90",
+        "Amount": 800,
+        "SortOrder": 6,
+        "PeriodKey": "W_6"
+      },
+      {
+        "PeriodDate": "2026-02-17",
+        "AgingBucket": "0-30",
+        "Amount": 9200,
+        "SortOrder": 7,
+        "PeriodKey": "W_7"
+      },
+      {
+        "PeriodDate": "2026-02-17",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 7,
+        "PeriodKey": "W_7"
+      },
+      {
+        "PeriodDate": "2026-02-17",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 7,
+        "PeriodKey": "W_7"
+      },
+      {
+        "PeriodDate": "2026-02-17",
+        "AgingBucket": ">90",
+        "Amount": 800,
+        "SortOrder": 7,
+        "PeriodKey": "W_7"
+      },
+      {
+        "PeriodDate": "2026-02-24",
+        "AgingBucket": "0-30",
+        "Amount": 9150,
+        "SortOrder": 8,
+        "PeriodKey": "W_8"
+      },
+      {
+        "PeriodDate": "2026-02-24",
+        "AgingBucket": "31-60",
+        "Amount": 3150,
+        "SortOrder": 8,
+        "PeriodKey": "W_8"
+      },
+      {
+        "PeriodDate": "2026-02-24",
+        "AgingBucket": "61-90",
+        "Amount": 1750,
+        "SortOrder": 8,
+        "PeriodKey": "W_8"
+      },
+      {
+        "PeriodDate": "2026-02-24",
+        "AgingBucket": ">90",
+        "Amount": 800,
+        "SortOrder": 8,
+        "PeriodKey": "W_8"
+      },
+      {
+        "PeriodDate": "2026-03-03",
+        "AgingBucket": "0-30",
+        "Amount": 9200,
+        "SortOrder": 9,
+        "PeriodKey": "W_9"
+      },
+      {
+        "PeriodDate": "2026-03-03",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 9,
+        "PeriodKey": "W_9"
+      },
+      {
+        "PeriodDate": "2026-03-03",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 9,
+        "PeriodKey": "W_9"
+      },
+      {
+        "PeriodDate": "2026-03-03",
+        "AgingBucket": ">90",
+        "Amount": 800,
+        "SortOrder": 9,
+        "PeriodKey": "W_9"
+      },
+      {
+        "PeriodDate": "2026-03-10",
+        "AgingBucket": "0-30",
+        "Amount": 9250,
+        "SortOrder": 10,
+        "PeriodKey": "W_10"
+      },
+      {
+        "PeriodDate": "2026-03-10",
+        "AgingBucket": "31-60",
+        "Amount": 3050,
+        "SortOrder": 10,
+        "PeriodKey": "W_10"
+      },
+      {
+        "PeriodDate": "2026-03-10",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 10,
+        "PeriodKey": "W_10"
+      },
+      {
+        "PeriodDate": "2026-03-10",
+        "AgingBucket": ">90",
+        "Amount": 820,
+        "SortOrder": 10,
+        "PeriodKey": "W_10"
+      },
+      {
+        "PeriodDate": "2026-03-17",
+        "AgingBucket": "0-30",
+        "Amount": 9200,
+        "SortOrder": 11,
+        "PeriodKey": "W_11"
+      },
+      {
+        "PeriodDate": "2026-03-17",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 11,
+        "PeriodKey": "W_11"
+      },
+      {
+        "PeriodDate": "2026-03-17",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 11,
+        "PeriodKey": "W_11"
+      },
+      {
+        "PeriodDate": "2026-03-17",
+        "AgingBucket": ">90",
+        "Amount": 820,
+        "SortOrder": 11,
+        "PeriodKey": "W_11"
+      },
+      {
+        "PeriodDate": "2026-03-24",
+        "AgingBucket": "0-30",
+        "Amount": 9180,
+        "SortOrder": 12,
+        "PeriodKey": "W_12"
+      },
+      {
+        "PeriodDate": "2026-03-24",
+        "AgingBucket": "31-60",
+        "Amount": 3150,
+        "SortOrder": 12,
+        "PeriodKey": "W_12"
+      },
+      {
+        "PeriodDate": "2026-03-24",
+        "AgingBucket": "61-90",
+        "Amount": 1750,
+        "SortOrder": 12,
+        "PeriodKey": "W_12"
+      },
+      {
+        "PeriodDate": "2026-03-24",
+        "AgingBucket": ">90",
+        "Amount": 820,
+        "SortOrder": 12,
+        "PeriodKey": "W_12"
+      },
+      {
+        "PeriodDate": "2026-03-31",
+        "AgingBucket": "0-30",
+        "Amount": 9200,
+        "SortOrder": 13,
+        "PeriodKey": "W_13"
+      },
+      {
+        "PeriodDate": "2026-03-31",
+        "AgingBucket": "31-60",
+        "Amount": 3100,
+        "SortOrder": 13,
+        "PeriodKey": "W_13"
+      },
+      {
+        "PeriodDate": "2026-03-31",
+        "AgingBucket": "61-90",
+        "Amount": 1700,
+        "SortOrder": 13,
+        "PeriodKey": "W_13"
+      },
+      {
+        "PeriodDate": "2026-03-31",
+        "AgingBucket": ">90",
+        "Amount": 820,
+        "SortOrder": 13,
+        "PeriodKey": "W_13"
+      }
+    ],
+    "debug": {
+      "returnedRows": 52
+    }
+  },
+  "aging-bankruptcies-by-customer-type": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Type": "Commercial",
+        "Metric": "Month #",
+        "Value": 28
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "Month $",
+        "Value": 285000
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD #",
+        "Value": 84
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD $",
+        "Value": 855000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month #",
+        "Value": 14
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month $",
+        "Value": 78000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD #",
+        "Value": 42
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD $",
+        "Value": 234000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month #",
+        "Value": 5
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month $",
+        "Value": 165000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD #",
+        "Value": 15
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD $",
+        "Value": 495000
+      }
+    ],
+    "debug": {
+      "returnedRows": 12
+    }
+  },
+  "aging-disconnects-by-customer-type": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Type": "Commercial",
+        "Metric": "Month #",
+        "Value": 142
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "Month $",
+        "Value": 284000
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD #",
+        "Value": 426
+      },
+      {
+        "Type": "Commercial",
+        "Metric": "YTD $",
+        "Value": 852000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month #",
+        "Value": 384
+      },
+      {
+        "Type": "Residential",
+        "Metric": "Month $",
+        "Value": 768000
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD #",
+        "Value": 1152
+      },
+      {
+        "Type": "Residential",
+        "Metric": "YTD $",
+        "Value": 2304000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month #",
+        "Value": 31
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "Month $",
+        "Value": 62000
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD #",
+        "Value": 93
+      },
+      {
+        "Type": "Industrial",
+        "Metric": "YTD $",
+        "Value": 186000
+      }
+    ],
+    "debug": {
+      "returnedRows": 12
+    }
+  },
+  "_meta": {
+    "version": "csr-aging-overview",
+    "title": "CSR \u2014 Aging & Collections Overview",
+    "generatedUtc": "2026-07-26T02:46:42Z"
+  }
+}

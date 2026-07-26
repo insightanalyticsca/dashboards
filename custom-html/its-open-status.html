@@ -48,31 +48,4 @@ function groups(items,role,total){const cx=250,cy=150,r=94,stroke=39,circ=590; c
 function render(payload){const rows=ITS.rowsOf(payload); if(!rows.length) return ITS.empty('No tickets created MTD'); const role0=String(payload?.config?.role||payload?.meta?.role||'open-priority').toLowerCase(); const role=role0.includes('status')?'status':role0.includes('closed')?'closed-priority':'priority'; const labelNames=role==='status'?['Status.Name','Status','status_name','name','category','label']:['Priority.Name','Priority','priority_name','name','category','label']; const valNames=['__Value','Value','Count','Requests','OpenTickets','ClosedTickets','Total','rowcount','count']; const items=sortItems(rows.map(r=>({label:ITS.txt(r,labelNames,'Unknown'),value:ITS.val(r,valNames,0)})).filter(x=>x.value>0)); const total=items.reduce((a,b)=>a+b.value,0); const cls=role==='status'?'status':(role==='closed-priority'?'closed-priority':'priority'); const center=role==='closed-priority'?['CLOSED','CREATED MTD']:['CREATED','MTD']; const empty=role==='status'||role==='priority'?'No tickets created MTD':'No closed tickets created MTD'; const top=role==='status'?'linear-gradient(90deg,#1D2BFF,#14C8B6,#0F172A,#94A3B8,rgba(255,255,255,.95))':'linear-gradient(90deg,#1D2BFF,#14C8B6,#48B56B,rgba(255,255,255,.95))'; ITS.root().innerHTML=`<div class='${cls}-shell'><div class='${cls}-card' style='--top-gradient:${top}'><svg class='${cls}-donut' viewBox='0 0 500 300' preserveAspectRatio='xMidYMid meet' xmlns='http://www.w3.org/2000/svg'><circle cx='250' cy='150' r='94' fill='none' stroke='rgba(255,255,255,.66)' stroke-width='39'/>${groups(items,role==='status'?'status':'priority',total)}<circle cx='250' cy='150' r='64' fill='rgba(255,255,255,.94)' stroke='rgba(226,232,240,.98)' stroke-width='2'/><text class='center-value' x='250' y='137' text-anchor='middle'>${ITS.nf0.format(total)}</text><text class='center-label' x='250' y='171' text-anchor='middle'><tspan x='250' dy='0'>${center[0]}</tspan><tspan x='250' dy='15'>${center[1]}</tspan></text>${total===0?`<text class='empty-note' x='250' y='150' text-anchor='middle'>${empty}</text>`:''}</svg></div></div>`;}
 
 receiveDashboard(render);
-</script>
-<script>
-// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
-(async function () {
-  try {
-    const res = await fetch('../data/its/its-open-status.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const payload = await res.json();
-    window.postMessage({
-      type: 'dashboard-custom-html:update',
-      payload: payload,
-      data: payload.data || payload
-    }, '*');
-    setTimeout(function () {
-      try {
-        if (typeof window.init === 'function') window.init(payload);
-        else if (typeof window.update === 'function') window.update(payload);
-        else if (typeof window.setData === 'function') window.setData(payload);
-      } catch (_) {}
-    }, 50);
-  } catch (err) {
-    console.error('Clone bootstrap failed:', err);
-    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
-    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
-  }
-})();
-</script>
-</body></html>
+</script></body></html>

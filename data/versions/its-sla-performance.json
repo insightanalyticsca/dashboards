@@ -1,0 +1,249 @@
+{
+  "its-response-sla-mom": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "period_label": "M-1",
+        "period_sort": 1,
+        "month_start": "2025-03-01",
+        "response_sla_met_requests": 92,
+        "response_sla_breached_requests": 8,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-2",
+        "period_sort": 2,
+        "month_start": "2025-04-01",
+        "response_sla_met_requests": 93,
+        "response_sla_breached_requests": 7,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-3",
+        "period_sort": 3,
+        "month_start": "2025-05-01",
+        "response_sla_met_requests": 94,
+        "response_sla_breached_requests": 6,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-4",
+        "period_sort": 4,
+        "month_start": "2025-06-01",
+        "response_sla_met_requests": 95,
+        "response_sla_breached_requests": 5,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-5",
+        "period_sort": 5,
+        "month_start": "2025-07-01",
+        "response_sla_met_requests": 92,
+        "response_sla_breached_requests": 8,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-6",
+        "period_sort": 6,
+        "month_start": "2025-08-01",
+        "response_sla_met_requests": 93,
+        "response_sla_breached_requests": 7,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-7",
+        "period_sort": 7,
+        "month_start": "2025-09-01",
+        "response_sla_met_requests": 94,
+        "response_sla_breached_requests": 6,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-8",
+        "period_sort": 8,
+        "month_start": "2025-10-01",
+        "response_sla_met_requests": 95,
+        "response_sla_breached_requests": 5,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-9",
+        "period_sort": 9,
+        "month_start": "2025-11-01",
+        "response_sla_met_requests": 92,
+        "response_sla_breached_requests": 8,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-10",
+        "period_sort": 10,
+        "month_start": "2025-12-01",
+        "response_sla_met_requests": 93,
+        "response_sla_breached_requests": 7,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-11",
+        "period_sort": 11,
+        "month_start": "2025-12-01",
+        "response_sla_met_requests": 94,
+        "response_sla_breached_requests": 6,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-12",
+        "period_sort": 12,
+        "month_start": "2026-01-01",
+        "response_sla_met_requests": 95,
+        "response_sla_breached_requests": 5,
+        "role": "response-sla"
+      },
+      {
+        "period_label": "M-13",
+        "period_sort": 13,
+        "month_start": "2026-03-01",
+        "response_sla_met_requests": 92,
+        "response_sla_breached_requests": 8,
+        "role": "response-sla"
+      }
+    ],
+    "debug": {
+      "returnedRows": 13
+    }
+  },
+  "its-closure-sla-mom": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "period_label": "M-1",
+        "period_sort": 1,
+        "month_start": "2025-03-01",
+        "closure_sla_met_requests": 88,
+        "closure_sla_breached_requests": 12,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-2",
+        "period_sort": 2,
+        "month_start": "2025-04-01",
+        "closure_sla_met_requests": 89,
+        "closure_sla_breached_requests": 11,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-3",
+        "period_sort": 3,
+        "month_start": "2025-05-01",
+        "closure_sla_met_requests": 90,
+        "closure_sla_breached_requests": 10,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-4",
+        "period_sort": 4,
+        "month_start": "2025-06-01",
+        "closure_sla_met_requests": 91,
+        "closure_sla_breached_requests": 9,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-5",
+        "period_sort": 5,
+        "month_start": "2025-07-01",
+        "closure_sla_met_requests": 92,
+        "closure_sla_breached_requests": 8,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-6",
+        "period_sort": 6,
+        "month_start": "2025-08-01",
+        "closure_sla_met_requests": 88,
+        "closure_sla_breached_requests": 12,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-7",
+        "period_sort": 7,
+        "month_start": "2025-09-01",
+        "closure_sla_met_requests": 89,
+        "closure_sla_breached_requests": 11,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-8",
+        "period_sort": 8,
+        "month_start": "2025-10-01",
+        "closure_sla_met_requests": 90,
+        "closure_sla_breached_requests": 10,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-9",
+        "period_sort": 9,
+        "month_start": "2025-11-01",
+        "closure_sla_met_requests": 91,
+        "closure_sla_breached_requests": 9,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-10",
+        "period_sort": 10,
+        "month_start": "2025-12-01",
+        "closure_sla_met_requests": 92,
+        "closure_sla_breached_requests": 8,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-11",
+        "period_sort": 11,
+        "month_start": "2025-12-01",
+        "closure_sla_met_requests": 88,
+        "closure_sla_breached_requests": 12,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-12",
+        "period_sort": 12,
+        "month_start": "2026-01-01",
+        "closure_sla_met_requests": 89,
+        "closure_sla_breached_requests": 11,
+        "role": "closure-sla"
+      },
+      {
+        "period_label": "M-13",
+        "period_sort": 13,
+        "month_start": "2026-03-01",
+        "closure_sla_met_requests": 90,
+        "closure_sla_breached_requests": 10,
+        "role": "closure-sla"
+      }
+    ],
+    "debug": {
+      "returnedRows": 13
+    }
+  },
+  "_meta": {
+    "version": "its-sla-performance",
+    "title": "ITS \u2014 SLA Performance",
+    "generatedUtc": "2026-07-26T02:46:42Z"
+  }
+}
