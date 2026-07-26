@@ -82,19 +82,25 @@
                 // Set DashVisualContext so the visual can access data
                 win.DashVisualContext = visualData;
 
-                // Use eval() to reset the chart closure variable and call render().
-                // Pass {payload: DashVisualContext} so render(msg) functions that
-                // expect msg.payload work, AND render(source) functions that call
-                // extract(source) which checks source.payload also work.
+                // Inject a script element to reset the chart and call render.
+                // Pass DashVisualContext directly (not wrapped) so CSR visuals
+                // that use extract(source) can find data via source.data.
                 var rendered = false;
                 if (typeof win.render === 'function') {
                   try {
-                    win.eval('try { chart = null; } catch(e) {}; render({payload: DashVisualContext, data: DashVisualContext.data || DashVisualContext});');
+                    var script = win.document.createElement('script');
+                    script.textContent = 'try { chart = null; } catch(e) {}; render(DashVisualContext);';
+                    win.document.body.appendChild(script);
+                    script.remove();
                     rendered = true;
                   } catch (e) {
-                    // If eval fails (CSP), fall back to direct call
-                    win.render({payload: visualData, data: visualData.data || visualData});
-                    rendered = true;
+                    try {
+                      win.eval('try { chart = null; } catch(e) {}; render(DashVisualContext);');
+                      rendered = true;
+                    } catch (e2) {
+                      win.render(visualData);
+                      rendered = true;
+                    }
                   }
                 }
 
@@ -106,16 +112,14 @@
                   if (typeof win.setData === 'function') { win.setData(visualData); rendered = true; }
                 }
 
-                // Only post via postMessage if we couldn't render directly.
-                // Posting after render() would cause a second render() call
-                // which re-creates the DOM and breaks the chart instance.
-                if (!rendered) {
-                  win.postMessage({
-                    type: 'dashboard-custom-html:update',
-                    payload: visualData,
-                    data: visualData.data || visualData
-                  }, '*');
-                }
+                // Post via postMessage as well — some visuals (especially ITS)
+                // use receive(render) which expects msg.payload, not DashVisualContext.
+                // The postMessage handler wraps the data in {type, payload, data}.
+                win.postMessage({
+                  type: 'dashboard-custom-html:update',
+                  payload: visualData,
+                  data: visualData.data || visualData
+                }, '*');
 
                 // Resize charts after a short delay
                 setTimeout(function() {
