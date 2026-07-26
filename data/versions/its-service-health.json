@@ -346,6 +346,10 @@
     ],
     "debug": {
       "returnedRows": 13
+    },
+    "Role": "ticket-open",
+    "config": {
+      "role": "ticket-open"
     }
   },
   "its-ticket-volume-close": {
@@ -558,11 +562,15 @@
     ],
     "debug": {
       "returnedRows": 13
+    },
+    "Role": "ticket-close",
+    "config": {
+      "role": "ticket-close"
     }
   },
   "_meta": {
     "version": "its-service-health",
     "title": "ITS \u2014 Service Health",
-    "generatedUtc": "2026-07-26T16:50:43Z"
+    "generatedUtc": "2026-07-26T17:09:23Z"
   }
 }

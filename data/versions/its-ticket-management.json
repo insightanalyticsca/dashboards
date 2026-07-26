@@ -14,38 +14,38 @@
       {
         "Priority": "P1",
         "priority": "P1",
-        "Count": 3,
-        "count": 5,
+        "Count": 4,
+        "count": 4,
         "Label": "Critical",
-        "AvgAge": 2.8,
-        "SLA": 97
+        "AvgAge": 2.9,
+        "SLA": 93
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 18,
-        "count": 17,
+        "Count": 20,
+        "count": 15,
         "Label": "High",
-        "AvgAge": 4.5,
-        "SLA": 88
+        "AvgAge": 4.8,
+        "SLA": 89
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 63,
-        "count": 67,
+        "Count": 65,
+        "count": 63,
         "Label": "Medium",
-        "AvgAge": 9.9,
-        "SLA": 89
+        "AvgAge": 9.4,
+        "SLA": 95
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 149,
-        "count": 145,
+        "Count": 135,
+        "count": 136,
         "Label": "Low",
-        "AvgAge": 18.7,
-        "SLA": 94
+        "AvgAge": 18.1,
+        "SLA": 97
       }
     ],
     "debug": {
@@ -67,27 +67,27 @@
       {
         "Status": "Open",
         "status": "Open",
-        "Count": 42
+        "Count": 47
       },
       {
         "Status": "In Progress",
         "status": "In Progress",
-        "Count": 73
+        "Count": 67
       },
       {
         "Status": "Pending",
         "status": "Pending",
-        "Count": 32
+        "Count": 34
       },
       {
         "Status": "Resolved",
         "status": "Resolved",
-        "Count": 139
+        "Count": 136
       },
       {
         "Status": "Closed",
         "status": "Closed",
-        "Count": 88
+        "Count": 89
       }
     ],
     "debug": {
@@ -107,64 +107,76 @@
     "valueFields": [],
     "data": [
       {
-        "Priority": "P1",
-        "Status": "Open",
-        "Count": 1
+        "category_label": "P1 - Open",
+        "Category Label": "P1 - Open",
+        "request_count": 1,
+        "Request Count": 2
       },
       {
-        "Priority": "P1",
-        "Status": "In Progress",
-        "Count": 1
+        "category_label": "P1 - In Progress",
+        "Category Label": "P1 - In Progress",
+        "request_count": 1,
+        "Request Count": 1
       },
       {
-        "Priority": "P1",
-        "Status": "Pending",
-        "Count": 1
+        "category_label": "P1 - Pending",
+        "Category Label": "P1 - Pending",
+        "request_count": 1,
+        "Request Count": 1
       },
       {
-        "Priority": "P2",
-        "Status": "Open",
-        "Count": 4
+        "category_label": "P2 - Open",
+        "Category Label": "P2 - Open",
+        "request_count": 5,
+        "Request Count": 4
       },
       {
-        "Priority": "P2",
-        "Status": "In Progress",
-        "Count": 8
+        "category_label": "P2 - In Progress",
+        "Category Label": "P2 - In Progress",
+        "request_count": 6,
+        "Request Count": 6
       },
       {
-        "Priority": "P2",
-        "Status": "Pending",
-        "Count": 4
+        "category_label": "P2 - Pending",
+        "Category Label": "P2 - Pending",
+        "request_count": 4,
+        "Request Count": 3
       },
       {
-        "Priority": "P3",
-        "Status": "Open",
-        "Count": 18
+        "category_label": "P3 - Open",
+        "Category Label": "P3 - Open",
+        "request_count": 17,
+        "Request Count": 17
       },
       {
-        "Priority": "P3",
-        "Status": "In Progress",
-        "Count": 20
+        "category_label": "P3 - In Progress",
+        "Category Label": "P3 - In Progress",
+        "request_count": 21,
+        "Request Count": 21
       },
       {
-        "Priority": "P3",
-        "Status": "Pending",
-        "Count": 21
+        "category_label": "P3 - Pending",
+        "Category Label": "P3 - Pending",
+        "request_count": 20,
+        "Request Count": 20
       },
       {
-        "Priority": "P4",
-        "Status": "Open",
-        "Count": 40
+        "category_label": "P4 - Open",
+        "Category Label": "P4 - Open",
+        "request_count": 42,
+        "Request Count": 41
       },
       {
-        "Priority": "P4",
-        "Status": "In Progress",
-        "Count": 57
+        "category_label": "P4 - In Progress",
+        "Category Label": "P4 - In Progress",
+        "request_count": 58,
+        "Request Count": 58
       },
       {
-        "Priority": "P4",
-        "Status": "Pending",
-        "Count": 41
+        "category_label": "P4 - Pending",
+        "Category Label": "P4 - Pending",
+        "request_count": 40,
+        "Request Count": 40
       }
     ],
     "debug": {
@@ -186,38 +198,38 @@
       {
         "Priority": "P1",
         "priority": "P1",
-        "Count": 4,
+        "Count": 3,
         "count": 2,
         "Label": "Critical",
-        "AvgAge": 2.6,
-        "SLA": 95
+        "AvgAge": 2.9,
+        "SLA": 93
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 21,
-        "count": 15,
+        "Count": 19,
+        "count": 20,
         "Label": "High",
-        "AvgAge": 5.3,
-        "SLA": 87
+        "AvgAge": 4.6,
+        "SLA": 86
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 64,
-        "count": 63,
+        "Count": 66,
+        "count": 59,
         "Label": "Medium",
-        "AvgAge": 8.5,
-        "SLA": 91
+        "AvgAge": 9.1,
+        "SLA": 95
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 150,
-        "count": 145,
+        "Count": 142,
+        "count": 148,
         "Label": "Low",
-        "AvgAge": 19.3,
-        "SLA": 98
+        "AvgAge": 18.2,
+        "SLA": 97
       }
     ],
     "debug": {
@@ -227,6 +239,6 @@
   "_meta": {
     "version": "its-ticket-management",
     "title": "ITS \u2014 Ticket Management",
-    "generatedUtc": "2026-07-26T16:50:43Z"
+    "generatedUtc": "2026-07-26T17:09:23Z"
   }
 }

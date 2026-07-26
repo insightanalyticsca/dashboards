@@ -19,10 +19,10 @@
         "PeriodSort": 1,
         "month_start": "2025-03-01",
         "MonthStart": "2025-03-01",
-        "created_requests": 131,
-        "Created Requests": 131,
-        "completed_requests": 141,
-        "Completed Requests": 141,
+        "created_requests": 126,
+        "Created Requests": 126,
+        "completed_requests": 118,
+        "Completed Requests": 118,
         "role": "open",
         "Role": "open"
       },
@@ -34,10 +34,10 @@
         "PeriodSort": 2,
         "month_start": "2025-04-01",
         "MonthStart": "2025-04-01",
-        "created_requests": 127,
-        "Created Requests": 127,
-        "completed_requests": 120,
-        "Completed Requests": 120,
+        "created_requests": 142,
+        "Created Requests": 142,
+        "completed_requests": 147,
+        "Completed Requests": 147,
         "role": "open",
         "Role": "open"
       },
@@ -49,10 +49,10 @@
         "PeriodSort": 3,
         "month_start": "2025-05-01",
         "MonthStart": "2025-05-01",
-        "created_requests": 160,
-        "Created Requests": 160,
-        "completed_requests": 135,
-        "Completed Requests": 135,
+        "created_requests": 148,
+        "Created Requests": 148,
+        "completed_requests": 138,
+        "Completed Requests": 138,
         "role": "open",
         "Role": "open"
       },
@@ -64,10 +64,10 @@
         "PeriodSort": 4,
         "month_start": "2025-06-01",
         "MonthStart": "2025-06-01",
-        "created_requests": 137,
-        "Created Requests": 137,
-        "completed_requests": 144,
-        "Completed Requests": 144,
+        "created_requests": 169,
+        "Created Requests": 169,
+        "completed_requests": 149,
+        "Completed Requests": 149,
         "role": "open",
         "Role": "open"
       },
@@ -79,10 +79,10 @@
         "PeriodSort": 5,
         "month_start": "2025-07-01",
         "MonthStart": "2025-07-01",
-        "created_requests": 140,
-        "Created Requests": 140,
-        "completed_requests": 151,
-        "Completed Requests": 151,
+        "created_requests": 152,
+        "Created Requests": 152,
+        "completed_requests": 147,
+        "Completed Requests": 147,
         "role": "open",
         "Role": "open"
       },
@@ -94,10 +94,10 @@
         "PeriodSort": 6,
         "month_start": "2025-08-01",
         "MonthStart": "2025-08-01",
-        "created_requests": 166,
-        "Created Requests": 166,
-        "completed_requests": 120,
-        "Completed Requests": 120,
+        "created_requests": 169,
+        "Created Requests": 169,
+        "completed_requests": 147,
+        "Completed Requests": 147,
         "role": "open",
         "Role": "open"
       },
@@ -109,10 +109,10 @@
         "PeriodSort": 7,
         "month_start": "2025-09-01",
         "MonthStart": "2025-09-01",
-        "created_requests": 149,
-        "Created Requests": 149,
-        "completed_requests": 148,
-        "Completed Requests": 148,
+        "created_requests": 146,
+        "Created Requests": 146,
+        "completed_requests": 129,
+        "Completed Requests": 129,
         "role": "open",
         "Role": "open"
       },
@@ -124,10 +124,10 @@
         "PeriodSort": 8,
         "month_start": "2025-10-01",
         "MonthStart": "2025-10-01",
-        "created_requests": 152,
-        "Created Requests": 152,
-        "completed_requests": 128,
-        "Completed Requests": 128,
+        "created_requests": 178,
+        "Created Requests": 178,
+        "completed_requests": 137,
+        "Completed Requests": 137,
         "role": "open",
         "Role": "open"
       },
@@ -139,10 +139,10 @@
         "PeriodSort": 9,
         "month_start": "2025-11-01",
         "MonthStart": "2025-11-01",
-        "created_requests": 176,
-        "Created Requests": 176,
-        "completed_requests": 142,
-        "Completed Requests": 142,
+        "created_requests": 173,
+        "Created Requests": 173,
+        "completed_requests": 154,
+        "Completed Requests": 154,
         "role": "open",
         "Role": "open"
       },
@@ -154,10 +154,10 @@
         "PeriodSort": 10,
         "month_start": "2025-12-01",
         "MonthStart": "2025-12-01",
-        "created_requests": 170,
-        "Created Requests": 170,
-        "completed_requests": 153,
-        "Completed Requests": 153,
+        "created_requests": 163,
+        "Created Requests": 163,
+        "completed_requests": 154,
+        "Completed Requests": 154,
         "role": "open",
         "Role": "open"
       },
@@ -169,10 +169,10 @@
         "PeriodSort": 11,
         "month_start": "2025-12-01",
         "MonthStart": "2025-12-01",
-        "created_requests": 157,
-        "Created Requests": 157,
-        "completed_requests": 151,
-        "Completed Requests": 151,
+        "created_requests": 173,
+        "Created Requests": 173,
+        "completed_requests": 159,
+        "Completed Requests": 159,
         "role": "open",
         "Role": "open"
       },
@@ -184,10 +184,10 @@
         "PeriodSort": 12,
         "month_start": "2026-01-01",
         "MonthStart": "2026-01-01",
-        "created_requests": 189,
-        "Created Requests": 189,
-        "completed_requests": 156,
-        "Completed Requests": 156,
+        "created_requests": 180,
+        "Created Requests": 180,
+        "completed_requests": 158,
+        "Completed Requests": 158,
         "role": "open",
         "Role": "open"
       },
@@ -199,16 +199,20 @@
         "PeriodSort": 13,
         "month_start": "2026-03-01",
         "MonthStart": "2026-03-01",
-        "created_requests": 178,
-        "Created Requests": 178,
-        "completed_requests": 165,
-        "Completed Requests": 165,
+        "created_requests": 164,
+        "Created Requests": 164,
+        "completed_requests": 154,
+        "Completed Requests": 154,
         "role": "open",
         "Role": "open"
       }
     ],
     "debug": {
       "returnedRows": 13
+    },
+    "Role": "ticket-open",
+    "config": {
+      "role": "ticket-open"
     }
   },
   "its-ticket-volume-close": {
@@ -231,10 +235,10 @@
         "PeriodSort": 1,
         "month_start": "2025-03-01",
         "MonthStart": "2025-03-01",
-        "created_requests": 156,
-        "Created Requests": 156,
-        "completed_requests": 112,
-        "Completed Requests": 112,
+        "created_requests": 149,
+        "Created Requests": 149,
+        "completed_requests": 130,
+        "Completed Requests": 130,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -246,10 +250,10 @@
         "PeriodSort": 2,
         "month_start": "2025-04-01",
         "MonthStart": "2025-04-01",
-        "created_requests": 164,
-        "Created Requests": 164,
-        "completed_requests": 116,
-        "Completed Requests": 116,
+        "created_requests": 141,
+        "Created Requests": 141,
+        "completed_requests": 135,
+        "Completed Requests": 135,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -261,10 +265,10 @@
         "PeriodSort": 3,
         "month_start": "2025-05-01",
         "MonthStart": "2025-05-01",
-        "created_requests": 143,
-        "Created Requests": 143,
-        "completed_requests": 132,
-        "Completed Requests": 132,
+        "created_requests": 137,
+        "Created Requests": 137,
+        "completed_requests": 144,
+        "Completed Requests": 144,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -276,8 +280,8 @@
         "PeriodSort": 4,
         "month_start": "2025-06-01",
         "MonthStart": "2025-06-01",
-        "created_requests": 145,
-        "Created Requests": 145,
+        "created_requests": 135,
+        "Created Requests": 135,
         "completed_requests": 121,
         "Completed Requests": 121,
         "role": "ticket-close",
@@ -291,10 +295,10 @@
         "PeriodSort": 5,
         "month_start": "2025-07-01",
         "MonthStart": "2025-07-01",
-        "created_requests": 161,
-        "Created Requests": 161,
-        "completed_requests": 124,
-        "Completed Requests": 124,
+        "created_requests": 139,
+        "Created Requests": 139,
+        "completed_requests": 123,
+        "Completed Requests": 123,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -306,8 +310,8 @@
         "PeriodSort": 6,
         "month_start": "2025-08-01",
         "MonthStart": "2025-08-01",
-        "created_requests": 177,
-        "Created Requests": 177,
+        "created_requests": 164,
+        "Created Requests": 164,
         "completed_requests": 126,
         "Completed Requests": 126,
         "role": "ticket-close",
@@ -321,10 +325,10 @@
         "PeriodSort": 7,
         "month_start": "2025-09-01",
         "MonthStart": "2025-09-01",
-        "created_requests": 168,
-        "Created Requests": 168,
-        "completed_requests": 132,
-        "Completed Requests": 132,
+        "created_requests": 163,
+        "Created Requests": 163,
+        "completed_requests": 130,
+        "Completed Requests": 130,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -336,10 +340,10 @@
         "PeriodSort": 8,
         "month_start": "2025-10-01",
         "MonthStart": "2025-10-01",
-        "created_requests": 162,
-        "Created Requests": 162,
-        "completed_requests": 125,
-        "Completed Requests": 125,
+        "created_requests": 178,
+        "Created Requests": 178,
+        "completed_requests": 127,
+        "Completed Requests": 127,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -351,10 +355,10 @@
         "PeriodSort": 9,
         "month_start": "2025-11-01",
         "MonthStart": "2025-11-01",
-        "created_requests": 148,
-        "Created Requests": 148,
-        "completed_requests": 146,
-        "Completed Requests": 146,
+        "created_requests": 183,
+        "Created Requests": 183,
+        "completed_requests": 161,
+        "Completed Requests": 161,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -366,10 +370,10 @@
         "PeriodSort": 10,
         "month_start": "2025-12-01",
         "MonthStart": "2025-12-01",
-        "created_requests": 152,
-        "Created Requests": 152,
-        "completed_requests": 146,
-        "Completed Requests": 146,
+        "created_requests": 184,
+        "Created Requests": 184,
+        "completed_requests": 149,
+        "Completed Requests": 149,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -381,10 +385,10 @@
         "PeriodSort": 11,
         "month_start": "2025-12-01",
         "MonthStart": "2025-12-01",
-        "created_requests": 174,
-        "Created Requests": 174,
-        "completed_requests": 153,
-        "Completed Requests": 153,
+        "created_requests": 159,
+        "Created Requests": 159,
+        "completed_requests": 156,
+        "Completed Requests": 156,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -396,10 +400,10 @@
         "PeriodSort": 12,
         "month_start": "2026-01-01",
         "MonthStart": "2026-01-01",
-        "created_requests": 182,
-        "Created Requests": 182,
-        "completed_requests": 141,
-        "Completed Requests": 141,
+        "created_requests": 177,
+        "Created Requests": 177,
+        "completed_requests": 159,
+        "Completed Requests": 159,
         "role": "ticket-close",
         "Role": "ticket-close"
       },
@@ -411,16 +415,20 @@
         "PeriodSort": 13,
         "month_start": "2026-03-01",
         "MonthStart": "2026-03-01",
-        "created_requests": 173,
-        "Created Requests": 173,
-        "completed_requests": 167,
-        "Completed Requests": 167,
+        "created_requests": 161,
+        "Created Requests": 161,
+        "completed_requests": 152,
+        "Completed Requests": 152,
         "role": "ticket-close",
         "Role": "ticket-close"
       }
     ],
     "debug": {
       "returnedRows": 13
+    },
+    "Role": "ticket-close",
+    "config": {
+      "role": "ticket-close"
     }
   },
   "its-open-priority": {
@@ -438,42 +446,46 @@
       {
         "Priority": "P1",
         "priority": "P1",
-        "Count": 5,
-        "count": 6,
+        "Count": 6,
+        "count": 4,
         "Label": "Critical",
-        "AvgAge": 3.0,
-        "SLA": 89
+        "AvgAge": 2.5,
+        "SLA": 88
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 16,
-        "count": 16,
+        "Count": 19,
+        "count": 19,
         "Label": "High",
-        "AvgAge": 4.4,
-        "SLA": 88
+        "AvgAge": 4.6,
+        "SLA": 81
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 63,
-        "count": 66,
+        "Count": 67,
+        "count": 64,
         "Label": "Medium",
         "AvgAge": 9.1,
-        "SLA": 95
+        "SLA": 89
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 138,
-        "count": 141,
+        "Count": 145,
+        "count": 145,
         "Label": "Low",
-        "AvgAge": 18.8,
-        "SLA": 97
+        "AvgAge": 17.7,
+        "SLA": 98
       }
     ],
     "debug": {
       "returnedRows": 4
+    },
+    "Role": "open-priority",
+    "config": {
+      "role": "open-priority"
     }
   },
   "its-open-status": {
@@ -496,26 +508,30 @@
       {
         "Status": "In Progress",
         "status": "In Progress",
-        "Count": 70
+        "Count": 72
       },
       {
         "Status": "Pending",
         "status": "Pending",
-        "Count": 35
+        "Count": 34
       },
       {
         "Status": "Resolved",
         "status": "Resolved",
-        "Count": 134
+        "Count": 147
       },
       {
         "Status": "Closed",
         "status": "Closed",
-        "Count": 95
+        "Count": 91
       }
     ],
     "debug": {
       "returnedRows": 5
+    },
+    "Role": "open-status",
+    "config": {
+      "role": "open-status"
     }
   },
   "its-closed-priority": {
@@ -533,47 +549,51 @@
       {
         "Priority": "P1",
         "priority": "P1",
-        "Count": 5,
-        "count": 4,
+        "Count": 6,
+        "count": 6,
         "Label": "Critical",
         "AvgAge": 3.0,
-        "SLA": 95
+        "SLA": 97
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 16,
+        "Count": 19,
         "count": 15,
         "Label": "High",
-        "AvgAge": 5.0,
-        "SLA": 84
+        "AvgAge": 5.2,
+        "SLA": 89
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 66,
-        "count": 61,
+        "Count": 61,
+        "count": 57,
         "Label": "Medium",
-        "AvgAge": 9.7,
+        "AvgAge": 8.9,
         "SLA": 92
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 148,
-        "count": 143,
+        "Count": 143,
+        "count": 144,
         "Label": "Low",
-        "AvgAge": 18.0,
-        "SLA": 95
+        "AvgAge": 18.5,
+        "SLA": 92
       }
     ],
     "debug": {
       "returnedRows": 4
+    },
+    "Role": "closed-priority",
+    "config": {
+      "role": "closed-priority"
     }
   },
   "_meta": {
     "version": "its-ticket-operations",
     "title": "ITS \u2014 Ticket Operations",
-    "generatedUtc": "2026-07-26T16:50:43Z"
+    "generatedUtc": "2026-07-26T17:09:23Z"
   }
 }
