@@ -231,6 +231,29 @@ html, body {
 
 .canvas-back:hover { background: var(--exec-grid); }
 
+/* Reset Layout button */
+.canvas-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--exec-primary);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+  white-space: nowrap;
+}
+.canvas-reset-btn:hover {
+  background: var(--exec-ink);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(8, 8, 238, 0.30);
+}
+.canvas-reset-btn:active { transform: translateY(0); }
+
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE — mobile
    ════════════════════════════════════════════════════════════════════════════ */

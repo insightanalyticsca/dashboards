@@ -44,6 +44,43 @@
       layoutZ: 100
     };
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  PERSISTENCE — save/load layout to localStorage (per browser, per version)
+    // ══════════════════════════════════════════════════════════════════════════
+    var LAYOUT_KEY = 'canvas-layout-' + config.version;
+
+    function saveLayout() {
+      try {
+        localStorage.setItem(LAYOUT_KEY, JSON.stringify(state.overrides));
+      } catch (e) {
+        console.warn('Canvas host: could not save layout', e);
+      }
+    }
+
+    function loadLayout() {
+      try {
+        var saved = localStorage.getItem(LAYOUT_KEY);
+        if (saved) {
+          var parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            state.overrides = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Canvas host: could not load layout', e);
+      }
+    }
+
+    function clearLayout() {
+      try {
+        localStorage.removeItem(LAYOUT_KEY);
+      } catch (e) {}
+      state.overrides = {};
+    }
+
+    // Load saved layout before computing defaults
+    loadLayout();
+
     // Compute default layout from config (grid → absolute positions)
     function computeDefaultLayout() {
       var colCount = 12;
@@ -204,6 +241,7 @@
           geometry.x = clampNumber(geometry.x, 0, Math.max(0, 100 - geometry.w));
           geometry.y = clampNumber(geometry.y, 0, Math.max(0, 100 - geometry.h));
           state.overrides[visId] = geometry;
+          saveLayout();  // persist to localStorage
           resizeIframeCharts(iframe);
         };
 
@@ -218,10 +256,33 @@
         e.preventDefault();
         e.stopPropagation();
         delete state.overrides[visId];
+        saveLayout();  // persist reset to localStorage
         applyVisualGeometry(tileEl, visualGeometry(visId));
         resizeIframeCharts(iframe);
       });
     }
+
+    // Add Reset Layout button to header
+    var resetBtn = document.createElement('button');
+    resetBtn.className = 'canvas-reset-btn';
+    resetBtn.type = 'button';
+    resetBtn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Reset Layout';
+    resetBtn.title = 'Reset all visuals to default positions';
+    resetBtn.addEventListener('click', function() {
+      if (!confirm('Reset all visuals to their default positions?')) return;
+      clearLayout();
+      // Reapply default geometry to all tiles
+      config.visuals.forEach(function(vis) {
+        var tile = canvas.querySelector('[data-visual-id="' + vis.id + '"]');
+        if (tile) {
+          applyVisualGeometry(tile, visualGeometry(vis.id));
+          var iframe = tile.querySelector('iframe');
+          if (iframe) resizeIframeCharts(iframe);
+        }
+      });
+    });
+    var header = app.querySelector('.canvas-header');
+    if (header) header.appendChild(resetBtn);
 
     // ══════════════════════════════════════════════════════════════════════════
     //  Fetch data + create tiles
