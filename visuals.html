@@ -11,74 +11,45 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <link rel="stylesheet" href="./css/site.css?v=20260726">
   <style>
-    body {
-      background: linear-gradient(135deg, #f4f6fb 0%, #e9edf5 100%);
-      min-height: 100vh;
-      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-      color: #171777;
-      margin: 0;
-    }
-    .topbar {
-      background: linear-gradient(90deg, #212121 0%, #171777 100%);
-      color: #fff;
-      padding: 14px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 4px 14px rgba(23,23,119,0.18);
-    }
+    body { background: linear-gradient(135deg, #f4f6fb 0%, #e9edf5 100%); min-height: 100vh; font-family: 'Inter', 'Segoe UI', Arial, sans-serif; color: #171777; margin: 0; }
+    .topbar { background: linear-gradient(90deg, #212121 0%, #171777 100%); color: #fff; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(23,23,119,0.18); position: sticky; top: 0; z-index: 50; }
     .brand { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; font-weight: 800; font-size: 18px; }
-    .brand-mark {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, #0808ee 0%, #09c698 100%);
-      display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 800;
-      box-shadow: 0 4px 14px rgba(8,8,238,0.4);
-    }
+    .brand-mark { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0808ee 0%, #09c698 100%); display: grid; place-items: center; color: #fff; font-size: 16px; font-weight: 800; box-shadow: 0 4px 14px rgba(8,8,238,0.4); }
     .topbar a { color: rgba(255,255,255,0.85); text-decoration: none; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 140ms ease; }
     .topbar a:hover { background: rgba(255,255,255,0.10); color: #fff; }
-
     .wrap { max-width: 1480px; margin: 32px auto; padding: 0 32px; }
     h1 { font-size: 28px; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.02em; }
-    .lead { color: #60708b; font-size: 14px; margin: 0 0 32px; line-height: 1.5; }
+    .lead { color: #60708b; font-size: 14px; margin: 0 0 24px; line-height: 1.5; }
     .lead code { background: #eef0f8; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: #171777; }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-    .tile {
-      background: #fff; border: 1px solid #d8deea; border-radius: 14px;
-      padding: 24px; text-decoration: none; color: inherit;
-      transition: all 220ms cubic-bezier(.22, 1, .36, 1);
-      position: relative; overflow: hidden;
-      display: flex; flex-direction: column; gap: 14px;
-    }
-    .tile::before {
-      content: ""; position: absolute; top: 0; left: 14px; right: 14px; height: 3px;
-      background: linear-gradient(90deg, #0808ee, #09c698, #38bdf8);
-      border-radius: 0 0 4px 4px; opacity: 0; transition: opacity 220ms ease;
-    }
-    .tile:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(23,23,119,0.14); border-color: #0808ee; }
+    .filters { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .filter { padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid #d8deea; color: #60708b; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 140ms ease; }
+    .filter:hover { border-color: #0808ee; color: #171777; }
+    .filter.is-active { background: #171777; color: #fff; border-color: #171777; box-shadow: 0 4px 14px rgba(23,23,119,0.25); }
+    .filter .count { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .filter:not(.is-active) .count { background: #d8deea; color: #60708b; }
+    .filter.is-active .count { background: rgba(255,255,255,0.18); }
+    .sector-block { margin-bottom: 40px; }
+    .sector-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid #d8deea; }
+    .sector-title i { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-size: 13px; color: #fff; }
+    .sector-title .meta { margin-left: auto; font-size: 11px; color: #60708b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    .tile { background: #fff; border: 1px solid #d8deea; border-radius: 12px; padding: 16px; text-decoration: none; color: inherit; transition: all 220ms cubic-bezier(.22, 1, .36, 1); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
+    .tile::before { content: ""; position: absolute; top: 0; left: 12px; right: 12px; height: 3px; background: linear-gradient(90deg, #0808ee, #09c698, #38bdf8); border-radius: 0 0 4px 4px; opacity: 0; transition: opacity 220ms ease; }
+    .tile:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(23,23,119,0.12); border-color: #0808ee; }
     .tile:hover::before { opacity: 1; }
-
-    .tile-head { display: flex; align-items: center; gap: 12px; }
-    .tile-icon {
-      width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-size: 18px;
-    }
+    .tile-head { display: flex; align-items: center; gap: 8px; }
+    .tile-icon { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: #fff; font-size: 12px; flex-shrink: 0; }
     .tile-icon.exec { background: linear-gradient(135deg, #0808ee, #4338ca); }
     .tile-icon.csr { background: linear-gradient(135deg, #09c698, #0e7490); }
     .tile-icon.its { background: linear-gradient(135deg, #845EF7, #6d28d9); }
-    .tile-badge {
-      margin-left: auto; padding: 4px 10px; border-radius: 999px;
-      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-    }
+    .tile-badge { margin-left: auto; padding: 2px 7px; border-radius: 999px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
     .tile-badge.exec { background: rgba(8,8,238,0.10); color: #0808ee; }
     .tile-badge.csr { background: rgba(9,198,152,0.12); color: #06a67f; }
     .tile-badge.its { background: rgba(132,94,247,0.12); color: #6d28d9; }
-
-    .tile-title { font-size: 16px; font-weight: 700; margin: 0; }
-    .tile-desc { font-size: 13px; color: #60708b; line-height: 1.5; margin: 0; }
-    .tile-stats { display: flex; gap: 16px; padding-top: 10px; border-top: 1px solid #eef0f8; font-size: 11px; color: #60708b; }
-    .tile-stats span { display: flex; align-items: center; gap: 4px; }
-    .tile-stats i { color: #0808ee; }
+    .tile-title { font-size: 13px; font-weight: 700; margin: 0; line-height: 1.3; }
+    .tile-foot { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid #eef0f8; font-size: 10px; color: #60708b; }
     .arrow { color: #0808ee; transition: transform 200ms ease; margin-left: auto; }
     .tile:hover .arrow { transform: translateX(3px); }
-
     footer { text-align: center; padding: 40px 32px; color: #60708b; font-size: 12px; }
     footer code { background: #eef0f8; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: #171777; }
   </style>
@@ -86,10 +57,7 @@
 <body>
 
 <header class="topbar">
-  <a class="brand" href="./index.html">
-    <span class="brand-mark">D</span>
-    DocChat · Visuals
-  </a>
+  <a class="brand" href="./index.html"><span class="brand-mark">D</span> DocChat · Visuals</a>
   <div style="display:flex; gap:8px;">
     <a href="./index.html"><i class="fa-solid fa-arrow-left"></i> Back to chat</a>
     <a href="https://github.com/insightanalyticsca/dashboards" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> Source</a>
@@ -98,125 +66,136 @@
 
 <div class="wrap">
   <h1>Dashboards</h1>
-  <p class="lead">7 collection dashboards — each a single HTML page that loads <code>executive-dashboard-suite.js</code> and fetches one JSON payload. Every dashboard renders a collection of KPIs, charts, and tables from that single payload. Same pattern across all 3 sectors.</p>
+  <p class="lead">42 version templates cloned from <code>corporate_dashboards</code> .NET MVC app. Each version is its own HTML page. Executive + CSR versions use <code>executive-dashboard-suite.js</code> (executive pattern). ITS versions use the original <code>.NET</code> HTML files verbatim, each fetching its own JSON payload.</p>
 
-  <div class="grid">
+  <div class="filters">
+    <button class="filter is-active" data-filter="all">All <span class="count" id="count-all">0</span></button>
+    <button class="filter" data-filter="exec">Executive <span class="count" id="count-exec">0</span></button>
+    <button class="filter" data-filter="csr">CSR <span class="count" id="count-csr">0</span></button>
+    <button class="filter" data-filter="its">ITS <span class="count" id="count-its">0</span></button>
+  </div>
 
-    <!-- ════════════ EXECUTIVE (5) ════════════ -->
-    <a class="tile" href="./custom-html/executive-ar-portfolio.html">
-      <div class="tile-head">
-        <div class="tile-icon exec"><i class="fa-solid fa-wallet"></i></div>
-        <span class="tile-badge exec">Executive</span>
-      </div>
-      <h3 class="tile-title">AR Portfolio</h3>
-      <p class="tile-desc">Total receivables, aging buckets, top accounts, DSO trends — executive overview.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 4 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 3 charts</span>
-        <span><i class="fa-solid fa-table"></i> 1 table</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
+  <!-- ════════════ EXECUTIVE (5) ════════════ -->
+  <div class="sector-block" data-sector="exec">
+    <h2 class="sector-title">
+      <i class="fa-solid fa-chart-pie" style="background: linear-gradient(135deg, #0808ee, #4338ca);"></i>
+      Executive Dashboards <span class="meta">5 versions · v213</span>
+    </h2>
+    <div class="grid" id="grid-exec"></div>
+  </div>
 
-    <a class="tile" href="./custom-html/executive-customer-payments.html">
-      <div class="tile-head">
-        <div class="tile-icon exec"><i class="fa-solid fa-money-bill-transfer"></i></div>
-        <span class="tile-badge exec">Executive</span>
-      </div>
-      <h3 class="tile-title">Customer Payments</h3>
-      <p class="tile-desc">Payment volume, methods, auto-pay adoption, days-to-pay by segment.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 4 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 3 charts</span>
-        <span><i class="fa-solid fa-table"></i> 1 table</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
+  <!-- ════════════ CSR (21) ════════════ -->
+  <div class="sector-block" data-sector="csr">
+    <h2 class="sector-title">
+      <i class="fa-solid fa-headset" style="background: linear-gradient(135deg, #09c698, #0e7490);"></i>
+      CSR Dashboards <span class="meta">21 versions · from manifest</span>
+    </h2>
+    <div class="grid" id="grid-csr"></div>
+  </div>
 
-    <a class="tile" href="./custom-html/executive-disconnects-bankruptcies.html">
-      <div class="tile-head">
-        <div class="tile-icon exec"><i class="fa-solid fa-plug-circle-xmark"></i></div>
-        <span class="tile-badge exec">Executive</span>
-      </div>
-      <h3 class="tile-title">Disconnects & Bankruptcies</h3>
-      <p class="tile-desc">Disconnect counts, reconnect rates, bankruptcy filings, balance at risk.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 4 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 3 charts</span>
-        <span><i class="fa-solid fa-table"></i> 1 table</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
-
-    <a class="tile" href="./custom-html/executive-ebill-performance.html">
-      <div class="tile-head">
-        <div class="tile-icon exec"><i class="fa-solid fa-envelope-open-text"></i></div>
-        <span class="tile-badge exec">Executive</span>
-      </div>
-      <h3 class="tile-title">E-Bill Performance</h3>
-      <p class="tile-desc">Paperless adoption trends, drivers, segment gap-to-target analysis.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 4 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 3 charts</span>
-        <span><i class="fa-solid fa-table"></i> 1 table</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
-
-    <a class="tile" href="./custom-html/executive-final-bill-recovery.html">
-      <div class="tile-head">
-        <div class="tile-icon exec"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-        <span class="tile-badge exec">Executive</span>
-      </div>
-      <h3 class="tile-title">Final Bill Recovery</h3>
-      <p class="tile-desc">Recovery rates by segment, recovery methods, average days-to-recover.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 4 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 3 charts</span>
-        <span><i class="fa-solid fa-table"></i> 1 table</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
-
-    <!-- ════════════ CSR (1 collection) ════════════ -->
-    <a class="tile" href="./custom-html/csr-dashboard.html">
-      <div class="tile-head">
-        <div class="tile-icon csr"><i class="fa-solid fa-headset"></i></div>
-        <span class="tile-badge csr">CSR</span>
-      </div>
-      <h3 class="tile-title">CSR Dashboard</h3>
-      <p class="tile-desc">AR aging buckets, collections, disconnects/reconnects, bankruptcies, electric arrears, 90-day forecast — full customer service & receivables collection.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 8 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 6 charts</span>
-        <span><i class="fa-solid fa-table"></i> 2 tables</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
-
-    <!-- ════════════ ITS (1 collection) ════════════ -->
-    <a class="tile" href="./custom-html/its-dashboard.html">
-      <div class="tile-head">
-        <div class="tile-icon its"><i class="fa-solid fa-shield-halved"></i></div>
-        <span class="tile-badge its">ITS</span>
-      </div>
-      <h3 class="tile-title">ITS Dashboard</h3>
-      <p class="tile-desc">Service uptime, ticket volume, open tickets by priority, KB4 phishing simulation, OCSF security events — full IT service & security collection.</p>
-      <div class="tile-stats">
-        <span><i class="fa-solid fa-gauge-high"></i> 8 KPIs</span>
-        <span><i class="fa-solid fa-chart-pie"></i> 6 charts</span>
-        <span><i class="fa-solid fa-table"></i> 2 tables</span>
-        <i class="fa-solid fa-arrow-right arrow"></i>
-      </div>
-    </a>
-
+  <!-- ════════════ ITS (16) ════════════ -->
+  <div class="sector-block" data-sector="its">
+    <h2 class="sector-title">
+      <i class="fa-solid fa-shield-halved" style="background: linear-gradient(135deg, #845EF7, #6d28d9);"></i>
+      ITS Dashboards <span class="meta">16 versions · original .NET HTMLs</span>
+    </h2>
+    <div class="grid" id="grid-its"></div>
   </div>
 </div>
 
 <footer>
-  7 collection dashboards · all use <code>executive-dashboard-suite.js</code> · same pattern across CX / CSR / ITS<br>
-  Cloned from <code>corporate_dashboards</code> .NET MVC app.
+  42 version templates · cloned from <code>corporate_dashboards</code> .NET MVC app<br>
+  Executive + CSR use executive-dashboard-suite.js · ITS uses original .NET visuals verbatim
 </footer>
+
+<script>
+const EXEC = [
+  {href: "executive-ar-portfolio.html", icon: "fa-wallet", title: "AR Portfolio", desc: "Total receivables, aging, DSO"},
+  {href: "executive-customer-payments.html", icon: "fa-money-bill-transfer", title: "Customer Payments", desc: "Payment volume, methods, auto-pay"},
+  {href: "executive-disconnects-bankruptcies.html", icon: "fa-plug-circle-xmark", title: "Disconnects & Bankruptcies", desc: "Disconnects, reconnects, bankruptcies"},
+  {href: "executive-ebill-performance.html", icon: "fa-envelope-open-text", title: "E-Bill Performance", desc: "Paperless adoption, drivers"},
+  {href: "executive-final-bill-recovery.html", icon: "fa-hand-holding-dollar", title: "Final Bill Recovery", desc: "Recovery rates, methods"},
+];
+
+const CSR = [
+  {href: "csr-aging-report-hourly-updates.html", title: "Aging Report — Hourly Updates"},
+  {href: "csr-residential-no-epp-aging-with-non-current-debt.html", title: "Residential No EPP Aging — Non-Current Debt"},
+  {href: "csr-commercial-no-epp-aging-with-non-current-debt.html", title: "Commercial No EPP Aging — Non-Current Debt"},
+  {href: "csr-aging-dynamics-hourly-updates.html", title: "Aging Dynamics — Hourly Updates"},
+  {href: "csr-top-arrears-accounts-hourly-updates.html", title: "Top Arrears Accounts — Hourly Updates"},
+  {href: "csr-monthly-moves.html", title: "Monthly Moves"},
+  {href: "csr-mitel-report.html", title: "Mitel Report"},
+  {href: "csr-queue-spectrum-report.html", title: "Queue Spectrum Report"},
+  {href: "csr-customer-payments-daily.html", title: "Customer Payments — Daily"},
+  {href: "csr-customer-payments-monthly.html", title: "Customer Payments — Monthly"},
+  {href: "csr-senior-cc-emails.html", title: "Senior CC Emails"},
+  {href: "csr-collection-emails.html", title: "Collection Emails"},
+  {href: "csr-collection-report.html", title: "Collection Report"},
+  {href: "csr-bankruptcies-report.html", title: "Bankruptcies Report"},
+  {href: "csr-multi-unit-conditions-map.html", title: "Multi-Unit Conditions Map"},
+  {href: "csr-request-service-layout-map.html", title: "Request Service Layout Map"},
+  {href: "csr-aging-ml-predictor-hourly-updates.html", title: "Aging ML Predictor — Hourly Updates"},
+  {href: "csr-risky-commercial-predictor.html", title: "Risky Commercial Predictor"},
+  {href: "csr-risky-residential-predictor.html", title: "Risky Residential Predictor"},
+  {href: "csr-monthly-ebnotes.html", title: "Monthly EBNotes"},
+  {href: "csr-aging-compared-by-periods.html", title: "Aging Compared By Periods"},
+];
+
+const ITS = [
+  {href: "its-uptime.html", icon: "fa-server", title: "ITS Uptime Report", desc: "SLA compliance by service"},
+  {href: "its-ticket-volume-open.html", icon: "fa-ticket", title: "Ticket Volume (Open)", desc: "Opened tickets MoM"},
+  {href: "its-ticket-volume-close.html", icon: "fa-ticket", title: "Ticket Volume (Close)", desc: "Closed tickets MoM"},
+  {href: "its-kb4-phish-mom.html", icon: "fa-fish", title: "KB4 Phishing MoM", desc: "Click rate by month"},
+  {href: "its-kb4-training.html", icon: "fa-graduation-cap", title: "KB4 Training", desc: "Completion by department"},
+  {href: "its-kb4-failure-ppp.html", icon: "fa-fish-fins", title: "KB4 Failure PPP", desc: "Reports per click"},
+  {href: "its-open-priority.html", icon: "fa-list-check", title: "Open by Priority", desc: "P1-P4 distribution"},
+  {href: "its-open-status.html", icon: "fa-list-check", title: "Open by Status", desc: "Status breakdown"},
+  {href: "its-closed-priority.html", icon: "fa-check", title: "Closed by Priority", desc: "Closed ticket analysis"},
+  {href: "its-response-sla-mom.html", icon: "fa-clock", title: "Response SLA MoM", desc: "Response SLA trend"},
+  {href: "its-closure-sla-mom.html", icon: "fa-clock", title: "Closure SLA MoM", desc: "Closure SLA trend"},
+  {href: "its-ocsf-report.html", icon: "fa-shield-halved", title: "OCSF Security Events", desc: "Cybersecurity framework"},
+  {href: "app100-sqljob-duration-trend.html", icon: "fa-database", title: "SQL Job Duration Trend", desc: "APP100 job durations"},
+  {href: "app100-sqljob-failure-details.html", icon: "fa-database", title: "SQL Job Failure Details", desc: "APP100 job failures"},
+  {href: "app100-sqljob-health-summary.html", icon: "fa-database", title: "SQL Job Health Summary", desc: "APP100 job health"},
+  {href: "app100-sqljob-run-stacks.html", icon: "fa-database", title: "SQL Job Run Stacks", desc: "APP100 run history"},
+];
+
+function tile(sector, item) {
+  const icon = item.icon || (sector === 'csr' ? 'fa-chart-column' : 'fa-chart-pie');
+  return `<a class="tile" data-sector="${sector}" href="./custom-html/${item.href}">
+    <div class="tile-head">
+      <div class="tile-icon ${sector}"><i class="fa-solid ${icon}"></i></div>
+      <span class="tile-badge ${sector}">${sector}</span>
+    </div>
+    <h3 class="tile-title">${item.title}</h3>
+    ${item.desc ? `<div style="font-size:11px;color:#60708b;line-height:1.4">${item.desc}</div>` : ''}
+    <div class="tile-foot"><span>${item.href.replace('.html','')}</span><i class="fa-solid fa-arrow-right arrow"></i></div>
+  </a>`;
+}
+
+document.getElementById('grid-exec').innerHTML = EXEC.map(i => tile('exec', i)).join('');
+document.getElementById('grid-csr').innerHTML = CSR.map(i => tile('csr', i)).join('');
+document.getElementById('grid-its').innerHTML = ITS.map(i => tile('its', i)).join('');
+
+// Counts
+const counts = { all: EXEC.length + CSR.length + ITS.length, exec: EXEC.length, csr: CSR.length, its: ITS.length };
+document.getElementById('count-all').textContent = counts.all;
+document.getElementById('count-exec').textContent = counts.exec;
+document.getElementById('count-csr').textContent = counts.csr;
+document.getElementById('count-its').textContent = counts.its;
+
+// Filters
+document.querySelectorAll('.filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter').forEach(b => b.classList.remove('is-active'));
+    btn.classList.add('is-active');
+    const f = btn.dataset.filter;
+    document.querySelectorAll('.sector-block').forEach(block => {
+      block.style.display = (f === 'all' || block.dataset.sector === f) ? '' : 'none';
+    });
+  });
+});
+</script>
 
 </body>
 </html>

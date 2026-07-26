@@ -1,0 +1,305 @@
+{
+  "key": "csr_aging-report-hourly-updates",
+  "title": "Aging Report-Hourly Updates",
+  "variant": "teal",
+  "asOfLabel": "Hourly \u00b7 March 2026",
+  "generatedUtc": "2026-07-26T02:01:22Z",
+  "metrics": [
+    {
+      "key": "total-ar",
+      "label": "Total AR",
+      "value": 14800000,
+      "format": "currency",
+      "period": "Mar 2026",
+      "mom": -2.6,
+      "yoy": 4.2,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "percent",
+      "positiveIsGood": true
+    },
+    {
+      "key": "current-pct",
+      "label": "Current %",
+      "value": 62.2,
+      "format": "percent",
+      "period": "Mar 2026",
+      "mom": 1.4,
+      "yoy": 2.8,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "points",
+      "positiveIsGood": true
+    },
+    {
+      "key": "over90",
+      "label": "91+ Days",
+      "value": 820000,
+      "format": "currency",
+      "period": "Mar 2026",
+      "mom": 18.3,
+      "yoy": -4.1,
+      "momLabel": "MoM",
+      "yoyLabel": "YoY",
+      "deltaMode": "percent",
+      "positiveIsGood": false
+    },
+    {
+      "key": "hourly-refresh",
+      "label": "Last Refresh",
+      "value": 142,
+      "format": "number",
+      "period": "minutes ago",
+      "mom": -8,
+      "yoy": 0,
+      "momLabel": "vs prev",
+      "yoyLabel": "YoY",
+      "deltaMode": "number",
+      "positiveIsGood": true
+    }
+  ],
+  "charts": [
+    {
+      "id": "ar-buckets",
+      "title": "AR Aging Buckets (CAD \u00d71000)",
+      "kind": "stackedbar",
+      "width": "wide",
+      "valueFormat": "currency",
+      "leftAxisTitle": "CAD (\u00d71000)",
+      "rightAxisTitle": "",
+      "categories": [
+        "01/06",
+        "01/13",
+        "01/20",
+        "01/27",
+        "02/03",
+        "02/10",
+        "02/17",
+        "02/24",
+        "03/03",
+        "03/10",
+        "03/17",
+        "03/24",
+        "03/31"
+      ],
+      "series": [
+        {
+          "name": "0-30 days",
+          "type": "bar",
+          "axis": "left",
+          "stack": "aging",
+          "color": "#0808ee",
+          "smooth": false,
+          "data": [
+            8200,
+            8400,
+            8600,
+            8800,
+            9000,
+            9100,
+            9200,
+            9150,
+            9200,
+            9250,
+            9200,
+            9180,
+            9200
+          ]
+        },
+        {
+          "name": "31-60 days",
+          "type": "bar",
+          "axis": "left",
+          "stack": "aging",
+          "color": "#09c698",
+          "smooth": false,
+          "data": [
+            3400,
+            3300,
+            3200,
+            3150,
+            3100,
+            3100,
+            3100,
+            3150,
+            3100,
+            3050,
+            3100,
+            3150,
+            3100
+          ]
+        },
+        {
+          "name": "61-90 days",
+          "type": "bar",
+          "axis": "left",
+          "stack": "aging",
+          "color": "#635BCB",
+          "smooth": false,
+          "data": [
+            1900,
+            1850,
+            1800,
+            1750,
+            1700,
+            1700,
+            1700,
+            1750,
+            1700,
+            1700,
+            1700,
+            1750,
+            1700
+          ]
+        },
+        {
+          "name": "90+ days",
+          "type": "bar",
+          "axis": "left",
+          "stack": "aging",
+          "color": "#BBFF05",
+          "smooth": false,
+          "data": [
+            600,
+            650,
+            700,
+            750,
+            800,
+            800,
+            800,
+            800,
+            800,
+            820,
+            820,
+            820,
+            820
+          ]
+        }
+      ]
+    },
+    {
+      "id": "overdue-by-cat",
+      "title": "Overdue Balance by Category",
+      "kind": "pie",
+      "width": "narrow",
+      "valueFormat": "currency",
+      "leftAxisTitle": "",
+      "rightAxisTitle": "",
+      "categories": [
+        "Electric",
+        "Water",
+        "Gas",
+        "Other"
+      ],
+      "series": [
+        {
+          "name": "CAD",
+          "type": "pie",
+          "axis": "left",
+          "stack": "",
+          "color": "#0808ee",
+          "smooth": false,
+          "data": [
+            8400000,
+            3200000,
+            2400000,
+            800000
+          ]
+        }
+      ]
+    },
+    {
+      "id": "top-risks",
+      "title": "Top Credit Risks (CAD)",
+      "kind": "bar",
+      "width": "wide",
+      "valueFormat": "currency",
+      "leftAxisTitle": "CAD",
+      "rightAxisTitle": "",
+      "categories": [
+        "Acme Ind.",
+        "Northern Log.",
+        "Pacific Tr.",
+        "EastGate Mfg.",
+        "Lakeshore"
+      ],
+      "series": [
+        {
+          "name": "Balance",
+          "type": "bar",
+          "axis": "left",
+          "stack": "",
+          "color": "#0808ee",
+          "smooth": false,
+          "data": [
+            1240,
+            980,
+            760,
+            620,
+            540
+          ]
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "top-accounts",
+      "title": "Top Arrears Accounts",
+      "width": "wide",
+      "kind": "table",
+      "columns": [
+        "Account",
+        "Balance",
+        "Aging Bucket",
+        "Service",
+        "Status"
+      ],
+      "columnGroups": [],
+      "formats": {
+        "Balance": "currency"
+      },
+      "rows": [
+        {
+          "Account": "Acme Industrial Group",
+          "Balance": 1240000,
+          "Aging Bucket": "61-90",
+          "Service": "Electric",
+          "Status": "Active"
+        },
+        {
+          "Account": "Northern Logistics Co.",
+          "Balance": 980000,
+          "Aging Bucket": "31-60",
+          "Service": "Electric",
+          "Status": "Active"
+        },
+        {
+          "Account": "Pacific Trade Holdings",
+          "Balance": 760000,
+          "Aging Bucket": "0-30",
+          "Service": "Water",
+          "Status": "Active"
+        },
+        {
+          "Account": "EastGate Manufacturing",
+          "Balance": 620000,
+          "Aging Bucket": "61-90",
+          "Service": "Gas",
+          "Status": "Active"
+        },
+        {
+          "Account": "Lakeshore Properties",
+          "Balance": 540000,
+          "Aging Bucket": "0-30",
+          "Service": "Electric",
+          "Status": "Active"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Hourly refresh from aging cube.",
+    "91+ day bucket elevated \u2014 3 large bankruptcies this period."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_app100_sqljob_health_summary",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "JobName": "Nightly_AR_Aging_Cube",
+      "Status": "Healthy",
+      "SuccessRate": 99.2,
+      "AvgDuration": 42.3,
+      "LastFailure": "2026-03-19",
+      "FailureCount30d": 1
+    },
+    {
+      "JobName": "Hourly_Payments_Refresh",
+      "Status": "Healthy",
+      "SuccessRate": 99.6,
+      "AvgDuration": 12.4,
+      "LastFailure": "2026-03-20",
+      "FailureCount30d": 1
+    },
+    {
+      "JobName": "Daily_CustomerSync",
+      "Status": "Warning",
+      "SuccessRate": 96.8,
+      "AvgDuration": 124.8,
+      "LastFailure": "2026-03-22",
+      "FailureCount30d": 3
+    },
+    {
+      "JobName": "Weekly_Report_Builder",
+      "Status": "Healthy",
+      "SuccessRate": 98.4,
+      "AvgDuration": 84.2,
+      "LastFailure": "2026-03-21",
+      "FailureCount30d": 1
+    },
+    {
+      "JobName": "Monthly_Reconciliation",
+      "Status": "Healthy",
+      "SuccessRate": 100.0,
+      "AvgDuration": 248.4,
+      "LastFailure": null,
+      "FailureCount30d": 0
+    },
+    {
+      "JobName": "Daily_EBill_Batch",
+      "Status": "Healthy",
+      "SuccessRate": 100.0,
+      "AvgDuration": 18.4,
+      "LastFailure": null,
+      "FailureCount30d": 0
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_app100_sqljob_health_summary",
+    "returnedRows": 6,
+    "requestedMaxRows": 50000
+  }
+}

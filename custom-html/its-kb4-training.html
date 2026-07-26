@@ -35,4 +35,31 @@ function receiveDashboard(render){
 
 function render(payload){const rows=ITS.rowsOf(payload); if(!rows.length) return ITS.empty('No KnowBe4 training rows.'); const month=ITS.month(ITS.txt(rows[0],['month_start','MonthStart'],'')); const target=ITS.val(rows[0],['target_pct','TargetPct'],90); const normTarget=Math.abs(target)<=1.5?target*100:target; const avg=rows.reduce((a,r)=>{let p=ITS.val(r,['completion_pct','CompletionPct'],0); if(Math.abs(p)<=1.5)p*=100; return a+p;},0)/Math.max(1,rows.length); const below=rows.map(r=>{let p=ITS.val(r,['completion_pct','CompletionPct'],0); if(Math.abs(p)<=1.5)p*=100; return {...r,__pct:p};}).filter(r=>r.__pct<90).sort((a,b)=>a.__pct-b.__pct).slice(0,6); const body=(below.length?below:rows.slice(0,6).map(r=>{let p=ITS.val(r,['completion_pct','CompletionPct'],0); if(Math.abs(p)<=1.5)p*=100; return {...r,__pct:p};})).map(r=>{const dept=ITS.txt(r,['department','Department'],'Unknown'); const p=r.__pct; const color=p>=90?'#09C698':p>=75?'#E6B422':'#D64550'; return `<div class="barrow"><div class="dept" title="${ITS.esc(dept)}">${ITS.esc(dept)}</div><div class="track"><div class="target" style="left:${Math.max(0,Math.min(100,normTarget))}%"></div><div class="bar" style="width:${Math.max(0,Math.min(100,p))}%;background:${color}"></div></div><div class="pct" style="color:${color}">${p.toFixed(1)}%</div></div>`}).join(''); const status=avg>=90?'On target':'Below target'; ITS.root().innerHTML=`<div class="train-card"><div class="head"><div class="title">CS Training Completion — Departments Below 90%</div><div class="pill">${ITS.esc(month||'Latest')}</div></div><div class="kpiLine"><div class="big">${avg.toFixed(1)}%</div><div class="tag" style="border-color:${avg>=90?'#09C698':'#D64550'}">${status}</div></div><div class="bars">${body}</div><div class="foot"><span>Target ${normTarget.toFixed(0)}%</span><span>${below.length} below 90%</span></div></div>`;}
 receiveDashboard(render);
-</script></body></html>
+</script>
+<script>
+// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
+(async function () {
+  try {
+    const res = await fetch('../data/its/its-kb4-training.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const payload = await res.json();
+    window.postMessage({
+      type: 'dashboard-custom-html:update',
+      payload: payload,
+      data: payload.data || payload
+    }, '*');
+    setTimeout(function () {
+      try {
+        if (typeof window.init === 'function') window.init(payload);
+        else if (typeof window.update === 'function') window.update(payload);
+        else if (typeof window.setData === 'function') window.setData(payload);
+      } catch (_) {}
+    }, 50);
+  } catch (err) {
+    console.error('Clone bootstrap failed:', err);
+    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
+    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
+  }
+})();
+</script>
+</body></html>

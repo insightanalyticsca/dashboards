@@ -1,0 +1,409 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_app100_sqljob_run_stacks",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1000,
+      "Status": "Failed",
+      "Duration": 42.3,
+      "StartTime": "2026-01-06 02:00:00",
+      "EndTime": "2026-01-06 02:00:42",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-01-06",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1000,
+      "Status": "Failed",
+      "Duration": 42.3,
+      "StartTime": "2026-01-06 02:00:00",
+      "EndTime": "2026-01-06 02:00:42",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-06",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1000,
+      "Status": "Failed",
+      "Duration": 42.3,
+      "StartTime": "2026-01-06 02:00:00",
+      "EndTime": "2026-01-06 02:00:42",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1003,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-01-13 02:00:00",
+      "EndTime": "2026-01-13 02:00:43",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1003,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-01-13 02:00:00",
+      "EndTime": "2026-01-13 02:00:43",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1003,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-01-13 02:00:00",
+      "EndTime": "2026-01-13 02:00:43",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1006,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-01-20 02:00:00",
+      "EndTime": "2026-01-20 02:00:44",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1006,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-01-20 02:00:00",
+      "EndTime": "2026-01-20 02:00:44",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1006,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-01-20 02:00:00",
+      "EndTime": "2026-01-20 02:00:44",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1009,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-01-27 02:00:00",
+      "EndTime": "2026-01-27 02:00:45",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1009,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-01-27 02:00:00",
+      "EndTime": "2026-01-27 02:00:45",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1009,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-01-27 02:00:00",
+      "EndTime": "2026-01-27 02:00:45",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1012,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-03 02:00:00",
+      "EndTime": "2026-02-03 02:00:46",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1012,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-03 02:00:00",
+      "EndTime": "2026-02-03 02:00:46",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1012,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-03 02:00:00",
+      "EndTime": "2026-02-03 02:00:46",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1015,
+      "Status": "Failed",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-02-10 02:00:00",
+      "EndTime": "2026-02-10 02:00:47",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1015,
+      "Status": "Failed",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-02-10 02:00:00",
+      "EndTime": "2026-02-10 02:00:47",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1015,
+      "Status": "Failed",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-02-10 02:00:00",
+      "EndTime": "2026-02-10 02:00:47",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1018,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-02-17 02:00:00",
+      "EndTime": "2026-02-17 02:00:48",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1018,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-02-17 02:00:00",
+      "EndTime": "2026-02-17 02:00:48",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1018,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-02-17 02:00:00",
+      "EndTime": "2026-02-17 02:00:48",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1021,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-24 02:00:00",
+      "EndTime": "2026-02-24 02:00:49",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1021,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-24 02:00:00",
+      "EndTime": "2026-02-24 02:00:49",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1021,
+      "Status": "Success",
+      "Duration": 50.5,
+      "StartTime": "2026-02-24 02:00:00",
+      "EndTime": "2026-02-24 02:00:49",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1024,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-03 02:00:00",
+      "EndTime": "2026-03-03 02:00:50",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1024,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-03 02:00:00",
+      "EndTime": "2026-03-03 02:00:50",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1024,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-03 02:00:00",
+      "EndTime": "2026-03-03 02:00:50",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1027,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-10 02:00:00",
+      "EndTime": "2026-03-10 02:00:51",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1027,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-10 02:00:00",
+      "EndTime": "2026-03-10 02:00:51",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1027,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-10 02:00:00",
+      "EndTime": "2026-03-10 02:00:51",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1030,
+      "Status": "Failed",
+      "Duration": 50.5,
+      "StartTime": "2026-03-17 02:00:00",
+      "EndTime": "2026-03-17 02:00:52",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1030,
+      "Status": "Failed",
+      "Duration": 50.5,
+      "StartTime": "2026-03-17 02:00:00",
+      "EndTime": "2026-03-17 02:00:52",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1030,
+      "Status": "Failed",
+      "Duration": 50.5,
+      "StartTime": "2026-03-17 02:00:00",
+      "EndTime": "2026-03-17 02:00:52",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1033,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-24 02:00:00",
+      "EndTime": "2026-03-24 02:00:53",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1033,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-24 02:00:00",
+      "EndTime": "2026-03-24 02:00:53",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1033,
+      "Status": "Success",
+      "Duration": 58.699999999999996,
+      "StartTime": "2026-03-24 02:00:00",
+      "EndTime": "2026-03-24 02:00:53",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "RunId": 1036,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-31 02:00:00",
+      "EndTime": "2026-03-31 02:00:54",
+      "Stack": "ETL \u2192 Cube \u2192 Index"
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "JobName": "Hourly_Payments_Refresh",
+      "RunId": 1036,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-31 02:00:00",
+      "EndTime": "2026-03-31 02:00:54",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "JobName": "Daily_CustomerSync",
+      "RunId": 1036,
+      "Status": "Success",
+      "Duration": 42.3,
+      "StartTime": "2026-03-31 02:00:00",
+      "EndTime": "2026-03-31 02:00:54",
+      "Stack": "Extract \u2192 Transform \u2192 Load"
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_app100_sqljob_run_stacks",
+    "returnedRows": 39,
+    "requestedMaxRows": 50000
+  }
+}

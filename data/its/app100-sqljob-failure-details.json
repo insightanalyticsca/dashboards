@@ -1,0 +1,54 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_app100_sqljob_failure_details",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "JobName": "Daily_CustomerSync",
+      "FailureDate": "2026-03-22 06:00",
+      "Duration": 124.8,
+      "ErrorCode": "Timeout",
+      "Message": "Connection timeout to source DB"
+    },
+    {
+      "JobName": "Weekly_Report_Builder",
+      "FailureDate": "2026-03-21 22:00",
+      "Duration": 89.2,
+      "ErrorCode": "DataMismatch",
+      "Message": "Row count mismatch in fact table"
+    },
+    {
+      "JobName": "Hourly_Payments_Refresh",
+      "FailureDate": "2026-03-20 14:00",
+      "Duration": 12.4,
+      "ErrorCode": "Deadlock",
+      "Message": "Deadlock victim in transaction"
+    },
+    {
+      "JobName": "Nightly_AR_Aging_Cube",
+      "FailureDate": "2026-03-19 02:00",
+      "Duration": 42.3,
+      "ErrorCode": "MemoryLimit",
+      "Message": "Memory limit exceeded"
+    },
+    {
+      "JobName": "Daily_CustomerSync",
+      "FailureDate": "2026-03-18 06:00",
+      "Duration": 98.4,
+      "ErrorCode": "Timeout",
+      "Message": "Connection timeout to source DB"
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_app100_sqljob_failure_details",
+    "returnedRows": 5,
+    "requestedMaxRows": 50000
+  }
+}

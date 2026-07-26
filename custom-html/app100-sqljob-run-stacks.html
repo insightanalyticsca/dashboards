@@ -23,5 +23,32 @@ function drawJobs(){const root=document.getElementById('root');let jobs=ALL_JOBS
 function render(payload){const rows=U.rowsOf(payload).slice();if(!rows.length){document.getElementById('root').innerHTML='<div class="empty">No SQL Agent job history rows returned.</div>';return}rows.sort((a,b)=>U.num(U.get(a,['health_sort']),999)-U.num(U.get(b,['health_sort']),999)||U.num(U.get(a,['sort_order']),9999)-U.num(U.get(b,['sort_order']),9999)||String(U.get(a,['display_name','job_name'])).localeCompare(String(U.get(b,['display_name','job_name'])))||U.num(U.get(a,['run_rank']),99)-U.num(U.get(b,['run_rank']),99));CURRENT=rows;const groups=new Map();rows.forEach((r,i)=>{const k=U.get(r,['job_id'])||U.get(r,['job_name']);if(!groups.has(k))groups.set(k,{name:U.get(r,['display_name','job_name'],'SQL job'),rows:[]});groups.get(k).rows.push({...r,_i:i})});ALL_JOBS=[...groups.values()].map(g=>{g.rows.sort((a,b)=>U.num(U.get(a,['run_rank']),99)-U.num(U.get(b,['run_rank']),99));const first=g.rows[0]||{};g.healthSort=U.num(U.get(first,['health_sort']),999);g.sortOrder=U.num(U.get(first,['sort_order']),9999);g.failures=U.num(U.get(first,['failures_last_15']),g.rows.filter(r=>Number(U.get(r,['run_status']))===0).length);g.warnings=U.num(U.get(first,['warnings_last_15']),g.rows.filter(r=>[2,3,4].includes(Number(U.get(r,['run_status'])))).length);g.success=U.num(U.get(first,['success_last_15']),g.rows.filter(r=>Number(U.get(r,['run_status']))===1).length);g.runs=U.num(U.get(first,['runs_last_15']),g.rows.length);g.latestStatus=U.num(U.get(first,['latest_run_status']),U.num(U.get(first,['run_status']),99));return g});drawJobs()}
 window.addEventListener('message',e=>{if(!e.data||!String(e.data.type||'').startsWith('dashboard-custom-html:')||String(e.data.type||'').endsWith(':resize'))return;render(e.data.payload||e.data||{})});
 </script>
+
+<script>
+// CLONE PATCH: fetch JSON and trigger render via postMessage (executive pattern).
+(async function () {
+  try {
+    const res = await fetch('../data/its/app100-sqljob-run-stacks.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const payload = await res.json();
+    window.postMessage({
+      type: 'dashboard-custom-html:update',
+      payload: payload,
+      data: payload.data || payload
+    }, '*');
+    setTimeout(function () {
+      try {
+        if (typeof window.init === 'function') window.init(payload);
+        else if (typeof window.update === 'function') window.update(payload);
+        else if (typeof window.setData === 'function') window.setData(payload);
+      } catch (_) {}
+    }, 50);
+  } catch (err) {
+    console.error('Clone bootstrap failed:', err);
+    var root = document.getElementById('root') || document.getElementById('csr-root') || document.getElementById('app');
+    if (root) root.innerHTML = '<div style="padding:12px;color:#b91c1c;font:600 12px Inter,sans-serif">⚠ ' + (err.message || err) + '</div>';
+  }
+})();
+</script>
 </body>
 </html>

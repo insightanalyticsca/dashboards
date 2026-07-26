@@ -1,0 +1,136 @@
+{
+  "found": true,
+  "mode": "rawRows",
+  "connectionName": "build",
+  "schema": "dbo",
+  "obj": "vw_app100_sqljob_duration_trend",
+  "objectType": "view",
+  "agg": "RawRows",
+  "rowFields": [],
+  "colFields": [],
+  "valueFields": [],
+  "data": [
+    {
+      "PeriodDate": "2026-01-06",
+      "period_sort": 1,
+      "PeriodLabel": "Wk 1",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 48.2,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 128.4
+    },
+    {
+      "PeriodDate": "2026-01-13",
+      "period_sort": 2,
+      "PeriodLabel": "Wk 2",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 47.800000000000004,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 127.2
+    },
+    {
+      "PeriodDate": "2026-01-20",
+      "period_sort": 3,
+      "PeriodLabel": "Wk 3",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 47.400000000000006,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 126.0
+    },
+    {
+      "PeriodDate": "2026-01-27",
+      "period_sort": 4,
+      "PeriodLabel": "Wk 4",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 47.0,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 124.80000000000001
+    },
+    {
+      "PeriodDate": "2026-02-03",
+      "period_sort": 5,
+      "PeriodLabel": "Wk 5",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 46.6,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 123.60000000000001
+    },
+    {
+      "PeriodDate": "2026-02-10",
+      "period_sort": 6,
+      "PeriodLabel": "Wk 6",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 46.2,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 122.4
+    },
+    {
+      "PeriodDate": "2026-02-17",
+      "period_sort": 7,
+      "PeriodLabel": "Wk 7",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 45.800000000000004,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 121.2
+    },
+    {
+      "PeriodDate": "2026-02-24",
+      "period_sort": 8,
+      "PeriodLabel": "Wk 8",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 45.400000000000006,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 120.0
+    },
+    {
+      "PeriodDate": "2026-03-03",
+      "period_sort": 9,
+      "PeriodLabel": "Wk 9",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 45.0,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 118.80000000000001
+    },
+    {
+      "PeriodDate": "2026-03-10",
+      "period_sort": 10,
+      "PeriodLabel": "Wk 10",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 44.6,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 117.60000000000001
+    },
+    {
+      "PeriodDate": "2026-03-17",
+      "period_sort": 11,
+      "PeriodLabel": "Wk 11",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 44.2,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 116.4
+    },
+    {
+      "PeriodDate": "2026-03-24",
+      "period_sort": 12,
+      "PeriodLabel": "Wk 12",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 43.800000000000004,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 115.2
+    },
+    {
+      "PeriodDate": "2026-03-31",
+      "period_sort": 13,
+      "PeriodLabel": "Wk 13",
+      "JobName": "Nightly_AR_Aging_Cube",
+      "DurationSec": 43.400000000000006,
+      "AvgDurationSec": 42.3,
+      "MaxDurationSec": 114.0
+    }
+  ],
+  "debug": {
+    "source": "dbo.vw_app100_sqljob_duration_trend",
+    "returnedRows": 13,
+    "requestedMaxRows": 50000
+  }
+}
