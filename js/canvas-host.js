@@ -1,153 +1,139 @@
 /* ════════════════════════════════════════════════════════════════════════════
    canvas-host.js — Shared version canvas renderer
    Mirrors the .NET Multi.cshtml pattern:
-   1. Creates iframes for each visual in the layout
+   1. Creates iframes for each visual (using frame.src)
    2. Fetches one JSON payload containing data for all visuals
-   3. Posts the appropriate data slice to each iframe via postMessage
-   4. The visual's existing message listener picks it up and renders
+   3. After iframe load: sets window.DashVisualContext + uses eval() to reset
+      chart closure + calls render({payload: data})
+   4. Falls back to postMessage if render not found
 
-   Each canvas page defines:
-   window.CANVAS_CONFIG = {
-     version: "csr-aging-overview",
-     title: "Aging & Collections Overview",
-     visuals: [
-       { id: "aging-bankruptcies", file: "aging-bankruptcies.html", w: 6, h: 300 },
-       { id: "ar-buckets-stacked", file: "ar-buckets-stacked.html", w: 6, h: 300 },
-       ...
-     ]
-   }
+   Uses eval() to access the visual's closure variable `chart` and reset it
+   to null before calling render(). This is necessary because the visual's
+   onDashMessages() calls handle({}) at init time (before DashVisualContext
+   is set), which may leave the chart in a broken/disposed state.
    ════════════════════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
   function init() {
-    const config = window.CANVAS_CONFIG;
-    if (!config) {
-      console.error('CANVAS_CONFIG not defined');
-      return;
-    }
+    var config = window.CANVAS_CONFIG;
+    if (!config) { console.error('CANVAS_CONFIG not defined'); return; }
 
-    const app = document.getElementById('app');
-    if (!app) {
-      console.error('#app element not found');
-      return;
-    }
+    var app = document.getElementById('app');
+    if (!app) return;
 
-    // Set title
     document.title = config.title;
-    const titleEl = app.querySelector('.canvas-title');
+    var titleEl = app.querySelector('.canvas-title');
     if (titleEl) titleEl.textContent = config.title;
-
-    const asOfEl = app.querySelector('.canvas-asof');
+    var asOfEl = app.querySelector('.canvas-asof');
     if (asOfEl) asOfEl.textContent = config.asOfLabel || '';
 
-    const canvas = app.querySelector('.canvas-grid');
-    if (!canvas) {
-      console.error('.canvas-grid not found');
-      return;
+    var canvas = app.querySelector('.canvas-grid');
+    if (!canvas) return;
+
+    if (config.notes && Array.isArray(config.notes)) {
+      var notesEl = app.querySelector('.canvas-notes');
+      if (notesEl) notesEl.innerHTML = config.notes.map(function(n) { return '<div>' + n + '</div>'; }).join('');
     }
 
-    // Fetch the JSON payload containing data for all visuals
-    const dataUrl = `../data/versions/${config.version}.json`;
+    var dataUrl = '../data/versions/' + config.version + '.json';
 
     fetch(dataUrl, { cache: 'no-store' })
-      .then(res => {
-        if (!res.ok) throw new Error(`Failed to load ${dataUrl}: HTTP ${res.status}`);
+      .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status + ' on ' + dataUrl);
         return res.json();
       })
-      .then(payload => {
-        // Render notes if present
-        if (config.notes && Array.isArray(config.notes)) {
-          const notesEl = app.querySelector('.canvas-notes');
-          if (notesEl) {
-            notesEl.innerHTML = config.notes.map(n => `<div>${n}</div>`).join('');
-          }
-        }
-
-        // Create iframe for each visual
-        config.visuals.forEach((vis, idx) => {
-          const tile = document.createElement('div');
+      .then(function(payload) {
+        config.visuals.forEach(function(vis) {
+          var tile = document.createElement('div');
           tile.className = 'canvas-tile';
-          tile.style.gridColumn = `span ${vis.w || 6}`;
+          tile.style.gridColumn = 'span ' + (vis.w || 6);
           tile.style.minHeight = (vis.h || 300) + 'px';
 
-          const tileHead = document.createElement('div');
+          var tileHead = document.createElement('div');
           tileHead.className = 'canvas-tile-head';
-          tileHead.innerHTML = `<span class="canvas-tile-title">${vis.title || vis.id}</span>`;
+          tileHead.innerHTML = '<span class="canvas-tile-title">' + (vis.title || vis.id) + '</span>';
           tile.appendChild(tileHead);
 
-          const frameHost = document.createElement('div');
+          var frameHost = document.createElement('div');
           frameHost.className = 'canvas-tile-body';
           tile.appendChild(frameHost);
-
           canvas.appendChild(tile);
 
-          // Create iframe
-          const frame = document.createElement('iframe');
+          var visualData = payload[vis.id] || (payload.data && payload.data[vis.id]) || payload;
+          var visualUrl = './' + vis.file;
+
+          var frame = document.createElement('iframe');
           frame.className = 'custom-html-frame';
           frame.style.width = '100%';
           frame.style.height = '100%';
           frame.style.border = '0';
           frame.style.background = 'transparent';
           frame.setAttribute('loading', 'eager');
-          frame.src = `./${vis.file}`;
-
+          frame.src = visualUrl;
           frameHost.appendChild(frame);
 
-          // Wait for iframe to load, then post data
-          frame.addEventListener('load', () => {
-            // Small delay to ensure the visual's message listener is registered
-            setTimeout(() => {
-              const visualData = payload[vis.id] || payload.data?.[vis.id] || payload;
-
-              // Post the data to the iframe via postMessage
-              // The visual's existing window.addEventListener('message', ...) picks it up
-              frame.contentWindow.postMessage({
-                type: 'dashboard-custom-html:update',
-                payload: visualData,
-                data: visualData.data || visualData
-              }, '*');
-
-              // Also post as 'init' type (some visuals listen for :init)
-              frame.contentWindow.postMessage({
-                type: 'dashboard-custom-html:init',
-                payload: visualData,
-                data: visualData.data || visualData
-              }, '*');
-
-              // Try calling global entry points (some CSR visuals expose window.receive)
+          frame.addEventListener('load', function() {
+            setTimeout(function() {
               try {
-                if (typeof frame.contentWindow.receive === 'function') {
-                  frame.contentWindow.receive(visualData);
+                var win = frame.contentWindow;
+
+                // Set DashVisualContext so the visual can access data
+                win.DashVisualContext = visualData;
+
+                // Use eval() to reset the chart closure variable and call render().
+                // Pass {payload: DashVisualContext} so render(msg) functions that
+                // expect msg.payload work, AND render(source) functions that call
+                // extract(source) which checks source.payload also work.
+                var rendered = false;
+                if (typeof win.render === 'function') {
+                  try {
+                    win.eval('try { chart = null; } catch(e) {}; render({payload: DashVisualContext, data: DashVisualContext.data || DashVisualContext});');
+                    rendered = true;
+                  } catch (e) {
+                    // If eval fails (CSP), fall back to direct call
+                    win.render({payload: visualData, data: visualData.data || visualData});
+                    rendered = true;
+                  }
                 }
-                if (typeof frame.contentWindow.init === 'function') {
-                  frame.contentWindow.init(visualData);
+
+                // Also call receive/init/update/setData for visuals that expose them
+                if (!rendered) {
+                  if (typeof win.receive === 'function') { win.receive(visualData); rendered = true; }
+                  if (typeof win.init === 'function') { win.init(visualData); rendered = true; }
+                  if (typeof win.update === 'function') { win.update(visualData); rendered = true; }
+                  if (typeof win.setData === 'function') { win.setData(visualData); rendered = true; }
                 }
-                if (typeof frame.contentWindow.update === 'function') {
-                  frame.contentWindow.update(visualData);
+
+                // Only post via postMessage if we couldn't render directly.
+                // Posting after render() would cause a second render() call
+                // which re-creates the DOM and breaks the chart instance.
+                if (!rendered) {
+                  win.postMessage({
+                    type: 'dashboard-custom-html:update',
+                    payload: visualData,
+                    data: visualData.data || visualData
+                  }, '*');
                 }
-                if (typeof frame.contentWindow.setData === 'function') {
-                  frame.contentWindow.setData(visualData);
-                }
-                // CSR visuals with ITS_LIVE pattern
-                if (typeof frame.contentWindow.render === 'function') {
-                  frame.contentWindow.render(visualData);
-                }
+
+                // Resize charts after a short delay
+                setTimeout(function() {
+                  try { win.dispatchEvent(new Event('resize')); } catch (e) {}
+                }, 200);
               } catch (e) {
-                // Cross-origin or not ready — postMessage already handled above
+                console.warn('Canvas host: could not call render on', vis.file, e);
               }
-            }, 200);
+            }, 300);
           });
 
-          // Handle iframe load errors
-          frame.addEventListener('error', () => {
-            frameHost.innerHTML = `<div style="padding:20px;color:#9b1c1c;text-align:center">Failed to load ${vis.file}</div>`;
+          frame.addEventListener('error', function() {
+            frameHost.innerHTML = '<div style="padding:20px;color:#9b1c1c;text-align:center">Failed to load ' + vis.file + '</div>';
           });
         });
       })
-      .catch(err => {
-        canvas.innerHTML = `<div style="grid-column:span 12;padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ${err.message}</div>`;
+      .catch(function(err) {
+        canvas.innerHTML = '<div style="grid-column:span 12;padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ' + err.message + '</div>';
         console.error('Canvas load failed:', err);
       });
   }
