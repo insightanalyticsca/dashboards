@@ -51,8 +51,8 @@ html, body {
   padding: 0 4px 8px;
 }
 
-.canvas-title { font-size: 18px; font-weight: 800; color: var(--exec-primary); }
-.canvas-asof { font-size: 12px; color: var(--exec-muted); }
+.canvas-title { font-size: 14px; font-weight: 700; color: var(--theme-text, var(--exec-ink)); }
+.canvas-asof { font-size: 10px; color: var(--theme-muted, var(--exec-muted)); }
 
 /* ════════════════════════════════════════════════════════════════════════════
    CANVAS — position:relative container for absolutely-positioned tiles
@@ -69,10 +69,10 @@ html, body {
    ════════════════════════════════════════════════════════════════════════════ */
 .canvas-tile {
   position: absolute;
-  background: var(--exec-panel);
-  border: 1px solid var(--exec-border);
-  border-radius: 14px;
-  box-shadow: var(--exec-shadow);
+  background: var(--theme-panel, var(--exec-panel));
+  border: 1px solid var(--theme-border, var(--exec-border));
+  border-radius: 10px;
+  box-shadow: var(--theme-shadow-card, var(--exec-shadow));
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -80,15 +80,15 @@ html, body {
 }
 
 .canvas-tile-head {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--exec-grid);
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--exec-ink);
+  padding: 5px 9px;
+  border-bottom: 1px solid var(--theme-border, var(--exec-grid));
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--theme-text, var(--exec-ink));
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .canvas-tile-title {
@@ -129,7 +129,7 @@ html, body {
   border-radius: 6px;
   background: rgba(99, 102, 241, 0.10);
   color: var(--exec-primary);
-  font-size: 14px;
+  font-size: 10px;
   line-height: 1;
   cursor: grab;
   display: flex;
@@ -161,8 +161,8 @@ html, body {
   bottom: 0;
   right: 0;
   z-index: 10;
-  width: 20px;
-  height: 20px;
+  width: 14px;
+  height: 14px;
   cursor: nwse-resize;
   opacity: 0;
   transition: opacity 140ms ease;
@@ -180,13 +180,13 @@ html, body {
 .canvas-layout-resize::after {
   content: "";
   position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid var(--exec-primary);
-  border-bottom: 2px solid var(--exec-primary);
-  border-bottom-right-radius: 4px;
+  bottom: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--theme-primary, var(--exec-primary));
+  border-bottom: 1.5px solid var(--theme-primary, var(--exec-primary));
+  border-bottom-right-radius: 3px;
 }
 
 /* Active (dragging/resizing) state */
@@ -202,13 +202,13 @@ html, body {
 
 /* Notes */
 .canvas-notes {
-  margin-top: 12px;
-  padding: 10px 12px;
-  background: var(--exec-panel);
-  border: 1px solid var(--exec-border);
-  border-radius: 10px;
-  font-size: 11px;
-  color: var(--exec-muted);
+  margin-top: 8px;
+  padding: 6px 9px;
+  background: transparent;
+  border: 1px solid var(--theme-border, var(--exec-border));
+  border-radius: 8px;
+  font-size: 9px;
+  color: var(--theme-muted, var(--exec-muted));
   line-height: 1.5;
 }
 
