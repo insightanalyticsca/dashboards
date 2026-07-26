@@ -14,38 +14,38 @@
       {
         "Priority": "P1",
         "priority": "P1",
-        "Count": 4,
+        "Count": 3,
         "count": 4,
         "Label": "Critical",
-        "AvgAge": 2.9,
-        "SLA": 93
+        "AvgAge": 2.2,
+        "SLA": 88
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 20,
-        "count": 15,
+        "Count": 15,
+        "count": 16,
         "Label": "High",
-        "AvgAge": 4.8,
-        "SLA": 89
+        "AvgAge": 4.7,
+        "SLA": 88
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 65,
-        "count": 63,
+        "Count": 66,
+        "count": 61,
         "Label": "Medium",
-        "AvgAge": 9.4,
-        "SLA": 95
+        "AvgAge": 9.8,
+        "SLA": 89
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 135,
-        "count": 136,
+        "Count": 148,
+        "count": 143,
         "Label": "Low",
-        "AvgAge": 18.1,
-        "SLA": 97
+        "AvgAge": 18.6,
+        "SLA": 94
       }
     ],
     "debug": {
@@ -67,27 +67,27 @@
       {
         "Status": "Open",
         "status": "Open",
-        "Count": 47
+        "Count": 45
       },
       {
         "Status": "In Progress",
         "status": "In Progress",
-        "Count": 67
+        "Count": 71
       },
       {
         "Status": "Pending",
         "status": "Pending",
-        "Count": 34
+        "Count": 38
       },
       {
         "Status": "Resolved",
         "status": "Resolved",
-        "Count": 136
+        "Count": 148
       },
       {
         "Status": "Closed",
         "status": "Closed",
-        "Count": 89
+        "Count": 84
       }
     ],
     "debug": {
@@ -109,8 +109,8 @@
       {
         "category_label": "P1 - Open",
         "Category Label": "P1 - Open",
-        "request_count": 1,
-        "Request Count": 2
+        "request_count": 2,
+        "Request Count": 1
       },
       {
         "category_label": "P1 - In Progress",
@@ -127,8 +127,8 @@
       {
         "category_label": "P2 - Open",
         "Category Label": "P2 - Open",
-        "request_count": 5,
-        "Request Count": 4
+        "request_count": 4,
+        "Request Count": 3
       },
       {
         "category_label": "P2 - In Progress",
@@ -139,31 +139,31 @@
       {
         "category_label": "P2 - Pending",
         "Category Label": "P2 - Pending",
-        "request_count": 4,
-        "Request Count": 3
+        "request_count": 5,
+        "Request Count": 5
       },
       {
         "category_label": "P3 - Open",
         "Category Label": "P3 - Open",
-        "request_count": 17,
-        "Request Count": 17
+        "request_count": 18,
+        "Request Count": 16
       },
       {
         "category_label": "P3 - In Progress",
         "Category Label": "P3 - In Progress",
-        "request_count": 21,
+        "request_count": 22,
         "Request Count": 21
       },
       {
         "category_label": "P3 - Pending",
         "Category Label": "P3 - Pending",
-        "request_count": 20,
+        "request_count": 22,
         "Request Count": 20
       },
       {
         "category_label": "P4 - Open",
         "Category Label": "P4 - Open",
-        "request_count": 42,
+        "request_count": 40,
         "Request Count": 41
       },
       {
@@ -175,8 +175,8 @@
       {
         "category_label": "P4 - Pending",
         "Category Label": "P4 - Pending",
-        "request_count": 40,
-        "Request Count": 40
+        "request_count": 41,
+        "Request Count": 41
       }
     ],
     "debug": {
@@ -199,37 +199,37 @@
         "Priority": "P1",
         "priority": "P1",
         "Count": 3,
-        "count": 2,
+        "count": 6,
         "Label": "Critical",
-        "AvgAge": 2.9,
-        "SLA": 93
+        "AvgAge": 2.6,
+        "SLA": 97
       },
       {
         "Priority": "P2",
         "priority": "P2",
-        "Count": 19,
-        "count": 20,
+        "Count": 21,
+        "count": 18,
         "Label": "High",
-        "AvgAge": 4.6,
+        "AvgAge": 4.4,
         "SLA": 86
       },
       {
         "Priority": "P3",
         "priority": "P3",
-        "Count": 66,
-        "count": 59,
+        "Count": 62,
+        "count": 63,
         "Label": "Medium",
-        "AvgAge": 9.1,
-        "SLA": 95
+        "AvgAge": 9.4,
+        "SLA": 93
       },
       {
         "Priority": "P4",
         "priority": "P4",
-        "Count": 142,
-        "count": 148,
+        "Count": 137,
+        "count": 139,
         "Label": "Low",
-        "AvgAge": 18.2,
-        "SLA": 97
+        "AvgAge": 18.4,
+        "SLA": 95
       }
     ],
     "debug": {

@@ -13,419 +13,419 @@
     "data": [
       {
         "PeriodDate": "2026-05-03",
-        "PeriodKey": "CURRENT",
+        "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
-        "SortOrder": 1,
+        "SortOrder": 5,
         "AgingBucket": "0-30",
-        "Amount": 9811
+        "Amount": 6942
       },
       {
         "PeriodDate": "2026-05-03",
-        "PeriodKey": "CURRENT",
+        "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
-        "SortOrder": 1,
+        "SortOrder": 5,
         "AgingBucket": "31-60",
-        "Amount": 3308
+        "Amount": 1964
       },
       {
         "PeriodDate": "2026-05-03",
-        "PeriodKey": "CURRENT",
+        "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
-        "SortOrder": 1,
+        "SortOrder": 5,
         "AgingBucket": "61-90",
-        "Amount": 1678
+        "Amount": 1068
       },
       {
         "PeriodDate": "2026-05-03",
-        "PeriodKey": "CURRENT",
+        "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 241
+      },
+      {
+        "PeriodDate": "2026-05-10",
+        "PeriodKey": "W_11",
+        "PeriodLabel": "Wk 12",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 7445
+      },
+      {
+        "PeriodDate": "2026-05-10",
+        "PeriodKey": "W_11",
+        "PeriodLabel": "Wk 12",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 2337
+      },
+      {
+        "PeriodDate": "2026-05-10",
+        "PeriodKey": "W_11",
+        "PeriodLabel": "Wk 12",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 1290
+      },
+      {
+        "PeriodDate": "2026-05-10",
+        "PeriodKey": "W_11",
+        "PeriodLabel": "Wk 12",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 406
+      },
+      {
+        "PeriodDate": "2026-05-17",
+        "PeriodKey": "W_10",
+        "PeriodLabel": "Wk 11",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 7890
+      },
+      {
+        "PeriodDate": "2026-05-17",
+        "PeriodKey": "W_10",
+        "PeriodLabel": "Wk 11",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 2482
+      },
+      {
+        "PeriodDate": "2026-05-17",
+        "PeriodKey": "W_10",
+        "PeriodLabel": "Wk 11",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 1379
+      },
+      {
+        "PeriodDate": "2026-05-17",
+        "PeriodKey": "W_10",
+        "PeriodLabel": "Wk 11",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 584
+      },
+      {
+        "PeriodDate": "2026-05-24",
+        "PeriodKey": "W_9",
+        "PeriodLabel": "Wk 10",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 8302
+      },
+      {
+        "PeriodDate": "2026-05-24",
+        "PeriodKey": "W_9",
+        "PeriodLabel": "Wk 10",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 2722
+      },
+      {
+        "PeriodDate": "2026-05-24",
+        "PeriodKey": "W_9",
+        "PeriodLabel": "Wk 10",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 1681
+      },
+      {
+        "PeriodDate": "2026-05-24",
+        "PeriodKey": "W_9",
+        "PeriodLabel": "Wk 10",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 696
+      },
+      {
+        "PeriodDate": "2026-05-31",
+        "PeriodKey": "W_8",
+        "PeriodLabel": "Wk 9",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 8700
+      },
+      {
+        "PeriodDate": "2026-05-31",
+        "PeriodKey": "W_8",
+        "PeriodLabel": "Wk 9",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 3000
+      },
+      {
+        "PeriodDate": "2026-05-31",
+        "PeriodKey": "W_8",
+        "PeriodLabel": "Wk 9",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 1900
+      },
+      {
+        "PeriodDate": "2026-05-31",
+        "PeriodKey": "W_8",
+        "PeriodLabel": "Wk 9",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 923
+      },
+      {
+        "PeriodDate": "2026-06-07",
+        "PeriodKey": "W_7",
+        "PeriodLabel": "Wk 8",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 9170
+      },
+      {
+        "PeriodDate": "2026-06-07",
+        "PeriodKey": "W_7",
+        "PeriodLabel": "Wk 8",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 3394
+      },
+      {
+        "PeriodDate": "2026-06-07",
+        "PeriodKey": "W_7",
+        "PeriodLabel": "Wk 8",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 2069
+      },
+      {
+        "PeriodDate": "2026-06-07",
+        "PeriodKey": "W_7",
+        "PeriodLabel": "Wk 8",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 977
+      },
+      {
+        "PeriodDate": "2026-06-14",
+        "PeriodKey": "W_6",
+        "PeriodLabel": "Wk 7",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 9536
+      },
+      {
+        "PeriodDate": "2026-06-14",
+        "PeriodKey": "W_6",
+        "PeriodLabel": "Wk 7",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 3543
+      },
+      {
+        "PeriodDate": "2026-06-14",
+        "PeriodKey": "W_6",
+        "PeriodLabel": "Wk 7",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 2356
+      },
+      {
+        "PeriodDate": "2026-06-14",
+        "PeriodKey": "W_6",
+        "PeriodLabel": "Wk 7",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 1060
+      },
+      {
+        "PeriodDate": "2026-06-21",
+        "PeriodKey": "W_5",
+        "PeriodLabel": "Wk 6",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 9968
+      },
+      {
+        "PeriodDate": "2026-06-21",
+        "PeriodKey": "W_5",
+        "PeriodLabel": "Wk 6",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 3845
+      },
+      {
+        "PeriodDate": "2026-06-21",
+        "PeriodKey": "W_5",
+        "PeriodLabel": "Wk 6",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 2576
+      },
+      {
+        "PeriodDate": "2026-06-21",
+        "PeriodKey": "W_5",
+        "PeriodLabel": "Wk 6",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 1254
+      },
+      {
+        "PeriodDate": "2026-06-28",
+        "PeriodKey": "W_4",
+        "PeriodLabel": "Wk 5",
+        "SortOrder": 5,
+        "AgingBucket": "0-30",
+        "Amount": 10420
+      },
+      {
+        "PeriodDate": "2026-06-28",
+        "PeriodKey": "W_4",
+        "PeriodLabel": "Wk 5",
+        "SortOrder": 5,
+        "AgingBucket": "31-60",
+        "Amount": 4062
+      },
+      {
+        "PeriodDate": "2026-06-28",
+        "PeriodKey": "W_4",
+        "PeriodLabel": "Wk 5",
+        "SortOrder": 5,
+        "AgingBucket": "61-90",
+        "Amount": 2718
+      },
+      {
+        "PeriodDate": "2026-06-28",
+        "PeriodKey": "W_4",
+        "PeriodLabel": "Wk 5",
+        "SortOrder": 5,
+        "AgingBucket": ">90",
+        "Amount": 1425
+      },
+      {
+        "PeriodDate": "2026-07-05",
+        "PeriodKey": "W_3",
+        "PeriodLabel": "Wk 4",
+        "SortOrder": 4,
+        "AgingBucket": "0-30",
+        "Amount": 10790
+      },
+      {
+        "PeriodDate": "2026-07-05",
+        "PeriodKey": "W_3",
+        "PeriodLabel": "Wk 4",
+        "SortOrder": 4,
+        "AgingBucket": "31-60",
+        "Amount": 4404
+      },
+      {
+        "PeriodDate": "2026-07-05",
+        "PeriodKey": "W_3",
+        "PeriodLabel": "Wk 4",
+        "SortOrder": 4,
+        "AgingBucket": "61-90",
+        "Amount": 2968
+      },
+      {
+        "PeriodDate": "2026-07-05",
+        "PeriodKey": "W_3",
+        "PeriodLabel": "Wk 4",
+        "SortOrder": 4,
+        "AgingBucket": ">90",
+        "Amount": 1516
+      },
+      {
+        "PeriodDate": "2026-07-12",
+        "PeriodKey": "W_2",
+        "PeriodLabel": "Wk 3",
+        "SortOrder": 3,
+        "AgingBucket": "0-30",
+        "Amount": 11326
+      },
+      {
+        "PeriodDate": "2026-07-12",
+        "PeriodKey": "W_2",
+        "PeriodLabel": "Wk 3",
+        "SortOrder": 3,
+        "AgingBucket": "31-60",
+        "Amount": 4635
+      },
+      {
+        "PeriodDate": "2026-07-12",
+        "PeriodKey": "W_2",
+        "PeriodLabel": "Wk 3",
+        "SortOrder": 3,
+        "AgingBucket": "61-90",
+        "Amount": 3210
+      },
+      {
+        "PeriodDate": "2026-07-12",
+        "PeriodKey": "W_2",
+        "PeriodLabel": "Wk 3",
+        "SortOrder": 3,
+        "AgingBucket": ">90",
+        "Amount": 1660
+      },
+      {
+        "PeriodDate": "2026-07-19",
+        "PeriodKey": "W_1",
+        "PeriodLabel": "Wk 2",
+        "SortOrder": 2,
+        "AgingBucket": "0-30",
+        "Amount": 11695
+      },
+      {
+        "PeriodDate": "2026-07-19",
+        "PeriodKey": "W_1",
+        "PeriodLabel": "Wk 2",
+        "SortOrder": 2,
+        "AgingBucket": "31-60",
+        "Amount": 4814
+      },
+      {
+        "PeriodDate": "2026-07-19",
+        "PeriodKey": "W_1",
+        "PeriodLabel": "Wk 2",
+        "SortOrder": 2,
+        "AgingBucket": "61-90",
+        "Amount": 3401
+      },
+      {
+        "PeriodDate": "2026-07-19",
+        "PeriodKey": "W_1",
+        "PeriodLabel": "Wk 2",
+        "SortOrder": 2,
+        "AgingBucket": ">90",
+        "Amount": 1841
+      },
+      {
+        "PeriodDate": "2026-07-26",
+        "PeriodKey": "CURRENT",
+        "PeriodLabel": "Wk 1",
+        "SortOrder": 1,
+        "AgingBucket": "0-30",
+        "Amount": 12151
+      },
+      {
+        "PeriodDate": "2026-07-26",
+        "PeriodKey": "CURRENT",
+        "PeriodLabel": "Wk 1",
+        "SortOrder": 1,
+        "AgingBucket": "31-60",
+        "Amount": 5141
+      },
+      {
+        "PeriodDate": "2026-07-26",
+        "PeriodKey": "CURRENT",
+        "PeriodLabel": "Wk 1",
+        "SortOrder": 1,
+        "AgingBucket": "61-90",
+        "Amount": 3590
+      },
+      {
+        "PeriodDate": "2026-07-26",
+        "PeriodKey": "CURRENT",
+        "PeriodLabel": "Wk 1",
         "SortOrder": 1,
         "AgingBucket": ">90",
-        "Amount": 967
-      },
-      {
-        "PeriodDate": "2026-05-10",
-        "PeriodKey": "W_1",
-        "PeriodLabel": "Wk 12",
-        "SortOrder": 2,
-        "AgingBucket": "0-30",
-        "Amount": 9965
-      },
-      {
-        "PeriodDate": "2026-05-10",
-        "PeriodKey": "W_1",
-        "PeriodLabel": "Wk 12",
-        "SortOrder": 2,
-        "AgingBucket": "31-60",
-        "Amount": 3352
-      },
-      {
-        "PeriodDate": "2026-05-10",
-        "PeriodKey": "W_1",
-        "PeriodLabel": "Wk 12",
-        "SortOrder": 2,
-        "AgingBucket": "61-90",
-        "Amount": 1798
-      },
-      {
-        "PeriodDate": "2026-05-10",
-        "PeriodKey": "W_1",
-        "PeriodLabel": "Wk 12",
-        "SortOrder": 2,
-        "AgingBucket": ">90",
-        "Amount": 934
-      },
-      {
-        "PeriodDate": "2026-05-17",
-        "PeriodKey": "W_2",
-        "PeriodLabel": "Wk 11",
-        "SortOrder": 3,
-        "AgingBucket": "0-30",
-        "Amount": 9966
-      },
-      {
-        "PeriodDate": "2026-05-17",
-        "PeriodKey": "W_2",
-        "PeriodLabel": "Wk 11",
-        "SortOrder": 3,
-        "AgingBucket": "31-60",
-        "Amount": 3375
-      },
-      {
-        "PeriodDate": "2026-05-17",
-        "PeriodKey": "W_2",
-        "PeriodLabel": "Wk 11",
-        "SortOrder": 3,
-        "AgingBucket": "61-90",
-        "Amount": 1825
-      },
-      {
-        "PeriodDate": "2026-05-17",
-        "PeriodKey": "W_2",
-        "PeriodLabel": "Wk 11",
-        "SortOrder": 3,
-        "AgingBucket": ">90",
-        "Amount": 997
-      },
-      {
-        "PeriodDate": "2026-05-24",
-        "PeriodKey": "W_3",
-        "PeriodLabel": "Wk 10",
-        "SortOrder": 4,
-        "AgingBucket": "0-30",
-        "Amount": 10005
-      },
-      {
-        "PeriodDate": "2026-05-24",
-        "PeriodKey": "W_3",
-        "PeriodLabel": "Wk 10",
-        "SortOrder": 4,
-        "AgingBucket": "31-60",
-        "Amount": 3461
-      },
-      {
-        "PeriodDate": "2026-05-24",
-        "PeriodKey": "W_3",
-        "PeriodLabel": "Wk 10",
-        "SortOrder": 4,
-        "AgingBucket": "61-90",
-        "Amount": 1809
-      },
-      {
-        "PeriodDate": "2026-05-24",
-        "PeriodKey": "W_3",
-        "PeriodLabel": "Wk 10",
-        "SortOrder": 4,
-        "AgingBucket": ">90",
-        "Amount": 1046
-      },
-      {
-        "PeriodDate": "2026-05-31",
-        "PeriodKey": "W_4",
-        "PeriodLabel": "Wk 9",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 9887
-      },
-      {
-        "PeriodDate": "2026-05-31",
-        "PeriodKey": "W_4",
-        "PeriodLabel": "Wk 9",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3413
-      },
-      {
-        "PeriodDate": "2026-05-31",
-        "PeriodKey": "W_4",
-        "PeriodLabel": "Wk 9",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 1864
-      },
-      {
-        "PeriodDate": "2026-05-31",
-        "PeriodKey": "W_4",
-        "PeriodLabel": "Wk 9",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1040
-      },
-      {
-        "PeriodDate": "2026-06-07",
-        "PeriodKey": "W_5",
-        "PeriodLabel": "Wk 8",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10006
-      },
-      {
-        "PeriodDate": "2026-06-07",
-        "PeriodKey": "W_5",
-        "PeriodLabel": "Wk 8",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3472
-      },
-      {
-        "PeriodDate": "2026-06-07",
-        "PeriodKey": "W_5",
-        "PeriodLabel": "Wk 8",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 1852
-      },
-      {
-        "PeriodDate": "2026-06-07",
-        "PeriodKey": "W_5",
-        "PeriodLabel": "Wk 8",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1075
-      },
-      {
-        "PeriodDate": "2026-06-14",
-        "PeriodKey": "W_6",
-        "PeriodLabel": "Wk 7",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10201
-      },
-      {
-        "PeriodDate": "2026-06-14",
-        "PeriodKey": "W_6",
-        "PeriodLabel": "Wk 7",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3549
-      },
-      {
-        "PeriodDate": "2026-06-14",
-        "PeriodKey": "W_6",
-        "PeriodLabel": "Wk 7",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 1921
-      },
-      {
-        "PeriodDate": "2026-06-14",
-        "PeriodKey": "W_6",
-        "PeriodLabel": "Wk 7",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1101
-      },
-      {
-        "PeriodDate": "2026-06-21",
-        "PeriodKey": "W_7",
-        "PeriodLabel": "Wk 6",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10261
-      },
-      {
-        "PeriodDate": "2026-06-21",
-        "PeriodKey": "W_7",
-        "PeriodLabel": "Wk 6",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3591
-      },
-      {
-        "PeriodDate": "2026-06-21",
-        "PeriodKey": "W_7",
-        "PeriodLabel": "Wk 6",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 1978
-      },
-      {
-        "PeriodDate": "2026-06-21",
-        "PeriodKey": "W_7",
-        "PeriodLabel": "Wk 6",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1180
-      },
-      {
-        "PeriodDate": "2026-06-28",
-        "PeriodKey": "W_8",
-        "PeriodLabel": "Wk 5",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10187
-      },
-      {
-        "PeriodDate": "2026-06-28",
-        "PeriodKey": "W_8",
-        "PeriodLabel": "Wk 5",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3580
-      },
-      {
-        "PeriodDate": "2026-06-28",
-        "PeriodKey": "W_8",
-        "PeriodLabel": "Wk 5",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 1974
-      },
-      {
-        "PeriodDate": "2026-06-28",
-        "PeriodKey": "W_8",
-        "PeriodLabel": "Wk 5",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1205
-      },
-      {
-        "PeriodDate": "2026-07-05",
-        "PeriodKey": "W_9",
-        "PeriodLabel": "Wk 4",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10160
-      },
-      {
-        "PeriodDate": "2026-07-05",
-        "PeriodKey": "W_9",
-        "PeriodLabel": "Wk 4",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3591
-      },
-      {
-        "PeriodDate": "2026-07-05",
-        "PeriodKey": "W_9",
-        "PeriodLabel": "Wk 4",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 2029
-      },
-      {
-        "PeriodDate": "2026-07-05",
-        "PeriodKey": "W_9",
-        "PeriodLabel": "Wk 4",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1162
-      },
-      {
-        "PeriodDate": "2026-07-12",
-        "PeriodKey": "W_10",
-        "PeriodLabel": "Wk 3",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10084
-      },
-      {
-        "PeriodDate": "2026-07-12",
-        "PeriodKey": "W_10",
-        "PeriodLabel": "Wk 3",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3599
-      },
-      {
-        "PeriodDate": "2026-07-12",
-        "PeriodKey": "W_10",
-        "PeriodLabel": "Wk 3",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 2034
-      },
-      {
-        "PeriodDate": "2026-07-12",
-        "PeriodKey": "W_10",
-        "PeriodLabel": "Wk 3",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1243
-      },
-      {
-        "PeriodDate": "2026-07-19",
-        "PeriodKey": "W_11",
-        "PeriodLabel": "Wk 2",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10254
-      },
-      {
-        "PeriodDate": "2026-07-19",
-        "PeriodKey": "W_11",
-        "PeriodLabel": "Wk 2",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3714
-      },
-      {
-        "PeriodDate": "2026-07-19",
-        "PeriodKey": "W_11",
-        "PeriodLabel": "Wk 2",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 2038
-      },
-      {
-        "PeriodDate": "2026-07-19",
-        "PeriodKey": "W_11",
-        "PeriodLabel": "Wk 2",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1292
-      },
-      {
-        "PeriodDate": "2026-07-26",
-        "PeriodKey": "W_12",
-        "PeriodLabel": "Wk 1",
-        "SortOrder": 5,
-        "AgingBucket": "0-30",
-        "Amount": 10290
-      },
-      {
-        "PeriodDate": "2026-07-26",
-        "PeriodKey": "W_12",
-        "PeriodLabel": "Wk 1",
-        "SortOrder": 5,
-        "AgingBucket": "31-60",
-        "Amount": 3668
-      },
-      {
-        "PeriodDate": "2026-07-26",
-        "PeriodKey": "W_12",
-        "PeriodLabel": "Wk 1",
-        "SortOrder": 5,
-        "AgingBucket": "61-90",
-        "Amount": 2052
-      },
-      {
-        "PeriodDate": "2026-07-26",
-        "PeriodKey": "W_12",
-        "PeriodLabel": "Wk 1",
-        "SortOrder": 5,
-        "AgingBucket": ">90",
-        "Amount": 1236
+        "Amount": 1947
       }
     ],
     "debug": {
@@ -447,27 +447,27 @@
       {
         "Type": "Commercial",
         "Metric": "Month #",
-        "Value": 36
+        "Value": 38
       },
       {
         "Type": "Commercial",
         "Metric": "Month $",
-        "Value": 419995
+        "Value": 419999
       },
       {
         "Type": "Commercial",
         "Metric": "YTD #",
-        "Value": 123
+        "Value": 124
       },
       {
         "Type": "Commercial",
         "Metric": "YTD $",
-        "Value": 1259998
+        "Value": 1259997
       },
       {
         "Type": "Residential",
         "Metric": "Month #",
-        "Value": 28
+        "Value": 27
       },
       {
         "Type": "Residential",
@@ -477,27 +477,27 @@
       {
         "Type": "Residential",
         "Metric": "YTD #",
-        "Value": 78
+        "Value": 82
       },
       {
         "Type": "Residential",
         "Metric": "YTD $",
-        "Value": 467997
+        "Value": 467996
       },
       {
         "Type": "Industrial",
         "Metric": "Month #",
-        "Value": 5
+        "Value": 2
       },
       {
         "Type": "Industrial",
         "Metric": "Month $",
-        "Value": 239999
+        "Value": 239994
       },
       {
         "Type": "Industrial",
         "Metric": "YTD #",
-        "Value": 22
+        "Value": 20
       },
       {
         "Type": "Industrial",
@@ -524,37 +524,37 @@
       {
         "Type": "Commercial",
         "Metric": "Month #",
-        "Value": 219
+        "Value": 218
       },
       {
         "Type": "Commercial",
         "Metric": "Month $",
-        "Value": 439999
+        "Value": 439996
       },
       {
         "Type": "Commercial",
         "Metric": "YTD #",
-        "Value": 657
+        "Value": 654
       },
       {
         "Type": "Commercial",
         "Metric": "YTD $",
-        "Value": 1319997
+        "Value": 1319994
       },
       {
         "Type": "Residential",
         "Metric": "Month #",
-        "Value": 577
+        "Value": 578
       },
       {
         "Type": "Residential",
         "Metric": "Month $",
-        "Value": 1159995
+        "Value": 1159997
       },
       {
         "Type": "Residential",
         "Metric": "YTD #",
-        "Value": 1735
+        "Value": 1736
       },
       {
         "Type": "Residential",
@@ -564,22 +564,22 @@
       {
         "Type": "Industrial",
         "Metric": "Month #",
-        "Value": 44
+        "Value": 45
       },
       {
         "Type": "Industrial",
         "Metric": "Month $",
-        "Value": 89994
+        "Value": 89996
       },
       {
         "Type": "Industrial",
         "Metric": "YTD #",
-        "Value": 135
+        "Value": 132
       },
       {
         "Type": "Industrial",
         "Metric": "YTD $",
-        "Value": 270000
+        "Value": 269998
       }
     ],
     "debug": {
