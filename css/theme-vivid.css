@@ -1,0 +1,370 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   theme-vivid.css — Vivid light/dark theme variables for the entire site
+   Applied via [data-theme="light"] or [data-theme="dark"] on <html>
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── LIGHT THEME (default) ─── */
+:root,
+[data-theme="light"] {
+  /* Surfaces */
+  --theme-bg: #f0f2f8;
+  --theme-bg-grad-1: radial-gradient(ellipse 800px 600px at 10% 5%, rgba(99,102,241,0.10), transparent 60%);
+  --theme-bg-grad-2: radial-gradient(ellipse 700px 500px at 90% 0%, rgba(236,72,153,0.06), transparent 60%);
+  --theme-bg-grad-3: radial-gradient(ellipse 900px 700px at 50% 100%, rgba(6,182,212,0.08), transparent 60%);
+
+  --theme-panel: #ffffff;
+  --theme-panel-hover: #f8f9ff;
+  --theme-border: rgba(23,23,119,0.12);
+  --theme-border-strong: rgba(23,23,119,0.20);
+
+  /* Text */
+  --theme-ink: #171777;
+  --theme-text: #1e293b;
+  --theme-text-soft: #475569;
+  --theme-muted: #64748b;
+  --theme-muted-dim: #94a3b8;
+
+  /* Accents — vivid */
+  --theme-primary: #6366f1;
+  --theme-primary-deep: #4338ca;
+  --theme-accent: #06b6d4;
+  --theme-hot: #ec4899;
+  --theme-success: #10b981;
+  --theme-warning: #f59e0b;
+  --theme-danger: #ef4444;
+
+  /* Glow */
+  --theme-glow-primary: 0 0 32px rgba(99,102,241,0.35);
+  --theme-glow-accent: 0 0 28px rgba(6,182,212,0.35);
+
+  /* Shadows */
+  --theme-shadow-card: 0 8px 32px rgba(23,23,119,0.08), 0 2px 8px rgba(0,0,0,0.06);
+  --theme-shadow-hover: 0 16px 48px rgba(23,23,119,0.16), 0 4px 16px rgba(0,0,0,0.08);
+  --theme-shadow-pop: 0 24px 64px rgba(0,0,0,0.20), 0 8px 24px rgba(0,0,0,0.12);
+
+  /* ECharts chart background (for canvas-host tiles) */
+  --theme-chart-bg: #ffffff;
+  --theme-chart-text: #1e293b;
+  --theme-chart-axis: #64748b;
+  --theme-chart-grid: rgba(0,0,0,0.06);
+  --theme-chart-tooltip-bg: rgba(255,255,255,0.97);
+  --theme-chart-tooltip-border: rgba(99,102,241,0.25);
+  --theme-chart-tooltip-text: #1e293b;
+
+  /* Toggle button */
+  --toggle-bg: rgba(99,102,241,0.15);
+  --toggle-border: rgba(99,102,241,0.25);
+  --toggle-color: #6366f1;
+}
+
+/* ─── DARK THEME ─── */
+[data-theme="dark"] {
+  /* Surfaces */
+  --theme-bg: #0a0e27;
+  --theme-bg-grad-1: radial-gradient(ellipse 800px 600px at 10% 5%, rgba(99,102,241,0.18), transparent 60%);
+  --theme-bg-grad-2: radial-gradient(ellipse 700px 500px at 90% 0%, rgba(236,72,153,0.12), transparent 60%);
+  --theme-bg-grad-3: radial-gradient(ellipse 900px 700px at 50% 100%, rgba(6,182,212,0.14), transparent 60%);
+
+  --theme-panel: rgba(255,255,255,0.04);
+  --theme-panel-hover: rgba(255,255,255,0.07);
+  --theme-border: rgba(255,255,255,0.08);
+  --theme-border-strong: rgba(255,255,255,0.16);
+
+  /* Text */
+  --theme-ink: #818cf8;
+  --theme-text: #f1f5f9;
+  --theme-text-soft: #cbd5e1;
+  --theme-muted: #94a3b8;
+  --theme-muted-dim: #64748b;
+
+  /* Accents — vivid */
+  --theme-primary: #818cf8;
+  --theme-primary-deep: #6366f1;
+  --theme-accent: #22d3ee;
+  --theme-hot: #f472b6;
+  --theme-success: #34d399;
+  --theme-warning: #fbbf24;
+  --theme-danger: #f87171;
+
+  /* Glow */
+  --theme-glow-primary: 0 0 32px rgba(129,140,248,0.45);
+  --theme-glow-accent: 0 0 28px rgba(34,211,238,0.40);
+
+  /* Shadows */
+  --theme-shadow-card: 0 8px 32px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.20);
+  --theme-shadow-hover: 0 16px 48px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.25);
+  --theme-shadow-pop: 0 24px 64px rgba(0,0,0,0.65), 0 8px 24px rgba(0,0,0,0.35);
+
+  /* ECharts chart background */
+  --theme-chart-bg: transparent;
+  --theme-chart-text: #f1f5f9;
+  --theme-chart-axis: #94a3b8;
+  --theme-chart-grid: rgba(255,255,255,0.06);
+  --theme-chart-tooltip-bg: rgba(15,23,42,0.95);
+  --theme-chart-tooltip-border: rgba(129,140,248,0.40);
+  --theme-chart-tooltip-text: #f8fafc;
+
+  /* Toggle button */
+  --toggle-bg: rgba(255,255,255,0.08);
+  --toggle-border: rgba(255,255,255,0.15);
+  --toggle-color: #fbbf24;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   APPLY THEME VARIABLES TO BASE ELEMENTS
+   ════════════════════════════════════════════════════════════════════════════ */
+
+html, body {
+  background: var(--theme-bg) !important;
+  background-image: var(--theme-bg-grad-1), var(--theme-bg-grad-2), var(--theme-bg-grad-3) !important;
+  background-attachment: fixed !important;
+  color: var(--theme-text) !important;
+  transition: background-color 280ms ease, color 280ms ease;
+}
+
+[data-theme="dark"] body {
+  color: var(--theme-text) !important;
+}
+
+/* Cards / panels */
+.card,
+.canvas-tile,
+.chart-card,
+.mini-card,
+.chunk,
+.source-card,
+.answer-box,
+.gallery-tile,
+.tile {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  box-shadow: var(--theme-shadow-card) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  transition: background 280ms ease, border-color 280ms ease, color 280ms ease, box-shadow 280ms ease;
+}
+
+/* Card hover */
+.card:hover,
+.canvas-tile:hover,
+.tile:hover,
+.chart-card:hover {
+  border-color: var(--theme-primary) !important;
+  box-shadow: var(--theme-shadow-hover) !important;
+}
+
+/* Text elements */
+h1, h2, h3, .canvas-title, .section-title, .card-title, .tile-title,
+.exec-title, .exec-metric-label, .chart-title {
+  color: var(--theme-text) !important;
+}
+
+p, .lead, .tile-desc, .canvas-asof, .chart-value,
+.exec-metric-period, .exec-asof, .canvas-notes,
+.canvas-tile-head, .footer, footer {
+  color: var(--theme-text-soft) !important;
+}
+
+.exec-metric-value, .kpi-big, .hero-stat .value {
+  color: var(--theme-text) !important;
+}
+
+/* Topbar */
+.topbar, .gallery-topbar {
+  background: linear-gradient(90deg, var(--theme-ink) 0%, var(--theme-primary-deep) 100%) !important;
+  border-bottom-color: var(--theme-border) !important;
+}
+
+/* Brand */
+.brand-name, .gallery-brand {
+  color: #fff !important;
+}
+
+/* Links */
+a, .navlink {
+  color: var(--theme-accent) !important;
+}
+
+a:hover, .navlink:hover {
+  color: var(--theme-hot) !important;
+}
+
+/* Buttons */
+.btn--primary {
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-deep)) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.35) !important;
+}
+
+.btn--accent {
+  background: linear-gradient(135deg, var(--theme-accent), #0e7490) !important;
+}
+
+.btn--ghost, .canvas-back, .canvas-reset-btn {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme="dark"] .btn--ghost,
+[data-theme="dark"] .canvas-back,
+[data-theme="dark"] .canvas-reset-btn {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Pills / badges */
+.pill, .tile-badge {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text-soft) !important;
+}
+
+[data-theme="dark"] .pill,
+[data-theme="dark"] .tile-badge {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Inputs */
+.chat-input, .form-input, .form-select {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+.chat-input::placeholder, .form-input::placeholder {
+  color: var(--theme-muted-dim) !important;
+}
+
+/* Scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(129,140,248,0.35) !important;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(129,140,248,0.55) !important;
+}
+
+/* Selection */
+[data-theme="dark"] ::selection {
+  background: rgba(129,140,248,0.40) !important;
+  color: #fff !important;
+}
+
+/* Executive dashboard tiles */
+.exec-page {
+  background: var(--theme-bg) !important;
+}
+.exec-panel {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+}
+.exec-visual {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Executive tables */
+.exec-table th {
+  background: var(--theme-primary-deep) !important;
+  color: #fff !important;
+}
+.exec-table td {
+  color: var(--theme-text) !important;
+  border-color: var(--theme-border) !important;
+}
+[data-theme="dark"] .exec-table tr:nth-child(even) td {
+  background: rgba(255,255,255,0.02) !important;
+}
+
+/* Executive deltas */
+.exec-delta.good { color: var(--theme-success) !important; }
+.exec-delta.bad { color: var(--theme-danger) !important; }
+
+/* Canvas host */
+.canvas-grid {
+  background: transparent !important;
+}
+.canvas-tile-head {
+  background: var(--theme-panel) !important;
+  border-bottom-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+}
+
+/* Drag/resize handles */
+.canvas-layout-move {
+  background: var(--toggle-bg) !important;
+  color: var(--toggle-color) !important;
+}
+
+/* Modal */
+.modal {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border-strong) !important;
+}
+.modal-head, .modal-foot {
+  border-color: var(--theme-border) !important;
+}
+
+/* Hero gradient text */
+.hero h1 {
+  background: linear-gradient(120deg, var(--theme-text) 0%, var(--theme-primary) 50%, var(--theme-accent) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Code */
+code, .codebox {
+  background: rgba(0,0,0,0.08) !important;
+  color: var(--theme-primary) !important;
+}
+[data-theme="dark"] code, [data-theme="dark"] .codebox {
+  background: rgba(255,255,255,0.06) !important;
+  color: var(--theme-accent) !important;
+}
+
+/* Footer */
+.footer, footer {
+  color: var(--theme-muted) !important;
+  border-top-color: var(--theme-border) !important;
+}
+
+/* Gallery */
+.gallery-hero {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Filter pills */
+.gallery-filter, .filter {
+  background: var(--theme-panel) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-muted) !important;
+}
+.filter.is-active {
+  background: var(--theme-primary-deep) !important;
+  color: #fff !important;
+  border-color: var(--theme-primary-deep) !important;
+}
+
+/* Canvas iframes: set background to match theme */
+.canvas-tile-body iframe {
+  background: var(--theme-chart-bg) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   TRANSITION — smooth theme switch
+   ════════════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow, fill;
+  transition-duration: 280ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
