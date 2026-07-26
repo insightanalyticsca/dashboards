@@ -1,0 +1,444 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        html, body, #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: Segoe UI,Tahoma,Arial,sans-serif;
+            color: #111827;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .shell {
+            position: fixed;
+            inset: 0;
+            padding: 4px;
+            overflow: hidden;
+        }
+
+        .card {
+            position: absolute;
+            inset: 4px;
+            border-radius: 18px;
+            border: 1px solid #BCB8BE;
+            background: radial-gradient(circle at 92% 8%,rgba(188,237,22,.13),transparent 27%), radial-gradient(circle at 8% 12%,rgba(21,18,244,.07),transparent 29%), linear-gradient(135deg,#fff 0%,#f3f7fb 48%,#eef1f6 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.92), 0 8px 18px rgba(33,43,60,.10);
+            overflow: hidden;
+        }
+
+            .card:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 16px;
+                right: 16px;
+                height: 4px;
+                border-radius: 999px;
+                background: linear-gradient(90deg,#2437ff,#13d8b3,#e8f65a);
+            }
+
+        .inner {
+            position: absolute;
+            inset: 8px 8px 7px 8px;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 2px;
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-width: 0;
+            z-index: 2;
+        }
+
+        .title {
+            font-size: clamp(11px,1.55vw,14px);
+            font-weight: 950;
+            color: #171777;
+            line-height: 1.05;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .period {
+            font-size: clamp(8px,1vw,10px);
+            font-weight: 900;
+            color: #546275;
+            background: #fff;
+            border: 1px solid rgba(20,32,50,.10);
+            border-radius: 999px;
+            padding: 4px 8px;
+            box-shadow: 0 2px 6px rgba(15,23,42,.06);
+            white-space: nowrap;
+        }
+
+        .viz {
+            position: relative;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .slice {
+            filter: drop-shadow(0 5px 8px rgba(36,55,255,.10));
+        }
+
+        .center-disk {
+            fill: #fff;
+            filter: drop-shadow(0 0 1px rgba(17,24,39,.10));
+        }
+
+        .total {
+            font-size: 28px;
+            font-weight: 950;
+            fill: #111827;
+            letter-spacing: -1.5px;
+        }
+
+        .cap {
+            font-size: 6.3px;
+            font-weight: 950;
+            fill: #334155;
+            letter-spacing: .35px;
+            text-transform: uppercase;
+        }
+
+        .leader {
+            fill: none;
+            stroke-width: 1.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .leader-dot {
+            stroke: #fff;
+            stroke-width: 1.2;
+        }
+
+        .lab-name {
+            font-size: 7.2px;
+            font-weight: 950;
+            fill: #111827;
+        }
+
+        .lab-val {
+            font-size: 7.2px;
+            font-weight: 900;
+            fill: #111827;
+        }
+
+        .empty {
+            height: 100%;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 10px;
+            font-size: 11px;
+            font-weight: 850;
+            color: #171777;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"><div class="empty">Waiting for SQL data…</div></div>
+
+    <script>const palette = ["#2437ff","#13d8b3","#95a3b8","#58d68d","#f2c94c","#ef5350","#7e57c2","#26a69a"];
+
+function rowsOf(p){
+  if(Array.isArray(p?.data)) return p.data;
+  if(Array.isArray(p?.result?.data)) return p.result.data;
+  if(Array.isArray(p?.rows)) return p.rows;
+  return [];
+}
+
+function nk(s){
+  return String(s || "").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function keyOf(row,names){
+  const m = {};
+  Object.keys(row || {}).forEach(k => m[nk(k)] = k);
+  for(const n of names){
+    const hit = m[nk(n)];
+    if(hit) return hit;
+  }
+  return "";
+}
+
+function raw(row,names,fb=""){
+  const k = keyOf(row,names);
+  return k ? row[k] : fb;
+}
+
+function num(v){
+  const n = Number(String(v ?? "").replace(/[^0-9.+-]/g,""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function esc(v){
+  return String(v ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+}
+
+function fmt(v){
+  return new Intl.NumberFormat().format(Math.round(num(v)));
+}
+
+function titleFrom(rawRows,p){
+  const role = String(p?.config?.role || p?.Role || p?.meta?.role || "").toLowerCase();
+  const fromRow = String(raw(rawRows[0],["card_title","Card Title","CardTitle"],"")).trim();
+
+  if(fromRow) return fromRow;
+  if(role.includes("closed")) return "Closed Requests by Priority";
+  if(role.includes("status")) return "Open Requests by Status";
+  return "Open Requests by Priority";
+}
+
+function periodFrom(rawRows){
+  const p = String(raw(rawRows[0],["period_month_label","Period Month Label","PeriodMonthLabel"],"")).trim();
+  return p || "MTD";
+}
+
+function category(row){
+  return String(raw(row,[
+    "category_label",
+    "Category Label",
+    "CategoryLabel",
+    "priority_name",
+    "Priority Name",
+    "status_name",
+    "Status Name"
+  ],"Unknown")).trim() || "Unknown";
+}
+
+function count(row){
+  return num(raw(row,[
+    "request_count",
+    "Request Count",
+    "RequestCount",
+    "sum_request_count",
+    "request_count_sum",
+    "Count"
+  ],0));
+}
+
+function captionFor(title){
+  return title.toLowerCase().includes("closed") ? "CLOSED" : "CREATED";
+}
+
+function truncate(s,max){
+  s = String(s || "");
+  return s.length > max ? s.slice(0,max - 1) + "…" : s;
+}
+
+function polar(cx,cy,r,deg){
+  const rad = (deg - 90) * Math.PI / 180;
+  return {
+    x: cx + r * Math.cos(rad),
+    y: cy + r * Math.sin(rad)
+  };
+}
+
+function arcPath(cx,cy,rOuter,rInner,startDeg,endDeg){
+  const large = (endDeg - startDeg) > 180 ? 1 : 0;
+
+  const p1 = polar(cx,cy,rOuter,startDeg);
+  const p2 = polar(cx,cy,rOuter,endDeg);
+  const p3 = polar(cx,cy,rInner,endDeg);
+  const p4 = polar(cx,cy,rInner,startDeg);
+
+  return [
+    `M ${p1.x.toFixed(3)} ${p1.y.toFixed(3)}`,
+    `A ${rOuter} ${rOuter} 0 ${large} 1 ${p2.x.toFixed(3)} ${p2.y.toFixed(3)}`,
+    `L ${p3.x.toFixed(3)} ${p3.y.toFixed(3)}`,
+    `A ${rInner} ${rInner} 0 ${large} 0 ${p4.x.toFixed(3)} ${p4.y.toFixed(3)}`,
+    "Z"
+  ].join(" ");
+}
+
+function spreadLabels(items,minY,maxY,minGap){
+  if(!items.length) return items;
+
+  items.sort((a,b) => a.baseY - b.baseY);
+
+  items.forEach(x => {
+    x.y = Math.max(minY, Math.min(maxY, x.baseY));
+  });
+
+  for(let i=1;i<items.length;i++){
+    if(items[i].y - items[i-1].y < minGap){
+      items[i].y = items[i-1].y + minGap;
+    }
+  }
+
+  const overflow = items[items.length - 1].y - maxY;
+  if(overflow > 0){
+    for(let i=items.length-1;i>=0;i--){
+      items[i].y -= overflow;
+      if(i < items.length-1 && items[i+1].y - items[i].y < minGap){
+        items[i].y = items[i+1].y - minGap;
+      }
+    }
+  }
+
+  if(items[0].y < minY){
+    const under = minY - items[0].y;
+    for(const x of items) x.y += under;
+  }
+
+  return items;
+}
+
+function render(msg){
+  const p = msg?.payload || {};
+
+  if(p?.error){
+    document.getElementById("root").innerHTML = `<div class="empty">SQL error:<br>${esc(p.error)}</div>`;
+    return;
+  }
+
+  const rawRows = rowsOf(p);
+
+  let rows = rawRows
+    .map(r => ({cat:category(r), cnt:count(r)}))
+    .filter(x => x.cnt > 0);
+
+  if(!rows.length){
+    document.getElementById("root").innerHTML = "<div class='empty'>No SQL rows returned.</div>";
+    return;
+  }
+
+  rows.sort((a,b) => b.cnt - a.cnt);
+
+  const totalRaw = rows.reduce((s,x) => s + x.cnt, 0);
+  const top = rows.slice(0,5);
+  const rest = rows.slice(5).reduce((s,x) => s + x.cnt, 0);
+
+  if(rest > 0){
+    top.pop();
+    top.push({cat:"Other",cnt:rest});
+  }
+
+  const total = top.reduce((s,x) => s + x.cnt, 0);
+  const title = titleFrom(rawRows,p);
+  const cap = captionFor(title);
+  const period = periodFrom(rawRows);
+
+  const cx = 160;
+  const cy = 93;
+  const rOuter = 55;
+  const rInner = 33;
+  const rLeader = 61;
+  const minY = 36;
+  const maxY = 150;
+  const minGap = 23;
+
+  let deg = 0;
+  const items = top.map((x,i) => {
+    const span = total ? (x.cnt / total) * 360 : 0;
+    const start = deg;
+    const end = deg + span;
+    const mid = start + span / 2;
+    deg = end;
+
+    const pct = total ? (x.cnt / total) * 100 : 0;
+    const side = Math.cos((mid - 90) * Math.PI / 180) >= 0 ? "right" : "left";
+    const base = polar(cx,cy,rLeader + 14,mid);
+
+    return {
+      ...x,
+      i,
+      color: palette[i % palette.length],
+      start,
+      end,
+      mid,
+      pct,
+      side,
+      baseY: base.y
+    };
+  });
+
+  const left = spreadLabels(items.filter(x => x.side === "left"), minY, maxY, minGap);
+  const right = spreadLabels(items.filter(x => x.side === "right"), minY, maxY, minGap);
+  const laid = [...left,...right];
+
+  const slices = items.map(x => {
+    return `<path class="slice" d="${arcPath(cx,cy,rOuter,rInner,x.start,x.end)}" fill="${esc(x.color)}"></path>`;
+  }).join("");
+
+  const leaders = laid.map(x => {
+    const p0 = polar(cx,cy,rOuter + 1,x.mid);
+    const p1 = polar(cx,cy,rLeader,x.mid);
+    const elbowX = x.side === "right" ? 238 : 82;
+    const labelX = x.side === "right" ? 252 : 68;
+    const anchor = x.side === "right" ? "start" : "end";
+    const dotX = x.side === "right" ? labelX - 7 : labelX + 7;
+
+    const line = `${p0.x.toFixed(2)},${p0.y.toFixed(2)} ${p1.x.toFixed(2)},${p1.y.toFixed(2)} ${elbowX},${x.y.toFixed(2)} ${dotX},${x.y.toFixed(2)}`;
+
+    return `
+      <polyline class="leader" points="${line}" stroke="${esc(x.color)}"></polyline>
+      <circle class="leader-dot" cx="${dotX}" cy="${x.y}" r="3.4" fill="${esc(x.color)}"></circle>
+      <text x="${labelX}" y="${x.y - 4}" text-anchor="${anchor}" class="lab-name">${esc(truncate(x.cat,22))}</text>
+      <text x="${labelX}" y="${x.y + 6}" text-anchor="${anchor}" class="lab-val">${esc(fmt(x.cnt))} - ${x.pct.toFixed(1)}%</text>
+    `;
+  }).join("");
+
+  document.getElementById("root").innerHTML =
+    `<div class="shell">
+      <div class="card">
+        <div class="inner">
+          <div class="head">
+            <div class="title">${esc(title)}</div>
+            <div class="period">${esc(period)} MTD</div>
+          </div>
+
+          <div class="viz">
+            <svg viewBox="0 0 320 182" preserveAspectRatio="xMidYMid meet" aria-label="${esc(title)}">
+              ${slices}
+              <circle class="center-disk" cx="${cx}" cy="${cy}" r="${rInner - 4}"></circle>
+
+              <text x="${cx}" y="${cy - 2}" text-anchor="middle" class="total">${esc(fmt(totalRaw))}</text>
+              <text x="${cx}" y="${cy + 15}" text-anchor="middle" class="cap">${esc(cap)}</text>
+              <text x="${cx}" y="${cy + 23}" text-anchor="middle" class="cap">MTD</text>
+
+              ${leaders}
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+window.addEventListener("message",e=>{
+  if(!e.data || !String(e.data.type || "").startsWith("dashboard-custom-html:")) return;
+  if(String(e.data.type).endsWith(":resize")) return;
+  render(e.data);
+});</script>
+</body>
+</html>

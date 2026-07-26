@@ -1,0 +1,212 @@
+[
+  {
+    "versionId": 192,
+    "title": "Aging Report-Hourly Updates",
+    "templateKey": "csr_aging-report-hourly-updates",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "aging_trans_details",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=192"
+  },
+  {
+    "versionId": 193,
+    "title": "Residential No EPP Aging - With Non-Current Debt",
+    "templateKey": "csr_residential-no-epp-aging-with-non-current-debt",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "agingcube_net_30daysplus",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=193"
+  },
+  {
+    "versionId": 194,
+    "title": "Commercial No EPP Aging - With Non-Current Debt",
+    "templateKey": "csr_commercial-no-epp-aging-with-non-current-debt",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "agingcube_net_30daysplus",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=194"
+  },
+  {
+    "versionId": 195,
+    "title": "Aging Dynamics-Hourly Updates",
+    "templateKey": "csr_aging-dynamics-hourly-updates",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "aging_param_history_sum",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=195"
+  },
+  {
+    "versionId": 196,
+    "title": "Top Arrears Accounts-Hourly Updates",
+    "templateKey": "csr_top-arrears-accounts-hourly-updates",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "agingcube_net",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=196"
+  },
+  {
+    "versionId": 197,
+    "title": "Monthly Moves",
+    "templateKey": "csr_monthly-moves",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "monthly_move_stats",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=197"
+  },
+  {
+    "versionId": 198,
+    "title": "Mitel Report",
+    "templateKey": "csr_mitel-report",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "mitel",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=198"
+  },
+  {
+    "versionId": 199,
+    "title": "Queue Spectrum Report",
+    "templateKey": "csr_queue-spectrum-report",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "queue_group_answer_spectrum",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=199"
+  },
+  {
+    "versionId": 200,
+    "title": "Customer Payments Daily",
+    "templateKey": "csr_customer-payments-daily",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "ns_daily_cash_by_cycle_view",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=200"
+  },
+  {
+    "versionId": 201,
+    "title": "Customer Payments Monthly",
+    "templateKey": "csr_customer-payments-monthly",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "ns_daily_cash_by_cycle_view",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=201"
+  },
+  {
+    "versionId": 202,
+    "title": "Senior CC Emails",
+    "templateKey": "csr_senior-cc-emails",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "queue_group_answer_spectrum",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=202"
+  },
+  {
+    "versionId": 203,
+    "title": "Collection Emails",
+    "templateKey": "csr_collection-emails",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "collections_emails_view",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=203"
+  },
+  {
+    "versionId": 204,
+    "title": "Collection Report",
+    "templateKey": "csr_collection-report",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "ns_collection_submission_accounts_pbi",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=204"
+  },
+  {
+    "versionId": 205,
+    "title": "Bankruptcies Report",
+    "templateKey": "csr_bankruptcies-report",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "ns_collection_submission_accounts_bankrupt",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=205"
+  },
+  {
+    "versionId": 206,
+    "title": "Multi-Unit Conditions Map",
+    "templateKey": "csr_multi-unit-conditions-map",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "multi_user_conditions_of_service",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=206"
+  },
+  {
+    "versionId": 207,
+    "title": "Request Service Layout Map",
+    "templateKey": "csr_request-service-layout-map",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "request_service_layout_form_geo",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=207"
+  },
+  {
+    "versionId": 208,
+    "title": "Aging ML Predictor - Hourly Updates",
+    "templateKey": "csr_aging-ml-predictor-hourly-updates",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "aging_ml_predictions",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=208"
+  },
+  {
+    "versionId": 209,
+    "title": "Risky Commercial Predictor",
+    "templateKey": "csr_risky-commercial-predictor",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "model_metrics",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=209"
+  },
+  {
+    "versionId": 210,
+    "title": "Risky Residential Predictor",
+    "templateKey": "csr_risky-residential-predictor",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "model_metrics_resid",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=210"
+  },
+  {
+    "versionId": 211,
+    "title": "Monthly EBNotes",
+    "templateKey": "csr_monthly-ebnotes",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "ns_daily_ebnotes",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=211"
+  },
+  {
+    "versionId": 212,
+    "title": "Aging Compared By Periods",
+    "templateKey": "csr_aging-compared-by-periods",
+    "htmlFile": "csr-page.html",
+    "connectionName": "corporate_dashboards",
+    "schema": "dbo",
+    "object": "AgingCompareSummary_view",
+    "directUrl": "/Dashboard/Multi?currentLayoutId=212"
+  }
+]

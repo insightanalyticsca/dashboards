@@ -1,0 +1,550 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <style>
+        :root {
+            --ink: #171777;
+            --header: #171777;
+            --rowheader: #171777;
+            --grid: #bfc4d2;
+            --body: #d4d4d9;
+            --white: #ffffff;
+            --neg: #09C698;
+            --pos: #ff2a2a;
+            --muted: #6d7590;
+            --border: #d5d7e0;
+        }
+
+        html, body, #root {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background: transparent;
+            font-family: Segoe UI,Arial,Helvetica,sans-serif;
+            color: var(--ink);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        .tile {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-rows: auto minmax(0,1fr);
+        }
+
+        .head {
+            padding: 8px 12px 4px 12px;
+        }
+
+        .title {
+            font-size: 12px;
+            line-height: 1.1;
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        .table-wrap {
+            padding: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid var(--grid);
+            padding: 10px 12px;
+            font-size: 11px;
+            line-height: 1.1;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        thead th {
+            background: var(--header);
+            color: var(--white);
+            font-weight: 800;
+        }
+
+            thead th:first-child {
+                width: 27%;
+                text-align: left;
+                padding-left: 18px;
+            }
+
+        tbody td {
+            background: var(--body);
+            color: var(--ink);
+        }
+
+            tbody td:first-child {
+                background: var(--rowheader);
+                color: var(--white);
+                font-weight: 800;
+                text-align: left;
+                padding-left: 18px;
+            }
+
+        tbody tr.delta td:not(:first-child) {
+            font-weight: 800;
+        }
+
+        tbody tr.delta td.pos {
+            color: var(--pos);
+        }
+
+        tbody tr.delta td.neg {
+            color: var(--neg);
+        }
+
+        tbody tr.delta td.zero {
+            color: var(--ink);
+        }
+
+        .state {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            background: #fff;
+        }
+
+        .state-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--muted);
+            max-width: 92%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .spin {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #d9dbe6;
+            border-top-color: var(--ink);
+            border-radius: 50%;
+            animation: spin .75s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .error-box {
+            width: 100%;
+            height: 100%;
+            background: #fff7f7;
+            color: #9b1c1c;
+            padding: 8px;
+            overflow: auto;
+            font-size: 10px;
+            line-height: 1.35;
+            font-weight: 700;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script>
+        (function () {
+            /* Change only this line per file. */
+            const TITLE = "Residential, Delta %";
+            /* For residential file use: const TITLE = "Residential, Delta %"; */
+
+            const ORDER = ["0-30", "31-60", "61-90", ">90"];
+            const COLS = ["0-30", "31-60", "61-90", ">90", "Total"];
+            let gotData = false;
+
+            function root() {
+                return document.getElementById("root");
+            }
+
+            function esc(value) {
+                return String(value ?? "").replace(/[&<>"']/g, ch => ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                }[ch]));
+            }
+
+            function showLoader(text) {
+                root().innerHTML =
+                    '<div class="state"><div class="state-inner">' +
+                    '<span class="spin"></span><span>' + esc(text || "loading") + '</span>' +
+                    '</div></div>';
+            }
+
+            function showNoData(text) {
+                root().innerHTML =
+                    '<div class="state"><div class="state-inner">' +
+                    '<span>' + esc(text || "no data") + '</span>' +
+                    '</div></div>';
+            }
+
+            function showError(err) {
+                const message = err && err.stack ? err.stack : String(err || "Unknown error");
+                root().innerHTML = '<div class="error-box">' + esc(message) + '</div>';
+            }
+
+            function parseMaybeJson(value) {
+                if (typeof value !== "string") return value;
+                const s = value.trim();
+                if (!s) return value;
+                if (s[0] !== "{" && s[0] !== "[") return value;
+                try { return JSON.parse(s); } catch { return value; }
+            }
+
+            function hasAgingKeys(row) {
+                if (!row || typeof row !== "object") return false;
+                const keys = Object.keys(row).map(k => k.toLowerCase());
+                return keys.includes("bucket") && keys.includes("period") && keys.includes("amount");
+            }
+
+            function isAgingRows(value) {
+                if (!Array.isArray(value) || !value.length) return false;
+                return value.some(hasAgingKeys);
+            }
+
+            function findAgingRows(value, depth, seen) {
+                depth = depth || 0;
+                seen = seen || [];
+
+                value = parseMaybeJson(value);
+
+                if (isAgingRows(value)) return value;
+
+                if (!value || typeof value !== "object" || depth > 16) return [];
+
+                for (let i = 0; i < seen.length; i++) {
+                    if (seen[i] === value) return [];
+                }
+                seen.push(value);
+
+                const preferred = [
+                    "data", "rows", "records", "items",
+                    "payload", "model", "result", "response", "body", "raw",
+                    "source", "detail", "value", "values", "context"
+                ];
+
+                for (const key of preferred) {
+                    if (Object.prototype.hasOwnProperty.call(value, key)) {
+                        const found = findAgingRows(value[key], depth + 1, seen);
+                        if (found.length) return found;
+                    }
+                }
+
+                for (const key of Object.keys(value)) {
+                    const found = findAgingRows(value[key], depth + 1, seen);
+                    if (found.length) return found;
+                }
+
+                return [];
+            }
+
+            function ciGet(row, name) {
+                if (!row || typeof row !== "object") return undefined;
+                const target = String(name).toLowerCase();
+                for (const key of Object.keys(row)) {
+                    if (String(key).toLowerCase() === target) return row[key];
+                }
+                return undefined;
+            }
+
+            function n(value) {
+                if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+                const s = String(value ?? "").replace(/[$,%\s,]/g, "");
+                const x = Number(s);
+                return Number.isFinite(x) ? x : 0;
+            }
+
+            function intFmt(value) {
+                return n(value).toLocaleString("en-US", { maximumFractionDigits: 0 });
+            }
+
+            function pctFmt(value) {
+                const x = n(value);
+                return (x >= 0 ? "+" : "") + x.toFixed(2);
+            }
+
+            function deltaClass(value) {
+                const x = n(value);
+                if (x > 0.000001) return "pos";
+                if (x < -0.000001) return "neg";
+                return "zero";
+            }
+
+            function normalizeBucket(raw) {
+                let s = String(raw ?? "").trim();
+                s = s.replace(/&gt;/gi, ">");
+                s = s.replace(/\\u003e/gi, ">");
+
+                const t = s.toLowerCase();
+
+                if (["current", "0-30", "0 to 30", "0_30", "0–30"].includes(t)) return "0-30";
+                if (["31-60", "31 to 60", "31_60", "31–60"].includes(t)) return "31-60";
+                if (["61-90", "61 to 90", "61_90", "61–90"].includes(t)) return "61-90";
+                if ([">90", "91+", "90+", "91 and over", "over 90", "91-999", "91 to 999"].includes(t)) return ">90";
+                if (t === "total") return "Total";
+
+                return s;
+            }
+
+            function parsePeriod(raw) {
+                const s = String(raw ?? "").trim();
+                const m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(s);
+                let d = null;
+
+                if (m) {
+                    d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+                } else {
+                    const parsed = new Date(s);
+                    if (Number.isFinite(parsed.getTime())) d = parsed;
+                }
+
+                if (!d || !Number.isFinite(d.getTime())) return null;
+
+                const yyyy = d.getFullYear();
+                const mm = String(d.getMonth() + 1).padStart(2, "0");
+                const dd = String(d.getDate()).padStart(2, "0");
+
+                return {
+                    key: `${yyyy}-${mm}-${dd}`,
+                    label: `${yyyy}-${mm}-${dd}`,
+                    sort: d.getTime()
+                };
+            }
+
+            function buildTable(rows) {
+                if (!Array.isArray(rows) || !rows.length) {
+                    throw new Error("No rows array reached visual. Expected rows with Bucket, Period, Amount.");
+                }
+
+                const byPeriod = new Map();
+                const explicitDelta = Object.fromEntries(COLS.map(c => [c, 0]));
+                const explicitDeltaSeen = Object.fromEntries(COLS.map(c => [c, false]));
+
+                rows.forEach(row => {
+                    if (!row || typeof row !== "object") return;
+
+                    const bucket = normalizeBucket(ciGet(row, "Bucket"));
+                    const rawPeriod = ciGet(row, "Period");
+                    const amount = n(ciGet(row, "Amount"));
+
+                    if (!COLS.includes(bucket)) return;
+
+                    const periodText = String(rawPeriod ?? "").trim();
+
+                    if (/^delta$/i.test(periodText)) {
+                        explicitDelta[bucket] += amount;
+                        explicitDeltaSeen[bucket] = true;
+                        return;
+                    }
+
+                    const period = parsePeriod(periodText);
+                    if (!period) return;
+
+                    if (!byPeriod.has(period.key)) {
+                        byPeriod.set(period.key, {
+                            label: period.label,
+                            sort: period.sort,
+                            values: Object.fromEntries(COLS.map(c => [c, 0])),
+                            hasTotal: false
+                        });
+                    }
+
+                    const entry = byPeriod.get(period.key);
+                    entry.values[bucket] += amount;
+                    if (bucket === "Total") entry.hasTotal = true;
+                });
+
+                const dated = Array.from(byPeriod.values())
+                    .sort((a, b) => a.sort - b.sort)
+                    .slice(-2);
+
+                if (dated.length < 2) {
+                    throw new Error("Expected two dated EOM periods. Found " + dated.length + ".");
+                }
+
+                dated.forEach(row => {
+                    if (!row.hasTotal) {
+                        row.values.Total = ORDER.reduce((sum, b) => sum + n(row.values[b]), 0);
+                    }
+                });
+
+                const older = dated[0];
+                const newer = dated[1];
+
+                const delta = COLS.map(col => {
+                    if (explicitDeltaSeen[col]) return explicitDelta[col];
+
+                    const oldValue = n(older.values[col]);
+                    const newValue = n(newer.values[col]);
+
+                    return oldValue === 0 ? 0 : ((newValue - oldValue) / oldValue) * 100;
+                });
+
+                return {
+                    rows: [
+                        { label: older.label, kind: "period", values: COLS.map(c => older.values[c]) },
+                        { label: newer.label, kind: "period", values: COLS.map(c => newer.values[c]) },
+                        { label: "Delta", kind: "delta", values: delta }
+                    ]
+                };
+            }
+
+            function drawMatrix(source) {
+                try {
+                    const rows = findAgingRows(source);
+
+                    if (!rows.length) {
+                        showNoData("no data");
+                        return;
+                    }
+
+                    const model = buildTable(rows);
+
+                    let html = "";
+                    html += '<div class="tile">';
+                    html += '<div class="head"><div class="title">' + esc(TITLE) + '</div></div>';
+                    html += '<div class="table-wrap">';
+                    html += '<table>';
+                    html += '<thead><tr><th>Period</th>';
+
+                    COLS.forEach(col => {
+                        html += '<th>' + esc(col) + '</th>';
+                    });
+
+                    html += '</tr></thead><tbody>';
+
+                    model.rows.forEach(row => {
+                        html += '<tr class="' + (row.kind === "delta" ? "delta" : "") + '">';
+                        html += '<td>' + esc(row.label) + '</td>';
+
+                        row.values.forEach(value => {
+                            if (row.kind === "delta") {
+                                html += '<td class="' + deltaClass(value) + '">' + pctFmt(value) + '</td>';
+                            } else {
+                                html += '<td>' + intFmt(value) + '</td>';
+                            }
+                        });
+
+                        html += '</tr>';
+                    });
+
+                    html += '</tbody></table>';
+                    html += '</div>';
+                    html += '</div>';
+
+                    root().innerHTML = html;
+                    gotData = true;
+                } catch (err) {
+                    showError(err);
+                }
+            }
+
+            function hasExplicitEmptyRows(source) {
+                source = parseMaybeJson(source);
+
+                if (!source || typeof source !== "object") return false;
+
+                // Only treat these as true no-data if the host explicitly sent an empty array.
+                if (Array.isArray(source.data) && source.data.length === 0) return true;
+                if (Array.isArray(source.rows) && source.rows.length === 0) return true;
+                if (Array.isArray(source.records) && source.records.length === 0) return true;
+                if (Array.isArray(source.items) && source.items.length === 0) return true;
+
+                const wrappers = ["payload", "model", "result", "response", "body", "raw"];
+
+                for (const key of wrappers) {
+                    if (source[key] && hasExplicitEmptyRows(source[key])) return true;
+                }
+
+                return false;
+            }
+
+            function receive(source) {
+                try {
+                    const rows = findAgingRows(source);
+
+                    if (rows.length) {
+                        drawMatrix(source);
+                        return;
+                    }
+
+                    // Never overwrite an already-rendered table with empty/no-data.
+                    if (gotData) return;
+
+                    // Only show no data if the host explicitly sent an empty rows/data array.
+                    if (hasExplicitEmptyRows(source)) {
+                        showNoData("no data");
+                        return;
+                    }
+
+                    // Otherwise keep loader. Empty init/update just means "not here yet".
+                } catch (err) {
+                    showError(err);
+                }
+            }
+
+            showLoader("loading");
+
+            window.addEventListener("message", ev => {
+                const data = ev && ev.data ? ev.data : {};
+                const type = String(data.type || "");
+
+                if (type.startsWith("dashboard-custom-html:") && type.endsWith(":resize")) return;
+
+                receive(data);
+            });
+
+            window.update = receive;
+            window.init = receive;
+            window.setData = receive;
+            window.onData = receive;
+            window.drawAgingMatrix = receive;
+
+            if (window.DashVisualContext) {
+                receive(window.DashVisualContext);
+            } else if (window.__DashVisualContext) {
+                receive(window.__DashVisualContext);
+            } else if (window.__DASH_VISUAL_CONTEXT__) {
+                receive(window.__DASH_VISUAL_CONTEXT__);
+            }
+
+            // No fallback timer.
+            // Loader stays until real rows arrive or an explicit empty rows/data array arrives.
+            ;
+        })();
+    </script>
+</body>
+</html>

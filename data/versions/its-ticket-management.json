@@ -1,0 +1,203 @@
+{
+  "its-open-priority": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Priority": "P1",
+        "Count": 4,
+        "AvgAge": 2.5,
+        "Label": "Critical"
+      },
+      {
+        "Priority": "P2",
+        "Count": 18,
+        "AvgAge": 4.8,
+        "Label": "High"
+      },
+      {
+        "Priority": "P3",
+        "Count": 62,
+        "AvgAge": 9.2,
+        "Label": "Medium"
+      },
+      {
+        "Priority": "P4",
+        "Count": 142,
+        "AvgAge": 18.4,
+        "Label": "Low"
+      }
+    ],
+    "debug": {
+      "returnedRows": 4
+    }
+  },
+  "its-open-status": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Status": "Open",
+        "Count": 42
+      },
+      {
+        "Status": "In Progress",
+        "Count": 68
+      },
+      {
+        "Status": "Pending",
+        "Count": 35
+      },
+      {
+        "Status": "Resolved",
+        "Count": 142
+      },
+      {
+        "Status": "Closed",
+        "Count": 89
+      }
+    ],
+    "debug": {
+      "returnedRows": 5
+    }
+  },
+  "its-priority-status": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Priority": "P1",
+        "Status": "Open",
+        "Count": 2
+      },
+      {
+        "Priority": "P1",
+        "Status": "In Progress",
+        "Count": 1
+      },
+      {
+        "Priority": "P1",
+        "Status": "Pending",
+        "Count": 1
+      },
+      {
+        "Priority": "P2",
+        "Status": "Open",
+        "Count": 5
+      },
+      {
+        "Priority": "P2",
+        "Status": "In Progress",
+        "Count": 8
+      },
+      {
+        "Priority": "P2",
+        "Status": "Pending",
+        "Count": 5
+      },
+      {
+        "Priority": "P3",
+        "Status": "Open",
+        "Count": 18
+      },
+      {
+        "Priority": "P3",
+        "Status": "In Progress",
+        "Count": 22
+      },
+      {
+        "Priority": "P3",
+        "Status": "Pending",
+        "Count": 22
+      },
+      {
+        "Priority": "P4",
+        "Status": "Open",
+        "Count": 42
+      },
+      {
+        "Priority": "P4",
+        "Status": "In Progress",
+        "Count": 58
+      },
+      {
+        "Priority": "P4",
+        "Status": "Pending",
+        "Count": 42
+      }
+    ],
+    "debug": {
+      "returnedRows": 12
+    }
+  },
+  "its-closed-priority": {
+    "found": true,
+    "mode": "rawRows",
+    "connectionName": "build",
+    "schema": "dbo",
+    "obj": "view",
+    "objectType": "view",
+    "agg": "RawRows",
+    "rowFields": [],
+    "colFields": [],
+    "valueFields": [],
+    "data": [
+      {
+        "Priority": "P1",
+        "Count": 4,
+        "AvgAge": 2.5,
+        "Label": "Critical"
+      },
+      {
+        "Priority": "P2",
+        "Count": 18,
+        "AvgAge": 4.8,
+        "Label": "High"
+      },
+      {
+        "Priority": "P3",
+        "Count": 62,
+        "AvgAge": 9.2,
+        "Label": "Medium"
+      },
+      {
+        "Priority": "P4",
+        "Count": 142,
+        "AvgAge": 18.4,
+        "Label": "Low"
+      }
+    ],
+    "debug": {
+      "returnedRows": 4
+    }
+  },
+  "_meta": {
+    "version": "its-ticket-management",
+    "title": "ITS \u2014 Ticket Management",
+    "generatedUtc": "2026-07-26T12:23:10Z"
+  }
+}
