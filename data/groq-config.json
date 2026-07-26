@@ -1,0 +1,8 @@
+{
+  "provider": "groq",
+  "keyParts": [
+    "CGuoODuizlhQjaa1_ksg",
+    "eamvEbOSTanDzzz4ZGh4KVc5YF3bydGWisxY"
+  ],
+  "groqModel": "llama-3.3-70b-versatile"
+}
