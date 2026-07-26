@@ -31,10 +31,16 @@
     document.documentElement.style.colorScheme = t;
     if (document.body) document.body.setAttribute('data-theme', t);
 
-    // Update toggle icon
-    var icon = document.getElementById('themeToggleIcon');
-    if (icon) {
-      icon.className = t === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    // Update toggle icon — inline SVG for reliability (no font dependency)
+    var iconHost = document.getElementById('themeToggleIcon');
+    if (iconHost) {
+      if (t === 'dark') {
+        // Sun icon
+        iconHost.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+      } else {
+        // Moon icon
+        iconHost.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+      }
     }
 
     // Broadcast to all iframes (CSR runtime listens for csr-dashboard-theme:apply)
@@ -98,9 +104,9 @@
       'box-shadow:0 4px 14px rgba(0,0,0,0.18)'
     ].join(';');
 
-    var icon = document.createElement('i');
+    var icon = document.createElement('span');
     icon.id = 'themeToggleIcon';
-    icon.className = 'fa-solid fa-moon';
+    icon.style.cssText = 'display:grid;place-items:center;width:100%;height:100%;line-height:1;';
     btn.appendChild(icon);
 
     btn.addEventListener('mouseenter', function () {
