@@ -12,7 +12,7 @@
     "valueFields": [],
     "data": [
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -20,7 +20,7 @@
         "Amount": 6947
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -28,7 +28,7 @@
         "Amount": 2036
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -36,7 +36,7 @@
         "Amount": 1019
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -44,7 +44,7 @@
         "Amount": 340
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -52,7 +52,7 @@
         "Amount": 7456
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -60,7 +60,7 @@
         "Amount": 2307
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -68,7 +68,7 @@
         "Amount": 1162
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -76,7 +76,7 @@
         "Amount": 394
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -84,7 +84,7 @@
         "Amount": 7795
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -92,7 +92,7 @@
         "Amount": 2553
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -100,7 +100,7 @@
         "Amount": 1455
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -108,7 +108,7 @@
         "Amount": 533
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -116,7 +116,7 @@
         "Amount": 8272
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -124,7 +124,7 @@
         "Amount": 2761
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -132,7 +132,7 @@
         "Amount": 1638
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -140,7 +140,7 @@
         "Amount": 780
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -148,7 +148,7 @@
         "Amount": 8751
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -156,7 +156,7 @@
         "Amount": 3009
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -164,7 +164,7 @@
         "Amount": 1918
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -172,7 +172,7 @@
         "Amount": 826
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -180,7 +180,7 @@
         "Amount": 9137
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -188,7 +188,7 @@
         "Amount": 3354
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -196,7 +196,7 @@
         "Amount": 2093
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -204,7 +204,7 @@
         "Amount": 936
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -212,7 +212,7 @@
         "Amount": 9608
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -220,7 +220,7 @@
         "Amount": 3638
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -228,7 +228,7 @@
         "Amount": 2276
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -236,7 +236,7 @@
         "Amount": 1066
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -244,7 +244,7 @@
         "Amount": 10061
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -252,7 +252,7 @@
         "Amount": 3763
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -260,7 +260,7 @@
         "Amount": 2494
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -268,7 +268,7 @@
         "Amount": 1251
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -276,7 +276,7 @@
         "Amount": 10394
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -284,7 +284,7 @@
         "Amount": 4126
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -292,7 +292,7 @@
         "Amount": 2815
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -300,7 +300,7 @@
         "Amount": 1451
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -308,7 +308,7 @@
         "Amount": 10835
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -316,7 +316,7 @@
         "Amount": 4386
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -324,7 +324,7 @@
         "Amount": 2927
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -332,7 +332,7 @@
         "Amount": 1507
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -340,7 +340,7 @@
         "Amount": 11306
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -348,7 +348,7 @@
         "Amount": 4546
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -356,7 +356,7 @@
         "Amount": 3231
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -364,7 +364,7 @@
         "Amount": 1669
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -372,7 +372,7 @@
         "Amount": 11754
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -380,7 +380,7 @@
         "Amount": 4881
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -388,7 +388,7 @@
         "Amount": 3460
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -396,7 +396,7 @@
         "Amount": 1881
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -404,7 +404,7 @@
         "Amount": 12191
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -412,7 +412,7 @@
         "Amount": 5109
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -420,7 +420,7 @@
         "Amount": 3621
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -445,7 +445,7 @@
     "valueFields": [],
     "data": [
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -453,7 +453,7 @@
         "Amount": 6978
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -461,7 +461,7 @@
         "Amount": 1940
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -469,7 +469,7 @@
         "Amount": 1077
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -477,7 +477,7 @@
         "Amount": 370
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -485,7 +485,7 @@
         "Amount": 7366
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -493,7 +493,7 @@
         "Amount": 2268
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -501,7 +501,7 @@
         "Amount": 1163
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -509,7 +509,7 @@
         "Amount": 381
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -517,7 +517,7 @@
         "Amount": 7929
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -525,7 +525,7 @@
         "Amount": 2572
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -533,7 +533,7 @@
         "Amount": 1497
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -541,7 +541,7 @@
         "Amount": 641
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -549,7 +549,7 @@
         "Amount": 8249
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -557,7 +557,7 @@
         "Amount": 2726
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -565,7 +565,7 @@
         "Amount": 1720
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -573,7 +573,7 @@
         "Amount": 663
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -581,7 +581,7 @@
         "Amount": 8684
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -589,7 +589,7 @@
         "Amount": 2991
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -597,7 +597,7 @@
         "Amount": 1962
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -605,7 +605,7 @@
         "Amount": 797
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -613,7 +613,7 @@
         "Amount": 9126
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -621,7 +621,7 @@
         "Amount": 3339
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -629,7 +629,7 @@
         "Amount": 2060
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -637,7 +637,7 @@
         "Amount": 1062
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -645,7 +645,7 @@
         "Amount": 9558
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -653,7 +653,7 @@
         "Amount": 3646
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -661,7 +661,7 @@
         "Amount": 2403
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -669,7 +669,7 @@
         "Amount": 1064
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -677,7 +677,7 @@
         "Amount": 10081
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -685,7 +685,7 @@
         "Amount": 3780
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -693,7 +693,7 @@
         "Amount": 2578
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -701,7 +701,7 @@
         "Amount": 1340
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -709,7 +709,7 @@
         "Amount": 10496
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -717,7 +717,7 @@
         "Amount": 4155
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -725,7 +725,7 @@
         "Amount": 2771
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -733,7 +733,7 @@
         "Amount": 1394
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -741,7 +741,7 @@
         "Amount": 10833
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -749,7 +749,7 @@
         "Amount": 4364
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -757,7 +757,7 @@
         "Amount": 2973
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -765,7 +765,7 @@
         "Amount": 1532
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -773,7 +773,7 @@
         "Amount": 11310
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -781,7 +781,7 @@
         "Amount": 4579
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -789,7 +789,7 @@
         "Amount": 3208
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -797,7 +797,7 @@
         "Amount": 1719
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -805,7 +805,7 @@
         "Amount": 11718
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -813,7 +813,7 @@
         "Amount": 4826
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -821,7 +821,7 @@
         "Amount": 3354
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -829,7 +829,7 @@
         "Amount": 1856
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -837,7 +837,7 @@
         "Amount": 12200
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -845,7 +845,7 @@
         "Amount": 5200
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -853,7 +853,7 @@
         "Amount": 3598
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -878,7 +878,7 @@
     "valueFields": [],
     "data": [
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -886,7 +886,7 @@
         "Amount": 7060
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -894,7 +894,7 @@
         "Amount": 1980
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -902,7 +902,7 @@
         "Amount": 1058
       },
       {
-        "PeriodDate": "2026-05-03",
+        "PeriodDate": "2026-05-04",
         "PeriodKey": "W_12",
         "PeriodLabel": "Wk 13",
         "SortOrder": 5,
@@ -910,7 +910,7 @@
         "Amount": 299
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -918,7 +918,7 @@
         "Amount": 7384
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -926,7 +926,7 @@
         "Amount": 2277
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -934,7 +934,7 @@
         "Amount": 1166
       },
       {
-        "PeriodDate": "2026-05-10",
+        "PeriodDate": "2026-05-11",
         "PeriodKey": "W_11",
         "PeriodLabel": "Wk 12",
         "SortOrder": 5,
@@ -942,7 +942,7 @@
         "Amount": 431
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -950,7 +950,7 @@
         "Amount": 7874
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -958,7 +958,7 @@
         "Amount": 2522
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -966,7 +966,7 @@
         "Amount": 1409
       },
       {
-        "PeriodDate": "2026-05-17",
+        "PeriodDate": "2026-05-18",
         "PeriodKey": "W_10",
         "PeriodLabel": "Wk 11",
         "SortOrder": 5,
@@ -974,7 +974,7 @@
         "Amount": 618
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -982,7 +982,7 @@
         "Amount": 8348
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -990,7 +990,7 @@
         "Amount": 2789
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -998,7 +998,7 @@
         "Amount": 1746
       },
       {
-        "PeriodDate": "2026-05-24",
+        "PeriodDate": "2026-05-25",
         "PeriodKey": "W_9",
         "PeriodLabel": "Wk 10",
         "SortOrder": 5,
@@ -1006,7 +1006,7 @@
         "Amount": 778
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -1014,7 +1014,7 @@
         "Amount": 8639
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -1022,7 +1022,7 @@
         "Amount": 3115
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -1030,7 +1030,7 @@
         "Amount": 1886
       },
       {
-        "PeriodDate": "2026-05-31",
+        "PeriodDate": "2026-06-01",
         "PeriodKey": "W_8",
         "PeriodLabel": "Wk 9",
         "SortOrder": 5,
@@ -1038,7 +1038,7 @@
         "Amount": 806
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -1046,7 +1046,7 @@
         "Amount": 9100
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -1054,7 +1054,7 @@
         "Amount": 3303
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -1062,7 +1062,7 @@
         "Amount": 2059
       },
       {
-        "PeriodDate": "2026-06-07",
+        "PeriodDate": "2026-06-08",
         "PeriodKey": "W_7",
         "PeriodLabel": "Wk 8",
         "SortOrder": 5,
@@ -1070,7 +1070,7 @@
         "Amount": 944
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -1078,7 +1078,7 @@
         "Amount": 9636
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -1086,7 +1086,7 @@
         "Amount": 3537
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -1094,7 +1094,7 @@
         "Amount": 2320
       },
       {
-        "PeriodDate": "2026-06-14",
+        "PeriodDate": "2026-06-15",
         "PeriodKey": "W_6",
         "PeriodLabel": "Wk 7",
         "SortOrder": 5,
@@ -1102,7 +1102,7 @@
         "Amount": 1126
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -1110,7 +1110,7 @@
         "Amount": 10077
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -1118,7 +1118,7 @@
         "Amount": 3813
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -1126,7 +1126,7 @@
         "Amount": 2558
       },
       {
-        "PeriodDate": "2026-06-21",
+        "PeriodDate": "2026-06-22",
         "PeriodKey": "W_5",
         "PeriodLabel": "Wk 6",
         "SortOrder": 5,
@@ -1134,7 +1134,7 @@
         "Amount": 1243
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -1142,7 +1142,7 @@
         "Amount": 10419
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -1150,7 +1150,7 @@
         "Amount": 4151
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -1158,7 +1158,7 @@
         "Amount": 2816
       },
       {
-        "PeriodDate": "2026-06-28",
+        "PeriodDate": "2026-06-29",
         "PeriodKey": "W_4",
         "PeriodLabel": "Wk 5",
         "SortOrder": 5,
@@ -1166,7 +1166,7 @@
         "Amount": 1392
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -1174,7 +1174,7 @@
         "Amount": 10794
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -1182,7 +1182,7 @@
         "Amount": 4307
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -1190,7 +1190,7 @@
         "Amount": 3020
       },
       {
-        "PeriodDate": "2026-07-05",
+        "PeriodDate": "2026-07-06",
         "PeriodKey": "W_3",
         "PeriodLabel": "Wk 4",
         "SortOrder": 4,
@@ -1198,7 +1198,7 @@
         "Amount": 1535
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -1206,7 +1206,7 @@
         "Amount": 11220
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -1214,7 +1214,7 @@
         "Amount": 4546
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -1222,7 +1222,7 @@
         "Amount": 3217
       },
       {
-        "PeriodDate": "2026-07-12",
+        "PeriodDate": "2026-07-13",
         "PeriodKey": "W_2",
         "PeriodLabel": "Wk 3",
         "SortOrder": 3,
@@ -1230,7 +1230,7 @@
         "Amount": 1635
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -1238,7 +1238,7 @@
         "Amount": 11705
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -1246,7 +1246,7 @@
         "Amount": 4849
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -1254,7 +1254,7 @@
         "Amount": 3465
       },
       {
-        "PeriodDate": "2026-07-19",
+        "PeriodDate": "2026-07-20",
         "PeriodKey": "W_1",
         "PeriodLabel": "Wk 2",
         "SortOrder": 2,
@@ -1262,7 +1262,7 @@
         "Amount": 1880
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -1270,7 +1270,7 @@
         "Amount": 12176
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -1278,7 +1278,7 @@
         "Amount": 5200
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -1286,7 +1286,7 @@
         "Amount": 3575
       },
       {
-        "PeriodDate": "2026-07-26",
+        "PeriodDate": "2026-07-27",
         "PeriodKey": "CURRENT",
         "PeriodLabel": "Wk 1",
         "SortOrder": 1,
@@ -1301,6 +1301,6 @@
   "_meta": {
     "version": "csr-ar-tabular",
     "title": "CSR \u2014 AR Tabular Views",
-    "generatedUtc": "2026-07-26T00:00:00Z"
+    "generatedUtc": "2026-07-27T00:00:00Z"
   }
 }
