@@ -553,8 +553,8 @@ body,
 .exec-canvas {
     width: 100%;
     height: auto !important;
-    min-height: 600px !important;
-    overflow: visible !important;
+    min-height: 720px;
+    overflow: visible;
 }
 
 /* Executive matrix header: remove the gap between grouped header levels. */
@@ -791,4 +791,32 @@ body,
     .exec-layout-move {
         background-color: rgba(23, 30, 49, .72);
     }
+}
+
+
+/* Reset Layout button + header right */
+.exec-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.exec-reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--exec-primary, #0808ee);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 140ms ease;
+    white-space: nowrap;
+}
+.exec-reset-btn:hover {
+    background: var(--exec-ink, #171777);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(8,8,238,0.30);
 }

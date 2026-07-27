@@ -11,11 +11,40 @@
         defaultLayout: {},
         visualElements: new Map(),
         layoutZ: 100,
-        canvasMinHeight: 720
+        canvasMinHeight: 960
     };
+
+    // ── localStorage persistence (same pattern as canvas-host.js) ──
+    var LAYOUT_KEY = 'exec-layout-' + suite;
+    function saveLayout() {
+        try { localStorage.setItem(LAYOUT_KEY, JSON.stringify(state.visualLayoutOverrides)); }
+        catch (e) {}
+    }
+    function loadLayout() {
+        try {
+            var saved = localStorage.getItem(LAYOUT_KEY);
+            if (saved) {
+                var parsed = JSON.parse(saved);
+                if (parsed && typeof parsed === 'object') state.visualLayoutOverrides = parsed;
+            }
+        } catch (e) {}
+    }
+    function clearLayout() {
+        try { localStorage.removeItem(LAYOUT_KEY); } catch (e) {}
+        state.visualLayoutOverrides = {};
+    }
+    loadLayout();
 
     // Multi.cshtml already reads this object immediately before saving the SQL layout.
     window.__csrDashboardInstance = { state };
+        window.__execResetLayout = function() {
+            clearLayout();
+            state.visualElements.forEach(function(element, id) {
+                applyVisualGeometry(element, visualGeometry(id));
+                var chart = charts.find(function(c) { return c.getDom() === element.querySelector('.exec-chart'); });
+            });
+            resizeChartsSoon();
+        };
 
     function palette() {
         const styles = getComputedStyle(document.documentElement);
@@ -197,7 +226,7 @@
             };
         });
 
-        state.canvasMinHeight = Math.max(720, Math.round(totalUnits * 108));
+        state.canvasMinHeight = Math.max(960, Math.round(totalUnits * 120));
         return result;
     }
 
@@ -312,6 +341,7 @@
                 geometry.x = clampNumber(geometry.x, 0, Math.max(0, 100 - geometry.w));
                 geometry.y = clampNumber(geometry.y, 0, Math.max(0, 100 - geometry.h));
                 state.visualLayoutOverrides[visualId] = geometry;
+                saveLayout();
                 publishVisualLayout();
                 resizeChartsSoon();
             };
@@ -327,6 +357,7 @@
             event.preventDefault();
             event.stopPropagation();
             delete state.visualLayoutOverrides[visualId];
+            saveLayout();
             applyVisualGeometry(element, visualGeometry(visualId));
             publishVisualLayout();
             resizeChartsSoon();
@@ -490,7 +521,10 @@
         app.innerHTML = `<main class="exec-page">
       <header class="exec-header">
         <div class="exec-title">${esc(payload.title || '')}</div>
-        <div class="exec-asof">${esc(payload.asOfLabel || '')}</div>
+        <div class="exec-header-right">
+          <div class="exec-asof">${esc(payload.asOfLabel || '')}</div>
+          <button class="exec-reset-btn" type="button" onclick="if(confirm('Reset all visuals to default positions?')) { window.__execResetLayout(); }"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
       </header>
       <div class="exec-canvas" style="min-height:${state.canvasMinHeight}px"></div>
       ${Array.isArray(payload.notes) && payload.notes.length
