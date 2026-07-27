@@ -137,7 +137,7 @@
       });
 
       // Set canvas min-height
-      canvas.style.minHeight = Math.max(720, totalUnits * 80) + 'px';
+      canvas.style.minHeight = '400px'; canvas.style.height = 'calc(100vh - 160px)';
       return placements;
     }
 

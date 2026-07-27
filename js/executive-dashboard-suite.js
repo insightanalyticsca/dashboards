@@ -526,7 +526,7 @@
           <button class="exec-reset-btn" type="button" onclick="if(confirm('Reset all visuals to default positions?')) { window.__execResetLayout(); }"><i class="fa-solid fa-rotate-left"></i> Reset</button>
         </div>
       </header>
-      <div class="exec-canvas" style="min-height:${state.canvasMinHeight}px"></div>
+      <div class="exec-canvas" style="min-height:calc(100vh - 120px)"></div>
       ${Array.isArray(payload.notes) && payload.notes.length
                 ? `<div class="exec-notes">${payload.notes.map(note => `<div>${esc(note)}</div>`).join('')}</div>`
                 : ''}
