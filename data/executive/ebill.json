@@ -163,6 +163,37 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ebill-target-pie",
+      "title": "Q4 2026 Target Progress",
+      "kind": "pie",
+      "width": "narrow",
+      "valueFormat": "number",
+      "leftAxisTitle": "",
+      "rightAxisTitle": "",
+      "categories": [
+        "Achieved",
+        "On Track",
+        "Behind",
+        "At Risk"
+      ],
+      "series": [
+        {
+          "name": "Segments",
+          "type": "pie",
+          "axis": "left",
+          "stack": "",
+          "color": "#845EF7",
+          "smooth": false,
+          "data": [
+            2,
+            1,
+            0,
+            0
+          ]
+        }
+      ]
     }
   ],
   "tables": [
