@@ -217,6 +217,7 @@
     const wrap = $('#chatMessages');
     const msg = document.createElement('div');
     msg.className = 'msg ' + role;
+    msg.dataset.msgId = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
     const avatar = role === 'user' ? '<i class="fa-solid fa-user"></i>' : '<i class="fa-solid fa-robot"></i>';
     const sourcesHtml = sources.length ? `
       <div class="msg-sources">
@@ -230,16 +231,84 @@
         ${meta.tokens?.total ? `<span>· ${meta.tokens.total} tok</span>` : ''}
       </div>
     ` : '';
+
+    // Read status indicator (appears under every message)
+    const isUser = role === 'user';
+    const statusHtml = isUser
+      ? `<div class="msg-status" data-status="sent" title="Sent · ${new Date().toLocaleTimeString()}">
+           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+           <span class="msg-status-text">Sent</span>
+         </div>`
+      : `<div class="msg-status" data-status="delivered" title="Delivered · ${new Date().toLocaleTimeString()}">
+           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><polyline points="24 6 13 17 10 14"/></svg>
+           <span class="msg-status-text">Delivered</span>
+         </div>`;
+
+    // Action buttons (edit + delete) — tiny, appear on hover
+    const actionsHtml = `
+      <div class="msg-actions">
+        ${isUser ? `<button class="msg-action-btn" data-act="edit" title="Edit message"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>` : ''}
+        <button class="msg-action-btn" data-act="copy" title="Copy text"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+        <button class="msg-action-btn danger" data-act="delete" title="Delete"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+      </div>`;
+
     msg.innerHTML = `
       <div class="msg-avatar">${avatar}</div>
-      <div>
+      <div class="msg-content">
         <div class="msg-bubble">${escapeHtml(text)}</div>
         ${sourcesHtml}
         ${metaHtml}
+        <div class="msg-footer">
+          ${statusHtml}
+          ${actionsHtml}
+        </div>
       </div>
     `;
     wrap.appendChild(msg);
     wrap.scrollTop = wrap.scrollHeight;
+
+    // Wire action buttons
+    msg.querySelectorAll('.msg-action-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const act = this.dataset.act;
+        if (act === 'delete') {
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateX(20px)';
+          setTimeout(() => msg.remove(), 280);
+        } else if (act === 'copy') {
+          navigator.clipboard.writeText(text).then(() => {
+            toast('Copied to clipboard');
+          });
+        } else if (act === 'edit') {
+          const input = $('#chatInput');
+          input.value = text;
+          autoResize(input);
+          updateSendButton();
+          input.focus();
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateX(20px)';
+          setTimeout(() => msg.remove(), 280);
+        }
+      });
+    });
+
+    // Simulate read receipt — user messages get "read" after 1s
+    if (isUser) {
+      setTimeout(() => {
+        const status = msg.querySelector('.msg-status');
+        if (status) {
+          status.dataset.status = 'read';
+          status.innerHTML = `
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><polyline points="24 6 13 17 10 14"/></svg>
+            <span class="msg-status-text">Read</span>
+          `;
+          status.style.color = 'var(--accent)';
+          status.title = 'Read · ' + new Date().toLocaleTimeString();
+        }
+      }, 1000);
+    }
+
     state.messages.push({ role, text, sources, meta });
     return msg;
   }
@@ -270,7 +339,6 @@
       bubble.innerHTML = escapeHtml(result.answer);
 
       // Sources & meta
-      const sourcesHost = assistantMsg.querySelector('.msg-bubble').nextElementSibling;
       let sourcesEl = assistantMsg.querySelector('.msg-sources');
       if (sourcesEl) sourcesEl.remove();
       if (result.sources.length) {
@@ -279,8 +347,13 @@
         div.innerHTML = result.sources.map((s, i) =>
           `<span class="source-chip" title="${escapeHtml(s.text)}">[${i + 1}] ${s.documentId} · ${s.score.toFixed(2)}</span>`
         ).join('');
-        bubble.after(div);
+        // Insert before footer
+        const footer = assistantMsg.querySelector('.msg-footer');
+        if (footer) footer.before(div); else bubble.after(div);
       }
+      // Remove old meta if exists
+      const oldMeta = assistantMsg.querySelector('.msg-meta');
+      if (oldMeta) oldMeta.remove();
       const metaDiv = document.createElement('div');
       metaDiv.className = 'msg-meta';
       metaDiv.innerHTML = `
@@ -288,7 +361,9 @@
         <span>· ${result.latencyMs} ms</span>
         <span>· ${result.tokens.total} tok</span>
       `;
-      (assistantMsg.querySelector('.msg-sources') || bubble).after(metaDiv);
+      // Insert before footer
+      const footer2 = assistantMsg.querySelector('.msg-footer');
+      if (footer2) footer2.before(metaDiv); else bubble.after(metaDiv);
 
       // Persist query
       await api.Queries.record({

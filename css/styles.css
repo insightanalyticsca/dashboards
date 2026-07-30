@@ -755,6 +755,69 @@ a:hover { color: var(--primary-soft); }
   font-variant-numeric: tabular-nums;
 }
 
+/* ─── Message footer (status + actions) ─── */
+.msg-footer {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 14px;
+}
+
+.msg-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  color: var(--muted-dim);
+  cursor: default;
+  user-select: none;
+  transition: color 220ms ease;
+}
+
+.msg-status[data-status="read"] {
+  color: var(--accent);
+}
+
+.msg-status-text {
+  line-height: 1;
+}
+
+.msg-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.msg:hover .msg-actions {
+  opacity: 1;
+}
+
+.msg-action-btn {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted-dim);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 100ms ease;
+}
+
+.msg-action-btn:hover {
+  background: var(--card-hover);
+  color: var(--text-soft);
+}
+
+.msg-action-btn.danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
 .typing-dots {
   display: inline-flex;
   gap: 4px;
