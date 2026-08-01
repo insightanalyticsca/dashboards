@@ -148,7 +148,7 @@
   }
 
   // Expose for programmatic use
-  window.Dashboards StudioTheme = {
+  window.DocChatTheme = {
     get: function () { return document.documentElement.getAttribute('data-theme') || resolveTheme(); },
     set: applyTheme,
     toggle: function () {

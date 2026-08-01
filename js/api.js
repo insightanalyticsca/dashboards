@@ -428,7 +428,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
       .catch(function() {});
   })();
 
-  global.Dashboards StudioAPI = {
+  global.DocChatAPI = {
     Documents, Chunks, Queries, Analytics,
     Config, retrieve, ask
   };

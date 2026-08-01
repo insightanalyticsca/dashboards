@@ -11,8 +11,8 @@
 
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
-  const api = window.Dashboards StudioAPI;
-  const charts = window.Dashboards StudioCharts;
+  const api = window.DocChatAPI;
+  const charts = window.DocChatCharts;
 
   // ─── State ────────────────────────────────────────────────────────────────
   const state = {
@@ -527,7 +527,7 @@
 
     // Check if Groq config loaded after boot (async)
     setTimeout(function() {
-      var cfg = window.Dashboards StudioAPI?.Config?.get();
+      var cfg = window.DocChatAPI?.Config?.get();
       if (cfg && cfg.provider === 'groq' && cfg.groqKey) {
         updateProviderPill();
         var status = document.getElementById('composerStatus');
