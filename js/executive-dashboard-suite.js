@@ -496,17 +496,17 @@
         return {
             color: colors,
             tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-            legend: { top: 2, type: 'scroll', textStyle: { fontSize: 9, color: getComputedStyle(document.documentElement).getPropertyValue('--exec-ink').trim() || '#171777' } },
+            legend: { top: 2, type: 'scroll', textStyle: { fontSize: 9, color: '#1e293b', fontWeight: 600 } },
             grid: { left: 52, right: hasSecondAxis ? 52 : 18, top: 38, bottom: 42 },
             xAxis: {
                 type: 'category',
                 data: categories,
-                axisLabel: { color: getComputedStyle(document.documentElement).getPropertyValue('--exec-muted').trim() || '#3b4a6b', fontSize: 9, interval: 0, hideOverlap: true },
+                axisLabel: { color: '#1e293b', fontSize: 9, interval: 0, hideOverlap: true, fontWeight: 600 },
                 axisTick: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9 }, splitLine: { lineStyle: { color: getComputedStyle(document.documentElement).getPropertyValue('--exec-grid').trim() || '#e2e6f0' } } },
-                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9 }, splitLine: { show: false } }] : [])
+                { type: 'value', name: chart.leftAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#cbd5e1' } } },
+                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { show: false } }] : [])
             ],
             series: echartsSeries
         };
