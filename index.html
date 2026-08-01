@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboards Studio — RAG Assistant Demo</title>
-  <meta name="description" content="Document-chat RAG demo. Static HTML + ECharts + Groq-ready AI.">
+  <meta name="description" content="Corporate dashboards with Groq-powered AI chat, ECharts visualizations, and executive analytics.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%236366F1'/%3E%3Ctext x='50' y='66' text-anchor='middle' font-family='Arial' font-weight='800' font-size='52' fill='white'%3ED%3C/text%3E%3C/svg%3E">
 
   <!-- Fonts -->
@@ -39,14 +39,12 @@
       </a>
       <span class="pill pill--ok" id="providerPill">
         <span class="pill-dot"></span>
-        <span id="providerLabel">Demo</span>
+        <span id="providerLabel">Groq · live</span>
       </span>
       <a class="btn btn--ghost btn--icon" href="https://github.com/insightanalyticsca/dashboards" target="_blank" rel="noopener" title="View on GitHub">
         <i class="fa-brands fa-github"></i>
       </a>
-      <button class="btn btn--ghost btn--icon" id="btnSettings" title="Settings" aria-label="Settings">
-        <i class="fa-solid fa-gear"></i>
-      </button>
+
     </div>
   </header>
 
@@ -83,8 +81,8 @@
         <h1>Ask your documents.<br>Get cited answers.</h1>
         <p class="lead">
           A retrieval-augmented chat demo running entirely on static JSON + GitHub Pages.
-          Drop in a <strong>Groq API key</strong> for real streaming responses, or run it
-          as-is in demo mode with simulated retrieval over pre-indexed sample documents.
+          Powered by <strong>Groq</strong> streaming with Llama 3.3 70B — ask questions about
+          your documents and get cited answers in real time.
         </p>
         <div class="hero-cta">
           <a class="btn btn--primary" href="#analytics">
@@ -272,85 +270,10 @@
 
   <!-- ════════════════════════ FOOTER ════════════════════════ -->
   <footer class="footer">
-    Dashboards Studio demo · static HTML + ECharts + Groq-ready · <code>v1.1.0</code><br>
+    Dashboards Studio · Groq-powered RAG + ECharts dashboards · <code>v1.1.0</code><br>
     Fork it, drop your <code>.json</code> data in <code>/data</code>, deploy to GitHub Pages.
   </footer>
 
-</div>
-
-<!-- ════════════════════════ SETTINGS MODAL ════════════════════════ -->
-<div class="modal-backdrop" id="settingsModal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="modal-head">
-      <div class="modal-title" id="settingsTitle">
-        <i class="fa-solid fa-sliders"></i> Settings
-      </div>
-      <button class="btn btn--ghost btn--icon" id="settingsClose">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-
-      <div class="form-field">
-        <label>AI Provider</label>
-        <div class="provider-toggle">
-          <button data-provider="demo" class="is-active"><i class="fa-solid fa-flask"></i> Demo (canned)</button>
-          <button data-provider="groq"><i class="fa-solid fa-bolt"></i> Groq (live)</button>
-        </div>
-        <div class="hint">Demo mode returns deterministic answers from the local JSON store. Switch to Groq for real streaming LLM responses.</div>
-      </div>
-
-      <div class="form-field">
-        <label>Groq API Key</label>
-        <input class="form-input" type="password" id="setGroqKey" placeholder="gsk_...">
-        <div class="hint">Stored in your browser localStorage only. Get one at <a href="https://console.groq.com" target="_blank">console.groq.com</a>.</div>
-      </div>
-
-      <div class="form-field">
-        <label>Groq Model</label>
-        <select class="form-select" id="setGroqModel">
-          <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile · default</option>
-          <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant · fast</option>
-          <option value="mixtral-8x7b-32768">Mixtral 8x7B · 32K context</option>
-          <option value="gemma2-9b-it">Gemma 2 9B IT</option>
-        </select>
-      </div>
-
-      <div class="form-field">
-        <label>Ollama Base URL (optional fallback)</label>
-        <input class="form-input" type="text" id="setOllamaBase" placeholder="http://localhost:11434">
-      </div>
-
-      <div class="form-field">
-        <label>Ollama Chat Model</label>
-        <input class="form-input" type="text" id="setOllamaModel" placeholder="gemma3:1b">
-      </div>
-
-      <hr style="border-color:var(--card-border); margin: 4px 0">
-
-      <div class="form-field">
-        <label>GitHub Repo (for write-back via Contents API)</label>
-        <input class="form-input" type="text" id="setGhRepo" placeholder="owner/repo">
-        <div class="hint">Leave blank for demo mode (writes only update the in-memory cache).</div>
-      </div>
-
-      <div class="form-field">
-        <label>GitHub Branch</label>
-        <input class="form-input" type="text" id="setGhBranch" placeholder="main">
-      </div>
-
-      <div class="form-field">
-        <label>GitHub PAT (classic, <code>repo</code> scope)</label>
-        <input class="form-input" type="password" id="setGhToken" placeholder="ghp_...">
-        <div class="hint">Enables CRUD writes that commit back to the repo, with full git history as audit trail.</div>
-      </div>
-
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn--ghost" id="settingsCancel">Cancel</button>
-      <button class="btn btn--primary" id="settingsSave">Save settings</button>
-    </div>
-  </div>
 </div>
 
 <!-- ════════════════════════ TOAST STACK ════════════════════════ -->
@@ -374,6 +297,7 @@
   // Smooth scroll for section nav
   document.querySelectorAll('.section-nav__item').forEach(link => {
     link.addEventListener('click', e => {
+      if (!link.dataset.target) return; // external link (e.g. Visuals Gallery) — let it navigate
       e.preventDefault();
       const target = document.getElementById(link.dataset.target);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });

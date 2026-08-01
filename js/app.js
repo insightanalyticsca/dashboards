@@ -537,7 +537,7 @@
     
     wireDropzone();
     wireChat();
-    wireSettings();
+    // wireSettings(); // removed — gear/modal non-functional
   }
 
   if (document.readyState === 'loading') {

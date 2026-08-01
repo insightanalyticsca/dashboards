@@ -17,7 +17,7 @@
     ghBranch: localStorage.getItem('docchat.gh.branch') || 'main',
     ghToken: localStorage.getItem('docchat.gh.token') || '',
     // AI provider
-    provider: localStorage.getItem('docchat.provider') || 'demo',
+    provider: localStorage.getItem('docchat.provider') || 'groq',
     groqKey: localStorage.getItem('docchat.groq.key') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile',
     ollamaBase: localStorage.getItem('docchat.ollama.base') || 'http://localhost:11434',
