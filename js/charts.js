@@ -475,8 +475,10 @@
   function startHeroNetwork(canvas) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let W = canvas.width = canvas.offsetWidth * devicePixelRatio;
-    let H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+    let cw = canvas.offsetWidth || canvas.parentElement.offsetWidth || 300;
+    let ch = canvas.offsetHeight || canvas.parentElement.offsetHeight || 300;
+    let W = canvas.width = cw * devicePixelRatio;
+    let H = canvas.height = ch * devicePixelRatio;
     ctx.scale(devicePixelRatio, devicePixelRatio);
 
     const nodes = [];

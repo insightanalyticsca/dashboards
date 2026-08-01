@@ -457,9 +457,28 @@
             const data = categories.map((name, index) => ({ name, value: number(first.data?.[index]) ?? 0 }));
             return {
                 color: palette(),
-                tooltip: { trigger: 'item', valueFormatter: v => formatValue(v, chart.valueFormat || 'number') },
-                legend: { bottom: 2, type: 'scroll', textStyle: { fontSize: 9 } },
-                series: [{ type: 'pie', radius: ['44%', '70%'], center: ['50%', '45%'], label: { fontSize: 9 }, data }]
+                tooltip: { 
+                    trigger: 'item', 
+                    valueFormatter: v => formatValue(v, chart.valueFormat || 'number'),
+                    backgroundColor: 'rgba(255,255,255,0.97)',
+                    borderColor: 'rgba(99,102,241,0.30)',
+                    borderWidth: 1,
+                    textStyle: { color: '#1e293b', fontSize: 11, fontWeight: 600 }
+                },
+                legend: { bottom: 2, type: 'scroll', textStyle: { fontSize: 10, color: '#1e293b', fontWeight: 600 } },
+                series: [{ 
+                    type: 'pie', 
+                    radius: ['44%', '70%'], 
+                    center: ['50%', '45%'], 
+                    label: { 
+                        fontSize: 10, 
+                        color: '#1e293b', 
+                        fontWeight: 600,
+                        formatter: '{b}: {d}%'
+                    },
+                    labelLine: { lineStyle: { color: '#64748b' } },
+                    data 
+                }]
             };
         }
 
@@ -502,6 +521,7 @@
                 type: 'category',
                 data: categories,
                 axisLabel: { color: '#1e293b', fontSize: 9, interval: 0, hideOverlap: true, fontWeight: 600 },
+                axisLine: { lineStyle: { color: '#94a3b8' } },
                 axisTick: { show: false }
             },
             yAxis: [
