@@ -482,7 +482,7 @@
     ctx.scale(devicePixelRatio, devicePixelRatio);
 
     const nodes = [];
-    const NODE_COUNT = 28;
+    const NODE_COUNT = 50;
     const colors = [PAL.primary, PAL.accent, PAL.hot, PAL.success];
 
     for (let i = 0; i < NODE_COUNT; i++) {
@@ -491,7 +491,7 @@
         y: Math.random() * canvas.offsetHeight,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        r: 2 + Math.random() * 3,
+        r: 3 + Math.random() * 4,
         c: colors[Math.floor(Math.random() * colors.length)]
       });
     }
@@ -514,8 +514,8 @@
           const dx = nodes[i].x - nodes[j].x;
           const dy = nodes[i].y - nodes[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 130) {
-            const alpha = (1 - dist / 130) * 0.32;
+          if (dist < 150) {
+            const alpha = (1 - dist / 150) * 0.50;
             ctx.strokeStyle = withAlpha(nodes[i].c, alpha);
             ctx.lineWidth = 0.8;
             ctx.beginPath();
@@ -530,7 +530,7 @@
       for (const n of nodes) {
         ctx.fillStyle = n.c;
         ctx.shadowColor = n.c;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 20;
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx.fill();
