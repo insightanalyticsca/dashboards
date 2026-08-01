@@ -23,7 +23,7 @@
       subtextStyle: { color: '#64748b', fontSize: 11 }
     },
     legend: {
-      textStyle: { color: '#475569', fontSize: 11 },
+      textStyle: { color: '#334155', fontSize: 11 },
       pageTextStyle: { color: '#475569' },
       icon: 'circle', itemWidth: 8, itemHeight: 8
     },
@@ -41,14 +41,14 @@
     categoryAxis: {
       axisLine: { lineStyle: { color: 'rgba(0,0,0,0.12)' } },
       axisTick: { show: false },
-      axisLabel: { color: '#64748b', fontSize: 11 },
+      axisLabel: { color: '#475569', fontSize: 11 },
       splitLine: { show: false }
     },
     valueAxis: {
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: '#64748b', fontSize: 11 },
-      splitLine: { lineStyle: { color: 'rgba(0,0,0,0.06)', type: 'dashed' } }
+      axisLabel: { color: '#475569', fontSize: 11 },
+      splitLine: { lineStyle: { color: 'rgba(0,0,0,0.10)', type: 'dashed' } }
     },
     line: {
       lineStyle: { width: 2.5, shadowColor: 'rgba(99,102,241,0.4)', shadowBlur: 6 },
@@ -86,7 +86,7 @@
       subtextStyle: { color: '#94a3b8', fontSize: 11 }
     },
     legend: {
-      textStyle: { color: '#cbd5e1', fontSize: 11 },
+      textStyle: { color: '#dce4f0', fontSize: 11 },
       pageTextStyle: { color: '#cbd5e1' },
       icon: 'circle', itemWidth: 8, itemHeight: 8
     },
@@ -104,13 +104,13 @@
     categoryAxis: {
       axisLine: { lineStyle: { color: 'rgba(255,255,255,0.10)' } },
       axisTick: { show: false },
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
+      axisLabel: { color: '#b0bcd4', fontSize: 11 },
       splitLine: { show: false }
     },
     valueAxis: {
       axisLine: { show: false },
       axisTick: { show: false },
-      axisLabel: { color: '#94a3b8', fontSize: 11 },
+      axisLabel: { color: '#b0bcd4', fontSize: 11 },
       splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)', type: 'dashed' } }
     },
     line: {

@@ -412,3 +412,64 @@ code, .codebox {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Executive text contrast overrides ── */
+.exec-title { color: var(--exec-primary) !important; }
+.exec-metric-label { color: var(--exec-ink) !important; font-weight: 700 !important; }
+.exec-metric-value { color: var(--exec-ink) !important; }
+.exec-metric-period { color: var(--exec-muted) !important; }
+.exec-asof { color: var(--exec-muted) !important; }
+.exec-panel-title { color: var(--exec-ink) !important; }
+.exec-notes { color: var(--exec-muted) !important; }
+.exec-delta.good { color: #059669 !important; }
+.exec-delta.bad { color: #dc2626 !important; }
+
+/* ── ECharts axis/label contrast ── */
+[data-theme="light"] .exec-chart .ec-text,
+[data-theme="light"] .exec-chart text {
+  fill: #1e293b !important;
+  color: #1e293b !important;
+}
+[data-theme="dark"] .exec-chart .ec-text,
+[data-theme="dark"] .exec-chart text {
+  fill: #e2e8f0 !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── Canvas tile text (CSR/ITS pages) ── */
+.canvas-tile-title { color: var(--exec-ink) !important; }
+.canvas-tile-head { color: var(--exec-ink) !important; }
+[data-theme="dark"] .canvas-tile-title { color: #f1f5f9 !important; }
+[data-theme="dark"] .canvas-tile-head { color: #f1f5f9 !important; }
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   EXECUTIVE DASHBOARD VARIABLE OVERRIDES — fix contrast in both themes
+   ════════════════════════════════════════════════════════════════════════════ */
+:root, [data-theme="light"] {
+  --exec-bg: #f0f2f8;
+  --exec-panel: #ffffff;
+  --exec-ink: #171777;
+  --exec-muted: #3b4a6b;
+  --exec-border: rgba(23,23,119,0.15);
+  --exec-grid: #e2e6f0;
+  --exec-primary: #0808ee;
+  --exec-secondary: #09c698;
+  --exec-accent: #bbff05;
+  --exec-highlight: #38bdf8;
+  --exec-shadow: 0 8px 22px rgba(23,23,119,0.10);
+}
+
+[data-theme="dark"] {
+  --exec-bg: #0a0e27;
+  --exec-panel: rgba(255,255,255,0.04);
+  --exec-ink: #818cf8;
+  --exec-muted: #b0bcd4;
+  --exec-border: rgba(255,255,255,0.10);
+  --exec-grid: rgba(255,255,255,0.06);
+  --exec-primary: #818cf8;
+  --exec-secondary: #22d3ee;
+  --exec-accent: #fbbf24;
+  --exec-highlight: #38bdf8;
+  --exec-shadow: 0 8px 22px rgba(0,0,0,0.40);
+}
