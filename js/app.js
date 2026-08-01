@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   app.js — DocChat demo UI logic
+   app.js — Dashboards Studio demo UI logic
    - Loads JSON
    - Renders library, chat, analytics
    - Wires Settings modal (Groq / Ollama / GitHub)
@@ -11,8 +11,8 @@
 
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
-  const api = window.DocChatAPI;
-  const charts = window.DocChatCharts;
+  const api = window.Dashboards StudioAPI;
+  const charts = window.Dashboards StudioCharts;
 
   // ─── State ────────────────────────────────────────────────────────────────
   const state = {
@@ -518,7 +518,7 @@
       await renderAnalytics();
       // Seed a welcome chat message
       appendMessage('assistant',
-        'Hi! I\'m DocChat. Ask me about the indexed documents — financial performance, AR aging, security incidents, e-bill adoption, or anything else. Try a quick-prompt below.',
+        'Hi! I\'m Dashboards Studio. Ask me about the indexed documents — financial performance, AR aging, security incidents, e-bill adoption, or anything else. Try a quick-prompt below.',
         [], { model: 'demo', provider: 'demo' });
     } catch (err) {
       toast('Failed to initialize: ' + err.message, 'err');
@@ -527,7 +527,7 @@
 
     // Check if Groq config loaded after boot (async)
     setTimeout(function() {
-      var cfg = window.DocChatAPI?.Config?.get();
+      var cfg = window.Dashboards StudioAPI?.Config?.get();
       if (cfg && cfg.provider === 'groq' && cfg.groqKey) {
         updateProviderPill();
         var status = document.getElementById('composerStatus');

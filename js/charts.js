@@ -555,7 +555,7 @@
   window.addEventListener('resize', resizeAll);
 
   // ─── Export ──────────────────────────────────────────────────────────────
-  global.DocChatCharts = {
+  global.Dashboards StudioCharts = {
     renderHealthGauge,
     renderDocTypesRose,
     renderUploadsTrend,

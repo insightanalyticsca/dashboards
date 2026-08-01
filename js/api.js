@@ -343,7 +343,7 @@
       `[${i + 1}] (doc: ${s.documentId}, page: ${s.page || '?'}, score: ${s.score.toFixed(2)})\n${s.text}`
     ).join('\n\n');
 
-    const systemPrompt = `You are DocChat, an assistant that answers strictly from the provided document excerpts.
+    const systemPrompt = `You are Dashboards Studio, an assistant that answers strictly from the provided document excerpts.
 Cite sources using [N] notation matching the bracketed indices above.
 If the excerpts don't contain the answer, say so honestly. Do not invent facts.
 Keep responses to 3-5 sentences unless the user asks for more detail.`;
@@ -428,7 +428,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
       .catch(function() {});
   })();
 
-  global.DocChatAPI = {
+  global.Dashboards StudioAPI = {
     Documents, Chunks, Queries, Analytics,
     Config, retrieve, ask
   };

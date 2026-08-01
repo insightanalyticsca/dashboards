@@ -253,7 +253,7 @@
   async function ask(question, onToken) {
     var visualContext = buildVisualContext();
 
-    var systemPrompt = 'You are DocChat, an assistant that answers questions about dashboard data.\n' +
+    var systemPrompt = 'You are Dashboards Studio, an assistant that answers questions about dashboard data.\n' +
       'You have access to the visual data from the current dashboard version.\n' +
       'Answer based on the provided dashboard data. Cite metrics by their label.\n' +
       'If the data does not contain the answer, say so honestly.\n' +
