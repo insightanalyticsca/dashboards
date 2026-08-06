@@ -64,6 +64,19 @@ body[data-variant="blue"] {
     gap: 8px;
 }
 
+/* On mobile: allow the page to scroll so the fixed-height canvas is fully visible.
+   Landscape mode especially needs this — viewport is too short for the dashboard. */
+@media (max-width: 1024px) {
+    .exec-page {
+        overflow: visible;
+        height: auto;
+        min-height: 0;
+    }
+    .exec-canvas {
+        overflow: visible !important;
+    }
+}
+
 .exec-header {
     min-height: 38px;
     display: flex;

@@ -546,7 +546,7 @@
           <button class="exec-reset-btn" type="button" onclick="if(confirm('Reset all visuals to default positions?')) { window.__execResetLayout(); }"><i class="fa-solid fa-rotate-left"></i> Reset</button>
         </div>
       </header>
-      <div class="exec-canvas" style="min-height:calc(100vh - 120px)"></div>
+      <div class="exec-canvas" style="min-height:calc(100vh - 120px)" data-design-height="960"></div>
       ${Array.isArray(payload.notes) && payload.notes.length
                 ? `<div class="exec-notes">${payload.notes.map(note => `<div>${esc(note)}</div>`).join('')}</div>`
                 : ''}
@@ -605,7 +605,30 @@
         }
     }
 
-    const resize = () => resizeChartsSoon();
+    const resize = () => {
+        resizeChartsSoon();
+        // On mobile/landscape: set canvas to fixed design height so tiles get
+        // their full designed height (percentages need a real pixel parent).
+        // Without this, landscape viewport is too short and charts get cut in half.
+        const canvas = document.querySelector('.exec-canvas');
+        if (canvas) {
+            const designHeight = parseInt(canvas.dataset.designHeight || '960', 10);
+            const isMobile = window.innerWidth < 1024;
+            if (isMobile) {
+                canvas.style.height = designHeight + 'px';
+                canvas.style.minHeight = designHeight + 'px';
+                canvas.style.overflow = 'visible';
+                canvas.parentElement.style.overflowY = 'auto';
+            } else {
+                canvas.style.height = '';
+                canvas.style.minHeight = 'calc(100vh - 120px)';
+                canvas.style.overflow = '';
+                canvas.parentElement.style.overflowY = '';
+            }
+            // Resize charts after canvas height settles
+            setTimeout(() => resizeChartsSoon(), 50);
+        }
+    };
     window.addEventListener('resize', resize);
     window.addEventListener('message', event => {
         if (event.origin !== window.location.origin) return;
@@ -627,4 +650,6 @@
     } catch (_) { }
 
     load();
+    // Apply canvas height fix after initial load
+    setTimeout(() => resize(), 500);
 })();
