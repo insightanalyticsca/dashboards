@@ -605,8 +605,36 @@
         }
     }
 
-    const resize = () => resizeChartsSoon();
+    const resize = () => {
+        resizeChartsSoon();
+        // Scale the entire canvas to fit the viewport on mobile/PWA.
+        // This preserves the dashboard's visual composition — tiles stay in their
+        // original positions, just proportionally smaller. Like zooming out.
+        applyResponsiveScale();
+    };
     window.addEventListener('resize', resize);
+
+    function applyResponsiveScale() {
+        const canvas = document.querySelector('.exec-canvas');
+        if (!canvas) return;
+        const vw = window.innerWidth;
+        // Design width: 1280px (standard dashboard canvas). Below that, scale down.
+        const designWidth = 1280;
+        if (vw < designWidth) {
+            const scale = Math.max(0.3, vw / designWidth);
+            canvas.style.transformOrigin = 'top left';
+            canvas.style.transform = `scale(${scale})`;
+            // Adjust container height to account for scaled-down canvas
+            const originalHeight = canvas.scrollHeight;
+            canvas.parentElement.style.height = (originalHeight * scale) + 'px';
+        } else {
+            canvas.style.transform = '';
+            canvas.style.transformOrigin = '';
+            canvas.parentElement.style.height = '';
+        }
+        // Resize charts after scale settles
+        setTimeout(() => resizeChartsSoon(), 100);
+    }
     window.addEventListener('message', event => {
         if (event.origin !== window.location.origin) return;
         const message = event.data || {};
@@ -627,4 +655,6 @@
     } catch (_) { }
 
     load();
+    // Apply responsive scale after initial load
+    setTimeout(() => applyResponsiveScale(), 500);
 })();

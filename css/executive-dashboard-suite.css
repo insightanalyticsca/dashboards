@@ -359,6 +359,9 @@ html, body, #app {
     overflow: hidden;
     border: 1px solid rgba(216, 222, 234, .72);
     background: linear-gradient(135deg, rgba(8, 8, 238, .018), transparent 34%), var(--exec-bg);
+    /* On mobile, JS applies transform: scale() to fit the viewport.
+       The canvas keeps its natural layout width; scaling shrinks everything
+       proportionally — tiles, text, charts — like zooming out. */
 }
 
 .exec-visual {
@@ -457,7 +460,9 @@ html, body, #app {
 
 @media (max-width: 900px) {
     .exec-visual {
-        min-width: 220px;
+        /* Remove min-width so tiles don't overflow on mobile — the JS scale
+           transform handles fitting everything into the viewport. */
+        min-width: 0;
     }
 }
 
