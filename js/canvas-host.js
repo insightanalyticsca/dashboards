@@ -81,67 +81,74 @@
     // Load saved layout before computing defaults
     loadLayout();
 
+    // Responsive: ALWAYS keep the original 12-column layout.
+    // Tiles scale proportionally — a row of 4 cards (each w=3) stays as 4 cards
+    // across the full width on every screen size. No column reduction, no piling.
+    function responsiveColCount() {
+      return 12;
+    }
+
     // Compute default layout from config (grid → absolute positions)
+    // Always uses 12 columns — tiles scale proportionally on narrow screens.
     function computeDefaultLayout() {
       var colCount = 12;
-      var x = 0, y = 0, rowH = 0;
       var gapX = 0.4, gapY = 0.5;
-      var totalUnits = 0;
       var placements = [];
 
+      // First pass: assign each visual to a row, tracking row widths/heights
+      var rows = [];
+      var currentRow = { tiles: [], maxHeight: 0, currentWidth: 0 };
+      
       config.visuals.forEach(function(vis, idx) {
         var span = vis.w || 6;
-        var h = vis.h || 320;
-        // Convert pixel height to "units" (rough: 1 unit ≈ 80px)
-        var hUnits = h / 80;
-
-        if (x > 0 && x + span > colCount) {
-          y += rowH + gapY;
-          x = 0;
-          rowH = 0;
+        if (span > colCount) span = colCount;
+        
+        if (currentRow.currentWidth + span > colCount && currentRow.tiles.length > 0) {
+          rows.push(currentRow);
+          currentRow = { tiles: [], maxHeight: 0, currentWidth: 0 };
         }
-        placements.push({
-          id: vis.id,
-          x: (x / colCount) * 100 + gapX / 2,
-          y: 0, // will compute after totalUnits
-          w: (span / colCount) * 100 - gapX,
-          h: 0, // will compute after totalUnits
-          hUnits: hUnits
+        
+        currentRow.tiles.push({ idx: idx, span: span, h: vis.h || 320 });
+        currentRow.currentWidth += span;
+        currentRow.maxHeight = Math.max(currentRow.maxHeight, vis.h || 320);
+      });
+      if (currentRow.tiles.length > 0) rows.push(currentRow);
+
+      // Second pass: compute x/y/w/h as percentages
+      var totalHeight = rows.reduce(function(sum, r) { return sum + r.maxHeight; }, 0);
+      var yPos = 0;
+      
+      rows.forEach(function(row) {
+        var rowHeightPct = (row.maxHeight / totalHeight) * 100;
+        var xPos = 0;
+        
+        row.tiles.forEach(function(t) {
+          var vis = config.visuals[t.idx];
+          var wPct = (t.span / colCount) * 100 - gapX;
+          var hPct = rowHeightPct - gapY;
+          
+          placements.push({
+            id: vis.id,
+            x: xPos + gapX / 2,
+            y: yPos + gapY / 2,
+            w: wPct,
+            h: hPct,
+            z: 100 + t.idx
+          });
+          xPos += (t.span / colCount) * 100;
         });
-        x += span;
-        rowH = Math.max(rowH, hUnits);
+        
+        yPos += rowHeightPct;
       });
 
-      totalUnits = Math.max(6, y + rowH);
-      placements.forEach(function(p) {
-        // Recompute y from stored row info
-      });
-
-      // Recompute y positions
-      x = 0; y = 0; rowH = 0;
-      placements.forEach(function(p, idx) {
-        var vis = config.visuals[idx];
-        var span = vis.w || 6;
-        if (x > 0 && x + span > colCount) {
-          y += rowH + gapY;
-          x = 0;
-          rowH = 0;
-        }
-        p.y = (y / totalUnits) * 100 + gapY / 2;
-        p.h = (vis.h || 320) / (totalUnits * 80) * 100 - gapY;
-        p.x = (x / colCount) * 100 + gapX / 2;
-        p.w = (span / colCount) * 100 - gapX;
-        p.z = 100 + idx;
-        x += span;
-        rowH = Math.max(rowH, (vis.h || 320) / 80);
-      });
-
-      // Set canvas min-height
-      canvas.style.minHeight = '400px'; canvas.style.height = 'calc(100vh - 160px)';
+      // Canvas height: fit viewport on all sizes — tiles scale proportionally
+      canvas.style.minHeight = '400px';
+      canvas.style.height = 'calc(100vh - 160px)';
       return placements;
     }
 
     var placements = computeDefaultLayout();
+    state._lastColCount = responsiveColCount();
     placements.forEach(function(p) {
       state.defaultLayout[p.id] = { x: p.x, y: p.y, w: p.w, h: p.h, z: p.z };
     });
@@ -363,6 +370,34 @@
       .catch(function(err) {
         canvas.innerHTML = '<div style="padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ' + err.message + '</div>';
       });
+
+    // Responsive: recompute layout on viewport resize (debounced)
+    var resizeTimer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        // Only recompute if column count actually changed
+        var newCols = responsiveColCount();
+        if (newCols !== state._lastColCount) {
+          state._lastColCount = newCols;
+          // Clear overrides so tiles snap to the new responsive layout
+          state.overrides = {};
+          var newPlacements = computeDefaultLayout();
+          newPlacements.forEach(function(p) {
+            state.defaultLayout[p.id] = { x: p.x, y: p.y, w: p.w, h: p.h, z: p.z };
+          });
+          // Re-apply geometry to all tiles
+          config.visuals.forEach(function(vis) {
+            var tile = canvas.querySelector('[data-visual-id="' + vis.id + '"]');
+            if (tile) {
+              applyVisualGeometry(tile, visualGeometry(vis.id));
+              var iframe = tile.querySelector('iframe');
+              if (iframe) resizeIframeCharts(iframe);
+            }
+          });
+        }
+      }, 150);
+    });
   }
 
   if (document.readyState === 'loading') {

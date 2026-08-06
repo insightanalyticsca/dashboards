@@ -356,32 +356,14 @@ html, body {
 .canvas-reset-btn:active { transform: translateY(0); }
 
 /* ════════════════════════════════════════════════════════════════════════════
-   RESPONSIVE — mobile
+   RESPONSIVE — mobile/PWA
+   Tiles ALWAYS keep the same column layout as desktop (12-col grid).
+   They scale proportionally — a row of 4 cards stays as 4 cards, just smaller.
+   No column reduction, no piling into single column.
    ════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  .canvas-grid {
-    /* Switch to relative flow on mobile — tiles stack vertically */
-    position: relative;
-    min-height: auto;
-  }
-
-  .canvas-tile {
-    /* Override absolute positioning on mobile */
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 360px;
-    margin-bottom: 8px;
-  }
-
-  .canvas-tile-body iframe {
-    min-height: 300px;
-  }
-
-  .canvas-page { padding: 8px; }
+  .canvas-page { padding: 4px; }
 
   .canvas-header {
     flex-direction: column;
@@ -389,11 +371,22 @@ html, body {
     gap: 4px;
   }
 
-  .canvas-title { font-size: 16px; }
+  .canvas-title { font-size: 13px; }
+  .canvas-asof { font-size: 9px; }
 
-  /* Hide drag/resize handles on mobile */
+  .canvas-tile-head {
+    padding: 3px 5px;
+    font-size: 8px;
+  }
+
+  /* Hide drag/resize handles on touch — users can't drag precisely on mobile */
   .canvas-layout-move,
   .canvas-layout-resize {
     display: none;
   }
+}
+
+@media (max-width: 480px) {
+  .canvas-page { padding: 2px; }
+  .canvas-tile-head { padding: 2px 4px; font-size: 7px; }
 }

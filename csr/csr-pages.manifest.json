@@ -68,14 +68,14 @@
           "options": {}
         },
         {
-          "id": "4f0c9a7b2e6d8c153a91",
+          "id": "8ab16b1c745ce1109ce0",
           "type": "columnChart",
           "position": {
-            "x": 53.02482876712329,
-            "y": 80.5726281163435,
-            "w": 46.919520547945204,
-            "h": 18.869027008310248,
-            "z": 7008
+            "x": 48.68085106382979,
+            "y": 53.56028368794326,
+            "w": 51.31914893617021,
+            "h": 19.5177304964539,
+            "z": 1000
           },
           "roles": {
             "Category": [
@@ -88,23 +88,13 @@
                 "queryRef": "agingcube_net.CategoryGroup"
               }
             ],
-            "Series": [
-              {
-                "kind": "column",
-                "entity": "agingcube_net",
-                "property": "Series",
-                "agg": "none",
-                "label": "Series",
-                "queryRef": "agingcube_net.Series"
-              }
-            ],
             "Y": [
               {
                 "kind": "column",
                 "entity": "agingcube_net",
                 "property": "Amount",
                 "agg": "sum",
-                "label": "Balance Overdue",
+                "label": "Sum of Amount",
                 "queryRef": "Sum(agingcube_net.Amount)"
               }
             ]
@@ -248,6 +238,25 @@
             }
           ],
           "options": {}
+        },
+        {
+          "id": "b5d2a26314058d28b9d3",
+          "type": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A",
+          "position": {
+            "x": 90.55319148936171,
+            "y": 73.07801418439716,
+            "w": 7.2340425531914905,
+            "h": 4.690307328605201,
+            "z": 5000
+          },
+          "roles": {},
+          "title": "",
+          "text": "+Snap",
+          "filters": [],
+          "options": {
+            "action": "flow",
+            "sourceVisualType": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A"
+          }
         },
         {
           "id": "26d33e960ba87850b085",
@@ -2592,6 +2601,25 @@
           "title": ""
         },
         {
+          "id": "ea77c1555d7d15595ce3",
+          "type": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A",
+          "position": {
+            "x": 90.55319148936171,
+            "y": 73.07801418439716,
+            "w": 7.2340425531914905,
+            "h": 4.690307328605201,
+            "z": 5000
+          },
+          "roles": {},
+          "title": "",
+          "text": "+Snap",
+          "filters": [],
+          "options": {
+            "action": "flow",
+            "sourceVisualType": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A"
+          }
+        },
+        {
           "id": "bfb358f7aa3a877e0665",
           "type": "columnChart",
           "position": {
@@ -4880,6 +4908,25 @@
           },
           "text": "Top Credit Balances Older Than 30 Days",
           "title": ""
+        },
+        {
+          "id": "1dfb4cf210073c80647e",
+          "type": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A",
+          "position": {
+            "x": 90.55319148936171,
+            "y": 73.07801418439716,
+            "w": 7.2340425531914905,
+            "h": 4.690307328605201,
+            "z": 5000
+          },
+          "roles": {},
+          "title": "",
+          "text": "+Snap",
+          "filters": [],
+          "options": {
+            "action": "flow",
+            "sourceVisualType": "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A"
+          }
         },
         {
           "id": "89f6616b483c40b0656c",

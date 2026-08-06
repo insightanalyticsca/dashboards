@@ -1,54 +1,477 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>CSR Visual</title>
-  <link rel="stylesheet" data-csr-runtime-style href="../css/csr-dashboard-runtime.css?v=executive-dashboard.css?v=20260724-polish-3">
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-  <script src="../js/csr-dashboard-runtime.js?v=executive-dashboard.css?v=20260724-polish-3"></script>
-  <style>
-    html,body,#csr-root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent}
-    #csr-bootstrap-error{position:absolute;inset:0;display:none;place-items:center;padding:12px;text-align:center;font:600 11px/1.4 Inter,Segoe UI,Arial,sans-serif;color:#a82c4d;background:rgba(255,240,245,.82)}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CSR Visual</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+:root {
+  --bg: #f7f9fc;
+  --ink: #1a2342;
+  --ink-2: #4a5578;
+  --muted: #8893b0;
+  --line: rgba(26,35,66,.08);
+  --line-2: rgba(26,35,66,.04);
+  --card: rgba(255,255,255,.88);
+  --accent: #4c6fff;
+  --accent-2: #14c8a7;
+  --good: #08c995;
+  --bad: #e53e6b;
+  --watch: #f0a020;
+  --shadow: 0 2px 8px rgba(26,35,66,.06);
+  --radius: 8px;
+  --font: Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.theme-dark {
+  --bg: #0a0f1e;
+  --ink: #e8edff;
+  --ink-2: #b4c0e0;
+  --muted: #6b7ba0;
+  --line: rgba(140,160,200,.12);
+  --line-2: rgba(140,160,200,.06);
+  --card: rgba(20,28,48,.82);
+  --shadow: 0 2px 8px rgba(0,0,0,.30);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+.root {
+  position: relative; width: 100%; height: 100%; min-width: 60px; min-height: 40px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg), rgba(255,255,255,.5));
+  border-radius: var(--radius);
+}
+.theme-dark .root { background: linear-gradient(135deg, var(--bg), rgba(20,28,48,.6)); }
+
+.stage { position: relative; width: 100%; height: 100%; }
+
+/* Inline title — rendered inside the visual */
+.viz-title {
+  position: absolute; top: 6px; left: 10px; z-index: 5;
+  font-size: 11px; font-weight: 500; color: var(--ink-2);
+  letter-spacing: -.005em; pointer-events: none;
+  max-width: calc(100% - 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.viz-title.empty { display: none; }
+
+.chart { position: absolute; inset: 0; }
+
+.kpi { position: absolute; inset: 0; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; justify-content: center; }
+.kpi-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.kpi-value { font-size: clamp(20px, 4vw, 38px); font-weight: 600; letter-spacing: -.03em; line-height: 1.1; color: var(--ink); }
+.kpi-sub { font-size: 10px; color: var(--muted); }
+.kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px; }
+.kpi-delta.up { color: var(--good); background: rgba(8,201,149,.10); }
+.kpi-delta.down { color: var(--bad); background: rgba(229,62,107,.10); }
+.kpi-delta.flat { color: var(--muted); background: rgba(136,147,176,.10); }
+
+.metric-grid { position: absolute; inset: 4px; padding: 4px; display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 4px; }
+.metric { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow); }
+.metric-label { font-size: 8px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.metric-value { font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; color: var(--ink); letter-spacing: -.02em; }
+
+.tbl-wrap { position: absolute; inset: 4px; overflow: auto; border-radius: 6px; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 10px; color: var(--ink); }
+.tbl thead th { position: sticky; top: 0; z-index: 2; background: var(--ink); color: #fff; font-weight: 500; text-align: left; padding: 4px 6px; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+.tbl tbody td { padding: 3px 6px; border-bottom: 1px solid var(--line-2); white-space: nowrap; }
+.tbl tbody tr:nth-child(even) td { background: rgba(26,35,66,.02); }
+.tbl tbody tr:hover td { background: rgba(76,111,255,.05); }
+.tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.pivot-wrap { position: absolute; inset: 4px; overflow: auto; border-radius: 6px; }
+.pivot { width: 100%; border-collapse: collapse; font-size: 10px; color: var(--ink); }
+.pivot thead th { position: sticky; top: 0; z-index: 2; background: var(--ink); color: #fff; font-weight: 500; text-align: center; padding: 4px 6px; font-size: 9px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+.pivot thead th:first-child { text-align: left; }
+.pivot tbody td { padding: 3px 6px; border-bottom: 1px solid var(--line-2); border-right: 1px solid var(--line-2); text-align: right; font-variant-numeric: tabular-nums; }
+.pivot tbody td:first-child { text-align: left; font-weight: 500; color: var(--ink); background: rgba(26,35,66,.025); }
+
+.textbox { position: absolute; inset: 6px 10px; display: flex; align-items: center; justify-content: flex-start; overflow: hidden; color: var(--ink-2); font-size: clamp(10px, .9vw, 13px); font-weight: 500; letter-spacing: .01em; }
+
+.action-btn { position: absolute; inset: 6px; display: flex; align-items: center; justify-content: center; border-radius: 6px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; font-weight: 500; font-size: 11px; cursor: pointer; border: none; box-shadow: 0 2px 6px rgba(76,111,255,.25); transition: transform .12s ease, box-shadow .12s ease; }
+.action-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(76,111,255,.35); }
+
+.slicer { position: absolute; inset: 6px; display: flex; align-items: center; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; box-shadow: var(--shadow); transition: border-color .12s ease; }
+.slicer:hover { border-color: var(--accent); }
+.slicer-label { font-size: 9px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.slicer-value { font-size: 11px; font-weight: 400; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.slicer-caret { font-size: 8px; color: var(--muted); }
+
+.map-wrap { position: absolute; inset: 0; background: radial-gradient(circle at 30% 40%, rgba(20,200,167,.08), transparent 40%), radial-gradient(circle at 70% 60%, rgba(168,255,0,.04), transparent 45%), var(--bg); }
+
+.loading, .empty, .error { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 10px; font-weight: 400; text-align: center; padding: 8px; }
+.loading::before { content: ""; position: absolute; width: 20px; height: 20px; border: 2px solid rgba(76,111,255,.15); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; }
+.loading-text::after { content: attr(data-text); position: absolute; top: calc(50% + 16px); }
+.error { color: var(--bad); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
-  <div id="csr-root"></div>
-  <div id="csr-bootstrap-error"></div>
-  <script>
-    (function () {
-      'use strict';
-      const root = document.getElementById('csr-root');
-      const errorHost = document.getElementById('csr-bootstrap-error');
-      const query = new URLSearchParams(location.search);
-      const templateId = String(query.get('templateId') || '').trim();
+<div class="root" id="root">
+  <div class="stage" id="stage">
+    <div class="loading loading-text" data-text="Loading">Loading</div>
+  </div>
+</div>
+<script>
+/* ============================================================================
+   CSR Visual — data-receiver template (mirrors cx-visual.html pattern).
+   Receives pre-aggregated rows via renderCsrVisual(payload) / postMessage.
+   Does NOT fetch its own data — parent (Multi.cshtml) loads data via
+   /Dashboard/Aggregate and pushes it in.
+   ============================================================================ */
+(function (global) {
+  "use strict";
+  var root = document.getElementById("root");
+  var stage = document.getElementById("stage");
+  var state = { cfg: {}, rows: [], charts: {}, rendered: false };
 
-      function fail(error) {
-        console.error('CSR visual bootstrap failed.', error);
-        errorHost.style.display = 'grid';
-        errorHost.textContent = error && error.message ? error.message : String(error || 'CSR visual could not start.');
-      }
+  var PALETTE = ["#4c6fff","#14c8a7","#a8ff00","#e53e6b","#f0a020","#845ef7","#00d4ff","#ff8a65","#2dd4bf","#e879f9"];
 
-      async function start() {
-        if (!templateId) throw new Error('CSR visual templateId is missing.');
-        if (!window.CsrDashboardRuntime || typeof window.CsrDashboardRuntime.start !== 'function') {
-          throw new Error('CSR shared runtime did not load.');
+  // ── Helpers ──
+  function fld(r, n) {
+    if (!r || n == null) return undefined;
+    if (r.hasOwnProperty(n)) return r[n];
+    var k = String(n).toLowerCase().replace(/[\s_\-\.]/g, "");
+    for (var key in r) { if (String(key).toLowerCase().replace(/[\s_\-\.]/g, "") === k) return r[key]; }
+    return undefined;
+  }
+  function num(v) { if (v == null || v === "") return NaN; if (typeof v === "number") return v; return parseFloat(String(v).replace(/[$,€£\s%]/g, "")); }
+  function fmt(v, spec) {
+    if (v == null || v === "") return "";
+    var n = num(v); if (isNaN(n)) return String(v);
+    spec = (spec || "").toLowerCase();
+    if (spec === "percent" || spec === "pct") return (n * 100).toFixed(1) + "%";
+    if (spec === "integer" || spec === "count") return Math.round(n).toLocaleString();
+    if (spec === "currency") return "$" + fmtCompact(n);
+    return fmtSmart(n);
+  }
+  function fmtSmart(n) {
+    if (isNaN(n)) return ""; var a = Math.abs(n);
+    if (a >= 1e9) return (n/1e9).toFixed(2) + "B";
+    if (a >= 1e6) return (n/1e6).toFixed(2) + "M";
+    if (a >= 1e3) return (n/1e3).toFixed(1) + "K";
+    return n % 1 === 0 ? n.toLocaleString() : n.toLocaleString(undefined, {maximumFractionDigits:2});
+  }
+  function fmtCompact(n) {
+    if (isNaN(n)) return ""; var a = Math.abs(n);
+    if (a >= 1e9) return (n/1e9).toFixed(1) + "B";
+    if (a >= 1e6) return (n/1e6).toFixed(1) + "M";
+    if (a >= 1e3) return (n/1e3).toFixed(0) + "K";
+    return Math.round(n).toString();
+  }
+  function esc(s) { return s == null ? "" : String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+  function uniqSorted(arr) { var s = {}, o = []; for (var i = 0; i < arr.length; i++) { var v = arr[i]; if (v == null) continue; var k = String(v); if (!s[k]) { s[k] = 1; o.push(v); } } o.sort(function(a,b){ var na=num(a), nb=num(b); if(!isNaN(na)&&!isNaN(nb)) return na-nb; return String(a).localeCompare(String(b)); }); return o; }
+
+  // ── Theme ──
+  function isDark() { return root.classList.contains("theme-dark"); }
+  function applyTheme(theme) {
+    root.classList.toggle("theme-dark", theme === "dark");
+    root.classList.toggle("theme-light", theme !== "dark");
+    // Re-render charts with new theme
+    if (state.rendered) rerender();
+  }
+
+  // ── Ingress: receive data from parent (mirrors cx-visual.html) ──
+  function ingest(payload) {
+    try {
+      if (!payload) return;
+      // Extract config + data from the payload (cx-visual envelope shape)
+      var cfg = payload.config || payload.Config || payload;
+      var data = payload.data || payload.rows || payload.rawRows || payload.result || [];
+      if (!Array.isArray(data) && data && data.data) data = data.data;
+      if (!Array.isArray(data)) data = [];
+
+      state.cfg = cfg;
+      state.rows = data;
+
+      // Apply theme if specified
+      var theme = cfg.theme || cfg.csrTheme || payload.theme;
+      if (theme) applyTheme(theme);
+
+      state.rendered = false;
+      rerender();
+    } catch (e) { showError(e); }
+  }
+
+  function rerender() {
+    try {
+      var cfg = state.cfg;
+      var visuals = cfg.visuals || (cfg.Visuals) || [];
+      if (!visuals.length) {
+        // No visuals array — try to infer from meta
+        if (state.rows.length) {
+          renderData(state.rows, cfg);
+          state.rendered = true;
+        } else {
+          showEmpty("Waiting for data");
         }
-
-        const endpoint = new URL('../Dashboard/GetCsrDefinition', location.href);
-        endpoint.searchParams.set('templateId', templateId);
-        const response = await fetch(endpoint, { credentials: 'same-origin', cache: 'no-store' });
-        if (!response.ok) throw new Error((await response.text()) || ('CSR definition request failed: HTTP ' + response.status));
-        const definition = await response.json();
-        definition.directSourceLoading = false;
-        definition.enableVisualLayoutEdit = false;
-        document.title = definition.title || 'CSR Visual';
-        window.CSR_PAGE_CONFIG = definition;
-        window.__csrDashboardInstance = window.CsrDashboardRuntime.start(root, definition);
+        return;
       }
+      var v = visuals[0];
+      renderVisual(v, state.rows);
+      state.rendered = true;
+    } catch (e) { showError(e); }
+  }
 
-      start().catch(fail);
-    })();
-  </script>
+  function renderVisual(v, rows) {
+    stage.innerHTML = "";
+    var title = v.title || v.text || state.cfg.title || state.cfg.Title || "";
+    if (title) {
+      var t = document.createElement("div"); t.className = "viz-title"; t.textContent = title;
+      stage.appendChild(t);
+    }
+    if (v.type === "textbox") { stage.innerHTML = '<div class="textbox">' + esc(v.text || v.title || "") + '</div>'; return; }
+    if (v.type === "actionButton" || v.type === "FlowVisual_C29F1DCC_81F5_4973_94AD_0517D44CC06A") { renderAction(v); return; }
+    if (!rows || !rows.length) { showEmpty("No data"); return; }
+    try {
+      switch (v.type) {
+        case "columnChart": case "barChart": case "lineChart": case "lineStackedColumnComboChart": drawChart(v, rows); break;
+        case "card": renderCard(v, rows, false); break;
+        case "multiRowCard": renderCard(v, rows, true); break;
+        case "tableEx": renderTable(v, rows); break;
+        case "pivotTable": renderPivot(v, rows); break;
+        case "slicer": renderSlicer(v, rows); break;
+        case "map": renderMap(v, rows); break;
+        default: showEmpty("Unsupported: " + v.type);
+      }
+    } catch (e) { showError(e); }
+  }
+
+  // Generic data renderer (when no visual config — just show rows)
+  function renderData(rows, cfg) {
+    stage.innerHTML = "";
+    renderTable({ roles: { Values: Object.keys(rows[0] || {}).slice(0, 8).map(function(k){ return {property: k, label: k}; }) } }, rows);
+  }
+
+  // ── Chart ──
+  function drawChart(v, rows) {
+    var d = document.createElement("div"); d.className = "chart"; d.style.top = "20px"; d.style.bottom = "0"; stage.appendChild(d);
+    var r = v.roles || {};
+    var catSpecs = r.Category || r.X || [];
+    var seriesSpecs = r.Series || [];
+    var ySpecs = r.Y || r.Values || [];
+    var y2Specs = r.Y2 || [];
+    var isH = v.type === "barChart", isCombo = v.type === "lineStackedColumnComboChart", isLine = v.type === "lineChart";
+
+    var catProp = catSpecs.length ? catSpecs[0].property : null;
+    var seriesProp = seriesSpecs.length ? seriesSpecs[0].property : null;
+    var yProp = ySpecs.length ? ySpecs[0].property : null;
+
+    // Build categories
+    var cats = [], catSet = {};
+    for (var i = 0; i < rows.length; i++) { var cv = fld(rows[i], catProp); var k = String(cv); if (!catSet[k]) { catSet[k] = 1; cats.push(cv); } }
+    var ss = (v.sort || [])[0];
+    if (ss) { var dir = (ss.direction||"").toLowerCase()==="desc"?-1:1; cats.sort(function(a,b){ var na=num(a), nb=num(b); if(!isNaN(na)&&!isNaN(nb)) return dir*(na-nb); return dir*String(a).localeCompare(String(b)); }); }
+
+    var allSeries = [];
+    if (seriesProp) {
+      var sVals = [], sSet = {};
+      for (var i = 0; i < rows.length; i++) { var sv = fld(rows[i], seriesProp); var k = String(sv); if (!sSet[k]) { sSet[k] = 1; sVals.push(sv); } }
+      sVals.forEach(function(sv, si) {
+        var data = cats.map(function(cv) {
+          var row = rows.find(function(r){ return String(fld(r, catProp)) === String(cv) && String(fld(r, seriesProp)) === String(sv); });
+          return row ? num(fld(row, yProp)) : 0;
+        });
+        allSeries.push({ name: String(sv), type: isLine ? "line" : "bar", data: data, barMaxWidth: 24, stack: isLine ? undefined : "total",
+          itemStyle: { color: gradient(PALETTE[si % PALETTE.length]), borderRadius: isH ? [0,3,3,0] : [3,3,0,0] },
+          lineStyle: isLine ? { width: 2 } : undefined, symbolSize: isLine ? 5 : 0, smooth: isLine ? 0.3 : 0,
+          areaStyle: isLine ? { color: gradientFade(PALETTE[si % PALETTE.length]) } : undefined
+        });
+      });
+    } else {
+      ySpecs.forEach(function(spec, idx) {
+        var data = cats.map(function(cv) { var row = rows.find(function(r){ return String(fld(r, catProp)) === String(cv); }); return row ? num(fld(row, spec.property)) : 0; });
+        allSeries.push({ name: spec.label || spec.property, type: isLine ? "line" : "bar", data: data, barMaxWidth: 28,
+          itemStyle: { color: gradient(PALETTE[idx % PALETTE.length]), borderRadius: isH ? [0,3,3,0] : [3,3,0,0] },
+          lineStyle: isLine ? { width: 2, shadowBlur: 4, shadowColor: PALETTE[idx % PALETTE.length] + "44" } : undefined,
+          symbolSize: isLine ? 5 : 0, smooth: isLine ? 0.3 : 0,
+          areaStyle: isLine ? { color: gradientFade(PALETTE[idx % PALETTE.length]) } : undefined
+        });
+      });
+    }
+    if (isCombo && y2Specs.length) {
+      y2Specs.forEach(function(spec, idx) { var ci = ySpecs.length + idx;
+        var data = cats.map(function(cv) { var row = rows.find(function(r){ return String(fld(r, catProp)) === String(cv); }); return row ? num(fld(row, spec.property)) : 0; });
+        allSeries.push({ name: spec.label || spec.property, type: "line", yAxisIndex: 1, data: data, symbolSize: 5, smooth: 0.3,
+          lineStyle: { width: 2, shadowBlur: 4, shadowColor: PALETTE[ci % PALETTE.length] + "44" }, itemStyle: { color: PALETTE[ci % PALETTE.length] } });
+      });
+    }
+
+    var dark = isDark();
+    var xLong = cats.length > 8 || cats.some(function(c){return String(c).length > 8;});
+    var xRot = cats.length > 14 ? 90 : (xLong ? 45 : 0);
+    var opt = {
+      backgroundColor: "transparent",
+      tooltip: { trigger: "axis", axisPointer: { type: isLine ? "line" : "shadow" }, confine: true,
+        backgroundColor: dark ? "rgba(20,28,48,.92)" : "rgba(255,255,255,.92)", borderColor: "rgba(26,35,66,.10)",
+        textStyle: { color: dark ? "#e8edff" : "#1a2342", fontSize: 10, fontFamily: "Inter,sans-serif" },
+        extraCssText: "border-radius:6px;box-shadow:0 4px 12px rgba(26,35,66,.10);" },
+      legend: { type: "scroll", top: 2, right: 4, textStyle: { color: dark ? "#b4c0e0" : "#4a5578", fontSize: 8 }, itemWidth: 8, itemHeight: 8 },
+      grid: { left: isH ? 64 : 28, right: isCombo ? 30 : 6, top: 20, bottom: 4 + (xRot ? 22 : 8), containLabel: true },
+      xAxis: isH ? { type: "value", scale: true, axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8 }, splitLine: { lineStyle: { color: "rgba(26,35,66,.04)", type: "dashed" } } }
+        : { type: "category", data: cats.map(String), axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8, rotate: xRot, hideOverlap: true, formatter: function(s){ return String(s).length > 10 ? String(s).slice(0,9)+"…" : s; } } },
+      yAxis: isH ? [{ type: "category", data: cats.map(String), inverse: true, axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8 } }]
+        : (isCombo ? [{ type: "value", axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8, formatter: fmtSmart }, splitLine: { lineStyle: { color: "rgba(26,35,66,.04)", type: "dashed" } } },
+                     { type: "value", axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8, formatter: fmtSmart }, splitLine: { show: false } }]
+        : [{ type: "value", axisLine: { lineStyle: { color: "rgba(26,35,66,.10)" } }, axisLabel: { color: dark ? "#6b7ba0" : "#8893b0", fontSize: 8, formatter: fmtSmart }, splitLine: { lineStyle: { color: "rgba(26,35,66,.04)", type: "dashed" } } }]),
+      series: allSeries,
+      animationDuration: 500, animationEasing: "cubicOut"
+    };
+    if (cats.length > 20) opt.dataZoom = [{ type: "inside" }, { type: "slider", height: 10, bottom: 2, textStyle: { fontSize: 8 } }];
+    var ch = echarts.init(d, null, { renderer: "canvas" });
+    state.charts[v.id || "main"] = ch;
+    ch.setOption(opt, true);
+  }
+  function gradient(color) { return new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: color }, { offset: 1, color: color + "33" }]); }
+  function gradientFade(color) { return new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: color + "22" }, { offset: 1, color: color + "00" }]); }
+
+  // ── Card ──
+  function renderCard(v, rows, isMulti) {
+    var r = v.roles || {}, specs = r.Values || [];
+    if (!specs.length) { showEmpty("No value spec"); return; }
+    if (isMulti) {
+      var h = '<div class="metric-grid">';
+      specs.forEach(function(s) {
+        var val = num(fld(rows[0], s.property));
+        h += '<div class="metric"><div class="metric-label">' + esc(s.label || s.property) + '</div><div class="metric-value">' + esc(fmt(val, s.format)) + '</div></div>';
+      });
+      h += '</div>'; stage.innerHTML = h;
+    } else {
+      var s = specs[0], val = num(fld(rows[0], s.property));
+      var delta = isNaN(val) ? "flat" : (val > 0 ? "up" : (val < 0 ? "down" : "flat"));
+      var h = '<div class="kpi"><div class="kpi-label">' + esc(v.title || s.label || s.property) + '</div><div class="kpi-value">' + esc(fmt(val, s.format)) + '</div>';
+      h += '<div><span class="kpi-delta ' + delta + '">' + esc(s.agg || "sum") + '</span></div>';
+      h += '<div class="kpi-sub">' + esc(rows.length + " rows") + '</div></div>';
+      stage.innerHTML = h;
+    }
+  }
+
+  // ── Table ──
+  function renderTable(v, rows) {
+    var r = v.roles || {}, specs = r.Values || [];
+    if (!specs.length) {
+      // Infer columns from first row
+      if (rows.length) { specs = Object.keys(rows[0]).slice(0, 10).map(function(k){ return {property: k, label: k}; }); }
+      else { showEmpty("No columns"); return; }
+    }
+    var h = '<div class="tbl-wrap"><table class="tbl"><thead><tr>';
+    specs.forEach(function(s){ h += '<th>' + esc(s.label || s.property) + '</th>'; });
+    h += '</tr></thead><tbody>';
+    for (var i = 0; i < rows.length; i++) { h += '<tr>';
+      for (var j = 0; j < specs.length; j++) { var s = specs[j], v2 = fld(rows[i], s.property); var isN = !isNaN(num(v2)); h += '<td' + (isN ? ' class="num"' : '') + '>' + esc(fmt(v2, s.format)) + '</td>'; }
+      h += '</tr>';
+    }
+    h += '</tbody></table></div>'; stage.innerHTML = h;
+  }
+
+  // ── Pivot ──
+  function renderPivot(v, rows) {
+    var r = v.roles || {}, rowSpecs = r.Rows || [], colSpecs = r.Columns || [], valSpecs = r.Values || [];
+    if (!valSpecs.length || !rowSpecs.length) { showEmpty("Pivot needs Rows + Values"); return; }
+    if (!rows.length) { showEmpty("No rows"); return; }
+    var rowProp = rowSpecs[0].property, colProp = colSpecs.length ? colSpecs[0].property : null, valProp = valSpecs[0].property;
+    var rowKeys = [], rowSet = {}, colKeys = [], colSet = {}, matrix = {};
+    for (var i = 0; i < rows.length; i++) {
+      var rk = String(fld(rows[i], rowProp) ?? "");
+      var ck = colProp ? String(fld(rows[i], colProp) ?? "") : "(All)";
+      if (!rowSet[rk]) { rowSet[rk] = 1; rowKeys.push(rk); }
+      if (!colSet[ck]) { colSet[ck] = 1; colKeys.push(ck); }
+      if (!matrix[rk]) matrix[rk] = {};
+      matrix[rk][ck] = num(fld(rows[i], valProp));
+    }
+    var h = '<div class="pivot-wrap"><table class="pivot"><thead><tr><th>' + esc(rowProp) + '</th>';
+    colKeys.forEach(function(ck){ h += '<th>' + esc(ck) + '</th>'; });
+    h += '</tr></thead><tbody>';
+    rowKeys.forEach(function(rk){ h += '<tr><td>' + esc(rk) + '</td>'; colKeys.forEach(function(ck){ var val = (matrix[rk] && matrix[rk][ck] !== undefined) ? matrix[rk][ck] : null; h += '<td>' + esc(fmt(val, valSpecs[0].format)) + '</td>'; }); h += '</tr>'; });
+    h += '</tbody></table></div>'; stage.innerHTML = h;
+  }
+
+  // ── Slicer ──
+  function renderSlicer(v, rows) {
+    var r = v.roles || {}, spec = (r.Values && r.Values[0]) || (r.Category && r.Category[0]);
+    if (!spec) { showEmpty("No slicer field"); return; }
+    var allVals = [];
+    if (rows && rows.length) {
+      var seen = {};
+      for (var i = 0; i < rows.length; i++) { var val = fld(rows[i], spec.property); if (val != null && val !== "") { var k = String(val); if (!seen[k]) { seen[k] = 1; allVals.push(val); } } }
+    }
+    allVals = uniqSorted(allVals);
+    var valText = "All";
+    stage.innerHTML = '<div class="slicer" id="sl"><span class="slicer-label">' + esc(v.title || spec.property) + '</span><span class="slicer-value">' + esc(valText) + '</span><span class="slicer-caret">▼</span></div>';
+    var el = document.getElementById("sl");
+    el.onclick = function() {
+      // Notify parent — parent handles slicer state + re-aggregation
+      if (global.parent) global.parent.postMessage({ type: "csr-slicer-click", visualId: v.id, field: spec.property, values: allVals }, "*");
+    };
+  }
+
+  // ── Map ──
+  function renderMap(v, rows) {
+    stage.innerHTML = '<div class="map-wrap"><div class="chart" id="ch"></div></div>';
+    var host = stage.querySelector("#ch");
+    if (!rows || !rows.length) { host.innerHTML = '<div class="empty">No map points</div>'; return; }
+    var points = [], labels = [];
+    for (var i = 0; i < rows.length; i++) { var row = rows[i]; var lat = num(fld(row,"latitude")||fld(row,"Latitude")||fld(row,"lat")); var lon = num(fld(row,"longitude")||fld(row,"Longitude")||fld(row,"lon")||fld(row,"lng")); if (isNaN(lat) || isNaN(lon)) continue; var lbl = fld(row,"Name")||fld(row,"name")||fld(row,"Address")||fld(row,"address")||""; points.push([lon, lat]); labels.push(lbl); }
+    var dark = isDark();
+    var opt = {
+      backgroundColor: "transparent",
+      tooltip: { formatter: function(p) { var i = p.dataIndex; return '<b>' + esc(labels[i] || "Point") + '</b><br>Lat: ' + (points[i] ? points[i][1].toFixed(4) : "") + '<br>Lon: ' + (points[i] ? points[i][0].toFixed(4) : ""); }, backgroundColor: dark ? "rgba(20,28,48,.92)" : "rgba(255,255,255,.92)", borderColor: "rgba(26,35,66,.10)", textStyle: { color: dark ? "#e8edff" : "#1a2342", fontSize: 10 } },
+      grid: { left: 0, right: 0, top: 0, bottom: 0 },
+      xAxis: { show: false, min: -180, max: 180 }, yAxis: { show: false, min: -90, max: 90, inverse: true },
+      series: [{ type: "scatter", data: points, symbolSize: 8,
+        itemStyle: { color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [{ offset: 0, color: PALETTE[2] }, { offset: 0.7, color: PALETTE[0] }, { offset: 1, color: PALETTE[0] + "00" }]), shadowBlur: 6, shadowColor: PALETTE[0] + "66" },
+        label: { show: points.length <= 15, position: "right", formatter: function(p){ return labels[p.dataIndex] || ""; }, color: dark ? "#e8edff" : "#1a2342", fontSize: 8 },
+        emphasis: { scale: 1.4 } }],
+      animationDuration: 500
+    };
+    var ch = echarts.init(host, null, { renderer: "canvas" });
+    state.charts[v.id || "map"] = ch;
+    ch.setOption(opt, true);
+  }
+
+  // ── Action button ──
+  function renderAction(v) {
+    var text = v.text || v.title || "Action";
+    var action = (v.options && v.options.action) || "back";
+    stage.innerHTML = '<button class="action-btn" id="ab">' + esc(text) + '</button>';
+    document.getElementById("ab").onclick = function() { if (action === "back" && global.history.length > 1) global.history.back(); };
+  }
+
+  // ── State helpers ──
+  function showEmpty(msg) { stage.innerHTML = '<div class="empty">' + esc(msg) + '</div>'; }
+  function showError(e) { stage.innerHTML = '<div class="error">' + esc(e && e.message || String(e)) + '</div>'; if (global.console) console.error(e); }
+
+  // ── Resize ──
+  global.addEventListener("resize", function() { for (var id in state.charts) { if (state.charts[id] && !state.charts[id].isDisposed()) state.charts[id].resize(); } });
+
+  // ── Ingress: postMessage + direct call (mirrors cx-visual.html) ──
+  global.renderCsrVisual = ingest;
+  global.csrRender = ingest;
+  global.renderCustomHtml = ingest;
+
+  global.addEventListener("message", function(event) {
+    var d = event.data; if (!d) return;
+    if (d.type === "dashboard-custom-html:init" || d.type === "csr-visual-init") {
+      ingest(d.payload || d.config || d);
+    } else if (d.type === "dashboard-custom-html:resize") {
+      for (var id in state.charts) { if (state.charts[id] && !state.charts[id].isDisposed()) state.charts[id].resize(); }
+    } else if (d.type === "csr-dashboard-filter:set") {
+      // Slicer selection from sibling — parent will re-push data
+    } else if (d.payload || d.config) {
+      ingest(d.payload || d.config);
+    } else if (typeof d === "object" && (d.visuals || d.data || d.rows || d.key)) {
+      ingest(d);
+    }
+  });
+
+  // ── Bootstrap: notify parent we're ready ──
+  if (global.parent && global.parent !== global) {
+    try { global.parent.postMessage({ type: "csr-visual-ready", ready: true }, "*"); } catch (e) {}
+  }
+  setTimeout(function() { if (!state.rendered) { stage.innerHTML = '<div class="loading loading-text" data-text="Waiting">Waiting</div>'; } }, 500);
+
+})(typeof window !== "undefined" ? window : this);
+</script>
 </body>
 </html>
