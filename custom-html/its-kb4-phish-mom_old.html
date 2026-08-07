@@ -35,4 +35,13 @@ function receiveDashboard(render){
 
 function render(payload){const rows=ITS.rowsOf(payload); if(!rows.length) return ITS.empty('No KnowBe4 phishing trend rows.'); const month=ITS.month(ITS.txt(rows[0],['month_start','MonthStart','CurrentPeriod'],'')); const mx=ITS.max(rows.map(r=>ITS.val(r,['failure_count','CurrentCount','Count'],0))); const body=rows.map(r=>{const label=ITS.txt(r,['failure_type','FailureType','Type'],'Failure'); const c=ITS.val(r,['failure_count','CurrentCount','Count'],0), p=ITS.val(r,['prior_month_count','PriorCount','Prior'],0), d=c-p; return `<div class="momrow"><div class="lab" title="${ITS.esc(label)}">${ITS.esc(label)}</div><div class="track"><div class="bar" style="width:${mx?Math.max(4,c/mx*100):0}%;background:${d>0?'#D64550':'#09C698'}"></div></div><div class="mv">${ITS.nf0.format(c)} ${d?`(${d>0?'+':''}${d})`:''}</div></div>`}).join(''); ITS.root().innerHTML=`<div class="phish-card"><div class="head"><div class="title">Phishing Failure MoM</div><div class="pill">${ITS.esc(month||'Latest')}</div></div><div class="momrows">${body}</div><div class="foot"><span>Current vs prior month</span><span>KnowBe4</span></div></div>`;}
 receiveDashboard(render);
-</script></body></html>
+</script><!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
+</body></html>

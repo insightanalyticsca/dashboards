@@ -2333,5 +2333,14 @@
     try { window.parent.postMessage({ type: "cx-visual-ready", ready: true }, "*"); } catch (e) { }
     setTimeout(function () { if (!state.rendered) { stage.className = "cx-loading"; stage.textContent = "Waiting for data"; } }, 450);
 })();</script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
 </body>
 </html>

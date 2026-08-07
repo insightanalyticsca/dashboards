@@ -29,5 +29,14 @@
   <script src="../js/dash-suite.js?v=20260808"></script>
   <script src="../js/theme-toggle.js?v=20260808"></script>
   <script src="../js/visual-chat.js?v=20260808"></script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
 </body>
 </html>

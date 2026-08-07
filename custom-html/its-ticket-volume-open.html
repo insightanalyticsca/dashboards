@@ -816,5 +816,14 @@ window.addEventListener("message",e=>{
   if(String(e.data.type).endsWith(":resize")) return;
   render(e.data);
 });</script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
 </body>
 </html>

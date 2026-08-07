@@ -473,5 +473,14 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 
 })(typeof window !== "undefined" ? window : this);
 </script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
 </body>
 </html>

@@ -210,4 +210,13 @@ window.addEventListener("message",ev=>{const data=ev&&ev.data?ev.data:{};const t
 window.update=receive; window.init=receive; window.setData=receive; window.onData=receive; window.drawArBuckets=receive;
 if(window.DashVisualContext)receive(window.DashVisualContext);else if(window.__DashVisualContext)receive(window.__DashVisualContext);else if(window.__DASH_VISUAL_CONTEXT__)receive(window.__DASH_VISUAL_CONTEXT__);
 })();
-</script></body></html>
+</script><!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
+</body></html>

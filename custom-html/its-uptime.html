@@ -143,4 +143,13 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
   }
   U.receive(render);
 })();
-</script></body></html>
+</script><!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20260808"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('../service-worker.js').catch(function() {});
+    });
+  }
+</script>
+</body></html>
