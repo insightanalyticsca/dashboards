@@ -664,7 +664,7 @@ a:hover { color: var(--primary-soft); }
 .msg {
   display: flex;
   gap: 12px;
-  max-width: 88%;
+  max-width: 92%;
   animation: msgIn var(--t-base) var(--ease-bounce) both;
 }
 @keyframes msgIn {
@@ -703,6 +703,10 @@ a:hover { color: var(--primary-soft); }
   line-height: 1.55;
   color: var(--text-soft);
   position: relative;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-height: none;
 }
 .msg.user .msg-bubble {
   border-radius: 14px 14px 4px 14px;
@@ -1223,4 +1227,11 @@ a:hover { color: var(--primary-soft); }
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+
+.msg-content {
+  min-width: 0;
+  overflow: visible;
+  flex: 1;
 }
