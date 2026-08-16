@@ -320,37 +320,51 @@ body[data-variant="blue"] {
 
 /* MOBILE / PWA — shrink fonts + padding so tiles fit without piling */
 @media (max-width: 768px) {
-    .exec-title { font-size: 13px; font-weight: 700; }
-    .exec-asof { font-size: 8px; }
-    .exec-metrics { gap: 4px; }
-    .exec-metric { min-height: 56px; padding: 4px 6px; gap: 1px; }
-    .exec-metric-label { font-size: 7px; letter-spacing: .2px; }
-    .exec-metric-value { font-size: 14px; font-weight: 700; }
-    .exec-metric-period { font-size: 7px; }
-    .exec-delta { font-size: 6px; padding: 1px 4px; font-weight: 700; }
-    .exec-deltas { gap: 3px; }
-    .exec-panel-title { font-size: 8px; padding: 4px 6px 2px; min-height: 20px; }
-    .exec-chart { min-height: 100px; }
-    .exec-table { font-size: 7px; }
-    .exec-table th { padding: 2px 4px; font-size: 6px; }
-    .exec-table td { padding: 2px 4px; }
-    .exec-empty, .exec-error, .exec-loading { font-size: 9px; min-height: 80px; padding: 8px; }
-    .exec-note { font-size: 7px; }
-    .exec-canvas { min-height: 400px; }
-    .exec-visual { min-width: 0; }
-}
+    .exec-title { font-size: 11px; font-weight: 700; }
+    .exec-asof { font-size: 7px; }
 
-@media (max-width: 480px) {
-    .exec-title { font-size: 11px; }
-    .exec-metric { min-height: 44px; padding: 3px 4px; }
-    .exec-metric-label { font-size: 6px; }
-    .exec-metric-value { font-size: 11px; }
+    .exec-metrics { gap: 3px; }
+    .exec-metric {
+        min-height: 48px;
+        padding: 3px 4px;
+        gap: 1px;
+    }
+    .exec-metric-label { font-size: 6px; letter-spacing: .15px; }
+    .exec-metric-value { font-size: 12px; font-weight: 700; }
     .exec-metric-period { font-size: 6px; }
-    .exec-delta { font-size: 5px; padding: 1px 3px; }
-    .exec-panel-title { font-size: 7px; padding: 3px 4px 1px; }
+    .exec-delta { font-size: 5px; padding: 1px 3px; font-weight: 700; }
+    .exec-deltas { gap: 2px; }
+
+    .exec-panel-title { font-size: 7px; padding: 2px 4px 1px; min-height: 16px; font-weight: 700; }
+    .exec-chart { min-height: 80px; }
+
     .exec-table { font-size: 6px; }
     .exec-table th { padding: 1px 3px; font-size: 5px; }
     .exec-table td { padding: 1px 3px; }
+
+    .exec-empty, .exec-error, .exec-loading { font-size: 8px; min-height: 60px; padding: 6px; }
+    .exec-note { font-size: 6px; padding: 0 2px; line-height: 1.3; }
+
+    .exec-canvas { min-height: 400px; }
+    .exec-visual { min-width: 0; }
+
+    /* ECharts text scaling: legends, axis labels, tooltips get tiny on mobile */
+    .exec-chart .ec-text { font-size: 6px !important; }
+    .exec-chart .ec-legend { font-size: 6px !important; }
+}
+
+@media (max-width: 480px) {
+    .exec-title { font-size: 10px; }
+    .exec-metric { min-height: 40px; padding: 2px 3px; }
+    .exec-metric-label { font-size: 5px; }
+    .exec-metric-value { font-size: 10px; }
+    .exec-metric-period { font-size: 5px; }
+    .exec-delta { font-size: 4px; padding: 0 2px; }
+    .exec-panel-title { font-size: 6px; padding: 1px 3px; }
+    .exec-table { font-size: 5px; }
+    .exec-table th { padding: 1px 2px; font-size: 4px; }
+    .exec-table td { padding: 1px 2px; }
+    .exec-note { font-size: 5px; line-height: 1.2; }
 }
 
 @media (prefers-color-scheme: dark) {

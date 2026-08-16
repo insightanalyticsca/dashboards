@@ -452,7 +452,7 @@
         const series = Array.isArray(chart.series) ? chart.series : [];
         const kind = String(chart.kind || 'line').toLowerCase();
 
-        if (kind === 'pie') {
+        if (kind === 'pie' || kind === 'donut') {
             const first = series[0] || { data: [] };
             const data = categories.map((name, index) => ({ name, value: number(first.data?.[index]) ?? 0 }));
             return {
@@ -468,7 +468,7 @@
                 legend: { bottom: 2, type: 'scroll', textStyle: { fontSize: 10, color: '#1e293b', fontWeight: 600 } },
                 series: [{ 
                     type: 'pie', 
-                    radius: ['44%', '70%'], 
+                    radius: kind === 'donut' ? ['40%', '68%'] : ['44%', '70%'], 
                     center: ['50%', '45%'], 
                     label: { 
                         fontSize: 10, 
@@ -478,6 +478,68 @@
                     },
                     labelLine: { lineStyle: { color: '#64748b' } },
                     data 
+                }]
+            };
+        }
+
+        if (kind === 'heatmap') {
+            // Heatmap: series = rows (time slots), categories = columns (days)
+            // Build [dayIndex, timeIndex, value] data points
+            const days = categories; // ["Mon", "Tue", ...]
+            const times = series.map(s => s.name); // ["9 AM", "12 PM", ...]
+            const heatData = [];
+            series.forEach((s, ti) => {
+                (s.data || []).forEach((val, di) => {
+                    heatData.push([di, ti, number(val) ?? 0]);
+                });
+            });
+            const maxVal = Math.max(...heatData.map(d => d[2]), 100);
+            return {
+                tooltip: {
+                    position: 'top',
+                    formatter: function(p) {
+                        return days[p.value[0]] + ' ' + times[p.value[1]] + '<br/>Utilization: ' + p.value[2] + '%';
+                    },
+                    backgroundColor: 'rgba(255,255,255,0.97)',
+                    borderColor: 'rgba(99,102,241,0.30)',
+                    borderWidth: 1,
+                    textStyle: { color: '#1e293b', fontSize: 11, fontWeight: 600 }
+                },
+                grid: { left: 48, right: 12, top: 8, bottom: 30, containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: days,
+                    splitArea: { show: true },
+                    axisLabel: { fontSize: 9, color: '#1e293b', fontWeight: 600 },
+                    axisLine: { show: false },
+                    axisTick: { show: false }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: times,
+                    splitArea: { show: true },
+                    axisLabel: { fontSize: 9, color: '#1e293b', fontWeight: 600 },
+                    axisLine: { show: false },
+                    axisTick: { show: false }
+                },
+                visualMap: {
+                    min: 0,
+                    max: maxVal,
+                    calculable: false,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: 2,
+                    itemWidth: 12,
+                    itemHeight: 80,
+                    textStyle: { fontSize: 8, color: '#1e293b' },
+                    inRange: { color: ['#e0e7ff', '#818cf8', '#4c6fff', '#0808ee'] }
+                },
+                series: [{
+                    type: 'heatmap',
+                    data: heatData,
+                    label: { show: true, fontSize: 8, fontWeight: 700, color: '#fff',
+                        formatter: function(p) { return p.value[2] + '%'; } },
+                    emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,0.3)' } }
                 }]
             };
         }
@@ -515,8 +577,8 @@
         return {
             color: colors,
             tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-            legend: { top: 2, type: 'scroll', textStyle: { fontSize: 9, color: '#1e293b', fontWeight: 600 } },
-            grid: { left: 52, right: hasSecondAxis ? 52 : 18, top: 38, bottom: 42 },
+            legend: { top: 2, type: 'scroll', textStyle: { fontSize: 9, color: '#1e293b', fontWeight: 600 }, itemWidth: 8, itemHeight: 8, itemGap: 4 },
+            grid: { left: 52, right: hasSecondAxis ? 52 : 18, top: 28, bottom: 38 },
             xAxis: {
                 type: 'category',
                 data: categories,
@@ -525,8 +587,8 @@
                 axisTick: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#cbd5e1' } } },
-                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { show: false } }] : [])
+                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: 8 }, axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#cbd5e1' } } },
+                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: 8 }, axisLabel: { formatter: axisFormatter, fontSize: 9, color: '#1e293b', fontWeight: 600 }, splitLine: { show: false } }] : [])
             ],
             series: echartsSeries
         };
