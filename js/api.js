@@ -207,15 +207,208 @@
     return Math.min(0.99, score + (Math.random() * 0.05));
   }
 
+  // ─── AI-powered semantic retrieval via Groq ──────────────────────────────
+  // Uses the LLM to score chunk relevance semantically — much better than
+  // keyword overlap. Falls back to scoreChunk if no Groq key.
+  async function aiScoreChunks(query, chunks, topK) {
+    if (!CONFIG.groqKey || CONFIG.provider !== 'groq') {
+      // Fallback: keyword overlap
+      return chunks.map(c => ({ ...c, score: scoreChunk(c.text, query) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, topK);
+    }
+
+    // Ask the LLM to rank chunks by relevance — returns indices
+    const chunkList = chunks.map((c, i) => `[${i}] ${c.text.slice(0, 200)}`).join('\n');
+    const prompt = `You are a semantic search engine. Given a question and document chunks, return ONLY a JSON array of the top ${topK} most relevant chunk indices (0-based), most relevant first.
+
+Question: ${query}
+
+Chunks:
+${chunkList}
+
+Return format: [0, 3, 1] (just the array, no explanation)`;
+
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${CONFIG.groqKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: CONFIG.groqModel,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          max_tokens: 100
+        })
+      });
+      if (!res.ok) throw new Error(`Groq rank failed: ${res.status}`);
+      const json = await res.json();
+      const text = json.choices?.[0]?.message?.content || '[]';
+      const indices = JSON.parse(text.match(/\[[\d\s,]+\]/)?.[0] || '[]');
+
+      const scored = indices.map((idx, rank) => ({
+        ...chunks[idx],
+        score: 0.99 - (rank * 0.05)  // high score for top-ranked, decreasing
+      })).filter(c => c);  // remove undefined if index was out of range
+
+      // If AI returned fewer than topK, fill with keyword-scored leftovers
+      if (scored.length < topK) {
+        const usedIndices = new Set(indices);
+        const leftovers = chunks
+          .filter((c, i) => !usedIndices.has(i))
+          .map(c => ({ ...c, score: scoreChunk(c.text, query) }))
+          .sort((a, b) => b.score - a.score);
+        scored.push(...leftovers.slice(0, topK - scored.length));
+      }
+
+      return scored.slice(0, topK);
+    } catch (e) {
+      console.warn('AI semantic ranking failed, falling back to keyword', e);
+      return chunks.map(c => ({ ...c, score: scoreChunk(c.text, query) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, topK);
+    }
+  }
+
+  // ─── AI-powered document OCR / text extraction ───────────────────────────
+  // Uses Groq vision (if available) or text parsing to extract structured
+  // text from uploaded files. Chunks the text into searchable segments.
+  async function parseDocument(file, onProgress) {
+    const fileName = file.name;
+    const fileType = file.type || '';
+    const isImage = fileType.startsWith('image/');
+    const isPDF = fileType === 'application/pdf' || fileName.toLowerCase().endsWith('.pdf');
+    const isText = fileType.startsWith('text/') || /\.(txt|md|csv|json|log|sql)$/i.test(fileName);
+
+    if (onProgress) onProgress('Reading file…');
+    let rawText = '';
+
+    if (isText) {
+      // Plain text: read directly
+      rawText = await file.text();
+    } else if (isImage) {
+      // Image: use Groq vision OCR (if key available)
+      if (onProgress) onProgress('Running AI OCR on image…');
+      rawText = await ocrImageWithGroq(file);
+    } else if (isPDF) {
+      // PDF: try text extraction via Groq (send pages as images if possible,
+      // otherwise extract via FileReader)
+      if (onProgress) onProgress('Extracting PDF text…');
+      // For demo: read as text (PDFs often have extractable text streams)
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        rawText = decoder.decode(arrayBuffer);
+        // Strip non-printable PDF binary, keep text between BT/ET markers
+        const textMatches = rawText.match(/\(([^)]+)\)/g);
+        if (textMatches && textMatches.length > 10) {
+          rawText = textMatches.map(m => m.slice(1, -1)).join(' ');
+        } else {
+          rawText = rawText.replace(/[^\x20-\x7E\n\r]/g, ' ').replace(/\s{3,}/g, ' ').trim();
+        }
+      } catch (e) {
+        rawText = `PDF: ${fileName} (binary, text extraction limited)`;
+      }
+    } else {
+      // Unknown type: try text
+      try { rawText = await file.text(); }
+      catch { rawText = `File: ${fileName} (${fileType || 'unknown type'})`; }
+    }
+
+    if (onProgress) onProgress('Chunking text…');
+    const chunks = chunkText(rawText, fileName);
+
+    return {
+      title: fileName,
+      rawText,
+      chunks,
+      wordCount: rawText.split(/\s+/).filter(Boolean).length,
+      contentType: isImage ? 'image-ocr' : isPDF ? 'pdf' : 'text'
+    };
+  }
+
+  // ─── Groq Vision OCR for images ──────────────────────────────────────────
+  async function ocrImageWithGroq(file) {
+    if (!CONFIG.groqKey) {
+      return `[Image OCR requires Groq API key. Image: ${file.name}]`;
+    }
+
+    // Convert file to base64
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const prompt = `Extract ALL text visible in this image. Return the text exactly as it appears, preserving line breaks and structure. If it's a table, format it as markdown. If it's a document, preserve headings and paragraphs. If no text is visible, describe what you see.`;
+
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${CONFIG.groqKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              { type: 'image_url', image_url: { url: `data:${file.type};base64,${base64}` } }
+            ]
+          }],
+          temperature: 0.1,
+          max_tokens: 2000
+        })
+      });
+
+      if (!res.ok) {
+        // Fallback: try without vision model
+        const errText = await res.text();
+        console.warn('Vision OCR failed:', res.status, errText);
+        return `[OCR failed (${res.status}). Image: ${file.name}]`;
+      }
+
+      const json = await res.json();
+      return json.choices?.[0]?.message?.content || `[No text extracted from ${file.name}]`;
+    } catch (e) {
+      console.warn('Vision OCR error:', e);
+      return `[OCR error: ${e.message}. Image: ${file.name}]`;
+    }
+  }
+
+  // ─── Text chunking: splits text into ~500-word searchable segments ──────
+  function chunkText(text, sourceName) {
+    const words = text.split(/\s+/).filter(Boolean);
+    const CHUNK_SIZE = 500;
+    const OVERLAP = 50;
+    const chunks = [];
+
+    for (let i = 0; i < words.length; i += CHUNK_SIZE - OVERLAP) {
+      const chunkWords = words.slice(i, i + CHUNK_SIZE);
+      if (chunkWords.length < 10) break;
+      const page = Math.floor(i / CHUNK_SIZE) + 1;
+      chunks.push({
+        id: 'chk-' + Date.now() + '-' + page,
+        text: chunkWords.join(' '),
+        page,
+        source: sourceName,
+        wordCount: chunkWords.length
+      });
+      if (i + CHUNK_SIZE >= words.length) break;
+    }
+
+    return chunks;
+  }
+
   async function retrieve(query, topK = 4) {
     const chunks = await Chunks.list();
-    const scored = chunks.map(c => ({
-      ...c,
-      score: scoreChunk(c.text, query)
-    }));
-    return scored
-      .sort((a, b) => b.score - a.score)
-      .slice(0, topK);
+    // Use AI-powered semantic ranking (Groq LLM) instead of keyword overlap
+    return await aiScoreChunks(query, chunks, topK);
   }
 
   // ─── Demo mode: deterministic answer from retrieved chunks ────────────────
@@ -430,7 +623,12 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
 
   global.DocChatAPI = {
     Documents, Chunks, Queries, Analytics,
-    Config, retrieve, ask
+    Config, retrieve, ask,
+    // AI-powered document processing
+    parseDocument,    // (file, onProgress) → { title, rawText, chunks, wordCount, contentType }
+    ocrImageWithGroq, // (file) → extracted text from image via Groq vision
+    aiScoreChunks,    // (query, chunks, topK) → semantically ranked chunks
+    chunkText         // (text, sourceName) → chunk objects
   };
 
 })(window);
