@@ -6,97 +6,140 @@
       "id": "q-001",
       "question": "What was Q1 2026 total revenue?",
       "answer": "Q1 2026 total revenue reached $84.2M, representing 12.4% year-over-year growth. Commercial revenue contributed $52.7M (62.6% of total) while residential contributed $31.5M.",
-      "sources": ["chk-001", "chk-002"],
+      "sources": [
+        "chk-001",
+        "chk-002"
+      ],
       "model": "llama-3.3-70b-versatile",
       "provider": "groq",
-      "tokens": { "prompt": 142, "completion": 58, "total": 200 },
+      "tokens": {
+        "prompt": 142,
+        "completion": 58,
+        "total": 200
+      },
       "latencyMs": 847,
-      "askedAt": "2026-07-25T14:23:11Z",
-      "confidence": 0.94
+      "askedAt": "2026-07-25T14:23:11Z"
     },
     {
       "id": "q-002",
       "question": "What is the FCR target for customer service?",
       "answer": "The First Contact Resolution (FCR) target is 78%, measured monthly. This is paired with an Average Handle Time (AHT) target of 6:42 and a Quality Assurance score target of 92%.",
-      "sources": ["chk-005"],
+      "sources": [
+        "chk-005"
+      ],
       "model": "llama-3.3-70b-versatile",
       "provider": "groq",
-      "tokens": { "prompt": 88, "completion": 47, "total": 135 },
+      "tokens": {
+        "prompt": 88,
+        "completion": 47,
+        "total": 135
+      },
       "latencyMs": 612,
-      "askedAt": "2026-07-25T14:25:33Z",
-      "confidence": 0.97
+      "askedAt": "2026-07-25T14:25:33Z"
     },
     {
       "id": "q-003",
       "question": "How is the AR aging distributed in March 2026?",
       "answer": "As of March 2026, total receivables were $14.8M distributed as: 0-30 days $9.2M (62.2%), 31-60 days $3.1M (20.9%), 61-90 days $1.7M (11.5%), and 91+ days $0.8M (5.4%).",
-      "sources": ["chk-007"],
+      "sources": [
+        "chk-007"
+      ],
       "model": "llama-3.1-8b-instant",
       "provider": "groq",
-      "tokens": { "prompt": 96, "completion": 52, "total": 148 },
+      "tokens": {
+        "prompt": 96,
+        "completion": 52,
+        "total": 148
+      },
       "latencyMs": 423,
-      "askedAt": "2026-07-25T14:28:01Z",
-      "confidence": 0.96
+      "askedAt": "2026-07-25T14:28:01Z"
     },
     {
       "id": "q-004",
       "question": "What is the Severity 1 incident response target?",
       "answer": "Severity 1 incidents target a 5-minute response time and 1-hour resolution time. These require immediate escalation to both the CISO and CTO. Severity 1 covers total system outages, customer-facing service disruptions, or active data breaches.",
-      "sources": ["chk-009"],
+      "sources": [
+        "chk-009"
+      ],
       "model": "llama-3.3-70b-versatile",
       "provider": "groq",
-      "tokens": { "prompt": 102, "completion": 64, "total": 166 },
+      "tokens": {
+        "prompt": 102,
+        "completion": 64,
+        "total": 166
+      },
       "latencyMs": 891,
-      "askedAt": "2026-07-25T14:31:45Z",
-      "confidence": 0.98
+      "askedAt": "2026-07-25T14:31:45Z"
     },
     {
       "id": "q-005",
       "question": "What is the current phishing click rate?",
       "answer": "The Q1 2026 phishing simulation click rate was 12.3%, down from 18.7% in Q4 2025. Operations (21.4%) and Customer Service (17.8%) had the highest click rates, while IT Security had the lowest at 2.1%.",
-      "sources": ["chk-015", "chk-016"],
+      "sources": [
+        "chk-015",
+        "chk-016"
+      ],
       "model": "llama-3.3-70b-versatile",
       "provider": "groq",
-      "tokens": { "prompt": 134, "completion": 58, "total": 192 },
+      "tokens": {
+        "prompt": 134,
+        "completion": 58,
+        "total": 192
+      },
       "latencyMs": 743,
-      "askedAt": "2026-07-25T14:34:22Z",
-      "confidence": 0.93
+      "askedAt": "2026-07-25T14:34:22Z"
     },
     {
       "id": "q-006",
       "question": "What is the strategic NPS target?",
       "answer": "The strategic roadmap targets NPS improvement from 42 to 60 by Q4 2027. Key drivers include faster issue resolution (AHT below 5 minutes), proactive outage communication, and personalized billing insights.",
-      "sources": ["chk-012"],
+      "sources": [
+        "chk-012"
+      ],
       "model": "llama-3.1-8b-instant",
       "provider": "groq",
-      "tokens": { "prompt": 91, "completion": 44, "total": 135 },
+      "tokens": {
+        "prompt": 91,
+        "completion": 44,
+        "total": 135
+      },
       "latencyMs": 387,
-      "askedAt": "2026-07-25T14:36:08Z",
-      "confidence": 0.95
+      "askedAt": "2026-07-25T14:36:08Z"
     },
     {
       "id": "q-007",
       "question": "What is the e-bill adoption rate for commercial customers?",
       "answer": "Current commercial e-bill adoption is 71.8%, with a target of 85% by Q4 2026. Drivers include invoice consolidation (38%), auto-pay enrollment (29%), and sustainability mandates (22%).",
-      "sources": ["chk-013", "chk-014"],
+      "sources": [
+        "chk-013",
+        "chk-014"
+      ],
       "model": "llama-3.3-70b-versatile",
       "provider": "groq",
-      "tokens": { "prompt": 119, "completion": 48, "total": 167 },
+      "tokens": {
+        "prompt": 119,
+        "completion": 48,
+        "total": 167
+      },
       "latencyMs": 654,
-      "askedAt": "2026-07-25T14:38:55Z",
-      "confidence": 0.96
+      "askedAt": "2026-07-25T14:38:55Z"
     },
     {
       "id": "q-008",
       "question": "How many VLANs are used in network segmentation?",
       "answer": "The network uses 5 VLANs: Corporate, Guest, IoT, Voice, and Security-Cameras. Additionally, micro-segmentation via Cisco TrustSec is applied for PCI-compliant systems, with east-west traffic inspected by Cisco Tetration.",
-      "sources": ["chk-018"],
+      "sources": [
+        "chk-018"
+      ],
       "model": "mixtral-8x7b-32768",
       "provider": "groq",
-      "tokens": { "prompt": 84, "completion": 56, "total": 140 },
+      "tokens": {
+        "prompt": 84,
+        "completion": 56,
+        "total": 140
+      },
       "latencyMs": 1124,
-      "askedAt": "2026-07-25T14:41:02Z",
-      "confidence": 0.94
+      "askedAt": "2026-07-25T14:41:02Z"
     }
   ]
 }

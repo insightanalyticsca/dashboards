@@ -417,7 +417,7 @@
   }
 
   // ══════════════════════════════════════════════════════════════════════════
-  //  Chart 7 — Gauge (avg confidence)
+  //  Chart 7 — Gauge (avg match score — retrieval similarity, NOT LLM confidence)
   // ══════════════════════════════════════════════════════════════════════════
   function renderConfidenceGauge(host, value) {
     init(host, {
@@ -464,7 +464,7 @@
           color: PAL.muted,
           fontSize: 11
         },
-        data: [{ value, name: 'Avg Confidence' }]
+        data: [{ value, name: 'Avg Match Score' }]
       }]
     });
   }

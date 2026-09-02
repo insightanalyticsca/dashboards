@@ -207,8 +207,8 @@
       body: JSON.stringify({
         model: CONFIG.groqModel,
         messages: messages,
-        temperature: 0.4,
-        max_tokens: 800,
+        temperature: 0.3,
+        max_tokens: 1200,
         stream: true
       })
     });
@@ -249,37 +249,53 @@
     return fullText;
   }
 
+  // ─── System prompt — honest structured analysis ──────────────────────────
+  // Demands a 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO)
+  // but explicitly forbids invented confidence %s, fabricated forecasts, and
+  // store-level attribution when the payload is aggregated. Only produces
+  // statements that can be derived directly from the provided JSON.
+  function buildSystemPrompt(visualContext) {
+    return [
+      'You are Dashboards Studio, an analytics assistant that answers questions about a specific dashboard.',
+      'You have access to the dashboard\'s data payload below. Your job is to produce an honest, structured analysis.',
+      '',
+      'OUTPUT FORMAT — always use these 4 sections, each on its own line, with the section header in uppercase followed by a colon:',
+      '  WHAT HAPPENED: <one or two sentences stating the factual change, citing actual metric labels and delta values from the data>',
+      '  WHY: <one or two sentences explaining the driver, only if the data or notes explicitly support it. If the payload does not contain driver-level breakdowns, say "Driver not isolated in this payload." instead of guessing>',
+      '  WHAT TO EXPECT: <one sentence describing the direction the trend points IF IT CONTINUES. Do NOT produce a specific forecast number. Do NOT attach a confidence percentage. Use phrases like "if the current trend continues" or "the trajectory suggests">',
+      '  WHAT TO DO: <one or two sentences of actionable recommendation grounded in the data pattern. If the data lacks the granularity to recommend a specific action, say what additional breakdown would be needed>',
+      '',
+      'HARD RULES (these are non-negotiable):',
+      '1. Every number you cite MUST come from the provided data. Do not invent metrics, percentages, or dollar figures.',
+      '2. NEVER produce a calibrated confidence percentage (e.g., "82% confidence", "P=0.9"). You are not a statistical model. If you want to express certainty, use qualitative language ("strong signal", "weak signal", "mixed").',
+      '3. NEVER produce a specific point forecast (e.g., "next-month revenue +3.9%"). You may describe direction only.',
+      '4. NEVER attribute to specific stores, regions, or units unless the data payload actually contains that granularity. If asked, state that the payload is aggregated and store-level attribution is not available.',
+      '5. NEVER compute "annualized opportunity" or "$X opportunity" unless the payload contains the full unit-economics chain (unit count × rate × frequency × time). If the chain is missing, say the figure cannot be derived.',
+      '6. If the user\'s question cannot be answered from the data, say so directly. Do not extrapolate beyond what the JSON shows.',
+      '7. Keep the entire response under 200 words. Tight prose, no filler, no preamble before WHAT HAPPENED.',
+      '',
+      'DASHBOARD DATA:',
+      visualContext || '(no visual data loaded — if no data is shown, tell the user the dashboard payload could not be loaded)'
+    ].join('\n');
+  }
+
   // ─── Ask with visual context ──────────────────────────────────────────────
   async function ask(question, onToken) {
     var visualContext = buildVisualContext();
 
-    var systemPrompt = 'You are Dashboards Studio, an assistant that answers questions about dashboard data.\n' +
-      'You have access to the visual data from the current dashboard version.\n' +
-      'Answer based on the provided dashboard data. Cite metrics by their label.\n' +
-      'If the data does not contain the answer, say so honestly.\n' +
-      'Keep responses concise (2-4 sentences) unless asked for more detail.\n\n' +
-      'DASHBOARD DATA:\n' + (visualContext || '(no visual data loaded)');
-
-    var userPrompt = 'Question: ' + question;
+    var userPrompt = 'Question: ' + question + '\n\n' +
+      'Produce the 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO) based strictly on the dashboard data. ' +
+      'Respect every hard rule in the system prompt.';
 
     if (CONFIG.provider === 'groq' && CONFIG.groqKey) {
       var messages = [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: buildSystemPrompt(visualContext) },
         { role: 'user', content: userPrompt }
       ];
       return await groqChat(messages, onToken);
     } else {
-      // Demo mode
-      var answer = 'Based on the dashboard data:\n\n';
-      if (state.visualData && state.visualData.metrics) {
-        answer += state.visualData.metrics.map(function(m) {
-          return m.label + ': ' + m.value;
-        }).join('\n');
-      } else if (visualContext) {
-        answer += visualContext.slice(0, 500);
-      } else {
-        answer = 'No visual data available for this page.';
-      }
+      // Demo mode — honest structured fallback built from actual data
+      var answer = buildDemoBrief(visualContext);
       if (onToken) {
         var tokens = answer.match(/\S+\s*/g) || [answer];
         for (var i = 0; i < tokens.length; i++) {
@@ -289,6 +305,46 @@
       }
       return answer;
     }
+  }
+
+  // ─── Demo-mode brief — honest structured fallback when Groq key absent ────
+  function buildDemoBrief(visualContext) {
+    if (!state.visualData) {
+      return 'WHAT HAPPENED: No dashboard payload loaded for this page.\n' +
+        'WHY: Visual data could not be fetched.\n' +
+        'WHAT TO EXPECT: Configure a Groq API key (data/groq-config.json) to enable live analysis.\n' +
+        'WHAT TO DO: Add a Groq key to the site config, then reopen this chat.';
+    }
+    var d = state.visualData;
+    var lines = [];
+    // WHAT HAPPENED — real KPI deltas
+    lines.push('WHAT HAPPENED: ' + (d.title || state.versionTitle) + ' as of ' + (d.asOfLabel || 'latest period') + '.');
+    if (d.metrics && d.metrics.length) {
+      var top = d.metrics.slice(0, 3).map(function(m) {
+        var parts = [m.label + ' = ' + m.value + (m.format === 'currency' ? ' CAD' : m.format === 'percent' || m.format === 'percent2' ? '%' : '')];
+        if (m.yoy != null) parts.push('YoY ' + (m.yoy > 0 ? '+' : '') + m.yoy + (m.deltaMode === 'points' ? ' pts' : '%'));
+        if (m.mom != null) parts.push('MoM ' + (m.mom > 0 ? '+' : '') + m.mom + (m.deltaMode === 'points' ? ' pts' : '%'));
+        return parts.join(', ');
+      });
+      lines[0] += ' ' + top.join('; ') + '.';
+    }
+    // WHY — only if notes exist
+    if (d.notes && d.notes.length) {
+      lines.push('WHY: ' + d.notes[0]);
+    } else {
+      lines.push('WHY: Driver not isolated in this payload.');
+    }
+    // WHAT TO EXPECT — direction only, no forecast number
+    if (d.metrics && d.metrics.length) {
+      var m0 = d.metrics[0];
+      var dir = m0.yoy != null ? (m0.yoy > 0 ? 'up' : 'down') : (m0.mom != null ? (m0.mom > 0 ? 'up' : 'down') : 'flat');
+      lines.push('WHAT TO EXPECT: If the current trend continues, ' + m0.label + ' trajectory points ' + dir + ' for the next period.');
+    } else {
+      lines.push('WHAT TO EXPECT: Trend direction requires time-series history in the payload.');
+    }
+    // WHAT TO DO — honest about granularity
+    lines.push('WHAT TO DO: Review the charts on this dashboard for the segment-level breakdown that would inform a targeted action.');
+    return lines.join('\n');
   }
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -386,7 +442,7 @@
       // Add welcome message if empty
       var msgs = document.getElementById('visualChatMessages');
       if (msgs.children.length === 0) {
-        addMessage('assistant', 'Hi! I can answer questions about the data on this dashboard. What would you like to know?');
+        addMessage('assistant', 'Hi! Ask about this dashboard and I\'ll give you a structured brief: WHAT HAPPENED, WHY, WHAT TO EXPECT, and WHAT TO DO — based strictly on the data on this page. No invented confidence %s or fabricated forecasts.');
       }
       setTimeout(function() { document.getElementById('visualChatInput').focus(); }, 100);
     } else {

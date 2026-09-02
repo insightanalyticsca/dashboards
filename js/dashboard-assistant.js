@@ -448,7 +448,7 @@
                 ...(plan.plan.dimensions || []),
                 plan.plan.periodLabel,
                 visualLabel(plan.visual.type),
-                `Confidence ${(Number(plan.confidence || 0) * 100).toFixed(0)}%`
+                `Source: ${plan.dataset.title || 'data'}`
             ];
             const chipHost = resultsHost.querySelector("[data-plan-chips]");
             chipHost.innerHTML = chips.map(value => `<span class="dashboard-assistant-chip">${escapeHtml(value)}</span>`).join("");

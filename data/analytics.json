@@ -2,75 +2,292 @@
   "version": 1,
   "generatedAt": "2026-07-26T10:00:00Z",
   "docTypes": [
-    { "type": "PDF", "count": 6, "color": "#6366F1" },
-    { "type": "Word", "count": 4, "color": "#06B6D4" },
-    { "type": "Excel", "count": 2, "color": "#EC4899" }
+    {
+      "type": "PDF",
+      "count": 6,
+      "color": "#6366F1"
+    },
+    {
+      "type": "Word",
+      "count": 4,
+      "color": "#06B6D4"
+    },
+    {
+      "type": "Excel",
+      "count": 2,
+      "color": "#EC4899"
+    }
   ],
   "uploadsTrend": [
-    { "day": "Mon", "count": 4 },
-    { "day": "Tue", "count": 7 },
-    { "day": "Wed", "count": 3 },
-    { "day": "Thu", "count": 9 },
-    { "day": "Fri", "count": 6 },
-    { "day": "Sat", "count": 2 },
-    { "day": "Sun", "count": 1 }
+    {
+      "day": "Mon",
+      "count": 4
+    },
+    {
+      "day": "Tue",
+      "count": 7
+    },
+    {
+      "day": "Wed",
+      "count": 3
+    },
+    {
+      "day": "Thu",
+      "count": 9
+    },
+    {
+      "day": "Fri",
+      "count": 6
+    },
+    {
+      "day": "Sat",
+      "count": 2
+    },
+    {
+      "day": "Sun",
+      "count": 1
+    }
   ],
   "chunksPerDoc": [
-    { "doc": "Ops Manual", "chunks": 318 },
-    { "doc": "Network Arch", "chunks": 198 },
-    { "doc": "Field Safety", "chunks": 167 },
-    { "doc": "Q1 Financial", "chunks": 142 },
-    { "doc": "Journey Map", "chunks": 124 },
-    { "doc": "Close Recon", "chunks": 92 },
-    { "doc": "Board Deck", "chunks": 89 },
-    { "doc": "E-Bill Rev", "chunks": 76 }
+    {
+      "doc": "Ops Manual",
+      "chunks": 318
+    },
+    {
+      "doc": "Network Arch",
+      "chunks": 198
+    },
+    {
+      "doc": "Field Safety",
+      "chunks": 167
+    },
+    {
+      "doc": "Q1 Financial",
+      "chunks": 142
+    },
+    {
+      "doc": "Journey Map",
+      "chunks": 124
+    },
+    {
+      "doc": "Close Recon",
+      "chunks": 92
+    },
+    {
+      "doc": "Board Deck",
+      "chunks": 89
+    },
+    {
+      "doc": "E-Bill Rev",
+      "chunks": 76
+    }
   ],
   "queryActivity": [
-    { "hour": "00", "count": 3 },
-    { "hour": "02", "count": 1 },
-    { "hour": "04", "count": 0 },
-    { "hour": "06", "count": 5 },
-    { "hour": "08", "count": 18 },
-    { "hour": "10", "count": 34 },
-    { "hour": "12", "count": 22 },
-    { "hour": "14", "count": 41 },
-    { "hour": "16", "count": 28 },
-    { "hour": "18", "count": 12 },
-    { "hour": "20", "count": 6 },
-    { "hour": "22", "count": 2 }
+    {
+      "hour": "00",
+      "count": 3
+    },
+    {
+      "hour": "02",
+      "count": 1
+    },
+    {
+      "hour": "04",
+      "count": 0
+    },
+    {
+      "hour": "06",
+      "count": 5
+    },
+    {
+      "hour": "08",
+      "count": 18
+    },
+    {
+      "hour": "10",
+      "count": 34
+    },
+    {
+      "hour": "12",
+      "count": 22
+    },
+    {
+      "hour": "14",
+      "count": 41
+    },
+    {
+      "hour": "16",
+      "count": 28
+    },
+    {
+      "hour": "18",
+      "count": 12
+    },
+    {
+      "hour": "20",
+      "count": 6
+    },
+    {
+      "hour": "22",
+      "count": 2
+    }
   ],
   "modelUsage": [
-    { "model": "Llama 3.3 70B", "requests": 142, "color": "#6366F1" },
-    { "model": "Llama 3.1 8B", "requests": 89, "color": "#06B6D4" },
-    { "model": "Mixtral 8x7B", "requests": 34, "color": "#EC4899" },
-    { "model": "Gemma 2 9B", "requests": 12, "color": "#10B981" }
+    {
+      "model": "Llama 3.3 70B",
+      "requests": 142,
+      "color": "#6366F1"
+    },
+    {
+      "model": "Llama 3.1 8B",
+      "requests": 89,
+      "color": "#06B6D4"
+    },
+    {
+      "model": "Mixtral 8x7B",
+      "requests": 34,
+      "color": "#EC4899"
+    },
+    {
+      "model": "Gemma 2 9B",
+      "requests": 12,
+      "color": "#10B981"
+    }
   ],
   "similarityScores": [
-    { "query": "q-001", "scores": [0.91, 0.88, 0.82, 0.76, 0.71, 0.65] },
-    { "query": "q-002", "scores": [0.97, 0.84, 0.79, 0.71, 0.68, 0.61] },
-    { "query": "q-003", "scores": [0.96, 0.85, 0.78, 0.72, 0.66, 0.58] },
-    { "query": "q-004", "scores": [0.98, 0.81, 0.75, 0.69, 0.63, 0.55] },
-    { "query": "q-005", "scores": [0.93, 0.89, 0.80, 0.74, 0.67, 0.60] },
-    { "query": "q-006", "scores": [0.95, 0.86, 0.77, 0.70, 0.64, 0.59] },
-    { "query": "q-007", "scores": [0.96, 0.88, 0.81, 0.73, 0.68, 0.62] },
-    { "query": "q-008", "scores": [0.94, 0.83, 0.76, 0.69, 0.62, 0.54] }
+    {
+      "query": "q-001",
+      "scores": [
+        0.91,
+        0.88,
+        0.82,
+        0.76,
+        0.71,
+        0.65
+      ]
+    },
+    {
+      "query": "q-002",
+      "scores": [
+        0.97,
+        0.84,
+        0.79,
+        0.71,
+        0.68,
+        0.61
+      ]
+    },
+    {
+      "query": "q-003",
+      "scores": [
+        0.96,
+        0.85,
+        0.78,
+        0.72,
+        0.66,
+        0.58
+      ]
+    },
+    {
+      "query": "q-004",
+      "scores": [
+        0.98,
+        0.81,
+        0.75,
+        0.69,
+        0.63,
+        0.55
+      ]
+    },
+    {
+      "query": "q-005",
+      "scores": [
+        0.93,
+        0.89,
+        0.8,
+        0.74,
+        0.67,
+        0.6
+      ]
+    },
+    {
+      "query": "q-006",
+      "scores": [
+        0.95,
+        0.86,
+        0.77,
+        0.7,
+        0.64,
+        0.59
+      ]
+    },
+    {
+      "query": "q-007",
+      "scores": [
+        0.96,
+        0.88,
+        0.81,
+        0.73,
+        0.68,
+        0.62
+      ]
+    },
+    {
+      "query": "q-008",
+      "scores": [
+        0.94,
+        0.83,
+        0.76,
+        0.69,
+        0.62,
+        0.54
+      ]
+    }
   ],
   "kpiSummary": {
     "totalDocuments": 12,
     "totalChunks": 1584,
     "totalQueries": 278,
-    "avgConfidence": 0.95,
     "avgLatencyMs": 712,
     "tokensUsed": 184293,
-    "estimatedCostUsd": 0.42
+    "estimatedCostUsd": 0.42,
+    "avgMatchScore": 0.95
   },
   "weeklyTrend": [
-    { "week": "W-7", "queries": 24, "tokens": 4280 },
-    { "week": "W-6", "queries": 31, "tokens": 5610 },
-    { "week": "W-5", "queries": 28, "tokens": 5040 },
-    { "week": "W-4", "queries": 42, "tokens": 7560 },
-    { "week": "W-3", "queries": 38, "tokens": 6840 },
-    { "week": "W-2", "queries": 51, "tokens": 9180 },
-    { "week": "W-1", "queries": 64, "tokens": 11520 }
+    {
+      "week": "W-7",
+      "queries": 24,
+      "tokens": 4280
+    },
+    {
+      "week": "W-6",
+      "queries": 31,
+      "tokens": 5610
+    },
+    {
+      "week": "W-5",
+      "queries": 28,
+      "tokens": 5040
+    },
+    {
+      "week": "W-4",
+      "queries": 42,
+      "tokens": 7560
+    },
+    {
+      "week": "W-3",
+      "queries": 38,
+      "tokens": 6840
+    },
+    {
+      "week": "W-2",
+      "queries": 51,
+      "tokens": 9180
+    },
+    {
+      "week": "W-1",
+      "queries": 64,
+      "tokens": 11520
+    }
   ]
 }

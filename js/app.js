@@ -374,7 +374,7 @@
         provider: result.provider,
         tokens: result.tokens,
         latencyMs: result.latencyMs,
-        confidence: result.sources[0]?.score || 0
+        matchScore: result.sources[0]?.score || 0
       });
     } catch (err) {
       bubble.innerHTML = `<span style="color:var(--danger)">⚠ ${escapeHtml(err.message)}</span>`;
@@ -442,7 +442,7 @@
     charts.renderQueryHeatmap($('#chartHeatmap'), state.analytics.queryActivity);
     charts.renderChunksRadial($('#chartChunks'), state.analytics.chunksPerDoc);
     charts.renderWeeklyTrend($('#chartWeekly'), state.analytics.weeklyTrend);
-    charts.renderConfidenceGauge($('#chartConfidence'), state.analytics.kpiSummary.avgConfidence);
+    charts.renderConfidenceGauge($('#chartConfidence'), state.analytics.kpiSummary.avgMatchScore || state.analytics.kpiSummary.avgConfidence || 0);
 
     // Model usage legend
     const usage = state.analytics.modelUsage;
