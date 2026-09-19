@@ -390,3 +390,139 @@ html, body {
   .canvas-page { padding: 2px; }
   .canvas-tile-head { padding: 2px 4px; font-size: 7px; }
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CONTACT FOOTER — sleek translucent bar with brand mark + contact links
+   Used on the Chatters page (data-contact-footer marker)
+   ════════════════════════════════════════════════════════════════════════════ */
+.contact-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(0deg, var(--theme-bg, #f8fafc) 0%, transparent 100%);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-top: 1px solid var(--theme-border, rgba(99, 102, 241, 0.10));
+}
+
+.contact-footer-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.contact-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-footer-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--theme-primary, #6366f1) 0%, var(--theme-accent, #06b6d4) 100%);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.20);
+}
+
+.contact-footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.contact-footer-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--theme-text, #0f172a);
+  line-height: 1.2;
+}
+
+.contact-footer-tag {
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--theme-muted, #64748b);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.contact-footer-spacer {
+  flex: 1;
+}
+
+.contact-footer-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--theme-primary, #6366f1);
+  text-decoration: none;
+  transition: color 150ms, opacity 150ms;
+}
+
+.contact-footer-link:hover {
+  color: var(--theme-accent, #06b6d4);
+  opacity: 0.85;
+}
+
+.contact-footer-sep {
+  color: var(--theme-muted, #94a3b8);
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* Translucent Contact button injected into the footer by contact-chat.js */
+.contact-footer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--toggle-border, rgba(99, 102, 241, 0.25));
+  background: var(--toggle-bg, rgba(99, 102, 241, 0.12));
+  color: var(--theme-primary, #6366f1);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 220ms cubic-bezier(.22, 1, .36, 1);
+  backdrop-filter: blur(10px) saturate(160%);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+}
+
+.contact-footer-btn:hover {
+  transform: translateY(-1px) scale(1.03);
+  background: var(--toggle-bg, rgba(99, 102, 241, 0.20));
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+}
+
+.contact-footer-icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--theme-primary, #6366f1), var(--theme-accent, #06b6d4));
+  color: #fff;
+}
+
+.contact-footer-text {
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 600px) {
+  .contact-footer-inner {
+    justify-content: center;
+    gap: 8px;
+  }
+  .contact-footer-spacer { display: none; }
+  .contact-footer-tag { display: none; }
+}

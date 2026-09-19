@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../css/theme-vivid.css?v=20260809">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-<body data-suite="chatters" data-variant="cyan">
+<body data-suite="chatters" data-variant="cyan" data-contact-bot="true">
   <header class="topbar">
     <a class="brand" href="../index.html">
       <span class="brand-mark">D</span>
@@ -26,9 +26,23 @@
     </nav>
   </header>
   <div id="app"></div>
+  <footer data-contact-footer class="contact-footer">
+    <div class="contact-footer-inner">
+      <span class="contact-footer-brand">
+        <span class="contact-footer-mark">IA</span>
+        <span class="contact-footer-meta">
+          <span class="contact-footer-name">Insight Analytics</span>
+          <span class="contact-footer-tag">Dashboards & AI-integrated analytics · click Contact to chat</span>
+        </span>
+      </span>
+      <span class="contact-footer-spacer"></span>
+      <!-- contact-chat.js injects the translucent Contact button here -->
+    </div>
+  </footer>
   <script src="../js/dash-suite.js?v=20260809"></script>
   <script src="../js/theme-toggle.js?v=20260809"></script>
   <script src="../js/visual-chat.js?v=20260809"></script>
+  <script src="../js/contact-chat.js?v=20260810"></script>
   <!-- Pull-to-refresh + service worker -->
   <script src="../js/pull-to-refresh.js?v=20260809"></script>
   <script>
