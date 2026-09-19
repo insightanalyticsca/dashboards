@@ -594,6 +594,58 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
     }
   };
 
+  // ─── Groq key verification ──────────────────────────────────────────────
+  // Makes a minimal real API call to verify the key actually works (not just
+  // that a key string is set). Returns a Promise resolving to:
+  //   { ok: true, model }      — key is valid, Groq is reachable
+  //   { ok: false, reason }    — key is invalid, revoked, or network failed
+  // Caches the result in sessionStorage for 5 minutes to avoid hammering
+  // the API on every page navigation.
+  let _groqVerifyCache = null;
+  async function verifyGroqKey() {
+    // 5-minute cache
+    if (_groqVerifyCache && (Date.now() - _groqVerifyCache.ts) < 5 * 60 * 1000) {
+      return _groqVerifyCache.result;
+    }
+    const result = { ok: false, reason: 'no key configured' };
+    if (!CONFIG.groqKey) {
+      result.reason = 'no key configured';
+      _groqVerifyCache = { ts: Date.now(), result };
+      return result;
+    }
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + CONFIG.groqKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: CONFIG.groqModel || 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+          stream: false
+        })
+      });
+      if (res.status === 200) {
+        result.ok = true;
+        result.reason = 'ok';
+        result.model = CONFIG.groqModel;
+      } else if (res.status === 401 || res.status === 403) {
+        result.ok = false;
+        result.reason = 'key rejected by Groq (' + res.status + ')';
+      } else {
+        result.ok = false;
+        result.reason = 'Groq returned HTTP ' + res.status;
+      }
+    } catch (e) {
+      result.ok = false;
+      result.reason = 'network error — ' + (e.message || 'unreachable');
+    }
+    _groqVerifyCache = { ts: Date.now(), result };
+    return result;
+  }
+
   // ─── Export ──────────────────────────────────────────────────────────────
   // Auto-load Groq config from data/groq-config.json (if available)
   (function autoLoadConfig() {
@@ -624,6 +676,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
   global.DocChatAPI = {
     Documents, Chunks, Queries, Analytics,
     Config, retrieve, ask,
+    verifyGroqKey, // () → Promise<{ ok: boolean, reason: string, model?: string }>
     // AI-powered document processing
     parseDocument,    // (file, onProgress) → { title, rawText, chunks, wordCount, contentType }
     ocrImageWithGroq, // (file) → extracted text from image via Groq vision

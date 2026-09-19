@@ -75,15 +75,60 @@
   }
 
   // ─── Topbar status pill ───────────────────────────────────────────────────
-  function updateProviderPill() {
+  // Honest status: actually calls Groq with a tiny payload to verify the key
+  // works. Shows 'Groq · live' (green, pulsing) only if the call returns 200;
+  // otherwise shows 'Groq · offline' (red) with the failure reason as title.
+  // Also updates the composerStatus text near the chat input to match.
+  async function updateProviderPill() {
     const cfg = api.Config.get();
     const pill = $('#providerPill');
     const label = $('#providerLabel');
-    let cls = 'pill', txt = 'Demo';
-    if (cfg.provider === 'groq' && cfg.groqKey) { cls = 'pill pill--ok'; txt = 'Groq · live'; }
-    else if (cfg.provider === 'ollama') { cls = 'pill pill--warn'; txt = 'Ollama · offline'; }
-    pill.className = cls;
-    label.textContent = txt;
+    const composer = document.getElementById('composerStatus');
+    if (!pill || !label) return;
+
+    const setComposer = (txt) => { if (composer) composer.textContent = txt; };
+
+    if (cfg.provider === 'ollama') {
+      pill.className = 'pill pill--warn';
+      label.textContent = 'Ollama · offline';
+      pill.title = 'Ollama provider not configured for live AI';
+      setComposer('Ollama · offline');
+      return;
+    }
+
+    if (cfg.provider !== 'groq' || !cfg.groqKey) {
+      pill.className = 'pill';
+      label.textContent = 'Demo';
+      pill.title = 'No AI provider configured';
+      setComposer('Demo');
+      return;
+    }
+
+    // Show 'checking' state while we ping Groq
+    pill.className = 'pill pill--warn';
+    label.textContent = 'Groq · checking…';
+    pill.title = 'Verifying Groq key with a real API call…';
+    setComposer('Groq · checking…');
+
+    try {
+      const v = await api.verifyGroqKey();
+      if (v.ok) {
+        pill.className = 'pill pill--ok';
+        label.textContent = 'Groq · live';
+        pill.title = 'Groq key verified — AI streaming is live';
+        setComposer('Groq · live');
+      } else {
+        pill.className = 'pill pill--err';
+        label.textContent = 'Groq · offline';
+        pill.title = 'Groq verification failed: ' + v.reason;
+        setComposer('Groq · offline');
+      }
+    } catch (e) {
+      pill.className = 'pill pill--err';
+      label.textContent = 'Groq · offline';
+      pill.title = 'Groq verification error: ' + (e.message || 'unknown');
+      setComposer('Groq · offline');
+    }
   }
 
   // ─── Document library ───────────────────────────────────────────────────
@@ -525,13 +570,13 @@
       console.error(err);
     }
 
-    // Check if Groq config loaded after boot (async)
+    // Check if Groq config loaded after boot (async). updateProviderPill now
+    // verifies the key with a real API call and updates composerStatus to
+    // match — 'Groq · live' if the call returns 200, 'Groq · offline' if not.
     setTimeout(function() {
       var cfg = window.DocChatAPI?.Config?.get();
       if (cfg && cfg.provider === 'groq' && cfg.groqKey) {
         updateProviderPill();
-        var status = document.getElementById('composerStatus');
-        if (status) status.textContent = 'Groq · live';
       }
     }, 2000);
     

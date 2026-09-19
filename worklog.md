@@ -53,3 +53,41 @@ Stage Summary:
 - Falls back to honest static notes if no Groq key or on error (badge shows "Static brief")
 - All dishonest content stripped: no fake confidence %s, no point forecasts, no store attribution without granularity
 - File changes: data/executive/chatters.json, js/dash-suite.js, js/exec-ai-brief.js (new), js/contact-chat.js, js/visual-chat.js, css/executive-dashboard-suite.css, custom-html/executive-chatters-portfolio.html, worklog.md
+
+---
+Task ID: pure-streaming-no-static-fallback
+Agent: main
+Task: Make all summaries and answers api-groq driven, printing them live as in real AI chats. Make static only if Groq is offline.
+
+Work Log:
+- Root cause analysis: the existing static/demo fallback was too eager. It triggered when CONFIG.groqKey wasn't in localStorage yet, even though the real key loads ASYNC from data/groq-config.json. This caused canned answers and pre-populated static notes to appear in the first ~200ms before the config fetch resolved — defeating the "live streaming" feel.
+- Refactored all three chat/brief scripts (exec-ai-brief.js, contact-chat.js, visual-chat.js) to use the same pattern:
+  1. The autoLoad IIFE returns a Promise (configPromise)
+  2. The ask()/runBrief() function AWAITS configPromise before checking CONFIG.groqKey
+  3. Only if the config truly has no key after the fetch resolves do we show the offline message
+- exec-ai-brief.js (AI Brief card):
+  - On page load: clears all 4 cells, shows shimmer + "AI generating..." badge IMMEDIATELY (no static notes pre-shown)
+  - Static notes ONLY revealed via restoreStaticBrief() when: (a) Groq key truly absent after config loaded, OR (b) the Groq call threw (network/API error)
+  - If no static notes either, shows clean "AI is offline — refresh in a moment" message instead of fake content
+  - Badge text: "AI generating..." (streaming) → "AI-wired" (live) or "Static (AI offline)" (fallback)
+  - Sets window.__execAiBriefActive = true in init() so dash-suite.js knows NOT to pre-populate
+- dash-suite.js:
+  - Removed upfront static notes pre-population (was racing with exec-ai-brief.js streaming)
+  - Now only pre-populates from notes if window.__execAiBriefActive is NOT set (i.e., the page doesn't load exec-ai-brief.js at all)
+- contact-chat.js:
+  - Removed the "demo mode" canned answer that was pretending to be a real response
+  - If Groq truly offline: streams a graceful "AI is offline — Groq is not configured on this deployment" message that points to the tappable email/phone in the panel (no fake content)
+- visual-chat.js:
+  - Same treatment: removed demo canned answer, uses configPromise pattern
+  - If Groq truly offline: streams "AI is offline — Groq is not configured on this deployment" message that references the dashboard title and points to still-visible charts/KPIs
+- Bumped cache version to v=20260811 on chatters.html (executive-dashboard-suite.css, dash-suite.js, visual-chat.js, contact-chat.js, exec-ai-brief.js)
+- Resolved local-vs-remote divergence (local had stray opaque-ID commit 1da1156 from a previous agent). Used git reset --soft origin/main to move HEAD to d9fadf0 (remote tip) while keeping working tree intact, then committed my 5-file changes on top.
+- Committed as d3ea76b, pushed to origin/main. Verified live on Pages after 35s propagation: all three JS files have configPromise, restoreStaticBrief (brief only), and "AI is offline" message present.
+
+Stage Summary:
+- All AI summaries and answers are now pure Groq streams — no static content shown unless Groq is truly unreachable
+- AI Brief card: shimmer state on load, streams in real time from Groq, falls back to honest static notes ONLY on Groq failure
+- Contact bot: streams every response from Groq; shows offline message with contact info only if Groq is unreachable
+- Visual chat: streams every 4-part brief from Groq; shows offline message referencing the dashboard only if Groq is unreachable
+- No more canned "demo answer" content anywhere
+- File changes: js/exec-ai-brief.js, js/dash-suite.js, js/contact-chat.js, js/visual-chat.js, custom-html/executive-chatters-portfolio.html, worklog.md
