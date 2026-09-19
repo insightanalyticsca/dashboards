@@ -20,18 +20,62 @@
 
   // ─── Known facts about Insight Analytics (for the system prompt) ─────────
   // These are the ONLY capabilities the bot may speak to. Anything else must
-  // be deflected to "reach out via email/phone".
+  // be deflected to "reach out via email/phone". Grouped by topic so the LLM
+  // can produce coherent answers when asked "what do you do?" or "tell me
+  // about your X".
   var IA_FACTS = [
+    '═══ CORE PLATFORM ═══',
     'Insight Analytics builds corporate dashboard platforms for utilities, telecom, and operations sectors.',
-    'Core product: executive, CSR (customer service), and ITS (IT service) dashboards, deployed as a static site (HTML+JS+ECharts) on GitHub Pages for free hosting.',
-    'Original platform was a .NET MVC Core app; the deployed demo is a faithful static clone of that app\'s logic, look, and feel.',
-    'AI integration: Groq-powered chat on every dashboard version. Produces a structured 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO) using only the dashboard\'s actual JSON data — no invented confidence %s or fabricated forecasts.',
-    'PWA support: site is installable, offline-capable, with translucent sleek icons and a service worker for cached assets.',
-    'Tech stack: HTML5, vanilla JS, ECharts 5, CSS variables for light/dark themes, JSON file backend (no server required).',
-    'Visualization library: ECharts 5 with custom "vivid" light and "vivid-dark" themes; canvas rendering for charts; iframed custom HTML visuals for canvas pages.',
-    'Source repo: github.com/insightanalyticsca/dashboards — deployed at insightanalyticsca.github.io/dashboards/.',
-    'Use cases demonstrated: AR portfolio, payments, disconnects, e-bill performance, final-bill recovery, CSR aging overview, IT service health, security posture, ticket operations, SLA performance.',
-    'Custom HTML visuals: 45+ individual visual files cloned verbatim from the .NET app, combined into 11 canvas versions with drag/resize/save layout via localStorage.'
+    'Core product: a static site (HTML5 + vanilla JS + ECharts 5) deployed on GitHub Pages at insightanalyticsca.github.io/dashboards/ — free hosting, no server required.',
+    'Original platform was a .NET MVC Core app; the deployed demo is a faithful static clone of that app\'s logic, look, and feel (not a reimplementation — the .NET cshtml templates were converted to static HTML shells that load shared JS).',
+    'JSON file backend: data/executive/*.json + data/versions/*.json. No database, no API server — every "query" is a fetch against a static JSON file.',
+    'Source repo: github.com/insightanalyticsca/dashboards',
+
+    '═══ DASHBOARD SECTORS ═══',
+    'Executive dashboards: 6 versions — AR portfolio, customer payments, disconnects/bankruptcies, e-bill performance, final-bill recovery, and Chatters (executive operating dashboard for a 116-store beauty retail + salon chain).',
+    'CSR (Customer Service Representative) dashboards: 11 canvas versions — aging overview, aging dynamics, AR tabular, electric arrears, top arrears, bankruptcies report, collection emails, monthly moves, multi-unit conditions map, queue spectrum, request service layout map.',
+    'ITS (IT Service) dashboards: 6 canvas versions — service health, security posture, security training, SLA performance, ticket management, ticket operations.',
+    'Custom HTML visuals: 45+ individual visual files cloned verbatim from the .NET app (no patches except fetch URL rewrites), combined into 23 canvas/executive versions.',
+
+    '═══ AI INTEGRATION (multiple Groq-powered bots) ═══',
+    'AI Brief card: a dazzling 4-section card on each executive dashboard page. On page load, fetches the dashboard JSON, calls Groq with an honest 4-part system prompt, and streams tokens live into the 4 cells (What happened / Why / What to expect / What to do) with shimmer state.',
+    'Visual chat: floating chat widget on every version page. Answers questions about the dashboard\'s JSON data using the same honest 4-part brief format. Includes an "AI-wired" badge with a green pulse dot.',
+    'Contact bot: footer-resident widget on the Chatters page. Conveys contact info (email + phone, clickable mailto:/tel:) and answers basic questions about Insight Analytics\' solutions. Inline compact form by default — tiny icons + Ask pill + close — collapses to a single Contact pill.',
+    'Honest status pill: lander page topbar pill that actually pings Groq with a real API call (max_tokens=1) to verify the key works. Shows green "Groq · live" only on HTTP 200, amber "Groq · checking…" during verification, red "Groq · offline" on 401/403/network error. 5-minute in-memory cache to avoid pinging on every page nav.',
+
+    '═══ HONEST AI PRINCIPLES ═══',
+    'All AI summaries and answers are pure Groq streams — no static content shown unless Groq is truly unreachable.',
+    'The 4-part brief system prompt forbids: invented confidence percentages (e.g., "82% confidence"), specific point forecasts (e.g., "next-month revenue +3.9%"), store-level attribution when the payload is aggregated, dollar-opportunity figures without the full unit-economics chain (unit count × rate × frequency × time).',
+    'No canned "demo answer" anywhere — if Groq is offline, the bot says "AI is offline" honestly and points to the contact info.',
+    'Configuration loading is awaited before deciding fallback — prevents premature "offline" messages when the async config fetch is still in flight.',
+
+    '═══ NETLIFY PROXY ARCHITECTURE (key never reaches client) ═══',
+    'The Groq API key is held server-side as the GROQ_API_KEY environment variable on a Netlify Edge Function (Deno runtime).',
+    'The static site on GitHub Pages calls the proxy URL (https://dashboards-groq-proxy.netlify.app/groq-proxy) instead of api.groq.com directly — the key never appears in client JS, never lives in the GitHub repo, never gets blocked by GitHub secret scanning.',
+    'The proxy streams SSE pass-through (ReadableStream) so token-by-token streaming still works in the browser.',
+    'CORS restricted to the GitHub Pages origin + localhost for dev.',
+    'Bonus: GET /groq-proxy?op=models endpoint forwards to Groq /v1/models for listing available models from the browser.',
+    'Rotating the key is a one-line `netlify env:set GROQ_API_KEY=...` + redeploy — no repo changes needed.',
+    'Previously the key was obfuscated as split+reversed keyParts in data/groq-config.json (bypassed GitHub secret scanning) — that hack is now retired in favor of the server-side proxy.',
+
+    '═══ PWA + THEMING ═══',
+    'Site is installable as a PWA: manifest.json, service worker (network-first caching strategy), translucent sleek icons (192/512/maskable/apple-touch/favicon).',
+    'Theme system: light/dark toggle with custom "vivid" light and "vivid-dark" ECharts themes (registered against echarts.registerTheme). Toggle broadcasts to all iframes via postMessage + injects CSS overrides for cross-frame consistency (CSR runtime listens for csr-dashboard-theme:apply events).',
+    'CSS variables for theming: --theme-bg, --theme-text, --theme-primary, --theme-accent, --theme-border, --theme-panel, --theme-muted — single source of truth across the site.',
+    'Hero canvas animation on the lander: animated node network (50 nodes, glow 20, opacity 0.50, cubic-bezier transitions) rendered on an ECharts graph.',
+
+    '═══ MOBILE + UX ═══',
+    'Pull-to-refresh on all pages — custom JS implementation (no library), integrates with the service worker cache.',
+    'Layout persistence: drag/resize positions of visuals saved per-version in localStorage (keyed by version ID) — restores on page reload. Reset button on each executive page.',
+    'Mobile-responsive: canvas tiles, footer wraps, contact widget collapses to single Contact pill on small screens, executive dashboards shrink fonts + padding (no transform, no piling).',
+    'Safari aggressive caching handled by renaming JS files (e.g., executive-dashboard-suite.js → dash-suite.js) and bumping cache version strings (e.g., v=20260813) on every release.',
+    'Cross-iframe layout sync: canvas pages use postMessage to broadcast drag/resize positions to the parent, which persists them.',
+
+    '═══ DEMO CONTENT (not real client data) ═══',
+    'All dashboard data is synthetic demo data — real customer data is never shipped to the browser.',
+    'Chatters executive dashboard uses a realistic operating model for a 116-store beauty retail + salon chain ($309M TTM revenue, $2.66M/store, $61.80/visit, 60/40 retail/services split) — derived from public benchmarks, not real client financials.',
+    'Period labels are real "today" — Week 32 / Aug 2026 — so the demo doesn\'t look stale.',
+    'Use cases demonstrated: AR portfolio, payments, disconnects, e-bill performance, final-bill recovery, CSR aging overview, IT service health, security posture, ticket operations, SLA performance.'
   ].join('\n');
 
   // ─── Config (mirror visual-chat.js) ──────────────────────────────────────

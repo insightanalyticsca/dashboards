@@ -276,6 +276,7 @@
       '5. NEVER compute "annualized opportunity" or "$X opportunity" unless the payload contains the full unit-economics chain (unit count × rate × frequency × time). If the chain is missing, say the figure cannot be derived.',
       '6. If the user\'s question cannot be answered from the data, say so directly. Do not extrapolate beyond what the JSON shows.',
       '7. Keep the entire response under 200 words. Tight prose, no filler, no preamble before WHAT HAPPENED.',
+      '8. If the user asks a general question about Insight Analytics, the platform, the tech stack, the PWA, the theming, the Netlify proxy, or any other non-dashboard-data topic (e.g., "what is this site?", "how does the AI work?", "is this a PWA?"), do NOT try to produce a 4-part brief. Instead, briefly note what you can see on this page and suggest they use the Contact bot in the footer for platform-level questions — it has the full knowledge base of implemented solutions.',
       '',
       'DASHBOARD DATA:',
       visualContext || '(no visual data loaded — if no data is shown, tell the user the dashboard payload could not be loaded)'
