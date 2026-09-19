@@ -13,7 +13,7 @@
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
-    groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
+    groqModel: localStorage.getItem('docchat.groq.model') || 'gemini-flash-latest'
   };
 
   // Expose a promise so ask() can wait for the config to finish loading
@@ -212,7 +212,8 @@
         messages: messages,
         temperature: 0.3,
         max_tokens: 1200,
-        stream: true
+        stream: true,
+        reasoning_effort: 'none'
       })
     });
 

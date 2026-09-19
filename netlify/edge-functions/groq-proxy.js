@@ -1,20 +1,26 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  groq-proxy — Netlify Edge Function
-//  Proxies chat completion requests to Groq, keeping the API key server-side.
+//  groq-proxy → gemini-proxy — Netlify Edge Function
 //
-//  The static site on GitHub Pages (https://insightanalyticsca.github.io/dashboards/)
-//  calls this function instead of api.groq.com directly, so the Groq key never
-//  reaches the browser. The key is read from the GROQ_API_KEY environment
-//  variable set on the Netlify site.
+//  Originally forwarded to Groq. As of this commit, forwards to Google
+//  Gemini's OpenAI-compatible endpoint instead — same request/response
+//  format, just a different upstream. The function name + path stay as
+//  "groq-proxy" for backward compat (the client JS still calls /groq-proxy).
 //
-//  Supports both:
-//    - streaming (stream:true) — passes SSE through as text/event-stream
-//    - non-streaming (stream:false) — used by the verifyGroq ping
+//  The Gemini key is held server-side as the GEMINI_API_KEY environment
+//  variable on the Netlify site. The browser never sees it.
 //
-//  CORS is restricted to the GitHub Pages origin (and localhost for dev).
+//  Gemini's OpenAI-compatible endpoint:
+//    POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
+//    Authorization: Bearer {GEMINI_API_KEY}
+//    Body: { model, messages, temperature, max_tokens, stream }
+//    Response: standard OpenAI format (SSE for streaming, JSON otherwise)
+//
+//  CORS restricted to the GitHub Pages origin (and localhost for dev).
 //  ════════════════════════════════════════════════════════════════════════════
 
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const UPSTREAM_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+const MODELS_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const DEFAULT_MODEL = 'gemini-1.5-flash';
 
 const ALLOWED_ORIGINS = [
   'https://insightanalyticsca.github.io',
@@ -28,7 +34,7 @@ function corsHeaders(origin) {
   const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allow,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin'
@@ -43,35 +49,36 @@ export default async (request, context) => {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
   }
 
-  // GET /groq-proxy?op=models → forward to Groq /v1/models
-  // (used to discover which models are actually available on this account)
+  // Read the API key from the Netlify env var
+  const API_KEY = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
+  if (!API_KEY) {
+    return new Response(
+      JSON.stringify({ error: 'GEMINI_API_KEY env var not set on the edge function' }),
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+    );
+  }
+
+  // GET /groq-proxy?op=models → list available Gemini models
   if (request.method === 'GET') {
     const url = new URL(request.url);
     if (url.searchParams.get('op') === 'models') {
-      const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
-      if (!GROQ_KEY) {
-        return new Response(
-          JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
-          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
-        );
-      }
       try {
-        const groqRes = await fetch('https://api.groq.com/openai/v1/models', {
-          headers: { 'Authorization': 'Bearer ' + GROQ_KEY }
+        const res = await fetch(MODELS_URL + '?pageSize=100', {
+          headers: { 'Authorization': 'Bearer ' + API_KEY }
         });
-        const body = await groqRes.text();
+        const body = await res.text();
         return new Response(body, {
-          status: groqRes.status,
+          status: res.status,
           headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
         });
       } catch (e) {
         return new Response(
-          JSON.stringify({ error: 'Failed to reach Groq', detail: e.message }),
+          JSON.stringify({ error: 'Failed to reach Gemini', detail: e.message }),
           { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
         );
       }
     }
-    return new Response(JSON.stringify({ ok: true, service: 'groq-proxy' }), {
+    return new Response(JSON.stringify({ ok: true, service: 'gemini-proxy' }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
     });
   }
@@ -81,18 +88,6 @@ export default async (request, context) => {
       status: 405,
       headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
     });
-  }
-
-  // Read the Groq key from the Netlify env var (set via Netlify dashboard or CLI)
-  const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
-  if (!GROQ_KEY) {
-    return new Response(
-      JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
-      }
-    );
   }
 
   // Parse the incoming request body
@@ -113,17 +108,18 @@ export default async (request, context) => {
     });
   }
 
-  // Forward to Groq — the proxy injects the Authorization header here
-  let groqRes;
+  // Forward to Gemini's OpenAI-compatible endpoint — same body format,
+  // Gemini accepts { model, messages, temperature, max_tokens, stream }
+  let upstreamRes;
   try {
-    groqRes = await fetch(GROQ_URL, {
+    upstreamRes = await fetch(UPSTREAM_URL, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + GROQ_KEY,
+        'Authorization': 'Bearer ' + API_KEY,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: body.model || 'qwen/qwen3.8-27b',
+        model: body.model || DEFAULT_MODEL,
         messages: body.messages,
         temperature: body.temperature ?? 0.3,
         max_tokens: body.max_tokens ?? 800,
@@ -132,27 +128,24 @@ export default async (request, context) => {
     });
   } catch (e) {
     return new Response(
-      JSON.stringify({ error: 'Failed to reach Groq', detail: e.message }),
-      {
-        status: 502,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
-      }
+      JSON.stringify({ error: 'Failed to reach Gemini', detail: e.message }),
+      { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
     );
   }
 
-  // Pass through the response — Groq streams text/event-stream when stream:true,
+  // Pass through the response — Gemini streams text/event-stream when stream:true,
   // we pass the ReadableStream through verbatim so the browser sees the same SSE.
   const respHeaders = {
-    'Content-Type': groqRes.headers.get('content-type') || 'application/json',
+    'Content-Type': upstreamRes.headers.get('content-type') || 'application/json',
     ...corsHeaders(origin)
   };
-  if ((groqRes.headers.get('content-type') || '').includes('text/event-stream')) {
+  if ((upstreamRes.headers.get('content-type') || '').includes('text/event-stream')) {
     respHeaders['Cache-Control'] = 'no-cache';
     respHeaders['Connection'] = 'keep-alive';
   }
 
-  return new Response(groqRes.body, {
-    status: groqRes.status,
+  return new Response(upstreamRes.body, {
+    status: upstreamRes.status,
     headers: respHeaders
   });
 };

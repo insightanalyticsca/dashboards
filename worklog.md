@@ -376,3 +376,41 @@ Stage Summary:
 - Visual chat Q&A cached per-(version+question) for 30 min — repeat questions on the same dashboard cost 0 tokens
 - Badge honestly shows 'AI-wired · cached' (sky-blue) when serving from cache, 'AI-wired' (green) for fresh calls, 'AI generating…' (amber) while streaming, 'Static (AI offline)' (gray) on failure
 - File changes: js/exec-ai-brief.js, js/contact-chat.js, js/visual-chat.js, css/executive-dashboard-suite.css, custom-html/executive-chatters-portfolio.html, worklog.md
+
+---
+Task ID: fix-invisible-phone-icon
+Agent: main
+Task: 'The phone pic on phone icon in chatters footer is visible only when touched - green icon otherwise. Fix it'
+
+Work Log:
+- Root cause analysis: the phone icon SVG (in contact-chat.js) uses stroke='currentColor' which inherits from the parent <a> element. The CSS rule .contact-compact-iconbtn { color: #fff } should make it white. BUT — theme-vivid.css has a global rule:
+    a, .navlink { color: var(--theme-accent) !important; }
+  The !important on this global <a> rule overrides the class-level .contact-compact-iconbtn color rule, so the SVG stroke was inheriting --theme-accent (teal) instead of white.
+
+- Why only the phone icon was affected (mail icon was fine):
+  - Mail button background: linear-gradient(135deg, #6366f1, #8b5cf6) — violet→purple
+  - Phone button background: linear-gradient(135deg, #06b6d4, #10b981) — teal→green
+  - SVG stroke color (teal, from --theme-accent):
+    - On violet background: teal-on-violet = visible (complementary colors)
+    - On teal background: teal-on-teal = invisible
+  - So the mail icon appeared normal (teal stroke on violet = visible) but the phone icon was invisible (teal stroke on teal = camouflaged)
+
+- Why it appeared on touch: theme-vivid.css also has
+    a:hover { color: var(--theme-hot) !important; }
+  --theme-hot is orange/red. On touch (which triggers :hover on mobile), the stroke changed to orange — visible on teal. That's why the icon 'appeared' when touched.
+
+- Fix: added !important to the color: #fff rule on .contact-compact-iconbtn in css/canvas-host.css so it wins the specificity battle against the global a{color:var(--theme-accent)} rule. The hover state still changes color (--theme-hot, orange/red on touch) which provides visual feedback — that's fine, even desirable.
+
+- Bumped cache version on canvas-host.css to v=20260817 in chatters.html
+
+- Resolved local-vs-remote divergence (local had stray opaque-ID commit 641780a on top of 2bfec51). Used git reset --soft origin/main to re-apply my 2-file changes on top of remote.
+
+- Committed as 2a3c98d, pushed to origin/main. Verified live after 30s Pages propagation:
+  - canvas-host.css has 'color: #fff !important;' on .contact-compact-iconbtn
+  - Comment explains why !important is needed (override theme-vivid.css global a{color} rule)
+
+Stage Summary:
+- Phone icon now renders white on teal→green by default (visible without touch)
+- Mail icon still renders white on violet→purple (was already visible, still is — just consistent now)
+- Hover/touch still changes color to --theme-hot (orange/red) for visual feedback
+- File changes: css/canvas-host.css (+1 line: !important), custom-html/executive-chatters-portfolio.html (cache bust), worklog.md
