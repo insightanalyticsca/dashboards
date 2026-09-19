@@ -16,9 +16,13 @@
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
   };
 
-  // Auto-load Groq config from data/groq-config.json
-  (function autoLoad() {
-    fetch('../data/groq-config.json', { cache: 'no-store' })
+  // Expose a promise so ask() can wait for the config to finish loading
+  // before deciding whether Groq is truly offline. Without this, the first
+  // message a user sends (before the async fetch resolves) would get a
+  // canned demo answer even though Groq IS configured in
+  // data/groq-config.json.
+  var configPromise = (function autoLoad() {
+    return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cfg) {
         if (!cfg) return;
@@ -287,24 +291,37 @@
       'Produce the 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO) based strictly on the dashboard data. ' +
       'Respect every hard rule in the system prompt.';
 
+    // Wait for the Groq config to finish loading before deciding whether
+    // Groq is truly offline. Without this, the first message a user sends
+    // (before the async fetch from data/groq-config.json resolves) would
+    // get a canned demo answer even though Groq IS configured.
+    await configPromise;
+
     if (CONFIG.provider === 'groq' && CONFIG.groqKey) {
       var messages = [
         { role: 'system', content: buildSystemPrompt(visualContext) },
         { role: 'user', content: userPrompt }
       ];
       return await groqChat(messages, onToken);
-    } else {
-      // Demo mode — honest structured fallback built from actual data
-      var answer = buildDemoBrief(visualContext);
-      if (onToken) {
-        var tokens = answer.match(/\S+\s*/g) || [answer];
-        for (var i = 0; i < tokens.length; i++) {
-          await new Promise(function(r) { setTimeout(r, 24); });
-          onToken(tokens[i]);
-        }
-      }
-      return answer;
     }
+
+    // Groq is truly offline (no key in localStorage AND no key in
+    // data/groq-config.json). Stream a graceful message that's honest
+    // about the AI being offline — not a canned "demo answer" pretending
+    // to be a real response.
+    var offlineMsg = 'AI is offline — Groq is not configured on this deployment.\n\n' +
+      'I can\'t produce a live brief without the AI backend. ' +
+      (state.visualData && state.visualData.title
+        ? 'This dashboard (' + state.visualData.title + ') still has its charts and KPIs visible — explore them directly, or refresh the page in a moment if this is a temporary outage.'
+        : 'Refresh the page in a moment if this is a temporary outage.');
+    if (onToken) {
+      var tokens = offlineMsg.match(/\S+\s*/g) || [offlineMsg];
+      for (var i = 0; i < tokens.length; i++) {
+        await new Promise(function(r) { setTimeout(r, 18); });
+        onToken(tokens[i]);
+      }
+    }
+    return offlineMsg;
   }
 
   // ─── Demo-mode brief — honest structured fallback when Groq key absent ────

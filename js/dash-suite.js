@@ -657,18 +657,23 @@
                 : ''}
     </main>`;
 
-        // Populate AI brief cells with static notes as initial state.
-        // exec-ai-brief.js (if loaded on the page) will replace this with a
-        // streamed Groq-generated brief; if absent or no Groq key, the honest
-        // static notes remain visible.
-        const briefHost = app.querySelector('[data-ai-brief]');
-        if (briefHost && Array.isArray(payload.notes) && payload.notes.length) {
-          const sectionOrder = ['what', 'why', 'next', 'do'];
-          const cells = briefHost.querySelectorAll('[data-section]');
-          sectionOrder.forEach((sec, i) => {
-            const cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
-            if (cell && payload.notes[i]) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
-          });
+        // The AI brief card ships with empty cells + shimmer state.
+        // exec-ai-brief.js (loaded on the page) takes over: streams Groq
+        // tokens into the cells, or — if Groq is truly offline — fills
+        // them with the honest static notes from the payload.
+        // If exec-ai-brief.js is NOT loaded on the page (no <script> tag),
+        // we still want SOMETHING visible, so populate from notes as a
+        // last-resort. We detect exec-ai-brief.js by checking whether its
+        // init function left a marker on window.
+        if (!window.__execAiBriefActive) {
+          const briefHost = app.querySelector('[data-ai-brief]');
+          if (briefHost && Array.isArray(payload.notes) && payload.notes.length) {
+            const sectionOrder = ['what', 'why', 'next', 'do'];
+            sectionOrder.forEach((sec, i) => {
+              const cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+              if (cell && payload.notes[i]) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
+            });
+          }
         }
 
         const canvas = app.querySelector('.exec-canvas');

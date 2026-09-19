@@ -41,8 +41,13 @@
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
   };
 
-  (function autoLoad() {
-    fetch('../data/groq-config.json', { cache: 'no-store' })
+  // Expose a promise so ask() can wait for the config to finish loading
+  // before deciding whether Groq is truly offline. Without this, a user
+  // who sends a message in the first ~200ms (before the async fetch
+  // resolves) would get a canned demo answer even though Groq IS
+  // configured in data/groq-config.json.
+  var configPromise = (function () {
+    return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (cfg) {
         if (!cfg) return;
@@ -137,27 +142,37 @@
   }
 
   async function ask(question, onToken) {
+    // Wait for the Groq config to finish loading before deciding whether
+    // to use Groq or report offline. The config fetch from
+    // data/groq-config.json is async and may still be in flight on
+    // first user interaction.
+    await configPromise;
+
     if (CONFIG.provider === 'groq' && CONFIG.groqKey) {
       var messages = [
         { role: 'system', content: buildSystemPrompt() },
         { role: 'user', content: question }
       ];
       return await groqChat(messages, onToken);
-    } else {
-      // Demo mode — honest fallback: always convey contact info + deflect
-      var answer = 'I\'m in demo mode (no Groq key configured), but here\'s what matters:\n' +
-        'Email: ' + CONTACT.email + '\n' +
-        'Phone: ' + CONTACT.phone + '\n' +
-        'Both are clickable above. For specific questions about our services, reach out directly — we\'ll get you a real answer.';
-      if (onToken) {
-        var tokens = answer.match(/\S+\s*/g) || [answer];
-        for (var i = 0; i < tokens.length; i++) {
-          await new Promise(function (r) { setTimeout(r, 24); });
-          onToken(tokens[i]);
-        }
-      }
-      return answer;
     }
+
+    // Groq is truly offline (no key in localStorage AND no key in
+    // data/groq-config.json). Stream a graceful message pointing to the
+    // tappable email/phone in the panel. This is the ONLY static content
+    // and it makes clear the AI is offline — not a fake "demo answer".
+    var offlineMsg = 'AI is offline — Groq is not configured on this deployment.\n\n' +
+      'For a real answer, reach out directly:\n' +
+      '  • Email: ' + CONTACT.email + ' (clickable above)\n' +
+      '  • Phone: ' + CONTACT.phone + ' (clickable above)\n\n' +
+      'Or refresh the page in a moment if this is a temporary outage.';
+    if (onToken) {
+      var tokens = offlineMsg.match(/\S+\s*/g) || [offlineMsg];
+      for (var i = 0; i < tokens.length; i++) {
+        await new Promise(function (r) { setTimeout(r, 18); });
+        onToken(tokens[i]);
+      }
+    }
+    return offlineMsg;
   }
 
   // ══════════════════════════════════════════════════════════════════════════

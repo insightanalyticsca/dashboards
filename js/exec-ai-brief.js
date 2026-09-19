@@ -18,8 +18,11 @@
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
   };
 
-  (function autoLoad() {
-    fetch('../data/groq-config.json', { cache: 'no-store' })
+  // Expose a promise so callers can wait for the config to load before
+  // deciding whether Groq is truly available. This prevents premature
+  // fallback to static content while the async config fetch is in flight.
+  var configPromise = (function () {
+    return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (cfg) {
         if (!cfg) return;
@@ -249,7 +252,7 @@
     var txt = badge.querySelector('.exec-ai-brief-badge-text');
     if (!txt) return;
     if (state === 'streaming') txt.textContent = 'AI generating…';
-    else if (state === 'fallback') txt.textContent = 'Static brief';
+    else if (state === 'fallback') txt.textContent = 'Static (AI offline)';
     else txt.textContent = 'AI-wired';
   }
 
@@ -261,39 +264,45 @@
     var jsonPath = detectJsonPath();
     if (!jsonPath) return;
 
-    // Fetch the dashboard JSON (cache-busting)
+    // Show shimmer + 'AI generating…' immediately — no static content shown
+    // upfront. Static notes are ONLY revealed if Groq is truly offline.
+    briefHost.querySelectorAll('[data-brief-body]').forEach(function (cell) {
+      cell.textContent = '';
+      cell.setAttribute('data-loading', 'true');
+    });
+    setBadgeState(briefHost, 'streaming');
+
+    // Wait for the async Groq config to finish loading before deciding
+    // whether to use Groq or fall back. This avoids the premature fallback
+    // that happened when CONFIG.groqKey was checked before the fetch resolved.
+    await configPromise;
+
+    // Fetch the dashboard JSON in parallel with the config wait
     var payload;
     try {
       var res = await fetch(jsonPath, { cache: 'no-store' });
-      if (!res.ok) { setBadgeState(briefHost, 'fallback'); return; }
+      if (!res.ok) { restoreStaticBrief(briefHost, null); return; }
       payload = await res.json();
     } catch (e) {
       console.warn('exec-ai-brief: payload fetch failed', e);
-      setBadgeState(briefHost, 'fallback');
+      restoreStaticBrief(briefHost, null);
       return;
     }
 
-    // No Groq key → keep static notes (already populated by dash-suite.js)
+    // Truly no Groq key available (not in localStorage, not in config JSON)
     if (CONFIG.provider !== 'groq' || !CONFIG.groqKey) {
-      setBadgeState(briefHost, 'fallback');
+      restoreStaticBrief(briefHost, payload);
       return;
     }
 
-    // Build context + messages
+    // Build context + messages and stream from Groq
     var visualContext = buildVisualContext(payload);
     var messages = [
       { role: 'system', content: buildSystemPrompt(visualContext) },
       { role: 'user', content: 'Produce the 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO) based strictly on the dashboard data. Respect every hard rule in the system prompt.' }
     ];
 
-    setBadgeState(briefHost, 'streaming');
-
-    // Clear cells, show shimmer
-    briefHost.querySelectorAll('[data-brief-body]').forEach(function (cell) {
-      cell.textContent = '';
-      cell.setAttribute('data-loading', 'true');
-    });
-
+    // Cells already cleared + shimmer on. Stream the response.
     var partial = '';
     try {
       await groqChat(messages, function (token) {
@@ -303,24 +312,40 @@
       clearShimmer(briefHost);
       setBadgeState(briefHost, null); // back to default "AI-wired"
     } catch (e) {
-      console.warn('exec-ai-brief: Groq call failed', e);
-      // Restore the static notes (already populated) on failure
-      clearShimmer(briefHost);
-      setBadgeState(briefHost, 'fallback');
-      // Re-populate from payload.notes as a safe fallback
-      if (payload.notes && payload.notes.length) {
-        var sectionOrder = ['what', 'why', 'next', 'do'];
-        sectionOrder.forEach(function (sec, i) {
-          if (!payload.notes[i]) return;
-          var cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
-          if (cell) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
-        });
-      }
+      console.warn('exec-ai-brief: Groq call failed, falling back to static notes', e);
+      restoreStaticBrief(briefHost, payload);
     }
+  }
+
+  // ─── Restore the brief from static notes (only on true Groq offline) ─────
+  function restoreStaticBrief(briefHost, payload) {
+    clearShimmer(briefHost);
+    setBadgeState(briefHost, 'fallback');
+    if (!payload || !payload.notes || !payload.notes.length) {
+      // No static notes either — show a clean "AI offline" message in each cell
+      var offlineMsg = 'AI is offline — refresh in a moment, or open Visual Chat below to ask directly.';
+      ['what', 'why', 'next', 'do'].forEach(function (sec) {
+        var cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+        if (cell) cell.textContent = sec === 'what' ? offlineMsg : '';
+      });
+      return;
+    }
+    // Re-populate the 4 cells with the honest static notes
+    var sectionOrder = ['what', 'why', 'next', 'do'];
+    sectionOrder.forEach(function (sec, i) {
+      if (!payload.notes[i]) return;
+      var cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+      if (cell) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
+    });
   }
 
   // ─── Init — wait for dash-suite.js to render the brief card ──────────────
   function init() {
+    // Mark ourselves active so dash-suite.js knows NOT to pre-populate the
+    // brief cells with static notes — we'll stream Groq tokens in instead
+    // (and only fall back to static if Groq is truly offline).
+    window.__execAiBriefActive = true;
+
     // dash-suite.js renders asynchronously; poll briefly for the brief host
     var tries = 0;
     function check() {
