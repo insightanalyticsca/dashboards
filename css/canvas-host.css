@@ -480,8 +480,9 @@ html, body {
   opacity: 0.6;
 }
 
-/* Translucent Contact button injected into the footer by contact-chat.js */
-.contact-footer-btn {
+/* Translucent Contact button (collapsed state of the compact widget) */
+.contact-footer-btn,
+.contact-collapsed-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -498,13 +499,15 @@ html, body {
   -webkit-backdrop-filter: blur(10px) saturate(160%);
 }
 
-.contact-footer-btn:hover {
+.contact-footer-btn:hover,
+.contact-collapsed-pill:hover {
   transform: translateY(-1px) scale(1.03);
   background: var(--toggle-bg, rgba(99, 102, 241, 0.20));
   box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
 }
 
-.contact-footer-icon {
+.contact-footer-icon,
+.contact-collapsed-icon {
   display: grid;
   place-items: center;
   width: 18px;
@@ -514,8 +517,124 @@ html, body {
   color: #fff;
 }
 
-.contact-footer-text {
+.contact-footer-text,
+.contact-collapsed-text {
   letter-spacing: 0.02em;
+}
+
+/* ─── Inline compact widget (right side of footer, same line as IA logo) ─── */
+.contact-compact-host {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+/* data-state="open" → show compact strip, hide collapsed pill */
+.contact-compact-host[data-state="open"] .contact-compact { display: flex; }
+.contact-compact-host[data-state="open"] .contact-collapsed-pill { display: none; }
+
+/* data-state="collapsed" → hide compact strip, show pill */
+.contact-compact-host[data-state="collapsed"] .contact-compact { display: none; }
+.contact-compact-host[data-state="collapsed"] .contact-collapsed-pill { display: inline-flex; }
+
+.contact-compact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 8px;
+  border-radius: 18px;
+  border: 1px solid var(--toggle-border, rgba(99, 102, 241, 0.25));
+  background: var(--toggle-bg, rgba(99, 102, 241, 0.10));
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  transition: all 220ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.contact-compact:hover {
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.20);
+}
+
+/* Tiny icon buttons (mailto: + tel:) */
+.contact-compact-iconbtn {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 150ms, box-shadow 150ms;
+  flex-shrink: 0;
+}
+
+.contact-compact-mail {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.contact-compact-phone {
+  background: linear-gradient(135deg, #06b6d4, #10b981);
+}
+
+.contact-compact-iconbtn:hover {
+  transform: translateY(-1px) scale(1.08);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.contact-compact-iconbtn:active {
+  transform: scale(0.96);
+}
+
+/* Ask pill (opens full chat panel) */
+.contact-compact-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(135deg, var(--theme-primary, #6366f1), var(--theme-accent, #06b6d4));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: transform 150ms, box-shadow 150ms;
+}
+
+.contact-compact-ask:hover {
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.contact-compact-ask-icon {
+  display: grid;
+  place-items: center;
+}
+
+.contact-compact-ask-text {
+  line-height: 1;
+}
+
+/* Close X button (collapses compact widget) */
+.contact-compact-close {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--theme-muted, #94a3b8);
+  cursor: pointer;
+  transition: background 150ms, color 150ms;
+  flex-shrink: 0;
+}
+
+.contact-compact-close:hover {
+  background: rgba(239, 68, 68, 0.10);
+  color: var(--theme-danger, #ef4444);
 }
 
 @media (max-width: 600px) {
@@ -525,4 +644,10 @@ html, body {
   }
   .contact-footer-spacer { display: none; }
   .contact-footer-tag { display: none; }
+  /* Compact widget wraps below the brand on small screens */
+  .contact-compact-host {
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
 }

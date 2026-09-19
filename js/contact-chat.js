@@ -59,7 +59,7 @@
       .catch(function () {});
   })();
 
-  var state = { isOpen: false, isStreaming: false, hintShown: false, hintDismissed: false };
+  var state = { isOpen: false, isStreaming: false };
 
   // ─── System prompt — honest contact bot ──────────────────────────────────
   function buildSystemPrompt() {
@@ -180,58 +180,80 @@
     chat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
   };
 
-  // ─── Build the footer Contact button + floating launcher + panel ─────────
+  // ─── Build the inline footer compact widget + floating panel ─────────────
+  // Compact widget = small inline strip in the footer, right of the IA logo:
+  //   [tiny mail icon → mailto:] [tiny phone icon → tel:] [Ask pill] [X close]
+  //   - Visible by default on page load (minimal state, exposes contact info)
+  //   - Close X collapses to a single Contact pill that re-opens compact
+  //   - Ask pill opens the full floating chat panel for Q&A
   function buildUI() {
-    // 1) Footer button (appended to the page footer if present)
     var footer = document.querySelector('[data-contact-footer]');
-    if (footer) {
-      var fbtn = document.createElement('button');
-      fbtn.type = 'button';
-      fbtn.className = 'contact-footer-btn';
-      fbtn.setAttribute('aria-label', 'Open contact chat');
-      fbtn.title = 'Contact Insight Analytics';
-      fbtn.innerHTML = '<span class="contact-footer-icon">' + ICONS.contact + '</span>' +
-        '<span class="contact-footer-text">Contact</span>';
-      fbtn.addEventListener('click', openPanel);
-      footer.appendChild(fbtn);
+    if (!footer) return; // only render on pages with the footer marker
+
+    // Compact widget host (inline in footer, right side)
+    var host = document.createElement('div');
+    host.id = 'contactCompactHost';
+    host.className = 'contact-compact-host';
+    host.setAttribute('data-state', 'open'); // open | collapsed
+
+    // --- Compact (open) state ---
+    var compact = document.createElement('div');
+    compact.className = 'contact-compact';
+    compact.innerHTML =
+      // Tiny email icon → mailto:
+      '<a class="contact-compact-iconbtn contact-compact-mail" href="mailto:' + escapeHtml(CONTACT.email) + '" ' +
+        'aria-label="Email ' + escapeHtml(CONTACT.brand) + '" title="' + escapeHtml(CONTACT.email) + '">' +
+        ICONS.mail +
+      '</a>' +
+      // Tiny phone icon → tel:
+      '<a class="contact-compact-iconbtn contact-compact-phone" href="tel:' + escapeHtml(CONTACT.phoneTel) + '" ' +
+        'aria-label="Call ' + escapeHtml(CONTACT.brand) + '" title="' + escapeHtml(CONTACT.phone) + '">' +
+        ICONS.phone +
+      '</a>' +
+      // Ask pill → opens full chat panel
+      '<button type="button" class="contact-compact-ask" id="contactAskBtn" ' +
+        'aria-label="Ask the contact bot a question" title="Ask a question">' +
+        '<span class="contact-compact-ask-icon">' + ICONS.chat + '</span>' +
+        '<span class="contact-compact-ask-text">Ask</span>' +
+      '</button>' +
+      // Close X → collapses compact
+      '<button type="button" class="contact-compact-close" id="contactCompactClose" ' +
+        'aria-label="Collapse contact widget" title="Close">' +
+        ICONS.close +
+      '</button>';
+
+    host.appendChild(compact);
+
+    // --- Collapsed state (single Contact pill, hidden when compact is open) ---
+    var collapsed = document.createElement('button');
+    collapsed.type = 'button';
+    collapsed.className = 'contact-collapsed-pill';
+    collapsed.id = 'contactCollapsedPill';
+    collapsed.setAttribute('aria-label', 'Open contact widget');
+    collapsed.title = 'Show contact info';
+    collapsed.innerHTML = '<span class="contact-collapsed-icon">' + ICONS.contact + '</span>' +
+      '<span class="contact-collapsed-text">Contact</span>';
+
+    host.appendChild(collapsed);
+
+    // Append to footer's inner container (right of IA logo, same line)
+    var footerInner = footer.querySelector('.contact-footer-inner');
+    if (footerInner) {
+      footerInner.appendChild(host);
+    } else {
+      footer.appendChild(host);
     }
 
-    // 2) Floating launcher (bottom-center, above theme toggle)
-    var launcher = document.createElement('button');
-    launcher.id = 'contactLauncher';
-    launcher.type = 'button';
-    launcher.setAttribute('aria-label', 'Open contact chat');
-    launcher.title = 'Contact Insight Analytics';
-    launcher.style.cssText = [
-      'position:fixed', 'bottom:14px', 'left:50%', 'transform:translateX(-50%)',
-      'z-index:9998', 'height:30px', 'padding:0 14px', 'border-radius:15px',
-      'border:1px solid var(--toggle-border, rgba(99,102,241,0.25))',
-      'background:var(--toggle-bg, rgba(99,102,241,0.15))',
-      'color:var(--toggle-color, var(--theme-primary, #6366f1))',
-      'font-size:11px', 'font-weight:600', 'cursor:pointer',
-      'display:flex', 'align-items:center', 'gap:6px',
-      'transition:all 220ms cubic-bezier(.22,1,.36,1)',
-      'backdrop-filter:blur(10px) saturate(160%)',
-      '-webkit-backdrop-filter:blur(10px) saturate(160%)',
-      'box-shadow:0 4px 14px rgba(0,0,0,0.18)'
-    ].join(';');
-    launcher.innerHTML = ICONS.contact + '<span>Contact</span>';
-    launcher.addEventListener('mouseenter', function () {
-      launcher.style.transform = 'translateX(-50%) translateY(-2px) scale(1.04)';
-      launcher.style.boxShadow = '0 8px 24px rgba(99,102,241,0.35)';
-    });
-    launcher.addEventListener('mouseleave', function () {
-      launcher.style.transform = 'translateX(-50%)';
-      launcher.style.boxShadow = '0 4px 14px rgba(0,0,0,0.18)';
-    });
-    launcher.addEventListener('click', openPanel);
-    document.body.appendChild(launcher);
+    // Wire events
+    document.getElementById('contactAskBtn').addEventListener('click', openPanel);
+    document.getElementById('contactCompactClose').addEventListener('click', collapseCompact);
+    collapsed.addEventListener('click', expandCompact);
 
-    // 3) Panel (hidden by default)
+    // Build the floating chat panel (hidden by default)
     var panel = document.createElement('div');
     panel.id = 'contactPanel';
     panel.style.cssText = [
-      'position:fixed', 'bottom:52px', 'left:50%', 'transform:translateX(-50%)',
+      'position:fixed', 'bottom:52px', 'right:14px',
       'z-index:9998', 'width:380px', 'max-width:calc(100vw - 28px)',
       'max-height:calc(100vh - 80px)',
       'border-radius:16px',
@@ -305,84 +327,29 @@
     });
   }
 
-  // ─── Auto-open hint bubble (minimal state, conveys purpose) ───────────────
-  function showHintBubble() {
-    if (state.hintShown || state.hintDismissed) return;
-    state.hintShown = true;
-
-    var hint = document.createElement('div');
-    hint.id = 'contactHint';
-    hint.style.cssText = [
-      'position:fixed', 'bottom:50px', 'left:50%', 'transform:translateX(-50%)',
-      'z-index:9997', 'padding:8px 14px', 'border-radius:18px',
-      'border:1px solid var(--toggle-border, rgba(99,102,241,0.25))',
-      'background:var(--toggle-bg, rgba(99,102,241,0.15))',
-      'color:var(--toggle-color, var(--theme-text, #171777))',
-      'font-size:11px', 'font-weight:500', 'cursor:pointer',
-      'display:flex', 'align-items:center', 'gap:6px',
-      'backdrop-filter:blur(12px) saturate(160%)',
-      '-webkit-backdrop-filter:blur(12px) saturate(160%)',
-      'box-shadow:0 6px 18px rgba(0,0,0,0.18)',
-      'opacity:0', 'transform:translateX(-50%) translateY(8px)',
-      'transition:all 320ms cubic-bezier(.22,1,.36,1)',
-      'max-width:calc(100vw - 28px)'
-    ].join(';');
-    hint.innerHTML = '<span style="display:inline-flex;align-items:center;gap:4px;">' +
-      '<span style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:contactPulse 2s ease-in-out infinite;"></span>' +
-      '<span>Questions? Contact ' + escapeHtml(CONTACT.brand) + '</span>' +
-      '<span style="opacity:0.6;font-size:10px;">· click to chat</span>' +
-      '</div>';
-
-    // Inject keyframes once
-    if (!document.getElementById('contactHintKeyframes')) {
-      var ks = document.createElement('style');
-      ks.id = 'contactHintKeyframes';
-      ks.textContent = '@keyframes contactPulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.15)}}';
-      document.head.appendChild(ks);
-    }
-
-    hint.addEventListener('click', function () {
-      state.hintDismissed = true;
-      hint.style.opacity = '0';
-      hint.style.transform = 'translateX(-50%) translateY(8px)';
-      setTimeout(function () { hint.remove(); }, 320);
-      openPanel(true);
-    });
-
-    document.body.appendChild(hint);
-    // Trigger entrance
-    requestAnimationFrame(function () {
-      hint.style.opacity = '1';
-      hint.style.transform = 'translateX(-50%) translateY(0)';
-    });
-
-    // Auto-dismiss after 8s
-    setTimeout(function () {
-      if (hint.parentNode && !state.hintDismissed) {
-        state.hintDismissed = true;
-        hint.style.opacity = '0';
-        hint.style.transform = 'translateX(-50%) translateY(8px)';
-        setTimeout(function () { if (hint.parentNode) hint.remove(); }, 320);
-      }
-    }, 8000);
+  // ─── Compact widget state (open by default on page load) ────────────────
+  // data-state="open" → compact widget visible (tiny mail + phone icons + Ask + X)
+  // data-state="collapsed" → only Contact pill visible
+  function collapseCompact() {
+    var host = document.getElementById('contactCompactHost');
+    if (host) host.setAttribute('data-state', 'collapsed');
   }
 
-  function openPanel(skipIntro) {
+  function expandCompact() {
+    var host = document.getElementById('contactCompactHost');
+    if (host) host.setAttribute('data-state', 'open');
+  }
+
+  function openPanel() {
     state.isOpen = true;
-    state.hintDismissed = true;
-    var hint = document.getElementById('contactHint');
-    if (hint) hint.remove();
     var panel = document.getElementById('contactPanel');
-    var launcher = document.getElementById('contactLauncher');
     if (panel) panel.style.display = 'flex';
-    if (launcher) launcher.style.background = 'var(--theme-primary, #6366f1)';
-    if (launcher) launcher.style.color = '#fff';
 
     var msgs = document.getElementById('contactMessages');
     if (msgs && msgs.children.length === 0) {
       addMessage('assistant',
         'Hi! I\'m the ' + CONTACT.brand + ' contact bot. ' + CONTACT.lead + '\n\n' +
-        'The email and phone above are clickable — they\'ll launch your mail client or dialer.\n\n' +
+        'The email and phone in the footer (and above) are clickable — they\'ll launch your mail client or dialer.\n\n' +
         'I can also answer basic questions about our dashboard and AI integration work. What would you like to know?');
     }
 
@@ -392,9 +359,7 @@
   function closePanel() {
     state.isOpen = false;
     var panel = document.getElementById('contactPanel');
-    var launcher = document.getElementById('contactLauncher');
     if (panel) panel.style.display = 'none';
-    if (launcher) { launcher.style.background = ''; launcher.style.color = ''; }
   }
 
   function addMessage(role, text) {
@@ -438,16 +403,13 @@
 
   // ─── Init ─────────────────────────────────────────────────────────────────
   function init() {
-    // Only init on pages that include this script AND opt-in via body data attr
-    // or presence of the contact footer marker
     var hasFooter = !!document.querySelector('[data-contact-footer]');
     var hasOptIn = document.body.dataset.contactBot === 'true';
     if (!hasFooter && !hasOptIn) return;
 
     buildUI();
-
-    // Show hint bubble after a short delay (let page settle)
-    setTimeout(showHintBubble, 1500);
+    // Compact widget is open by default on page load (no auto-open of full panel,
+    // no floating hint bubble — the inline compact widget IS the minimal state).
   }
 
   if (document.readyState === 'loading') {
