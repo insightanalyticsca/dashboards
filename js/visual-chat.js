@@ -324,46 +324,6 @@
     return offlineMsg;
   }
 
-  // ─── Demo-mode brief — honest structured fallback when Groq key absent ────
-  function buildDemoBrief(visualContext) {
-    if (!state.visualData) {
-      return 'WHAT HAPPENED: No dashboard payload loaded for this page.\n' +
-        'WHY: Visual data could not be fetched.\n' +
-        'WHAT TO EXPECT: Configure a Groq API key (data/groq-config.json) to enable live analysis.\n' +
-        'WHAT TO DO: Add a Groq key to the site config, then reopen this chat.';
-    }
-    var d = state.visualData;
-    var lines = [];
-    // WHAT HAPPENED — real KPI deltas
-    lines.push('WHAT HAPPENED: ' + (d.title || state.versionTitle) + ' as of ' + (d.asOfLabel || 'latest period') + '.');
-    if (d.metrics && d.metrics.length) {
-      var top = d.metrics.slice(0, 3).map(function(m) {
-        var parts = [m.label + ' = ' + m.value + (m.format === 'currency' ? ' CAD' : m.format === 'percent' || m.format === 'percent2' ? '%' : '')];
-        if (m.yoy != null) parts.push('YoY ' + (m.yoy > 0 ? '+' : '') + m.yoy + (m.deltaMode === 'points' ? ' pts' : '%'));
-        if (m.mom != null) parts.push('MoM ' + (m.mom > 0 ? '+' : '') + m.mom + (m.deltaMode === 'points' ? ' pts' : '%'));
-        return parts.join(', ');
-      });
-      lines[0] += ' ' + top.join('; ') + '.';
-    }
-    // WHY — only if notes exist
-    if (d.notes && d.notes.length) {
-      lines.push('WHY: ' + d.notes[0]);
-    } else {
-      lines.push('WHY: Driver not isolated in this payload.');
-    }
-    // WHAT TO EXPECT — direction only, no forecast number
-    if (d.metrics && d.metrics.length) {
-      var m0 = d.metrics[0];
-      var dir = m0.yoy != null ? (m0.yoy > 0 ? 'up' : 'down') : (m0.mom != null ? (m0.mom > 0 ? 'up' : 'down') : 'flat');
-      lines.push('WHAT TO EXPECT: If the current trend continues, ' + m0.label + ' trajectory points ' + dir + ' for the next period.');
-    } else {
-      lines.push('WHAT TO EXPECT: Trend direction requires time-series history in the payload.');
-    }
-    // WHAT TO DO — honest about granularity
-    lines.push('WHAT TO DO: Review the charts on this dashboard for the segment-level breakdown that would inform a targeted action.');
-    return lines.join('\n');
-  }
-
   // ══════════════════════════════════════════════════════════════════════════
   //  UI — floating chat widget
   // ══════════════════════════════════════════════════════════════════════════
