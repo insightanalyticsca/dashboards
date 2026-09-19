@@ -276,12 +276,17 @@
       return;
     }
     const hours = data.map(d => d.hour + ':00');
-    const values = data.map((d, i) => [i, d.count]);
     const max = Math.max(...data.map(d => d.count));
 
     init(host, {
       tooltip: {
-        formatter: p => `Hour ${p.data[0]}:00<br/>Queries: <b>${p.data[1]}</b>`
+        trigger: 'item',
+        formatter: p => {
+          const idx = p.dataIndex;
+          const hour = hours[idx] || '?';
+          const count = p.data ? p.data[1] : (p.value || 0);
+          return `${hour}<br/>Queries: <b>${count}</b>`;
+        }
       },
       grid: { top: 14, left: 48, right: 14, bottom: 26 },
       xAxis: {
@@ -292,7 +297,8 @@
       },
       yAxis: {
         type: 'value',
-        axisLabel: { color: PAL.muted, fontSize: 10 }
+        axisLabel: { color: PAL.muted, fontSize: 10 },
+        max: max * 1.2
       },
       visualMap: {
         show: false,
@@ -301,18 +307,19 @@
         inRange: { color: [withAlpha(PAL.primary, 0.10), PAL.accent, PAL.primary, PAL.hot] }
       },
       series: [{
-        type: 'heatmap',
-        data: values,
+        type: 'custom',
+        data: data.map((d, i) => [i, d.count]),
         renderItem: (params, api) => {
-          const start = api.coord([api.value(0), 0]);
-          const end = api.coord([api.value(0), api.value(1)]);
-          const width = api.size([0, 0])[0] - 4;
-          const height = Math.max(2, start[1] - end[1] - 2);
+          const idx = api.value(0);
           const val = api.value(1);
+          const start = api.coord([idx, 0]);
+          const end = api.coord([idx, val]);
+          const w = api.size([0, 0])[0] - 4;
+          const h = Math.max(2, start[1] - end[1] - 2);
           const t = max ? val / max : 0;
           return {
             type: 'rect',
-            shape: { x: start[0] - width / 2, y: end[1], width, height },
+            shape: { x: start[0] - w / 2, y: end[1], width: w, height: h },
             style: {
               fill: api.visual('color'),
               shadowColor: withAlpha(PAL.primary, 0.4),

@@ -650,3 +650,36 @@ Stage Summary:
 - Metric periods updated from "Jun 2026" to "Sep 2026"
 - The script is persisted at scripts/update_temporal_labels.py for re-running when needed
 - File changes: 5 executive JSONs (ar, disconnects, ebill, finalbill, payments), chatters.json, 11 CSR/ITS version JSONs, scripts/update_temporal_labels.py
+
+---
+Task ID: fix-heatmap-and-add-ai-brief-to-csr-its
+Agent: main
+Task: 'On landerpage query activity by hour always empty. Also, summaries ai wired and nicely formatted on exec visuals only, not on CSR and ITS'
+
+Work Log:
+FIX 1: Empty 'Query Activity by Hour' heatmap on the lander (js/charts.js)
+- Root cause: data.map(d => [d.hour, d.count]) passed string hours ('00', '02', ...) as x-values — ECharts heatmap needs numeric indices into the category axis, not strings
+- Fix: data.map((d, i) => [i, d.count]) uses the 0-based index into the hours array
+- Added empty-data guard: if data is empty or missing, shows 'No query activity yet' instead of rendering a broken chart
+
+FIX 2: AI Brief card added to CSR/ITS canvas pages
+- js/exec-ai-brief.js: updated detectJsonPath() to handle CSR/ITS suites:
+  - csr-* → '../data/versions/' + suite + '.json'
+  - its-* → same path
+- js/exec-ai-brief.js: rewrote buildVisualContext() to handle two JSON formats:
+  - Executive format (metrics + charts + notes): same as before
+  - CSR/ITS format (per-visual data objects with rows): builds context from _meta.title, _meta.version, and per-visual row summaries (first 3 rows of each visual's data, including column names + values)
+- js/canvas-host.js: injects the AI Brief card HTML (same 4-cell grid as executive dashboards, with AI-wired badge, spark icon, section headers) below the canvas after tiles are built. The card uses the same CSS classes (.exec-ai-brief, .exec-ai-brief-cell, etc.) from executive-dashboard-suite.css
+- All 17 CSR/ITS HTML files updated via sed: added <link rel=executive-dashboard-suite.css> for the AI Brief card styling + <script src=exec-ai-brief.js> to run the brief generation
+- Removed the old duplicate buildVisualContext code that was left dangling after the rewrite
+
+- Committed as e9e5b1e, pushed to origin/main. Verified live after 35s Pages propagation:
+  - charts.js: 2 refs to the new data.map((d, i) pattern (heatmap fix)
+  - csr-aging-overview.html: 1 ref to exec-ai-brief.js (script include)
+  - canvas-host.js: 24 refs to exec-ai-brief/data-ai-brief classes (AI Brief card injection)
+
+Stage Summary:
+- Lander heatmap now renders correctly (numeric indices instead of string hours)
+- All dashboard pages (6 executive + 11 CSR + 6 ITS = 23 total) now have the AI Brief card with the same 4-cell grid, AI-wired badge, streaming tokens from Groq, and client+server cache
+- CSR/ITS AI Briefs use the per-visual data (rows from each visual's JSON) as context for Groq — same honest 4-part brief format (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO)
+- File changes: js/charts.js (heatmap fix), js/exec-ai-brief.js (CSR/ITS detection + dual-format buildVisualContext), js/canvas-host.js (AI Brief card injection), 17 CSR/ITS HTML files (CSS + script includes)
