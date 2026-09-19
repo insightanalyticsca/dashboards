@@ -430,27 +430,35 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
         visitPanel.style.display = 'block';
         visitCount.textContent = data.count + ' visits · edge: ' + (data.edge || 'unknown') + ' · captured ' + new Date(data.capturedAt).toLocaleString();
         visitError.style.display = 'none';
-        // Render table
-        var html = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+        // Render table — horizontally scrollable, no truncation, no TZ column
+        var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.1));border-radius:8px;">';
+        html += '<table style="border-collapse:collapse;font-size:11px;width:max-content;min-width:100%;">';
         html += '<thead><tr style="text-align:left;border-bottom:2px solid var(--card-border,rgba(0,0,0,0.1));color:var(--muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;font-size:9px;">';
-        html += '<th style="padding:6px 8px;">Time</th><th style="padding:6px 8px;">IP</th><th style="padding:6px 8px;">Country</th><th style="padding:6px 8px;">City</th><th style="padding:6px 8px;">Region</th><th style="padding:6px 8px;">TZ</th><th style="padding:6px 8px;">Path</th><th style="padding:6px 8px;">Method</th><th style="padding:6px 8px;">UA</th><th style="padding:6px 8px;">Referrer</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;position:sticky;left:0;background:var(--bg,#fff);z-index:1;">Time</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">IP</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">Country</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">City</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">Region</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">Path</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">Method</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">User-Agent</th>';
+        html += '<th style="padding:8px 12px;white-space:nowrap;">Referrer</th>';
         html += '</tr></thead><tbody>';
         data.visits.forEach(function(v, i) {
           var bg = i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.02)';
           html += '<tr style="border-bottom:1px solid var(--card-border,rgba(0,0,0,0.05));background:' + bg + ';">';
-          html += '<td style="padding:6px 8px;white-space:nowrap;">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
-          html += '<td style="padding:6px 8px;font-family:monospace;">' + (v.ip || '—') + '</td>';
-          html += '<td style="padding:6px 8px;">' + (v.country || '—') + '</td>';
-          html += '<td style="padding:6px 8px;">' + (v.city || '—') + '</td>';
-          html += '<td style="padding:6px 8px;">' + (v.region || '—') + '</td>';
-          html += '<td style="padding:6px 8px;">' + (v.timezone || '—') + '</td>';
-          html += '<td style="padding:6px 8px;font-family:monospace;">' + (v.path || '—') + '</td>';
-          html += '<td style="padding:6px 8px;">' + (v.method || '—') + '</td>';
-          html += '<td style="padding:6px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (v.ua || '') + '">' + (v.ua || '—').slice(0, 40) + '</td>';
-          html += '<td style="padding:6px 8px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (v.referrer || '') + '">' + (v.referrer || '—').slice(0, 30) + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;position:sticky;left:0;background:' + (i % 2 === 0 ? 'var(--bg,#fff)' : 'var(--bg-soft,rgba(0,0,0,0.02))') + ';z-index:1;font-weight:600;color:var(--text,#0f172a);">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.ip || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.country || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.city || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.region || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.path || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.method || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;font-size:10px;color:var(--text-soft,#475569);">' + (v.ua || '—') + '</td>';
+          html += '<td style="padding:6px 12px;white-space:nowrap;font-size:10px;color:var(--text-soft,#475569);">' + (v.referrer || '—') + '</td>';
           html += '</tr>';
         });
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         visitTable.innerHTML = html;
       })
       .catch(function(e) {
