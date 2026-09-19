@@ -49,7 +49,7 @@
       "label": "Retail Attachment",
       "value": 21.8,
       "format": "percent",
-      "period": "Week 32",
+      "period": "Week 38",
       "mom": -2.3,
       "yoy": -0.8,
       "momLabel": "MoM",
@@ -93,7 +93,6 @@
       "leftAxisTitle": "Revenue (CAD M)",
       "rightAxisTitle": "SSS Growth %",
       "categories": [
-        "Sep",
         "Oct",
         "Nov",
         "Dec",
@@ -104,7 +103,8 @@
         "May",
         "Jun",
         "Jul",
-        "Aug"
+        "Aug",
+        "Sep"
       ],
       "series": [
         {
@@ -397,17 +397,17 @@
     },
     {
       "id": "forecast-revenue",
-      "title": "Revenue Forecast: Next 4 Weeks (CAD M, 82% confidence)",
+      "title": "Revenue Forecast: Next 4 Weeks (CAD M)",
       "kind": "line",
       "width": "third",
       "valueFormat": "compact",
       "leftAxisTitle": "Revenue (CAD M)",
       "rightAxisTitle": "",
       "categories": [
-        "W33",
-        "W34",
-        "W35",
-        "W36"
+        "W39",
+        "W40",
+        "W41",
+        "W42"
       ],
       "series": [
         {

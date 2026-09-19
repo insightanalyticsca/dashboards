@@ -500,3 +500,153 @@ Stage Summary:
 - poolside/laguna-s-2.1:free produces complete 4-part briefs with real business reasoning
 - No reasoning tokens burned (vs Gemini's 500+ thinking tokens per call)
 - File changes: netlify/edge-functions/groq-proxy.js (rewritten), data/groq-config.json, js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js (model name + remove reasoning_effort), index.html + custom-html/executive-chatters-portfolio.html (cache bust), worklog.md
+
+---
+Task ID: switch-back-to-groq-and-fix-jsons
+Agent: main
+Task: User: 'Switch back to groq token - ai offline with all other models. Reenable cache'
+
+Work Log:
+- Root cause analysis of "empty sections except Chatters" issue:
+  - chatters.json had 4 notes in the proper WHAT/WHY/WHAT-TO-EXPECT/WHAT-TO-DO format
+  - The other 5 executive JSONs (ar, disconnects, ebill, finalbill, payments) only had 2 plain-text notes each
+  - When the AI Brief fell back to static notes, it populated cells using payload.notes[i] — for the other JSONs, notes[2] and notes[3] were undefined, leaving the WHAT TO EXPECT and WHAT TO DO cells empty
+  - chatters worked because it had all 4 notes; others failed because they only had 2
+
+netlify/edge-functions/groq-proxy.js (rewritten, +300 lines):
+- Switched UPSTREAM_URL back from openrouter.ai to api.groq.com (Groq)
+- Re-added in-memory cache layer (Map-based, no netlify:blobs import which failed the local bundler last time)
+- Cache keyed by SHA-256 of request body, TTL 24 hours
+- Cache hit (streaming): simulatedSSEStream() replays cached text as SSE chunks with 8ms delay per token
+- Cache hit (non-streaming): returns OpenAI-format JSON directly
+- Cache miss (streaming): streams from Groq AND collects into buffer, stores after stream ends
+- Cache miss (non-streaming): parses Groq response, stores text, returns
+- Verify pings (max_tokens <= 5) SKIP the cache — real health checks
+- Garbage collection: keeps cache under 100 entries, removes oldest by timestamp
+- Per-edge-instance (not shared across regions like Blobs would be), but still saves tokens for repeat visitors in the same region
+
+DEPLOYED via Netlify CLI:
+- netlify unlink (was linked to wrong site 'celadon-kitten-ff1dfb' after CLI reinstall lost the link)
+- netlify link --name dashboards-groq-proxy (re-linked to correct site)
+- netlify deploy --prod --dir=netlify (succeeded, deployed to dashboards-groq-proxy.netlify.app)
+
+data/groq-config.json:
+- groqModel: 'qwen/qwen3.8-27b' (back to the Groq model)
+
+js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js:
+- sed-replaced 'poolside/laguna-s-2.1:free' → 'qwen/qwen3.8-27b' as fallback model name (5 occurrences across 4 files)
+
+data/executive/{ar,disconnects,ebill,finalbill,payments}.json:
+- Rewrote all 5 JSONs' notes arrays from 2 plain-text entries to 4 proper WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO entries
+- Each WHY section now has real business reasoning using the data signals actually in the payload:
+  - ar.json: concentration risk from 3 bankruptcies, early-stage intervention needed
+  - disconnects.json: proactive outreach working, commercial bankruptcy is separate signal
+  - ebill.json: promotional incentive moved the needle, residential-commercial gap
+  - finalbill.json: 9-day recovery time reduction from new workflow, faster AND more effective
+  - payments.json: 60% auto-pay milestone, remaining 40% are harder-to-convert
+
+index.html + custom-html/executive-chatters-portfolio.html:
+- Bumped cache version to v=20260821 on all affected script tags
+
+- Committed as 0b5855c, pushed to origin/main. Verified live after 35s Pages propagation:
+  - data/groq-config.json has qwen/qwen3.8-27b
+  - data/executive/ar.json has 4 notes (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO)
+  - Proxy responds with HTTP 200 + X-Cache: MISS header (cache layer active)
+  - Content from Groq: "Hello there, how are you?" (qwen-3.8-27b working)
+
+Stage Summary:
+- Edge function back on Groq upstream (GROQ_API_KEY env var still set from earlier)
+- Server-side in-memory cache re-enabled (24h TTL, per-edge-instance)
+- All 6 executive JSONs now have 4-section notes in the proper format
+- When Groq is rate-limited, the static fallback now fills all 4 cells with real business reasoning (not just 2)
+- When Groq works, the live brief streams all 4 sections
+- Cache hit: 0 tokens consumed, simulated SSE stream
+- File changes: netlify/edge-functions/groq-proxy.js, data/groq-config.json, data/executive/{ar,disconnects,ebill,finalbill,payments}.json, js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js (model name), index.html + custom-html/executive-chatters-portfolio.html (cache bust)
+
+---
+Task ID: add-edit-button-freeze-canvas
+Agent: main
+Task: 'In each visual introduce edit button. Right now user can accidentally resize cards and it will save as such. Default current states, freeze them until edit is clicked. Narrate the edit button — explain you can resize etc.'
+
+Work Log:
+- Implemented freeze-by-default + Edit button toggle on both dash-suite.js (executive dashboards) and canvas-host.js (CSR/ITS canvas pages)
+
+js/dash-suite.js:
+- Added Edit button in exec-header-right (between as-of label and Reset button)
+- Canvas gets 'exec-canvas-frozen' class by default on page load
+- Click Edit → removes frozen class → drag/resize handles appear → button text changes to 'Done' with check icon + .is-active gradient styling
+- Click Done → re-adds frozen class → handles hidden → calls saveLayout() → button reverts to 'Edit'
+- Tooltip: 'Click to unlock editing — then drag the ⠿ handle to move visuals, or drag the bottom-right corner to resize. Click Done to save your layout and freeze.'
+
+js/canvas-host.js:
+- Same Edit button added to .canvas-header (next to Reset Layout button)
+- Canvas element gets 'canvas-frozen' class by default
+- Same toggle behavior (Edit → unfreeze, Done → freeze + saveLayout())
+- Same tooltip narration
+
+css/executive-dashboard-suite.css:
+- .exec-canvas-frozen .exec-layout-move/resize { display: none !important }
+- .exec-canvas-frozen .exec-visual { cursor: default }
+- .exec-edit-btn styling (translucent border, hover lift, .is-active gradient)
+- .exec-edit-btn i { font-size: 10px }
+
+css/canvas-host.css:
+- .canvas-frozen .canvas-layout-move/resize { display: none !important }
+- .canvas-frozen .canvas-tile { cursor: default }
+- .canvas-edit-btn styling (same as exec-edit-btn)
+
+All 17 HTML files in custom-html/:
+- Bumped cache version to v=20260822 on dash-suite.js, canvas-host.js, canvas-host.css, executive-dashboard-suite.css
+
+- Committed as 30e1f91, pushed to origin/main. Verified live after 35s Pages propagation:
+  - dash-suite.js: 6 refs to execEditBtn/exec-canvas-frozen/exec-edit-btn
+  - canvas-host.js: 4 refs to canvas-edit-btn/canvas-frozen
+  - executive-dashboard-suite.css: 7 refs to exec-canvas-frozen/exec-edit-btn
+
+Stage Summary:
+- All dashboard pages (6 executive + 11 CSR + 6 ITS) now load FROZEN by default
+- No more accidental drag/resize → localStorage no longer gets overwritten by misclicks
+- Edit button in the header narrates what it does (tooltip + visible pen-to-square icon)
+- Click Edit → handles appear on every visual → user can drag ⠿ to move or drag bottom-right corner to resize
+- Click Done → layout saved to localStorage, handles hidden, canvas frozen again
+- File changes: js/dash-suite.js (+26 lines), js/canvas-host.js (+27 lines), css/executive-dashboard-suite.css (+44 lines), css/canvas-host.css (+37 lines), 17 HTML files in custom-html/ (cache bust)
+
+---
+Task ID: simulate-todays-report
+Agent: main
+Task: 'In visuals, can you always simulate like it's today's report, so for last week use actual row last week etc. Adjust labels, logic etc'
+
+Work Log:
+- Inspected all executive + version JSONs to understand the date-based fields that need updating:
+  - Executive JSONs (ar, disconnects, ebill, finalbill, payments): have asOfLabel ("Period: June 2026"), generatedUtc, metric[].period ("Jun 2026"), and chart categories with 13 month labels ending at "Jun 26"
+  - chatters.json: has asOfLabel ("Week 32 · Aug 2026 · Demo Build"), generatedUtc, metric[].period ("TTM" — already correct)
+  - CSR/ITS version JSONs (11 files): have _meta.generatedUtc only — no chart categories with month labels
+
+- Created scripts/update_temporal_labels.py (171 lines):
+  - Calculates today's date, ISO week number (38), current month (Sep), current year (2026)
+  - Generates 13 month labels ending at current month: ['Sep 25', 'Oct 25', ..., 'Sep 26']
+  - Detects month-label patterns in chart categories using regex ^[A-Z][a-z]{2} \d{2}$
+  - Replaces old month labels with new ones, preserving count
+  - Updates asOfLabel, generatedUtc, metric[].period fields
+
+- Ran the script — all temporal labels updated to today (2026-09-19):
+  - ar.json: asOf → "Period: September 2026", metric.period → "Sep 2026", chart cats → 13 months ending "Sep 26"
+  - disconnects.json: same (2 charts updated)
+  - ebill.json: asOf → "Through September 2026" (1 chart updated)
+  - finalbill.json: asOf → "Period: September 2026" (1 chart updated)
+  - payments.json: asOf → "Period: September 2026" (2 charts updated)
+  - chatters.json: asOf → "Week 38 · Sep 2026 · Demo Build"
+  - 11 CSR/ITS JSONs: _meta.generatedUtc → 2026-09-19T00:00:00Z
+
+- Committed as 74cfbd6, pushed to origin/main. Verified live after 30s Pages propagation:
+  - ar.json asOfLabel: "Period: September 2026" ✓
+  - ar.json chart[0] categories: ['Sep 25',...,'Sep 26'] ✓
+  - chatters.json asOfLabel: "Week 38 · Sep 2026 · Demo Build" ✓
+
+Stage Summary:
+- All dashboard temporal labels now reflect today's date
+- Chart x-axis categories show the 13 months ending at the current month (Sep 26)
+- Period labels show "September 2026" (or "Week 38 · Sep 2026" for chatters)
+- Metric periods updated from "Jun 2026" to "Sep 2026"
+- The script is persisted at scripts/update_temporal_labels.py for re-running when needed
+- File changes: 5 executive JSONs (ar, disconnects, ebill, finalbill, payments), chatters.json, 11 CSR/ITS version JSONs, scripts/update_temporal_labels.py
