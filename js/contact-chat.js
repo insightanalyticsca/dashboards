@@ -207,6 +207,46 @@
     return fullText;
   }
 
+  // ─── 30-min localStorage cache for repeat questions ─────────────────────
+  // Most users ask the same handful of questions (what do you do? is this a
+  // PWA? how does the proxy work?). Caching by question hash saves tokens
+  // for repeat questions within a 30-min window.
+  var QA_CACHE_PREFIX = 'contact-qa:v1:';
+  var QA_CACHE_TTL_MS = 30 * 60 * 1000;  // 30 minutes
+
+  function qaHash(question) {
+    var s = question.toLowerCase().trim().replace(/\s+/g, ' ');
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(36);
+  }
+
+  function getCachedAnswer(question) {
+    try {
+      var raw = localStorage.getItem(QA_CACHE_PREFIX + qaHash(question));
+      if (!raw) return null;
+      var entry = JSON.parse(raw);
+      if (!entry || !entry.ts || !entry.answer) return null;
+      if (Date.now() - entry.ts > QA_CACHE_TTL_MS) {
+        localStorage.removeItem(QA_CACHE_PREFIX + qaHash(question));
+        return null;
+      }
+      return entry.answer;
+    } catch (_) { return null; }
+  }
+
+  function setCachedAnswer(question, answer) {
+    try {
+      localStorage.setItem(QA_CACHE_PREFIX + qaHash(question), JSON.stringify({
+        ts: Date.now(),
+        answer: answer
+      }));
+    } catch (_) {}
+  }
+
   async function ask(question, onToken) {
     // Wait for the Groq config to finish loading before deciding whether
     // to use Groq or report offline. The config fetch from
@@ -215,11 +255,30 @@
     await configPromise;
 
     if (CONFIG.provider === 'groq' && CONFIG.proxyUrl) {
+      // ─── CACHE CHECK ──────────────────────────────────────────────────
+      // If we've answered this exact question in the last 30 min, replay
+      // the cached answer token-by-token (preserves the streaming feel)
+      // and skip the Groq call entirely.
+      var cached = getCachedAnswer(question);
+      if (cached) {
+        if (onToken) {
+          var cachedTokens = cached.match(/\S+\s*/g) || [cached];
+          for (var ci = 0; ci < cachedTokens.length; ci++) {
+            await new Promise(function (r) { setTimeout(r, 12); });
+            onToken(cachedTokens[ci]);
+          }
+        }
+        return cached;
+      }
+
       var messages = [
         { role: 'system', content: buildSystemPrompt() },
         { role: 'user', content: question }
       ];
-      return await groqChat(messages, onToken);
+      var answer = await groqChat(messages, onToken);
+      // Cache the answer for next time (30-min TTL)
+      setCachedAnswer(question, answer);
+      return answer;
     }
 
     // Groq is truly offline (no key in localStorage AND no key in

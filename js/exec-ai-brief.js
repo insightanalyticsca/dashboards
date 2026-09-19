@@ -249,8 +249,71 @@
     var txt = badge.querySelector('.exec-ai-brief-badge-text');
     if (!txt) return;
     if (state === 'streaming') txt.textContent = 'AI generating…';
+    else if (state === 'cached') txt.textContent = 'AI-wired · cached';
     else if (state === 'fallback') txt.textContent = 'Static (AI offline)';
     else txt.textContent = 'AI-wired';
+  }
+
+  // ─── 1-hour localStorage cache for the AI Brief ─────────────────────────
+  // The AI Brief auto-fires on every Chatters page load (~2400 tokens per
+  // call). Without caching, 50 page refreshes = ~120K tokens = 60% of the
+  // free-tier daily TPD budget just for one user. With a 1-hour cache:
+  //   - First visit: 1 Groq call (2400 tokens)
+  //   - Refreshes within 1hr: 0 Groq calls (cached)
+  //   - Visit after 1hr: 1 fresh Groq call, then cached again
+  // Net: ~80% reduction in token usage for normal demo traffic.
+  // Keyed by version (so chatters.json != ar.json) + payload hash (so a
+  // new period invalidates the cache automatically).
+  var BRIEF_CACHE_PREFIX = 'exec-ai-brief:v1:';
+  var BRIEF_CACHE_TTL_MS = 60 * 60 * 1000;  // 1 hour
+
+  function payloadHash(payload) {
+    // Cheap hash: title + asOfLabel + first 3 metric values + first 3 chart titles
+    // — enough to invalidate when period data changes, but not sensitive to
+    // every byte (which would invalidate on every reload due to timestamps)
+    if (!payload) return '0';
+    var parts = [
+      payload.title || '',
+      payload.asOfLabel || '',
+      payload.generatedUtc || '',
+      (payload.metrics || []).slice(0, 3).map(function(m) {
+        return m.label + '=' + m.value + '|' + (m.mom != null ? m.mom : '') + '|' + (m.yoy != null ? m.yoy : '');
+      }).join(';'),
+      (payload.charts || []).slice(0, 3).map(function(c) { return c.id + ':' + (c.categories || []).length; }).join(';')
+    ];
+    var s = parts.join('||');
+    // FNV-1a 32-bit — fast, no deps
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(36);
+  }
+
+  function getCachedBrief(versionKey, payload) {
+    try {
+      var raw = localStorage.getItem(BRIEF_CACHE_PREFIX + versionKey + ':' + payloadHash(payload));
+      if (!raw) return null;
+      var entry = JSON.parse(raw);
+      if (!entry || !entry.ts || !entry.parsed) return null;
+      if (Date.now() - entry.ts > BRIEF_CACHE_TTL_MS) {
+        localStorage.removeItem(BRIEF_CACHE_PREFIX + versionKey + ':' + payloadHash(payload));
+        return null;
+      }
+      return entry.parsed;
+    } catch (_) { return null; }
+  }
+
+  function setCachedBrief(versionKey, payload, parsed) {
+    try {
+      localStorage.setItem(BRIEF_CACHE_PREFIX + versionKey + ':' + payloadHash(payload), JSON.stringify({
+        ts: Date.now(),
+        parsed: parsed
+      }));
+    } catch (_) {
+      // localStorage might be full (private mode, etc.) — silently skip
+    }
   }
 
   // ─── Run the brief generation for the current page ───────────────────────
@@ -292,7 +355,24 @@
       return;
     }
 
-    // Build context + messages and stream from Groq
+    // ─── CACHE CHECK ──────────────────────────────────────────────────────
+    // If we have a cached brief for this version + payload hash from the
+    // last hour, populate the cells from cache and skip the Groq call
+    // entirely. This is the single biggest token-saver — without it, every
+    // page load burns ~2400 tokens even if the user just refreshed.
+    var versionKey = document.body.dataset.suite || 'unknown';
+    var cached = getCachedBrief(versionKey, payload);
+    if (cached) {
+      ['what', 'why', 'next', 'do'].forEach(function (sec) {
+        var cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+        if (cell) cell.textContent = cached[sec] || '';
+      });
+      clearShimmer(briefHost);
+      setBadgeState(briefHost, 'cached');
+      return;
+    }
+
+    // ─── NO CACHE — call Groq and stream the response ─────────────────────
     var visualContext = buildVisualContext(payload);
     var messages = [
       { role: 'system', content: buildSystemPrompt(visualContext) },
@@ -308,6 +388,8 @@
       });
       clearShimmer(briefHost);
       setBadgeState(briefHost, null); // back to default "AI-wired"
+      // Cache the parsed result for next time (1-hour TTL)
+      setCachedBrief(versionKey, payload, parseBrief(partial));
     } catch (e) {
       console.warn('exec-ai-brief: Groq call failed, falling back to static notes', e);
       restoreStaticBrief(briefHost, payload);

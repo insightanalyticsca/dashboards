@@ -283,7 +283,45 @@
     ].join('\n');
   }
 
-  // ─── Ask with visual context ──────────────────────────────────────────────
+  // ─── 30-min localStorage cache for repeat questions ─────────────────────
+  // Keyed by (version + question) so the same question on different
+  // dashboards gets different cached answers.
+  var QA_CACHE_PREFIX = 'visual-qa:v1:';
+  var QA_CACHE_TTL_MS = 30 * 60 * 1000;
+
+  function qaHash(versionKey, question) {
+    var s = (versionKey || '') + '|' + question.toLowerCase().trim().replace(/\s+/g, ' ');
+    var h = 0x811c9dc5;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(36);
+  }
+
+  function getCachedAnswer(versionKey, question) {
+    try {
+      var raw = localStorage.getItem(QA_CACHE_PREFIX + qaHash(versionKey, question));
+      if (!raw) return null;
+      var entry = JSON.parse(raw);
+      if (!entry || !entry.ts || !entry.answer) return null;
+      if (Date.now() - entry.ts > QA_CACHE_TTL_MS) {
+        localStorage.removeItem(QA_CACHE_PREFIX + qaHash(versionKey, question));
+        return null;
+      }
+      return entry.answer;
+    } catch (_) { return null; }
+  }
+
+  function setCachedAnswer(versionKey, question, answer) {
+    try {
+      localStorage.setItem(QA_CACHE_PREFIX + qaHash(versionKey, question), JSON.stringify({
+        ts: Date.now(),
+        answer: answer
+      }));
+    } catch (_) {}
+  }
+
   async function ask(question, onToken) {
     var visualContext = buildVisualContext();
 
@@ -298,11 +336,27 @@
     await configPromise;
 
     if (CONFIG.provider === 'groq' && CONFIG.proxyUrl) {
+      // ─── CACHE CHECK ──────────────────────────────────────────────────
+      var versionKey = state.versionKey || 'unknown';
+      var cached = getCachedAnswer(versionKey, question);
+      if (cached) {
+        if (onToken) {
+          var cachedTokens = cached.match(/\S+\s*/g) || [cached];
+          for (var ci = 0; ci < cachedTokens.length; ci++) {
+            await new Promise(function(r) { setTimeout(r, 12); });
+            onToken(cachedTokens[ci]);
+          }
+        }
+        return cached;
+      }
+
       var messages = [
         { role: 'system', content: buildSystemPrompt(visualContext) },
         { role: 'user', content: userPrompt }
       ];
-      return await groqChat(messages, onToken);
+      var answer = await groqChat(messages, onToken);
+      setCachedAnswer(versionKey, question, answer);
+      return answer;
     }
 
     // Groq is truly offline (no key in localStorage AND no key in

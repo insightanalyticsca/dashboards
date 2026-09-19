@@ -275,3 +275,55 @@ Stage Summary:
 - Visual chat gracefully deflects platform questions to the contact bot (keeps its primary job)
 - No hardcoded secrets in the repo — scripts read from env vars
 - File changes: js/contact-chat.js (+54 lines of grouped IA_FACTS), js/visual-chat.js (+1 line rule #8), custom-html/executive-chatters-portfolio.html (cache bust), scripts/*.py (6 files: removed hardcoded secrets), worklog.md (removed key references)
+
+---
+Task ID: pdf-as-kb-and-fix-why-reasoning
+Agent: main
+Task: User uploaded Insight_Analytics_Executive_Brief_Story_Tech_Footer.pdf — use it as knowledge base. Also fix the 'Why' summary across the site — Groq was answering 'Driver not isolated in this payload' which is a non-answer; need real business acumen instead everywhere.
+
+Work Log:
+- Extracted PDF text via pdftotext (142 lines, 3 pages). Content is the IA executive brief story deck:
+  - Tagline: "FROM REPORTING TO PREDICTIVE BUSINESS INTELLIGENCE — The business already has the answers. Leadership should not have to hunt for them."
+  - Problem: info scattered across systems, people spend hours collecting/reconciling
+  - 8-step methodology: connect/automate-collection/governed-picture/AI-first-reader → ask-questions/predict/deliver/close-loop
+  - 5-part brief format: OVERALL/CHANGE/CONCERN/OUTLOOK/ACTION (the IA house style)
+  - "Why this is realistic now" — platform-agnostic architecture
+  - IA positioning: end-to-end data, analytics, automation, AI around existing systems
+  - Value chain: Data → understanding → prediction → action
+
+- js/contact-chat.js: Added a new "PHILOSOPHY" section to IA_FACTS (the 9th section) capturing the entire PDF content. The contact bot can now answer questions like:
+  - "What's your consulting approach?" → 8-step methodology
+  - "How do you produce executive briefs?" → 5-part OVERALL/CHANGE/CONCERN/OUTLOOK/ACTION format
+  - "Why is this realistic now?" → platform-agnostic architecture
+  - "What's your value chain?" → Data → understanding → prediction → action
+
+- js/visual-chat.js + js/exec-ai-brief.js: Rewrote the WHY section guidance in the system prompt. OLD guidance told Groq to say "Driver not isolated in this payload" whenever driver-level breakdowns were missing — which produced a lazy non-answer for most dashboards. NEW guidance:
+  - Use the data signals visible in the payload (KPI deltas, chart series trends, table breakdowns, period-over-period comparisons, segment splits) to form a business hypothesis
+  - Use language like "the pattern suggests...", "likely drivers include...", "this likely reflects...", "the disparity between X and Y points to..."
+  - NEVER say "Driver not isolated" — that's a non-answer
+  - Only if the payload is genuinely empty of ANY signal may the bot say so — but that's rare
+
+- Found and removed 2 more places where "Driver not isolated" was hiding:
+  1. js/visual-chat.js: Deleted the entire dead buildDemoBrief() function (~38 lines) — it was the demo-mode fallback that hardcoded "WHY: Driver not isolated in this payload" and had no callers since commit d3ea76b removed the demo-mode canned answer. The function was dead code but the string still lived in the file.
+  2. data/executive/chatters.json: Replaced the WHY note with REAL business reasoning using the signals actually in the payload:
+     - 7.2pp gap between retail (+7.2%) and salon (+0.8%) → product mix shift, attachment push, or capacity ceiling
+     - Ontario's 3.1pp outperformance → benchmarking opportunity
+     - Fri-Sat saturation + Mon-Tue slack below 55% → capacity-allocation issue, not demand problem
+
+- Bumped cache version to v=20260815 on visual-chat.js, contact-chat.js, exec-ai-brief.js in chatters.html
+
+- Added /home/z/my-project/upload/ to .gitignore so future user-uploaded PDFs don't get accidentally staged in commits (the user's PDF got staged when I ran `git add` on the working tree — had to unstage it before push to avoid bloating the repo with a 2MB binary)
+
+- Verified live via direct proxy ping with the new system prompt + Chatters JSON as context:
+  - WHAT HAPPENED: "Total Revenue (est.) reached 309,000,000 CAD, up 4.7% MoM and 8.2% YoY, while Retail Attachment declined 2.3% MoM to 21.8."
+  - WHY: "The disparity between strong top-line growth and falling retail attachment suggests that revenue gains are being driven by service volume or higher average ticket sizes rather than increased ancillary product sales." ← REAL BUSINESS REASONING, no more "Driver not isolated"
+  - WHAT TO EXPECT: "If the current trend continues, total revenue will maintain upward momentum, but the declining retail attachment may limit overall margin expansion."
+  - WHAT TO DO: "Investigate the specific service categories driving the revenue lift to determine if they can be leveraged to re-engage customers in retail purchases."
+
+- Verified: "Driver not isolated" now appears ONLY inside the new system prompt guidance string that says "NEVER say 'Driver not isolated' in this payload" — nowhere else in any JS file, JSON, or static note.
+
+Stage Summary:
+- Contact bot has the IA philosophy deck as knowledge base — can answer questions about the 8-step methodology, 5-part brief format, platform-agnostic architecture, value chain
+- AI Brief card on Chatters + visual chat on every version page now produce REAL business reasoning in the WHY section, drawing from KPI deltas, chart series trends, segment splits, period-over-period comparisons
+- The lazy "Driver not isolated" non-answer is gone from: live system prompts, dead code, AND static notes
+- File changes: js/contact-chat.js (+27 lines PHILOSOPHY section), js/visual-chat.js (system prompt rewrite + buildDemoBrief deleted = -38 lines), js/exec-ai-brief.js (system prompt rewrite), data/executive/chatters.json (WHY note → real reasoning), custom-html/executive-chatters-portfolio.html (cache bust), .gitignore (upload/ excluded), worklog.md
