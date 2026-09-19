@@ -430,32 +430,30 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
         visitPanel.style.display = 'block';
         visitCount.textContent = data.count + ' visits · edge: ' + (data.edge || 'unknown') + ' · captured ' + new Date(data.capturedAt).toLocaleString();
         visitError.style.display = 'none';
-        // Render table — horizontally scrollable, no truncation, no TZ column
-        var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.1));border-radius:8px;">';
-        html += '<table style="border-collapse:collapse;font-size:11px;width:max-content;min-width:100%;">';
-        html += '<thead><tr style="text-align:left;border-bottom:2px solid var(--card-border,rgba(0,0,0,0.1));color:var(--muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;font-size:9px;">';
-        html += '<th style="padding:8px 12px;white-space:nowrap;position:sticky;left:0;background:var(--bg,#fff);z-index:1;">Time</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">IP</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">Country</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">City</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">Region</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">Path</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">Method</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">User-Agent</th>';
-        html += '<th style="padding:8px 12px;white-space:nowrap;">Referrer</th>';
+        // Render table — clean, consistent 11px font, horizontal scroll for long UA
+        var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
+        html += '<table style="border-collapse:collapse;font-size:11px;width:max-content;min-width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;">';
+        // Header
+        html += '<thead><tr style="background:linear-gradient(180deg,rgba(99,102,241,0.06),transparent);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
+        html += '<th style="padding:10px 14px;white-space:nowrap;position:sticky;left:0;background:rgba(99,102,241,0.08);z-index:2;">Time</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">IP</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">Country</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">City</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">Page Visited</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">Method</th>';
+        html += '<th style="padding:10px 14px;white-space:nowrap;">User-Agent</th>';
         html += '</tr></thead><tbody>';
         data.visits.forEach(function(v, i) {
-          var bg = i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.02)';
-          html += '<tr style="border-bottom:1px solid var(--card-border,rgba(0,0,0,0.05));background:' + bg + ';">';
-          html += '<td style="padding:6px 12px;white-space:nowrap;position:sticky;left:0;background:' + (i % 2 === 0 ? 'var(--bg,#fff)' : 'var(--bg-soft,rgba(0,0,0,0.02))') + ';z-index:1;font-weight:600;color:var(--text,#0f172a);">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.ip || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.country || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.city || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.region || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.path || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;">' + (v.method || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;font-family:monospace;font-size:10px;color:var(--text-soft,#475569);">' + (v.ua || '—') + '</td>';
-          html += '<td style="padding:6px 12px;white-space:nowrap;font-size:10px;color:var(--text-soft,#475569);">' + (v.referrer || '—') + '</td>';
+          var rowBg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.03)';
+          var timeBg = i % 2 === 0 ? 'rgba(99,102,241,0.04)' : 'rgba(99,102,241,0.07)';
+          html += '<tr style="border-bottom:1px solid var(--card-border,rgba(0,0,0,0.04));background:' + rowBg + ';">';
+          html += '<td style="padding:7px 14px;white-space:nowrap;position:sticky;left:0;background:' + timeBg + ';z-index:1;color:var(--text,#0f172a);font-weight:600;">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.ip || '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.country || '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.city || '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (v.page || '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.method || '—') + '</td>';
+          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + (v.ua || '—') + '</td>';
           html += '</tr>';
         });
         html += '</tbody></table></div>';

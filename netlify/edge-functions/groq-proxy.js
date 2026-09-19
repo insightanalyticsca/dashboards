@@ -55,6 +55,18 @@ const ADMIN_PASSWORD = 'Domino88!!';
 function logVisit(request, context) {
   const headers = request.headers;
   const geo = context.geo || {};
+  var referrer = headers.get('referer') || headers.get('referrer') || 'direct';
+  // Extract the actual PAGE the visitor was on (from the Referer header)
+  var page = 'direct';
+  if (referrer && referrer !== 'direct') {
+    try {
+      var refUrl = new URL(referrer);
+      page = refUrl.pathname.replace(/^\/dashboards\/?/, '') || 'index.html';
+      if (refUrl.hash) page += refUrl.hash;
+    } catch(e) {
+      page = referrer.slice(0, 80);
+    }
+  }
   const visit = {
     ts: new Date().toISOString(),
     ip: headers.get('x-nf-client-connection-ip') ||
@@ -63,14 +75,9 @@ function logVisit(request, context) {
         'unknown',
     country: geo.country?.name || geo.country || 'unknown',
     city: geo.city?.name || geo.city || 'unknown',
-    region: geo.subdivision?.name || geo.subdivision || 'unknown',
-    timezone: geo.timezone || 'unknown',
-    lat: geo.latitude?.toString() || '',
-    lon: geo.longitude?.toString() || '',
-    ua: headers.get('user-agent') || 'unknown',
-    path: new URL(request.url).pathname,
+    page: page,
     method: request.method,
-    referrer: headers.get('referer') || headers.get('referrer') || 'direct'
+    ua: headers.get('user-agent') || 'unknown'
   };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
