@@ -37,72 +37,110 @@
       .catch(function () {});
   })();
 
-  // ─── Detect the JSON path for the current executive page ─────────────────
+  // ─── Detect the JSON path for the current page ───────────────────────────
   function detectJsonPath() {
     var suite = document.body.dataset.suite;
     if (!suite) return null;
     // Executive suites use data/executive/<suite>.json
     var execKeys = ['ar', 'payments', 'disconnects', 'ebill', 'finalbill', 'chatters'];
     if (execKeys.indexOf(suite) >= 0) return '../data/executive/' + suite + '.json';
+    // CSR + ITS suites use data/versions/<suite>.json
+    if (suite.indexOf('csr-') === 0 || suite.indexOf('its-') === 0) {
+      return '../data/versions/' + suite + '.json';
+    }
     return null;
   }
 
-  // ─── Build the visual context from the JSON payload (mirror visual-chat) ──
+  // ─── Build the visual context from the JSON payload ─────────────────────
+  // Handles two formats: executive (metrics + charts + notes) and CSR/ITS
+  // (per-visual data objects with rows, keyed by visual ID)
   function buildVisualContext(d) {
     if (!d) return '';
     var parts = [];
-    parts.push('Dashboard: ' + (d.title || ''));
-    parts.push('Version: ' + (d.key || ''));
-    if (d.asOfLabel) parts.push('Period: ' + d.asOfLabel);
+
+    // Executive format: has 'metrics' and 'charts' arrays
+    if (d.metrics || d.charts) {
+      parts.push('Dashboard: ' + (d.title || ''));
+      parts.push('Version: ' + (d.key || ''));
+      if (d.asOfLabel) parts.push('Period: ' + d.asOfLabel);
+      parts.push('');
+
+      if (d.metrics && d.metrics.length) {
+        parts.push('KPIs:');
+        d.metrics.forEach(function(m, i) {
+          parts.push('  [' + (i + 1) + '] ' + m.label + ': ' + m.value +
+            (m.format === 'currency' ? ' CAD' : '') +
+            (m.format === 'percent' || m.format === 'percent2' ? '%' : '') +
+            (m.mom != null ? ' (MoM: ' + (m.mom > 0 ? '+' : '') + m.mom + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : '') +
+            (m.yoy != null ? ' (YoY: ' + (m.yoy > 0 ? '+' : '') + m.yoy + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : ''));
+        });
+        parts.push('');
+      }
+
+      if (d.charts && d.charts.length) {
+        parts.push('Charts:');
+        d.charts.forEach(function(c, i) {
+          parts.push('  [' + (i + 1) + '] ' + c.title + ' (' + c.kind + ')');
+          if (c.categories && c.categories.length) parts.push('      Categories: ' + c.categories.join(', '));
+          if (c.series && c.series.length) {
+            c.series.forEach(function(s) {
+              var dataStr = (s.data || []).map(function(v) {
+                if (v === null || v === undefined) return '—';
+                return typeof v === 'number' ? v.toLocaleString() : v;
+              }).join(', ');
+              parts.push('      ' + s.name + ': [' + dataStr + ']');
+            });
+          }
+        });
+        parts.push('');
+      }
+
+      if (d.tables && d.tables.length) {
+        parts.push('Tables:');
+        d.tables.forEach(function(t, i) {
+          parts.push('  [' + (i + 1) + '] ' + t.title);
+          if (t.columns && t.columns.length) parts.push('      Columns: ' + t.columns.join(', '));
+          if (t.rows && t.rows.length) {
+            parts.push('      Rows: ' + t.rows.length);
+            t.rows.slice(0, 3).forEach(function(r, j) {
+              var rowStr = t.columns.map(function(col) { return col + '=' + (r[col] != null ? r[col] : '—'); }).join(', ');
+              parts.push('      Row ' + (j + 1) + ': ' + rowStr);
+            });
+            if (t.rows.length > 3) parts.push('      ... (' + (t.rows.length - 3) + ' more rows)');
+          }
+        });
+        parts.push('');
+      }
+
+      return parts.join('\n');
+    }
+
+    // CSR/ITS format: per-visual data objects keyed by visual ID
+    var meta = d._meta || {};
+    parts.push('Dashboard: ' + (meta.title || ''));
+    parts.push('Version: ' + (meta.version || ''));
     parts.push('');
 
-    if (d.metrics && d.metrics.length) {
-      parts.push('KPIs:');
-      d.metrics.forEach(function (m, i) {
-        parts.push('  [' + (i + 1) + '] ' + m.label + ': ' + m.value +
-          (m.format === 'currency' ? ' CAD' : '') +
-          (m.format === 'percent' || m.format === 'percent2' ? '%' : '') +
-          (m.mom != null ? ' (MoM: ' + (m.mom > 0 ? '+' : '') + m.mom + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : '') +
-          (m.yoy != null ? ' (YoY: ' + (m.yoy > 0 ? '+' : '') + m.yoy + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : ''));
-      });
-      parts.push('');
-    }
-
-    if (d.charts && d.charts.length) {
-      parts.push('Charts:');
-      d.charts.forEach(function (c, i) {
-        parts.push('  [' + (i + 1) + '] ' + c.title + ' (' + c.kind + ')');
-        if (c.categories && c.categories.length) parts.push('      Categories: ' + c.categories.join(', '));
-        if (c.series && c.series.length) {
-          c.series.forEach(function (s) {
-            var dataStr = (s.data || []).map(function (v) {
-              if (v === null || v === undefined) return '—';
-              return typeof v === 'number' ? v.toLocaleString() : v;
-            }).join(', ');
-            parts.push('      ' + s.name + ': [' + dataStr + ']');
+    var visualKeys = Object.keys(d).filter(function(k) { return k !== '_meta'; });
+    if (visualKeys.length) {
+      parts.push('Visuals on this canvas:');
+      visualKeys.forEach(function(vk, i) {
+        var vd = d[vk];
+        var rows = vd.rows || vd.data || [];
+        if (rows && rows.length) {
+          parts.push('  [' + (i + 1) + '] ' + vk + ' (' + rows.length + ' rows)');
+          // Show first 3 rows
+          rows.slice(0, 3).forEach(function(r, j) {
+            if (typeof r === 'object') {
+              var rowStr = Object.keys(r).map(function(k) { return k + '=' + r[k]; }).join(', ');
+              parts.push('      Row ' + (j + 1) + ': ' + rowStr);
+            } else {
+              parts.push('      Row ' + (j + 1) + ': ' + r);
+            }
           });
+          if (rows.length > 3) parts.push('      ... (' + (rows.length - 3) + ' more rows)');
         }
       });
-      parts.push('');
-    }
-
-    if (d.tables && d.tables.length) {
-      parts.push('Tables:');
-      d.tables.forEach(function (t, i) {
-        parts.push('  [' + (i + 1) + '] ' + t.title);
-        if (t.columns && t.columns.length) parts.push('      Columns: ' + t.columns.join(', '));
-        if (t.rows && t.rows.length) {
-          parts.push('      Rows: ' + t.rows.length);
-          t.rows.slice(0, 3).forEach(function (r, j) {
-            var rowStr = t.columns.map(function (col) {
-              return col + '=' + (r[col] != null ? r[col] : '—');
-            }).join(', ');
-            parts.push('      Row ' + (j + 1) + ': ' + rowStr);
-          });
-          if (t.rows.length > 3) parts.push('      ... (' + (t.rows.length - 3) + ' more rows)');
-        }
-      });
-      parts.push('');
     }
 
     return parts.join('\n');

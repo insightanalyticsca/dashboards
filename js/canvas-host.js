@@ -398,6 +398,49 @@
         canvas.innerHTML = '<div style="padding:40px;text-align:center;color:#9b1c1c;font-weight:600">⚠ ' + err.message + '</div>';
       });
 
+    // ─── Inject AI Brief card below the canvas ────────────────────────────
+    // Same card as executive dashboards — exec-ai-brief.js will find it via
+    // [data-ai-brief] and stream a Groq brief into the 4 cells.
+    if (!app.querySelector('[data-ai-brief]')) {
+      var briefCard = document.createElement('div');
+      briefCard.className = 'exec-ai-brief';
+      briefCard.setAttribute('data-ai-brief', '');
+      briefCard.innerHTML =
+        '<div class="exec-ai-brief-head">' +
+          '<div class="exec-ai-brief-title">' +
+            '<span class="exec-ai-brief-spark" aria-hidden="true">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>' +
+            '</span>' +
+            '<span>AI Brief</span>' +
+          '</div>' +
+          '<div class="exec-ai-brief-badge" data-ai-badge>' +
+            '<span class="exec-ai-brief-dot"></span>' +
+            '<span class="exec-ai-brief-badge-text">AI-wired</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="exec-ai-brief-grid" data-ai-brief-grid>' +
+          '<div class="exec-ai-brief-cell exec-ai-brief-what" data-section="what">' +
+            '<div class="exec-ai-brief-cell-head"><span class="exec-ai-brief-cell-icon">✓</span><span class="exec-ai-brief-cell-label">What happened</span></div>' +
+            '<div class="exec-ai-brief-cell-body" data-brief-body></div>' +
+          '</div>' +
+          '<div class="exec-ai-brief-cell exec-ai-brief-why" data-section="why">' +
+            '<div class="exec-ai-brief-cell-head"><span class="exec-ai-brief-cell-icon">?</span><span class="exec-ai-brief-cell-label">Why</span></div>' +
+            '<div class="exec-ai-brief-cell-body" data-brief-body></div>' +
+          '</div>' +
+          '<div class="exec-ai-brief-cell exec-ai-brief-next" data-section="next">' +
+            '<div class="exec-ai-brief-cell-head"><span class="exec-ai-brief-cell-icon">→</span><span class="exec-ai-brief-cell-label">What to expect</span></div>' +
+            '<div class="exec-ai-brief-cell-body" data-brief-body></div>' +
+          '</div>' +
+          '<div class="exec-ai-brief-cell exec-ai-brief-do" data-section="do">' +
+            '<div class="exec-ai-brief-cell-head"><span class="exec-ai-brief-cell-icon">⊕</span><span class="exec-ai-brief-cell-label">What to do</span></div>' +
+            '<div class="exec-ai-brief-cell-body" data-brief-body></div>' +
+          '</div>' +
+        '</div>';
+      // Insert after the canvas-page div, inside #app
+      var canvasPage = app.querySelector('.canvas-page') || app;
+      canvasPage.appendChild(briefCard);
+    }
+
     // Responsive: recompute layout on viewport resize (debounced)
     var resizeTimer = null;
     window.addEventListener('resize', function() {

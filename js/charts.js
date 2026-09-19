@@ -269,8 +269,14 @@
   //  Chart 4 — Heatmap (query activity by hour)
   // ══════════════════════════════════════════════════════════════════════════
   function renderQueryHeatmap(host, data) {
+    if (!data || !data.length) {
+      init(host, {
+        title: { text: 'No query activity yet', left: 'center', top: 'middle', textStyle: { color: PAL.muted, fontSize: 12 } }
+      });
+      return;
+    }
     const hours = data.map(d => d.hour + ':00');
-    const values = data.map(d => [d.hour, d.count]);
+    const values = data.map((d, i) => [i, d.count]);
     const max = Math.max(...data.map(d => d.count));
 
     init(host, {
