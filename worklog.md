@@ -91,3 +91,37 @@ Stage Summary:
 - Visual chat: streams every 4-part brief from Groq; shows offline message referencing the dashboard only if Groq is unreachable
 - No more canned "demo answer" content anywhere
 - File changes: js/exec-ai-brief.js, js/dash-suite.js, js/contact-chat.js, js/visual-chat.js, custom-html/executive-chatters-portfolio.html, worklog.md
+
+---
+Task ID: honest-groq-status-pill
+Agent: main
+Task: User pointed out the lander page shows green dot + 'Groq · live' message even though the Groq key is invalid (returns 403). Fix the dishonest pill.
+
+Work Log:
+- Located the dishonest code in js/app.js updateProviderPill(): the check was `if (cfg.provider === 'groq' && cfg.groqKey)` — only verified a key string was SET, not that it actually WORKS.
+- Also found a second dishonest line in the 2-second setTimeout: `status.textContent = 'Groq · live'` hardcoded unconditionally after the same shallow key check.
+- Added verifyGroqKey() to js/api.js:
+  - Makes a real minimal POST to api.groq.com/openai/v1/chat/completions with max_tokens=1
+  - Returns { ok: true, model } on HTTP 200
+  - Returns { ok: false, reason: 'key rejected by Groq (403)' } on 401/403
+  - Returns { ok: false, reason: 'Groq returned HTTP X' } on other 4xx/5xx
+  - Returns { ok: false, reason: 'network error' } on fetch throw
+  - 5-minute in-memory cache to avoid pinging Groq on every page nav
+  - Exported via global.DocChatAPI.verifyGroqKey
+- Rewrote updateProviderPill() in app.js as async + honest:
+  - 'Groq · checking…' (warning pill) while pinging
+  - 'Groq · live' (green pulsing pill--ok) ONLY if Groq returns 200
+  - 'Groq · offline' (RED pill--err) with the failure reason as the pill's title tooltip if verification fails
+  - Also updates composerStatus near the chat input to match (previously hardcoded to 'Groq · live')
+- Removed the unconditional composerStatus = 'Groq · live' line in the setTimeout block
+- Bumped cache version on api.js + app.js to v=20260811 in index.html
+- Verified directly: Groq API returns 403 Forbidden for the key currently in data/groq-config.json. The live site will now honestly show 'Groq · offline' (red) on the lander instead of the green 'Groq · live' lie.
+- Committed as a51e273, pushed to origin/main. Verified live on Pages after 35s: api.js has verifyGroqKey (2 refs), app.js no longer has the hardcoded 'Groq · live' string (0 refs), index.html loads v=20260811.
+
+Stage Summary:
+- The lander page status pill is now honest — it actually verifies the Groq key with a real API call on page load
+- Currently shows red 'Groq · offline' because the live key is invalid (403 Forbidden — revoked by Groq)
+- When a fresh key is provided, the pill will show green 'Groq · live' only after a successful verification
+- The 5-minute cache prevents pinging Groq on every page navigation
+- Tooltip on the pill shows the exact failure reason for debugging
+- File changes: js/api.js (+53 lines for verifyGroqKey), js/app.js (updateProviderPill rewritten + composerStatus honest update + removed hardcoded 'Groq · live'), index.html (cache bust), worklog.md
