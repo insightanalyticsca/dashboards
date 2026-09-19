@@ -187,22 +187,28 @@
     if (!text) return out;
     var lines = text.split('\n');
     var current = null;
+    // Strip leading markdown/list prefixes before matching the section header.
+    // Handles: **WHAT HAPPENED:**, - WHAT HAPPENED:, 1. WHAT HAPPENED:, ## WHAT HAPPENED:
+    function stripPrefix(line) {
+      return line.replace(/^[\s\*#\-\.\d]+:?/, '').trim();
+    }
     lines.forEach(function (raw) {
       var line = raw.trim();
       if (!line) return;
-      var upper = line.toUpperCase();
-      if (upper.indexOf('WHAT HAPPENED:') === 0) {
-        current = 'what';
-        out.what += line.slice('WHAT HAPPENED:'.length).trim() + ' ';
-      } else if (upper.indexOf('WHY:') === 0) {
-        current = 'why';
-        out.why += line.slice('WHY:'.length).trim() + ' ';
-      } else if (upper.indexOf('WHAT TO EXPECT:') === 0) {
-        current = 'next';
-        out.next += line.slice('WHAT TO EXPECT:'.length).trim() + ' ';
-      } else if (upper.indexOf('WHAT TO DO:') === 0) {
-        current = 'do';
-        out.do += line.slice('WHAT TO DO:'.length).trim() + ' ';
+      var stripped = stripPrefix(line);
+      var upper = stripped.toUpperCase();
+      // Strip trailing ** too (e.g., "**WHY:**" → after stripPrefix → "WHY:**" → upper "WHY:**")
+      // Match header at start, allow trailing : or :** or whitespace
+      var headerMatch = upper.match(/^(WHAT HAPPENED|WHY|WHAT TO EXPECT|WHAT TO DO)\s*[:\*]*/);
+      if (headerMatch) {
+        var header = headerMatch[1];
+        // Find where the header ends in the original stripped line + skip past colons/stars
+        var headerEnd = stripped.toUpperCase().indexOf(header) + header.length;
+        var rest = stripped.slice(headerEnd).replace(/^[:\*\s\#]+/, '').trim();
+        if (header === 'WHAT HAPPENED') { current = 'what'; out.what += rest + ' '; }
+        else if (header === 'WHY') { current = 'why'; out.why += rest + ' '; }
+        else if (header === 'WHAT TO EXPECT') { current = 'next'; out.next += rest + ' '; }
+        else if (header === 'WHAT TO DO') { current = 'do'; out.do += rest + ' '; }
       } else if (current) {
         out[current] += line + ' ';
       }
