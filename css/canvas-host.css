@@ -564,7 +564,7 @@ html, body {
   height: 26px;
   border-radius: 8px;
   text-decoration: none;
-  color: #fff;
+  color: #fff !important;  /* !important to override theme-vivid.css global a{color:var(--theme-accent)} rule — otherwise the SVG stroke (currentColor) inherits teal, making the phone icon invisible on its teal→green gradient background */
   transition: transform 150ms, box-shadow 150ms;
   flex-shrink: 0;
 }

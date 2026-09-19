@@ -327,3 +327,52 @@ Stage Summary:
 - AI Brief card on Chatters + visual chat on every version page now produce REAL business reasoning in the WHY section, drawing from KPI deltas, chart series trends, segment splits, period-over-period comparisons
 - The lazy "Driver not isolated" non-answer is gone from: live system prompts, dead code, AND static notes
 - File changes: js/contact-chat.js (+27 lines PHILOSOPHY section), js/visual-chat.js (system prompt rewrite + buildDemoBrief deleted = -38 lines), js/exec-ai-brief.js (system prompt rewrite), data/executive/chatters.json (WHY note → real reasoning), custom-html/executive-chatters-portfolio.html (cache bust), .gitignore (upload/ excluded), worklog.md
+
+---
+Task ID: add-cache-layer
+Agent: main
+Task: 'Add cache' — the Groq free-tier TPD limit (200K) was getting burned in ~50 page refreshes. Cache the AI Brief (1hr) and Q&A pairs (30min) in localStorage to cut token usage ~80%.
+
+Work Log:
+- js/exec-ai-brief.js (+84 lines): added 1-hour localStorage cache layer
+  - BRIEF_CACHE_PREFIX = 'exec-ai-brief:v1:'
+  - BRIEF_CACHE_TTL_MS = 60 * 60 * 1000 (1 hour)
+  - payloadHash() uses FNV-1a 32-bit hash of title + asOfLabel + generatedUtc + first 3 metric values + first 3 chart shapes — stable across reloads for the same period, invalidates when period data changes
+  - getCachedBrief(versionKey, payload) / setCachedBrief(versionKey, payload, parsed)
+  - In runBrief(): after configPromise + payload fetch, check cache FIRST. On hit: populate cells from cache, clear shimmer, badge='cached'. On miss: do the normal Groq stream, then cache the parsed result.
+  - New badge state 'cached' added to setBadgeState: text='AI-wired · cached', styling in CSS
+
+- js/contact-chat.js (+61 lines): added 30-min Q&A cache
+  - QA_CACHE_PREFIX = 'contact-qa:v1:'
+  - QA_CACHE_TTL_MS = 30 * 60 * 1000 (30 minutes)
+  - qaHash(question): FNV-1a of question (case-insensitive, whitespace-normalized)
+  - getCachedAnswer(question) / setCachedAnswer(question, answer)
+  - On cache hit: replay answer token-by-token with 12ms delay per token (preserves streaming feel)
+  - On cache miss: normal Groq call, then cache the answer
+
+- js/visual-chat.js (+58 lines): same 30-min Q&A cache, but keyed by (versionKey + question) — same question on different dashboards gets different cached answers because the dashboard context is different
+
+- css/executive-dashboard-suite.css (+6 lines): new .exec-ai-brief-badge[data-state='cached'] rule with sky-blue styling (rgba(14,165,233)) — distinct from green live, amber streaming, gray fallback
+
+- custom-html/executive-chatters-portfolio.html: bumped cache version to v=20260816 on executive-dashboard-suite.css, visual-chat.js, contact-chat.js, exec-ai-brief.js
+
+- Resolved local-vs-remote divergence (local had stray opaque-ID commit b683427 on top of 690f229). Used git reset --soft origin/main to re-apply my 6-file changes on top of remote.
+
+- Committed as 2bfec51, pushed to origin/main. Verified live after 35s Pages propagation:
+  - exec-ai-brief.js: 9 cache refs (BRIEF_CACHE_PREFIX, getCachedBrief, setCachedBrief, payloadHash)
+  - contact-chat.js: 9 cache refs (QA_CACHE_PREFIX, getCachedAnswer, setCachedAnswer, qaHash)
+  - visual-chat.js: 9 cache refs (same)
+  - executive-dashboard-suite.css: 1 cached badge state rule
+
+Token usage math post-cache:
+- Before: 50 refreshes of Chatters = 50 × 2400 = 120K tokens (60% of the 200K daily budget, just for one user)
+- After: 50 refreshes within 1 hour = 1 × 2400 + 49 × 0 = 2400 tokens (1.2% of the daily budget)
+- Plus Q&A caching: repeat questions cost 0 tokens for 30 min
+- Net: ~80% reduction in token usage for normal demo traffic
+
+Stage Summary:
+- AI Brief card on Chatters page now caches per-version for 1 hour — refreshes within the hour cost 0 tokens
+- Contact bot Q&A cached per-question for 30 min — repeat questions cost 0 tokens
+- Visual chat Q&A cached per-(version+question) for 30 min — repeat questions on the same dashboard cost 0 tokens
+- Badge honestly shows 'AI-wired · cached' (sky-blue) when serving from cache, 'AI-wired' (green) for fresh calls, 'AI generating…' (amber) while streaming, 'Static (AI offline)' (gray) on failure
+- File changes: js/exec-ai-brief.js, js/contact-chat.js, js/visual-chat.js, css/executive-dashboard-suite.css, custom-html/executive-chatters-portfolio.html, worklog.md
