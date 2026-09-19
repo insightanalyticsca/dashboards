@@ -1,8 +1,5 @@
 {
   "provider": "groq",
-  "keyParts": [
-    "ydGWCFlm5sOK4H70APmpJdCO_ksg",
-    "nkOct2zZevyUyMGbbWJwDm3BYF3b"
-  ],
+  "proxyUrl": "https://dashboards-groq-proxy.netlify.app/groq-proxy",
   "groqModel": "llama-3.3-70b-versatile"
 }

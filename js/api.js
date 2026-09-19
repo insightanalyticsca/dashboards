@@ -18,7 +18,7 @@
     ghToken: localStorage.getItem('docchat.gh.token') || '',
     // AI provider
     provider: localStorage.getItem('docchat.provider') || 'groq',
-    groqKey: localStorage.getItem('docchat.groq.key') || '',
+    proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile',
     ollamaBase: localStorage.getItem('docchat.ollama.base') || 'http://localhost:11434',
     ollamaModel: localStorage.getItem('docchat.ollama.model') || 'gemma3:1b',
@@ -211,7 +211,7 @@
   // Uses the LLM to score chunk relevance semantically — much better than
   // keyword overlap. Falls back to scoreChunk if no Groq key.
   async function aiScoreChunks(query, chunks, topK) {
-    if (!CONFIG.groqKey || CONFIG.provider !== 'groq') {
+    if (!CONFIG.proxyUrl || CONFIG.provider !== 'groq') {
       // Fallback: keyword overlap
       return chunks.map(c => ({ ...c, score: scoreChunk(c.text, query) }))
         .sort((a, b) => b.score - a.score)
@@ -230,10 +230,9 @@ ${chunkList}
 Return format: [0, 3, 1] (just the array, no explanation)`;
 
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch(CONFIG.proxyUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${CONFIG.groqKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -331,8 +330,8 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
 
   // ─── Groq Vision OCR for images ──────────────────────────────────────────
   async function ocrImageWithGroq(file) {
-    if (!CONFIG.groqKey) {
-      return `[Image OCR requires Groq API key. Image: ${file.name}]`;
+    if (!CONFIG.proxyUrl) {
+      return `[Image OCR requires the Groq proxy. Image: ${file.name}]`;
     }
 
     // Convert file to base64
@@ -346,10 +345,9 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
     const prompt = `Extract ALL text visible in this image. Return the text exactly as it appears, preserving line breaks and structure. If it's a table, format it as markdown. If it's a document, preserve headings and paragraphs. If no text is visible, describe what you see.`;
 
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch(CONFIG.proxyUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${CONFIG.groqKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -437,12 +435,11 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
 
   // ─── Groq: streaming chat completion (OpenAI-compatible) ──────────────────
   async function groqChatStream(messages, onToken) {
-    if (!CONFIG.groqKey) throw new Error('Groq API key not set. Open Settings to configure.');
+    if (!CONFIG.proxyUrl) throw new Error('Groq proxy URL not configured. Set proxyUrl in data/groq-config.json.');
 
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const res = await fetch(CONFIG.proxyUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${CONFIG.groqKey}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -545,7 +542,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
 
     let result, model, provider;
 
-    if (CONFIG.provider === 'groq' && CONFIG.groqKey) {
+    if (CONFIG.provider === 'groq' && CONFIG.proxyUrl) {
       const messages = [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -602,24 +599,24 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
   // Caches the result in sessionStorage for 5 minutes to avoid hammering
   // the API on every page navigation.
   let _groqVerifyCache = null;
-  async function verifyGroqKey() {
+  // verifyGroq pings the Netlify edge function with max_tokens=1 to confirm
+  // the proxy is deployed, the GROQ_API_KEY env var is set, and the key is
+  // actually valid. The key itself never leaves the server.
+  async function verifyGroq() {
     // 5-minute cache
     if (_groqVerifyCache && (Date.now() - _groqVerifyCache.ts) < 5 * 60 * 1000) {
       return _groqVerifyCache.result;
     }
-    const result = { ok: false, reason: 'no key configured' };
-    if (!CONFIG.groqKey) {
-      result.reason = 'no key configured';
+    const result = { ok: false, reason: 'no proxy URL configured' };
+    if (!CONFIG.proxyUrl) {
+      result.reason = 'no proxy URL configured';
       _groqVerifyCache = { ts: Date.now(), result };
       return result;
     }
     try {
-      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const res = await fetch(CONFIG.proxyUrl, {
         method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + CONFIG.groqKey,
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           model: CONFIG.groqModel || 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: 'ping' }],
@@ -633,10 +630,10 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
         result.model = CONFIG.groqModel;
       } else if (res.status === 401 || res.status === 403) {
         result.ok = false;
-        result.reason = 'key rejected by Groq (' + res.status + ')';
+        result.reason = 'proxy rejected (' + res.status + ')';
       } else {
         result.ok = false;
-        result.reason = 'Groq returned HTTP ' + res.status;
+        result.reason = 'proxy returned HTTP ' + res.status;
       }
     } catch (e) {
       result.ok = false;
@@ -657,14 +654,11 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
           CONFIG.provider = cfg.provider;
           try { localStorage.setItem('docchat.provider', cfg.provider); } catch(_){}
         }
-        if (cfg.groqKey && !localStorage.getItem('docchat.groq.key')) {
-          CONFIG.groqKey = cfg.groqKey;
-        }
-        if (cfg.groqKeyEnc && !localStorage.getItem('docchat.groq.key')) {
-          CONFIG.groqKey = atob(cfg.groqKeyEnc);
-        }
-        if (cfg.keyParts && !localStorage.getItem('docchat.groq.key')) {
-          CONFIG.groqKey = cfg.keyParts.map(function(p) { return p.split('').reverse().join(''); }).join('');
+        // Load the proxy URL from config (the Groq key itself lives server-side
+        // on the Netlify Edge Function — never on the client).
+        if (cfg.proxyUrl) {
+          CONFIG.proxyUrl = cfg.proxyUrl;
+          try { localStorage.setItem('docchat.groq.proxyUrl', cfg.proxyUrl); } catch(_){}
         }
         if (cfg.groqModel) {
           CONFIG.groqModel = cfg.groqModel;
@@ -676,7 +670,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
   global.DocChatAPI = {
     Documents, Chunks, Queries, Analytics,
     Config, retrieve, ask,
-    verifyGroqKey, // () → Promise<{ ok: boolean, reason: string, model?: string }>
+    verifyGroq,    // () → Promise<{ ok: boolean, reason: string, model?: string }>
     // AI-powered document processing
     parseDocument,    // (file, onProgress) → { title, rawText, chunks, wordCount, contentType }
     ocrImageWithGroq, // (file) → extracted text from image via Groq vision

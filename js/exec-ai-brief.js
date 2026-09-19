@@ -14,7 +14,7 @@
   // ─── Config (mirror visual-chat.js + contact-chat.js) ────────────────────
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
-    groqKey: localStorage.getItem('docchat.groq.key') || '',
+    proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
   };
 
@@ -28,12 +28,10 @@
         if (!cfg) return;
         if (cfg.provider && !localStorage.getItem('docchat.provider'))
           CONFIG.provider = cfg.provider;
-        if (cfg.groqKeyEnc && !localStorage.getItem('docchat.groq.key'))
-          CONFIG.groqKey = atob(cfg.groqKeyEnc);
-        if (cfg.keyParts && !localStorage.getItem('docchat.groq.key'))
-          CONFIG.groqKey = cfg.keyParts.map(function (p) {
-            return p.split('').reverse().join('');
-          }).join('');
+        if (cfg.proxyUrl) {
+          CONFIG.proxyUrl = cfg.proxyUrl;
+          try { localStorage.setItem('docchat.groq.proxyUrl', cfg.proxyUrl); } catch (_) {}
+        }
         if (cfg.groqModel) CONFIG.groqModel = cfg.groqModel;
       })
       .catch(function () {});
@@ -135,13 +133,12 @@
     ].join('\n');
   }
 
-  // ─── Groq streaming (mirror visual-chat.js) ──────────────────────────────
+  // ─── Groq streaming (via Netlify edge function proxy) ────────────────────
   async function groqChat(messages, onToken) {
-    if (!CONFIG.groqKey) throw new Error('Groq API key not configured');
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    if (!CONFIG.proxyUrl) throw new Error('Groq proxy URL not configured');
+    var res = await fetch(CONFIG.proxyUrl, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + CONFIG.groqKey,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -274,7 +271,7 @@
 
     // Wait for the async Groq config to finish loading before deciding
     // whether to use Groq or fall back. This avoids the premature fallback
-    // that happened when CONFIG.groqKey was checked before the fetch resolved.
+    // that happened when CONFIG.proxyUrl was checked before the fetch resolved.
     await configPromise;
 
     // Fetch the dashboard JSON in parallel with the config wait
@@ -289,8 +286,8 @@
       return;
     }
 
-    // Truly no Groq key available (not in localStorage, not in config JSON)
-    if (CONFIG.provider !== 'groq' || !CONFIG.groqKey) {
+    // Truly no Groq proxy configured (not in localStorage, not in config JSON)
+    if (CONFIG.provider !== 'groq' || !CONFIG.proxyUrl) {
       restoreStaticBrief(briefHost, payload);
       return;
     }

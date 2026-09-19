@@ -96,7 +96,7 @@
       return;
     }
 
-    if (cfg.provider !== 'groq' || !cfg.groqKey) {
+    if (cfg.provider !== 'groq' || !cfg.proxyUrl) {
       pill.className = 'pill';
       label.textContent = 'Demo';
       pill.title = 'No AI provider configured';
@@ -111,7 +111,7 @@
     setComposer('Groq · checking…');
 
     try {
-      const v = await api.verifyGroqKey();
+      const v = await api.verifyGroq();
       if (v.ok) {
         pill.className = 'pill pill--ok';
         label.textContent = 'Groq · live';
@@ -513,7 +513,7 @@
       $('#setProviderDemo').classList.toggle('is-active', cfg.provider === 'demo');
       $('#setProviderGroq').classList.toggle('is-active', cfg.provider === 'groq');
       $('#setProviderOllama').classList.toggle('is-active', cfg.provider === 'ollama');
-      $('#setGroqKey').value = cfg.groqKey;
+      $('#setGroqProxyUrl').value = cfg.proxyUrl;  // Groq key now lives on Netlify (server-side)
       $('#setGroqModel').value = cfg.groqModel;
       $('#setOllamaBase').value = cfg.ollamaBase;
       $('#setOllamaModel').value = cfg.ollamaModel;
@@ -571,11 +571,12 @@
     }
 
     // Check if Groq config loaded after boot (async). updateProviderPill now
-    // verifies the key with a real API call and updates composerStatus to
-    // match — 'Groq · live' if the call returns 200, 'Groq · offline' if not.
+    // verifies the proxy is reachable + the GROQ_API_KEY env var is set on
+    // the Netlify Edge Function — shows 'Groq · live' only if a real API
+    // call returns 200, 'Groq · offline' (red) otherwise.
     setTimeout(function() {
       var cfg = window.DocChatAPI?.Config?.get();
-      if (cfg && cfg.provider === 'groq' && cfg.groqKey) {
+      if (cfg && cfg.provider === 'groq' && cfg.proxyUrl) {
         updateProviderPill();
       }
     }, 2000);

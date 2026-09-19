@@ -12,14 +12,14 @@
   // ─── Config (same as api.js) ──────────────────────────────────────────────
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
-    groqKey: localStorage.getItem('docchat.groq.key') || '',
+    proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
   };
 
   // Expose a promise so ask() can wait for the config to finish loading
   // before deciding whether Groq is truly offline. Without this, the first
   // message a user sends (before the async fetch resolves) would get a
-  // canned demo answer even though Groq IS configured in
+  // canned offline message even though the proxy IS configured in
   // data/groq-config.json.
   var configPromise = (function autoLoad() {
     return fetch('../data/groq-config.json', { cache: 'no-store' })
@@ -28,10 +28,10 @@
         if (!cfg) return;
         if (cfg.provider && !localStorage.getItem('docchat.provider'))
           CONFIG.provider = cfg.provider;
-        if (cfg.groqKeyEnc && !localStorage.getItem('docchat.groq.key'))
-          CONFIG.groqKey = atob(cfg.groqKeyEnc);
-        if (cfg.keyParts && !localStorage.getItem('docchat.groq.key'))
-          CONFIG.groqKey = cfg.keyParts.map(function(p) { return p.split('').reverse().join(''); }).join('');
+        if (cfg.proxyUrl) {
+          CONFIG.proxyUrl = cfg.proxyUrl;
+          try { localStorage.setItem('docchat.groq.proxyUrl', cfg.proxyUrl); } catch(_){}
+        }
         if (cfg.groqModel) CONFIG.groqModel = cfg.groqModel;
       })
       .catch(function() {});
@@ -198,14 +198,13 @@
     return parts.join('\n');
   }
 
-  // ─── Groq streaming chat ──────────────────────────────────────────────────
+  // ─── Groq streaming chat (via Netlify edge function proxy) ───────────────
   async function groqChat(messages, onToken) {
-    if (!CONFIG.groqKey) throw new Error('Groq API key not configured');
+    if (!CONFIG.proxyUrl) throw new Error('Groq proxy URL not configured');
 
-    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch(CONFIG.proxyUrl, {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer ' + CONFIG.groqKey,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -297,7 +296,7 @@
     // get a canned demo answer even though Groq IS configured.
     await configPromise;
 
-    if (CONFIG.provider === 'groq' && CONFIG.groqKey) {
+    if (CONFIG.provider === 'groq' && CONFIG.proxyUrl) {
       var messages = [
         { role: 'system', content: buildSystemPrompt(visualContext) },
         { role: 'user', content: userPrompt }

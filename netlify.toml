@@ -1,0 +1,40 @@
+# Netlify config for the Groq proxy edge function.
+#
+# The static site is NOT deployed here — it stays on GitHub Pages at
+# https://insightanalyticsca.github.io/dashboards/
+#
+# This Netlify site only hosts the groq-proxy edge function, which keeps the
+# Groq API key server-side. The static site's JS calls this function instead
+# of api.groq.com directly.
+#
+# DEPLOY STEPS:
+#   1. Create a new Netlify site (dashboard.netlify.com → "Add new site" →
+#      "Import an existing project" or "Deploy manually")
+#   2. Connect this repo (or drag-and-drop this directory)
+#   3. Set the environment variable:
+#        GROQ_API_KEY = gsk_...your real Groq key here...
+#      (Site settings → Environment variables → Add a variable)
+#   4. Deploy. Netlify will give you a URL like:
+#        https://<your-site-name>.netlify.app
+#   5. Open data/groq-config.json in the repo and set:
+#        "proxyUrl": "https://<your-site-name>.netlify.app/groq-proxy"
+#   6. Commit + push — the GitHub Pages site will pick up the new config
+#      and start routing Groq calls through the proxy.
+#
+# The edge function file lives at:
+#   netlify/edge-functions/groq-proxy.js
+# and is auto-discovered by Netlify. It serves at the path /groq-proxy.
+
+[build]
+  # No static files to publish — this site only hosts the edge function.
+  # Point publish at the netlify/ dir so Netlify has something to "deploy".
+  publish = "netlify"
+
+[functions]
+  # Edge functions directory (auto-discovered)
+  directory = "netlify/edge-functions"
+
+# Edge function explicit declaration (optional — auto-discovery also works)
+[[edge_functions]]
+  function = "groq-proxy"
+  path = "/groq-proxy"
