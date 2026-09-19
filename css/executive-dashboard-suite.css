@@ -403,6 +403,232 @@ body[data-variant="blue"] {
     padding: 0 4px 2px;
 }
 
+/* ════════════════════════════════════════════════════════════════════════════
+   AI BRIEF — dazzling 4-section card with AI-wired badge + shimmer
+   Populated by dash-suite.js with static notes, then replaced at runtime
+   by exec-ai-brief.js (Groq streaming) when a Groq key is configured.
+   ════════════════════════════════════════════════════════════════════════════ */
+.exec-ai-brief {
+    margin: 12px 4px 4px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    background:
+        linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(6, 182, 212, 0.04) 50%, rgba(139, 92, 246, 0.05) 100%),
+        var(--exec-bg, rgba(255, 255, 255, 0.96));
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.10), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle top sheen */
+.exec-ai-brief::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.45) 20%, rgba(6, 182, 212, 0.45) 50%, rgba(139, 92, 246, 0.45) 80%, transparent 100%);
+}
+
+.exec-ai-brief-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.exec-ai-brief-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.exec-ai-brief-spark {
+    display: grid;
+    place-items: center;
+    color: #6366f1;
+    animation: execAiSparkSpin 4s ease-in-out infinite;
+}
+
+@keyframes execAiSparkSpin {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+}
+
+.exec-ai-brief-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    background: rgba(16, 185, 129, 0.10);
+    color: #10b981;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.exec-ai-brief-badge[data-state="streaming"] {
+    border-color: rgba(99, 102, 241, 0.45);
+    background: rgba(99, 102, 241, 0.12);
+    color: #6366f1;
+}
+
+.exec-ai-brief-badge[data-state="fallback"] {
+    border-color: rgba(148, 163, 184, 0.35);
+    background: rgba(148, 163, 184, 0.10);
+    color: #64748b;
+}
+
+.exec-ai-brief-badge-text { line-height: 1; }
+
+.exec-ai-brief-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation: execAiPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes execAiPulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.25); }
+}
+
+.exec-ai-brief-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+@media (max-width: 900px) {
+    .exec-ai-brief-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 560px) {
+    .exec-ai-brief-grid { grid-template-columns: 1fr; }
+}
+
+.exec-ai-brief-cell {
+    position: relative;
+    padding: 10px 12px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(99, 102, 241, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+    transition: transform 200ms cubic-bezier(.22, 1, .36, 1), box-shadow 200ms;
+}
+
+.exec-ai-brief-cell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.14);
+}
+
+/* Section accent strip on top */
+.exec-ai-brief-cell::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0.85;
+}
+
+.exec-ai-brief-what::before  { background: linear-gradient(90deg, #10b981, #06b6d4); }
+.exec-ai-brief-why::before   { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+.exec-ai-brief-next::before  { background: linear-gradient(90deg, #06b6d4, #6366f1); }
+.exec-ai-brief-do::before    { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+
+.exec-ai-brief-cell-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.exec-ai-brief-cell-icon {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.exec-ai-brief-what .exec-ai-brief-cell-icon  { background: linear-gradient(135deg, #10b981, #06b6d4); }
+.exec-ai-brief-why .exec-ai-brief-cell-icon   { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.exec-ai-brief-next .exec-ai-brief-cell-icon  { background: linear-gradient(135deg, #06b6d4, #6366f1); }
+.exec-ai-brief-do .exec-ai-brief-cell-icon    { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+.exec-ai-brief-cell-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--exec-muted, #64748b);
+}
+
+.exec-ai-brief-cell-body {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--exec-text, #0f172a);
+    word-wrap: break-word;
+}
+
+/* Shimmer placeholder while Groq is streaming */
+.exec-ai-brief-cell-body[data-loading="true"]::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 11px;
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5), transparent);
+    background-size: 200% 100%;
+    animation: execAiShimmer 1.2s linear infinite;
+    vertical-align: -1px;
+    margin-left: 2px;
+}
+
+@keyframes execAiShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Dark theme adaptations */
+[data-theme="dark"] .exec-ai-brief {
+    background:
+        linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(6, 182, 212, 0.05) 50%, rgba(139, 92, 246, 0.06) 100%),
+        rgba(15, 23, 42, 0.6);
+    border-color: rgba(99, 102, 241, 0.25);
+}
+
+[data-theme="dark"] .exec-ai-brief-cell {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .exec-ai-brief-cell-body {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .exec-ai-brief-cell-label {
+    color: #94a3b8;
+}
+
 /* Executive internal visual canvas: same saved drag/resize concept as CSR pages. */
 html, body, #app {
     overflow: auto;

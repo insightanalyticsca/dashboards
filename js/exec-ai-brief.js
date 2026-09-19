@@ -1,0 +1,344 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   exec-ai-brief.js — Runtime Groq-powered AI brief for executive dashboard pages
+   - Watches for the [data-ai-brief] card rendered by dash-suite.js
+   - Fetches the dashboard's JSON payload (same JSON dash-suite used to render)
+   - Calls Groq with the SAME honest 4-part brief system prompt as visual-chat.js
+   - Streams the response into the 4 cells (what / why / next / do)
+   - Falls back to the static notes if no Groq key or on error
+   - Sets the AI-wired badge state: streaming -> live, or fallback
+   ════════════════════════════════════════════════════════════════════════════ */
+
+(function () {
+  'use strict';
+
+  // ─── Config (mirror visual-chat.js + contact-chat.js) ────────────────────
+  var CONFIG = {
+    provider: localStorage.getItem('docchat.provider') || 'demo',
+    groqKey: localStorage.getItem('docchat.groq.key') || '',
+    groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
+  };
+
+  (function autoLoad() {
+    fetch('../data/groq-config.json', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (cfg) {
+        if (!cfg) return;
+        if (cfg.provider && !localStorage.getItem('docchat.provider'))
+          CONFIG.provider = cfg.provider;
+        if (cfg.groqKeyEnc && !localStorage.getItem('docchat.groq.key'))
+          CONFIG.groqKey = atob(cfg.groqKeyEnc);
+        if (cfg.keyParts && !localStorage.getItem('docchat.groq.key'))
+          CONFIG.groqKey = cfg.keyParts.map(function (p) {
+            return p.split('').reverse().join('');
+          }).join('');
+        if (cfg.groqModel) CONFIG.groqModel = cfg.groqModel;
+      })
+      .catch(function () {});
+  })();
+
+  // ─── Detect the JSON path for the current executive page ─────────────────
+  function detectJsonPath() {
+    var suite = document.body.dataset.suite;
+    if (!suite) return null;
+    // Executive suites use data/executive/<suite>.json
+    var execKeys = ['ar', 'payments', 'disconnects', 'ebill', 'finalbill', 'chatters'];
+    if (execKeys.indexOf(suite) >= 0) return '../data/executive/' + suite + '.json';
+    return null;
+  }
+
+  // ─── Build the visual context from the JSON payload (mirror visual-chat) ──
+  function buildVisualContext(d) {
+    if (!d) return '';
+    var parts = [];
+    parts.push('Dashboard: ' + (d.title || ''));
+    parts.push('Version: ' + (d.key || ''));
+    if (d.asOfLabel) parts.push('Period: ' + d.asOfLabel);
+    parts.push('');
+
+    if (d.metrics && d.metrics.length) {
+      parts.push('KPIs:');
+      d.metrics.forEach(function (m, i) {
+        parts.push('  [' + (i + 1) + '] ' + m.label + ': ' + m.value +
+          (m.format === 'currency' ? ' CAD' : '') +
+          (m.format === 'percent' || m.format === 'percent2' ? '%' : '') +
+          (m.mom != null ? ' (MoM: ' + (m.mom > 0 ? '+' : '') + m.mom + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : '') +
+          (m.yoy != null ? ' (YoY: ' + (m.yoy > 0 ? '+' : '') + m.yoy + (m.deltaMode === 'points' ? ' pts' : '%') + ')' : ''));
+      });
+      parts.push('');
+    }
+
+    if (d.charts && d.charts.length) {
+      parts.push('Charts:');
+      d.charts.forEach(function (c, i) {
+        parts.push('  [' + (i + 1) + '] ' + c.title + ' (' + c.kind + ')');
+        if (c.categories && c.categories.length) parts.push('      Categories: ' + c.categories.join(', '));
+        if (c.series && c.series.length) {
+          c.series.forEach(function (s) {
+            var dataStr = (s.data || []).map(function (v) {
+              if (v === null || v === undefined) return '—';
+              return typeof v === 'number' ? v.toLocaleString() : v;
+            }).join(', ');
+            parts.push('      ' + s.name + ': [' + dataStr + ']');
+          });
+        }
+      });
+      parts.push('');
+    }
+
+    if (d.tables && d.tables.length) {
+      parts.push('Tables:');
+      d.tables.forEach(function (t, i) {
+        parts.push('  [' + (i + 1) + '] ' + t.title);
+        if (t.columns && t.columns.length) parts.push('      Columns: ' + t.columns.join(', '));
+        if (t.rows && t.rows.length) {
+          parts.push('      Rows: ' + t.rows.length);
+          t.rows.slice(0, 3).forEach(function (r, j) {
+            var rowStr = t.columns.map(function (col) {
+              return col + '=' + (r[col] != null ? r[col] : '—');
+            }).join(', ');
+            parts.push('      Row ' + (j + 1) + ': ' + rowStr);
+          });
+          if (t.rows.length > 3) parts.push('      ... (' + (t.rows.length - 3) + ' more rows)');
+        }
+      });
+      parts.push('');
+    }
+
+    return parts.join('\n');
+  }
+
+  // ─── Honest system prompt — identical rules to visual-chat.js ────────────
+  function buildSystemPrompt(visualContext) {
+    return [
+      'You are Dashboards Studio, an analytics assistant producing an executive brief for a specific dashboard.',
+      'You have access to the dashboard\'s data payload below. Your job is to produce an honest, structured analysis.',
+      '',
+      'OUTPUT FORMAT — exactly 4 lines, each starting with the section header in uppercase followed by a colon:',
+      '  WHAT HAPPENED: <one or two sentences stating the factual change, citing actual metric labels and delta values from the data>',
+      '  WHY: <one or two sentences explaining the driver, only if the data explicitly supports it. If the payload lacks driver-level breakdowns, say "Driver not isolated in this payload." instead of guessing>',
+      '  WHAT TO EXPECT: <one sentence describing the direction the trend points IF IT CONTINUES. Do NOT produce a specific forecast number. Do NOT attach a confidence percentage. Use phrases like "if the current trend continues" or "the trajectory suggests">',
+      '  WHAT TO DO: <one or two sentences of actionable recommendation grounded in the data pattern. If the data lacks the granularity to recommend a specific action, say what additional breakdown would be needed>',
+      '',
+      'HARD RULES (non-negotiable):',
+      '1. Every number you cite MUST come from the provided data. Do not invent metrics, percentages, or dollar figures.',
+      '2. NEVER produce a calibrated confidence percentage (e.g., "82% confidence"). You are not a statistical model.',
+      '3. NEVER produce a specific point forecast (e.g., "next-month revenue +3.9%"). Direction only.',
+      '4. NEVER attribute to specific stores, regions, or units unless the payload contains that granularity. If asked, say the payload is aggregated.',
+      '5. NEVER compute "annualized opportunity" or "$X opportunity" unless the payload contains the full unit-economics chain.',
+      '6. Keep the entire response under 200 words. Tight prose, no filler, no preamble before WHAT HAPPENED.',
+      '',
+      'DASHBOARD DATA:',
+      visualContext || '(no visual data loaded)'
+    ].join('\n');
+  }
+
+  // ─── Groq streaming (mirror visual-chat.js) ──────────────────────────────
+  async function groqChat(messages, onToken) {
+    if (!CONFIG.groqKey) throw new Error('Groq API key not configured');
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + CONFIG.groqKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: CONFIG.groqModel,
+        messages: messages,
+        temperature: 0.3,
+        max_tokens: 1200,
+        stream: true
+      })
+    });
+    if (!res.ok) {
+      var err = await res.text();
+      throw new Error('Groq API error (' + res.status + '): ' + err.slice(0, 200));
+    }
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '', fullText = '';
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buffer += decoder.decode(chunk.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (var i = 0; i < lines.length; i++) {
+        var trimmed = lines[i].trim();
+        if (trimmed.indexOf('data:') !== 0) continue;
+        var data = trimmed.slice(5).trim();
+        if (data === '[DONE]') continue;
+        try {
+          var evt = JSON.parse(data);
+          if (evt.choices && evt.choices[0] && evt.choices[0].delta && evt.choices[0].delta.content) {
+            fullText += evt.choices[0].delta.content;
+            if (onToken) onToken(evt.choices[0].delta.content);
+          }
+        } catch (_) {}
+      }
+    }
+    return fullText;
+  }
+
+  // ─── Parse the streamed brief into 4 sections ───────────────────────────
+  // Expected: each line starts with one of "WHAT HAPPENED:", "WHY:",
+  // "WHAT TO EXPECT:", "WHAT TO DO:". Returns {what, why, next, do}.
+  function parseBrief(text) {
+    var out = { what: '', why: '', next: '', do: '' };
+    if (!text) return out;
+    var lines = text.split('\n');
+    var current = null;
+    lines.forEach(function (raw) {
+      var line = raw.trim();
+      if (!line) return;
+      var upper = line.toUpperCase();
+      if (upper.indexOf('WHAT HAPPENED:') === 0) {
+        current = 'what';
+        out.what += line.slice('WHAT HAPPENED:'.length).trim() + ' ';
+      } else if (upper.indexOf('WHY:') === 0) {
+        current = 'why';
+        out.why += line.slice('WHY:'.length).trim() + ' ';
+      } else if (upper.indexOf('WHAT TO EXPECT:') === 0) {
+        current = 'next';
+        out.next += line.slice('WHAT TO EXPECT:'.length).trim() + ' ';
+      } else if (upper.indexOf('WHAT TO DO:') === 0) {
+        current = 'do';
+        out.do += line.slice('WHAT TO DO:'.length).trim() + ' ';
+      } else if (current) {
+        out[current] += line + ' ';
+      }
+    });
+    Object.keys(out).forEach(function (k) { out[k] = out[k].trim(); });
+    return out;
+  }
+
+  // ─── Render streamed tokens into the 4 cells in real time ────────────────
+  // As tokens arrive, we re-parse the partial text and update only the
+  // currently-filling cell, so the user sees each section build live.
+  function streamIntoCells(partialText, briefHost) {
+    var parsed = parseBrief(partialText);
+    var sectionMap = { what: 'what', why: 'why', next: 'next', do: 'do' };
+    Object.keys(sectionMap).forEach(function (key) {
+      var cell = briefHost.querySelector('[data-section="' + key + '"] [data-brief-body]');
+      if (cell) {
+        cell.textContent = parsed[key] || '';
+        // Show shimmer cursor on the currently-filling cell
+        cell.setAttribute('data-loading', parsed[key] ? 'false' : 'true');
+      }
+    });
+    // Mark the last non-empty cell as still streaming
+    var lastFilled = ['what', 'why', 'next', 'do'].filter(function (k) {
+      return parsed[k];
+    }).pop();
+    if (lastFilled) {
+      var cell = briefHost.querySelector('[data-section="' + lastFilled + '"] [data-brief-body]');
+      if (cell) cell.setAttribute('data-loading', 'true');
+    }
+  }
+
+  function clearShimmer(briefHost) {
+    briefHost.querySelectorAll('[data-brief-body]').forEach(function (cell) {
+      cell.removeAttribute('data-loading');
+    });
+  }
+
+  function setBadgeState(briefHost, state) {
+    var badge = briefHost.querySelector('[data-ai-badge]');
+    if (!badge) return;
+    if (state) badge.setAttribute('data-state', state);
+    else badge.removeAttribute('data-state');
+    var txt = badge.querySelector('.exec-ai-brief-badge-text');
+    if (!txt) return;
+    if (state === 'streaming') txt.textContent = 'AI generating…';
+    else if (state === 'fallback') txt.textContent = 'Static brief';
+    else txt.textContent = 'AI-wired';
+  }
+
+  // ─── Run the brief generation for the current page ───────────────────────
+  async function runBrief() {
+    var briefHost = document.querySelector('[data-ai-brief]');
+    if (!briefHost) return; // page has no brief card
+
+    var jsonPath = detectJsonPath();
+    if (!jsonPath) return;
+
+    // Fetch the dashboard JSON (cache-busting)
+    var payload;
+    try {
+      var res = await fetch(jsonPath, { cache: 'no-store' });
+      if (!res.ok) { setBadgeState(briefHost, 'fallback'); return; }
+      payload = await res.json();
+    } catch (e) {
+      console.warn('exec-ai-brief: payload fetch failed', e);
+      setBadgeState(briefHost, 'fallback');
+      return;
+    }
+
+    // No Groq key → keep static notes (already populated by dash-suite.js)
+    if (CONFIG.provider !== 'groq' || !CONFIG.groqKey) {
+      setBadgeState(briefHost, 'fallback');
+      return;
+    }
+
+    // Build context + messages
+    var visualContext = buildVisualContext(payload);
+    var messages = [
+      { role: 'system', content: buildSystemPrompt(visualContext) },
+      { role: 'user', content: 'Produce the 4-part brief (WHAT HAPPENED / WHY / WHAT TO EXPECT / WHAT TO DO) based strictly on the dashboard data. Respect every hard rule in the system prompt.' }
+    ];
+
+    setBadgeState(briefHost, 'streaming');
+
+    // Clear cells, show shimmer
+    briefHost.querySelectorAll('[data-brief-body]').forEach(function (cell) {
+      cell.textContent = '';
+      cell.setAttribute('data-loading', 'true');
+    });
+
+    var partial = '';
+    try {
+      await groqChat(messages, function (token) {
+        partial += token;
+        streamIntoCells(partial, briefHost);
+      });
+      clearShimmer(briefHost);
+      setBadgeState(briefHost, null); // back to default "AI-wired"
+    } catch (e) {
+      console.warn('exec-ai-brief: Groq call failed', e);
+      // Restore the static notes (already populated) on failure
+      clearShimmer(briefHost);
+      setBadgeState(briefHost, 'fallback');
+      // Re-populate from payload.notes as a safe fallback
+      if (payload.notes && payload.notes.length) {
+        var sectionOrder = ['what', 'why', 'next', 'do'];
+        sectionOrder.forEach(function (sec, i) {
+          if (!payload.notes[i]) return;
+          var cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+          if (cell) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
+        });
+      }
+    }
+  }
+
+  // ─── Init — wait for dash-suite.js to render the brief card ──────────────
+  function init() {
+    // dash-suite.js renders asynchronously; poll briefly for the brief host
+    var tries = 0;
+    function check() {
+      var briefHost = document.querySelector('[data-ai-brief]');
+      if (briefHost) {
+        runBrief();
+        return;
+      }
+      tries++;
+      if (tries < 30) setTimeout(check, 200); // up to 6s
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', check);
+    } else {
+      check();
+    }
+  }
+
+  if (document.body.dataset.suite) init();
+
+})();

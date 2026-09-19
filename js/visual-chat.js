@@ -352,6 +352,14 @@
   // ══════════════════════════════════════════════════════════════════════════
 
   function createWidget() {
+    // Inject keyframes for the AI-wired pulse dot (once per page)
+    if (!document.getElementById('visualChatAiKeyframes')) {
+      var ks = document.createElement('style');
+      ks.id = 'visualChatAiKeyframes';
+      ks.textContent = '@keyframes visualChatAiPulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}';
+      document.head.appendChild(ks);
+    }
+
     // Launcher button (bottom-left, above theme toggle)
     var launcher = document.createElement('button');
     launcher.id = 'visualChatLauncher';
@@ -409,6 +417,10 @@
         '<span style="font-size:11px;font-weight:700;color:var(--theme-text,#171777);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' +
           '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
           'Visual Chat' +
+        '</span>' +
+        '<span style="display:inline-flex;align-items:center;gap:4px;padding:2px 7px 2px 5px;border-radius:9px;border:1px solid rgba(16,185,129,0.35);background:rgba(16,185,129,0.10);color:#10b981;font-size:8px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;" title="Powered by Groq AI">' +
+          '<span style="width:5px;height:5px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;animation:visualChatAiPulse 1.8s ease-in-out infinite;"></span>' +
+          '<span>AI-wired</span>' +
         '</span>' +
         '<button id="visualChatClose" style="width:20px;height:20px;border:0;border-radius:5px;background:transparent;color:var(--theme-muted,#94a3b8);cursor:pointer;font-size:12px;display:grid;place-items:center;">✕</button>' +
       '</div>' +

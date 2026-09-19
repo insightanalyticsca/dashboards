@@ -610,9 +610,66 @@
       </header>
       <div class="exec-canvas" style="min-height:calc(100vh - 120px)" data-design-height="960"></div>
       ${Array.isArray(payload.notes) && payload.notes.length
-                ? `<div class="exec-notes">${payload.notes.map(note => `<div>${esc(note)}</div>`).join('')}</div>`
+                ? `<div class="exec-ai-brief" data-ai-brief>
+                     <div class="exec-ai-brief-head">
+                       <div class="exec-ai-brief-title">
+                         <span class="exec-ai-brief-spark" aria-hidden="true">
+                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>
+                         </span>
+                         <span>AI Brief</span>
+                       </div>
+                       <div class="exec-ai-brief-badge" data-ai-badge>
+                         <span class="exec-ai-brief-dot"></span>
+                         <span class="exec-ai-brief-badge-text">AI-wired</span>
+                       </div>
+                     </div>
+                     <div class="exec-ai-brief-grid" data-ai-brief-grid>
+                       <div class="exec-ai-brief-cell exec-ai-brief-what" data-section="what">
+                         <div class="exec-ai-brief-cell-head">
+                           <span class="exec-ai-brief-cell-icon">✓</span>
+                           <span class="exec-ai-brief-cell-label">What happened</span>
+                         </div>
+                         <div class="exec-ai-brief-cell-body" data-brief-body></div>
+                       </div>
+                       <div class="exec-ai-brief-cell exec-ai-brief-why" data-section="why">
+                         <div class="exec-ai-brief-cell-head">
+                           <span class="exec-ai-brief-cell-icon">?</span>
+                           <span class="exec-ai-brief-cell-label">Why</span>
+                         </div>
+                         <div class="exec-ai-brief-cell-body" data-brief-body></div>
+                       </div>
+                       <div class="exec-ai-brief-cell exec-ai-brief-next" data-section="next">
+                         <div class="exec-ai-brief-cell-head">
+                           <span class="exec-ai-brief-cell-icon">→</span>
+                           <span class="exec-ai-brief-cell-label">What to expect</span>
+                         </div>
+                         <div class="exec-ai-brief-cell-body" data-brief-body></div>
+                       </div>
+                       <div class="exec-ai-brief-cell exec-ai-brief-do" data-section="do">
+                         <div class="exec-ai-brief-cell-head">
+                           <span class="exec-ai-brief-cell-icon">⊕</span>
+                           <span class="exec-ai-brief-cell-label">What to do</span>
+                         </div>
+                         <div class="exec-ai-brief-cell-body" data-brief-body></div>
+                       </div>
+                     </div>
+                   </div>`
                 : ''}
     </main>`;
+
+        // Populate AI brief cells with static notes as initial state.
+        // exec-ai-brief.js (if loaded on the page) will replace this with a
+        // streamed Groq-generated brief; if absent or no Groq key, the honest
+        // static notes remain visible.
+        const briefHost = app.querySelector('[data-ai-brief]');
+        if (briefHost && Array.isArray(payload.notes) && payload.notes.length) {
+          const sectionOrder = ['what', 'why', 'next', 'do'];
+          const cells = briefHost.querySelectorAll('[data-section]');
+          sectionOrder.forEach((sec, i) => {
+            const cell = briefHost.querySelector('[data-section="' + sec + '"] [data-brief-body]');
+            if (cell && payload.notes[i]) cell.textContent = payload.notes[i].replace(/^[A-Z ]+:/, '').trim();
+          });
+        }
 
         const canvas = app.querySelector('.exec-canvas');
         charts.splice(0).forEach(chart => chart.dispose());

@@ -190,6 +190,14 @@
     var footer = document.querySelector('[data-contact-footer]');
     if (!footer) return; // only render on pages with the footer marker
 
+    // Inject keyframes once for the AI-wired pulse dot
+    if (!document.getElementById('contactAiKeyframes')) {
+      var ks = document.createElement('style');
+      ks.id = 'contactAiKeyframes';
+      ks.textContent = '@keyframes contactAiPulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.25)}}';
+      document.head.appendChild(ks);
+    }
+
     // Compact widget host (inline in footer, right side)
     var host = document.createElement('div');
     host.id = 'contactCompactHost';
@@ -275,6 +283,10 @@
           '<div style="font-size:12px;font-weight:700;letter-spacing:0.02em;">' + escapeHtml(CONTACT.brand) + '</div>' +
           '<div style="font-size:10px;opacity:0.85;font-weight:500;">Contact & info bot</div>' +
         '</div>' +
+        '<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 8px 3px 6px;border-radius:11px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);color:#fff;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;" title="Powered by Groq AI">' +
+          '<span style="width:6px;height:6px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:contactAiPulse 1.8s ease-in-out infinite;"></span>' +
+          '<span>AI-wired</span>' +
+        '</span>' +
         '<button id="contactClose" style="width:22px;height:22px;border:0;border-radius:6px;background:rgba(255,255,255,0.12);color:#fff;cursor:pointer;display:grid;place-items:center;transition:background 150ms;">' + ICONS.close + '</button>' +
       '</div>' +
       // Contact card (clickable email + phone)
