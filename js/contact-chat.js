@@ -75,7 +75,32 @@
     'All dashboard data is synthetic demo data — real customer data is never shipped to the browser.',
     'Chatters executive dashboard uses a realistic operating model for a 116-store beauty retail + salon chain ($309M TTM revenue, $2.66M/store, $61.80/visit, 60/40 retail/services split) — derived from public benchmarks, not real client financials.',
     'Period labels are real "today" — Week 32 / Aug 2026 — so the demo doesn\'t look stale.',
-    'Use cases demonstrated: AR portfolio, payments, disconnects, e-bill performance, final-bill recovery, CSR aging overview, IT service health, security posture, ticket operations, SLA performance.'
+    'Use cases demonstrated: AR portfolio, payments, disconnects, e-bill performance, final-bill recovery, CSR aging overview, IT service health, security posture, ticket operations, SLA performance.',
+
+    '═══ PHILOSOPHY (Insight Analytics executive brief story — from the IA deck) ═══',
+    'Tagline: "FROM REPORTING TO PREDICTIVE BUSINESS INTELLIGENCE" — The business already has the answers. Leadership should not have to hunt for them. Instead of asking leadership to find the story in the data, let the system bring the story to leadership.',
+    'Problem statement: Most organizations already have the information they need. It is scattered across systems, spreadsheets, reports, presentations and operational updates — so people still spend hours collecting, reconciling and interpreting it before a decision can be made.',
+    'The 8-step story (Part 1 — From reporting to predictive BI):',
+    '  1. CONNECT WHAT ALREADY EXISTS — Existing databases, business applications, spreadsheets, websites and external information become one connected information environment. Secure database connections, system interfaces, file imports and scheduled connectors retrieve information without forcing replacement of systems already in place.',
+    '  2. STOP MAKING PEOPLE COLLECT THE SAME INFORMATION REPEATEDLY — Routine collection and preparation happen automatically, so recurring reports no longer begin with someone gathering files and rebuilding the same calculations. Scheduled data pipelines pull, validate, standardize and combine information using repeatable business rules.',
+    '  3. CREATE ONE RELIABLE PICTURE OF THE BUSINESS — The same governed numbers can feed dashboards, management reports, Excel, PowerPoint, operational applications and AI — reducing competing versions of the truth. A shared reporting layer stores clean current and historical data with common definitions, calculations, mappings and quality checks.',
+    '  4. MAKE AI THE FIRST READER — Before the meeting, the system has already compared current performance with history and identified what changed, what looks unusual and what deserves attention. Analytics detect trends, exceptions and relationships; AI turns those findings into concise management language grounded in the trusted data.',
+    'The 8-step story (Part 2 — From understanding to foresight and action):',
+    '  5. ASK THE BUSINESS QUESTIONS DIRECTLY — A static report becomes interactive. Management can ask follow-up questions instead of waiting for another analysis cycle. A natural-language interface queries governed business data and returns answers with the relevant numbers, trends and context.',
+    '  6. DO NOT JUST EXPLAIN THE PAST — PREDICT THE FUTURE — Historical information can be used to forecast demand, revenue, activity or cost; flag unusual behaviour; and identify situations that resemble known outcomes. Predictive models use the historical data already collected — forecasting, likelihood scoring, pattern grouping and unusual-behaviour detection are selected according to the business problem.',
+    '  7. PUT THE INSIGHT WHERE PEOPLE ALREADY WORK — The same information can refresh dashboards, management packs and presentations automatically instead of being rebuilt separately for each audience. Power BI or web dashboards, Excel, PowerPoint, PDF and email become delivery channels fed from the same trusted source.',
+    '  8. CLOSE THE LOOP FROM INSIGHT TO ACTION — When something important happens, the organization does not have to wait for someone to notice it manually. Alerts, approvals, notifications and workflow rules can route the issue, update the system of record and record the response.',
+    'The 5-part executive brief format (the output, not another 40-page report — the five things that matter):',
+    '  OVERALL — Performance is stable, with one material change requiring attention. (one-line status)',
+    '  CHANGE — Customer activity moved sharply versus the previous period. (what changed)',
+    '  CONCERN — One area is now outside its normal historical pattern. (what is unusual)',
+    '  OUTLOOK — If the trend continues, the related indicator may weaken next quarter. (direction only, no point forecast)',
+    '  ACTION — Review the underlying drivers now rather than at the next reporting cycle. (what to do)',
+    'Then the report becomes a conversation: Why did this happen? Is it temporary or a trend? Has it happened before? What happens if it continues? Where should attention go now?',
+    'Why this is realistic now: The architecture is platform-agnostic. It can work with various databases, core business systems, spreadsheets, websites, system interfaces, Power BI, Excel, PowerPoint and custom web applications. Modern development platforms, reusable components, mature connectors, cloud and on-premises options, and AI-assisted development have shortened implementation and learning curves dramatically.',
+    'The important constraints are business priority, data access, security, quality and governance — not whether the technology can be learned or integrated. Workload size is not the limiting factor: the same design can be sized for a focused process or an enterprise-scale information flow.',
+    'Insight Analytics positioning: designs and builds end-to-end data, analytics, automation and AI solutions around the systems an organization already uses — from collection and transformation through dashboards, management reporting, prediction and workflow automation. The goal is not to force a particular platform; it is to make information move automatically and turn it into decisions faster.',
+    'The IA value chain in one line: Data → understanding → prediction → action.'
   ].join('\n');
 
   // ─── Config (mirror visual-chat.js) ──────────────────────────────────────

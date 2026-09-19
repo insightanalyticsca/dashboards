@@ -116,7 +116,7 @@
       '',
       'OUTPUT FORMAT — exactly 4 lines, each starting with the section header in uppercase followed by a colon:',
       '  WHAT HAPPENED: <one or two sentences stating the factual change, citing actual metric labels and delta values from the data>',
-      '  WHY: <one or two sentences explaining the driver, only if the data explicitly supports it. If the payload lacks driver-level breakdowns, say "Driver not isolated in this payload." instead of guessing>',
+      '  WHY: <one or two sentences of real business reasoning about what likely drove the change. Use the data signals visible in the payload — KPI deltas, chart series trends, table breakdowns, period-over-period comparisons, segment splits — to form a hypothesis. Use language like "the pattern suggests...", "likely drivers include...", "this likely reflects...", or "the disparity between X and Y points to...". NEVER say "Driver not isolated in this payload" — that is a non-answer. If the payload has ANY signal (one segment growing faster than another, capacity saturation, seasonality, a divergence between two KPIs, a step-change in a chart series), use it to form a business hypothesis. Only if the payload is genuinely empty of any signal may you say so — but that is rare.>',
       '  WHAT TO EXPECT: <one sentence describing the direction the trend points IF IT CONTINUES. Do NOT produce a specific forecast number. Do NOT attach a confidence percentage. Use phrases like "if the current trend continues" or "the trajectory suggests">',
       '  WHAT TO DO: <one or two sentences of actionable recommendation grounded in the data pattern. If the data lacks the granularity to recommend a specific action, say what additional breakdown would be needed>',
       '',

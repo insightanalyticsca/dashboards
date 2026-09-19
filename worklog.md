@@ -229,3 +229,49 @@ Stage Summary:
 - Lander pill will flip from amber 'Groq checking...' to green 'Groq live' on next refresh
 - Chatters AI Brief will stream tokens live on page load
 - File changes: netlify/edge-functions/groq-proxy.js (+35 lines for GET /op=models + model swap), data/groq-config.json (model swap), js/api.js + js/contact-chat.js + js/exec-ai-brief.js + js/visual-chat.js (model fallback swap), index.html + custom-html/executive-chatters-portfolio.html (cache bust)
+
+---
+Task ID: expand-contact-bot-knowledge
+Agent: main
+Task: Expand Groq contact bot to answer not only about dashboards but all solutions implemented by agents across the project.
+
+Work Log:
+- Expanded IA_FACTS in js/contact-chat.js from 10 entries to a comprehensive, grouped knowledge base covering every implemented solution. Organized into 8 sections (clear visual markers):
+  1. CORE PLATFORM: .NET MVC origin, static clone, JSON file backend, GitHub Pages hosting, source repo
+  2. DASHBOARD SECTORS: 6 executive + 11 CSR + 6 ITS = 23 versions, 45+ custom HTML visuals
+  3. AI INTEGRATION: AI Brief card, visual chat, contact bot, honest status pill — each with role + behavior
+  4. HONEST AI PRINCIPLES: pure streaming, no static fallback, forbidden patterns, no canned demo
+  5. NETLIFY PROXY ARCHITECTURE: server-side env var, SSE pass-through, CORS, /op=models, key rotation
+  6. PWA + THEMING: manifest, service worker, vivid themes, CSS variables, cross-iframe broadcasting, hero animation
+  7. MOBILE + UX: pull-to-refresh, layout persistence, mobile responsive, Safari cache-busting, cross-iframe sync
+  8. DEMO CONTENT: synthetic data disclaimer, Chatters operating model, real 'today' period labels
+
+- Added hard rule #8 to visual-chat.js: if the user asks a platform-level question instead of dashboard-data question, do NOT produce a 4-part brief. Instead, briefly note what's visible on this page and suggest using the Contact bot in the footer for platform questions (it has the full knowledge base). This keeps the visual chat focused on its primary job while gracefully handling off-topic questions.
+
+- Bumped cache version to v=20260814 on visual-chat.js + contact-chat.js in custom-html/executive-chatters-portfolio.html
+
+- Pushed first attempt — REJECTED by GitHub push protection (caught the Groq key in scripts/*.py and worklog.md). The deploy scripts I wrote earlier had hardcoded the Groq key for convenience.
+
+- Stripped credentials from all 6 deploy scripts:
+  - GROQ_KEY = 'gsk_...' → GROQ_KEY = os.environ.get('GROQ_KEY', '')
+  - NETLIFY_TOKEN = 'nfp_...' → NETLIFY_TOKEN = os.environ.get('NETLIFY_TOKEN', '')
+  - Added `import os` to scripts that didn't have it
+  - Stripped the Groq key reference from worklog.md (lines 136 and 186)
+  - Verified: grep finds 0 hardcoded secrets in scripts/ + worklog.md
+
+- Pushed clean commit (039a651) successfully. Verified live on Pages after 35s propagation:
+  - contact-chat.js has all 8 section markers (CORE PLATFORM, DASHBOARD SECTORS, AI INTEGRATION, HONEST AI PRINCIPLES, NETLIFY PROXY ARCHITECTURE, PWA + THEMING, MOBILE + UX, DEMO CONTENT)
+  - Ran live Q&A test against the proxy with the expanded system prompt — 6 of 8 platform questions answered correctly:
+    - 'What kind of work does IA do?' → sectors, static site, GitHub Pages, PWA ✓
+    - 'Is this a PWA?' → manifest, service worker, icons, offline ✓
+    - 'How does the Groq proxy work?' → Netlify Edge Function, server-side key, browser never sees raw key ✓
+    - 'Theme system?' → light/dark, CSS variables, vivid + vivid-dark ECharts ✓
+    - 'Mobile responsiveness?' → pull-to-refresh, layout persistence, Safari cache-busting ✓
+    - 'AI Brief card?' → 4-section, streaming tokens on page load ✓
+    - Last 2 questions hit HTTP 429 (Groq free-tier rate limit, not a bug)
+
+Stage Summary:
+- Contact bot can now answer questions about ALL implemented solutions, not just the dashboards
+- Visual chat gracefully deflects platform questions to the contact bot (keeps its primary job)
+- No hardcoded secrets in the repo — scripts read from env vars
+- File changes: js/contact-chat.js (+54 lines of grouped IA_FACTS), js/visual-chat.js (+1 line rule #8), custom-html/executive-chatters-portfolio.html (cache bust), scripts/*.py (6 files: removed hardcoded secrets), worklog.md (removed key references)
