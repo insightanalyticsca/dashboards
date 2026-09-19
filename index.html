@@ -347,5 +347,122 @@
     });
   }
 </script>
+
+<!-- ════════════════════════════════════════════════════════════════════════
+     ADMIN GEAR — password-protected visit history viewer
+     ════════════════════════════════════════════════════════════════════════ -->
+<button id="adminGear" title="Admin" style="position:fixed;bottom:14px;left:14px;z-index:9996;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;display:grid;place-items:center;opacity:0.3;transition:opacity 200ms;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+</button>
+
+<!-- Password prompt modal -->
+<div id="adminPasswordModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:var(--bg,#fff);border:1px solid var(--card-border,rgba(0,0,0,0.1));border-radius:14px;padding:24px;width:320px;max-width:calc(100vw - 32px);box-shadow:0 24px 64px rgba(0,0,0,0.3);">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text,#0f172a);">🔒 Admin Access</div>
+    <input id="adminPasswordInput" type="password" placeholder="Enter password" style="width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid var(--card-border,rgba(0,0,0,0.15));border-radius:8px;font-size:13px;outline:none;margin-bottom:12px;background:var(--bg-soft,rgba(0,0,0,0.03));color:var(--text,#0f172a);">
+    <div style="display:flex;gap:8px;">
+      <button id="adminPasswordSubmit" style="flex:1;padding:8px;border:0;border-radius:8px;background:linear-gradient(135deg,var(--primary,#6366f1),var(--accent,#06b6d4));color:#fff;font-size:12px;font-weight:600;cursor:pointer;">Enter</button>
+      <button id="adminPasswordCancel" style="padding:8px 14px;border:1px solid var(--card-border,rgba(0,0,0,0.15));border-radius:8px;background:transparent;color:var(--text-soft,#64748b);font-size:12px;cursor:pointer;">Cancel</button>
+    </div>
+    <div id="adminPasswordError" style="color:var(--danger,#ef4444);font-size:11px;margin-top:8px;display:none;">Wrong password</div>
+  </div>
+</div>
+
+<!-- Visit history viewer (full-screen overlay) -->
+<div id="adminVisitPanel" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg,#f8fafc);overflow-y:auto;">
+  <div style="max-width:1200px;margin:0 auto;padding:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text,#0f172a);">📊 Visit History</div>
+        <div id="adminVisitCount" style="font-size:11px;color:var(--muted,#94a3b8);">Loading…</div>
+      </div>
+      <button id="adminCloseBtn" style="padding:6px 14px;border:1px solid var(--card-border,rgba(0,0,0,0.15));border-radius:8px;background:transparent;color:var(--text-soft,#64748b);font-size:12px;cursor:pointer;">✕ Close</button>
+    </div>
+    <div id="adminVisitTable" style="font-size:12px;"></div>
+    <div id="adminVisitError" style="color:var(--danger,#ef4444);font-size:12px;display:none;"></div>
+  </div>
+</div>
+
+<script>
+// Beacon: log this visit on page load
+new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beacon&cb=' + Date.now();
+
+// Admin gear: subtle, reveals on hover
+(function() {
+  var gear = document.getElementById('adminGear');
+  var pwdModal = document.getElementById('adminPasswordModal');
+  var pwdInput = document.getElementById('adminPasswordInput');
+  var pwdSubmit = document.getElementById('adminPasswordSubmit');
+  var pwdCancel = document.getElementById('adminPasswordCancel');
+  var pwdError = document.getElementById('adminPasswordError');
+  var visitPanel = document.getElementById('adminVisitPanel');
+  var visitTable = document.getElementById('adminVisitTable');
+  var visitCount = document.getElementById('adminVisitCount');
+  var visitError = document.getElementById('adminVisitError');
+  var closeBtn = document.getElementById('adminCloseBtn');
+
+  gear.addEventListener('mouseenter', function() { gear.style.opacity = '0.6'; });
+  gear.addEventListener('mouseleave', function() { gear.style.opacity = '0.3'; });
+  gear.addEventListener('click', function() {
+    pwdModal.style.display = 'flex';
+    pwdInput.value = '';
+    pwdError.style.display = 'none';
+    setTimeout(function() { pwdInput.focus(); }, 100);
+  });
+
+  function closePwd() { pwdModal.style.display = 'none'; }
+  pwdCancel.addEventListener('click', closePwd);
+  pwdModal.addEventListener('click', function(e) { if (e.target === pwdModal) closePwd(); });
+
+  pwdSubmit.addEventListener('click', function() {
+    var pwd = pwdInput.value;
+    if (!pwd) { pwdError.textContent = 'Enter password'; pwdError.style.display = 'block'; return; }
+    // Fetch visit log with the password
+    var url = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=visits&password=' + encodeURIComponent(pwd);
+    fetch(url, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+      .then(function(r) {
+        if (r.status === 403) { pwdError.textContent = 'Wrong password'; pwdError.style.display = 'block'; return null; }
+        return r.json();
+      })
+      .then(function(data) {
+        if (!data) return;
+        closePwd();
+        visitPanel.style.display = 'block';
+        visitCount.textContent = data.count + ' visits · edge: ' + (data.edge || 'unknown') + ' · captured ' + new Date(data.capturedAt).toLocaleString();
+        visitError.style.display = 'none';
+        // Render table
+        var html = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+        html += '<thead><tr style="text-align:left;border-bottom:2px solid var(--card-border,rgba(0,0,0,0.1));color:var(--muted,#94a3b8);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;font-size:9px;">';
+        html += '<th style="padding:6px 8px;">Time</th><th style="padding:6px 8px;">IP</th><th style="padding:6px 8px;">Country</th><th style="padding:6px 8px;">City</th><th style="padding:6px 8px;">Region</th><th style="padding:6px 8px;">TZ</th><th style="padding:6px 8px;">Path</th><th style="padding:6px 8px;">Method</th><th style="padding:6px 8px;">UA</th><th style="padding:6px 8px;">Referrer</th>';
+        html += '</tr></thead><tbody>';
+        data.visits.forEach(function(v, i) {
+          var bg = i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.02)';
+          html += '<tr style="border-bottom:1px solid var(--card-border,rgba(0,0,0,0.05));background:' + bg + ';">';
+          html += '<td style="padding:6px 8px;white-space:nowrap;">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
+          html += '<td style="padding:6px 8px;font-family:monospace;">' + (v.ip || '—') + '</td>';
+          html += '<td style="padding:6px 8px;">' + (v.country || '—') + '</td>';
+          html += '<td style="padding:6px 8px;">' + (v.city || '—') + '</td>';
+          html += '<td style="padding:6px 8px;">' + (v.region || '—') + '</td>';
+          html += '<td style="padding:6px 8px;">' + (v.timezone || '—') + '</td>';
+          html += '<td style="padding:6px 8px;font-family:monospace;">' + (v.path || '—') + '</td>';
+          html += '<td style="padding:6px 8px;">' + (v.method || '—') + '</td>';
+          html += '<td style="padding:6px 8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (v.ua || '') + '">' + (v.ua || '—').slice(0, 40) + '</td>';
+          html += '<td style="padding:6px 8px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + (v.referrer || '') + '">' + (v.referrer || '—').slice(0, 30) + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+        visitTable.innerHTML = html;
+      })
+      .catch(function(e) {
+        pwdError.textContent = 'Error: ' + e.message;
+        pwdError.style.display = 'block';
+      });
+  });
+
+  pwdInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') pwdSubmit.click(); });
+
+  closeBtn.addEventListener('click', function() { visitPanel.style.display = 'none'; });
+})();
+</script>
 </body>
 </html>

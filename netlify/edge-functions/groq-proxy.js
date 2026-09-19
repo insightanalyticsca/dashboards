@@ -47,6 +47,36 @@ function corsHeaders(origin) {
 // a single edge — most users in the same region hit the same instance.
 const memCache = new Map();
 
+// ─── Visit logging (in-memory, per edge instance) ──────────────────────────
+const visitLog = [];
+const MAX_VISITS = 500;
+const ADMIN_PASSWORD = 'Domino88!!';
+
+function logVisit(request, context) {
+  const headers = request.headers;
+  const geo = context.geo || {};
+  const visit = {
+    ts: new Date().toISOString(),
+    ip: headers.get('x-nf-client-connection-ip') ||
+        headers.get('cf-connecting-ip') ||
+        headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+        'unknown',
+    country: geo.country?.name || geo.country || 'unknown',
+    city: geo.city?.name || geo.city || 'unknown',
+    region: geo.subdivision?.name || geo.subdivision || 'unknown',
+    timezone: geo.timezone || 'unknown',
+    lat: geo.latitude?.toString() || '',
+    lon: geo.longitude?.toString() || '',
+    ua: headers.get('user-agent') || 'unknown',
+    path: new URL(request.url).pathname,
+    method: request.method,
+    referrer: headers.get('referer') || headers.get('referrer') || 'direct'
+  };
+  visitLog.push(visit);
+  if (visitLog.length > MAX_VISITS) visitLog.shift();
+  return visit;
+}
+
 async function sha256(text) {
   const data = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', data);
@@ -94,22 +124,58 @@ function simulatedSSEStream(fullText, model) {
 export default async (request, context) => {
   const origin = request.headers.get('origin') || '';
 
+  // ─── Log every visit (IP, geo, UA, timestamp) ──────────────────────────
+  logVisit(request, context);
+
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
   }
 
-  const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
-  if (!GROQ_KEY) {
-    return new Response(
-      JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
-      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
-    );
-  }
-
-  // GET /groq-proxy?op=models → list Groq models
+  // GET endpoints
   if (request.method === 'GET') {
     const url = new URL(request.url);
-    if (url.searchParams.get('op') === 'models') {
+    const op = url.searchParams.get('op');
+
+    // op=beacon — lightweight visit logger called from the lander on page load
+    // Returns a 1x1 transparent pixel so it can be used as an image beacon
+    if (op === 'beacon') {
+      return new Response(
+        new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00, 0xff, 0xff, 0xff, 0x21, 0xf9, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b]),
+        { status: 200, headers: { 'Content-Type': 'image/gif', ...corsHeaders(origin) } }
+      );
+    }
+
+    // op=visits — admin endpoint, requires password
+    if (op === 'visits') {
+      const pwd = url.searchParams.get('password') || url.searchParams.get('pwd') || '';
+      if (pwd !== ADMIN_PASSWORD) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+        });
+      }
+      // Return visits newest-first
+      const visits = [...visitLog].reverse();
+      return new Response(JSON.stringify({
+        count: visits.length,
+        visits,
+        edge: context.geo?.country?.name || 'unknown',
+        capturedAt: new Date().toISOString()
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+      });
+    }
+
+    // op=models → list Groq models (existing)
+    if (op === 'models') {
+      const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
+      if (!GROQ_KEY) {
+        return new Response(
+          JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
+          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+        );
+      }
       try {
         const res = await fetch('https://api.groq.com/openai/v1/models', {
           headers: { 'Authorization': 'Bearer ' + GROQ_KEY }
@@ -126,16 +192,20 @@ export default async (request, context) => {
         );
       }
     }
+
+    // Health check
     return new Response(JSON.stringify({ ok: true, service: 'groq-proxy', cache: 'memory' }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
     });
   }
 
-  if (request.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
-    });
+  // For POST requests, check GROQ_KEY
+  const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
+  if (!GROQ_KEY) {
+    return new Response(
+      JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
+      { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+    );
   }
 
   let body;
