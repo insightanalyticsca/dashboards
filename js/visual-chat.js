@@ -13,7 +13,7 @@
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
-    groqModel: localStorage.getItem('docchat.groq.model') || 'llama-3.3-70b-versatile'
+    groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
   };
 
   // Expose a promise so ask() can wait for the config to finish loading

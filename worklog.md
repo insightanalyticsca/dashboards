@@ -125,3 +125,54 @@ Stage Summary:
 - The 5-minute cache prevents pinging Groq on every page navigation
 - Tooltip on the pill shows the exact failure reason for debugging
 - File changes: js/api.js (+53 lines for verifyGroqKey), js/app.js (updateProviderPill rewritten + composerStatus honest update + removed hardcoded 'Groq · live'), index.html (cache bust), worklog.md
+
+---
+Task ID: netlify-groq-proxy-architecture
+Agent: main
+Task: Move the Groq key to Netlify (server-side env var), keep the static site on GitHub Pages at the same URL.
+
+Work Log:
+- User clarified: keep the static site on GitHub Pages (same URL: insightanalyticsca.github.io/dashboards/), only the Groq key moves to Netlify (server-side). This avoids shipping the key in the repo (which GitHub secret scanning blocks) and avoids exposing the key to the browser.
+- Found the user had pushed commit 8fef66a in parallel — they updated the keyParts in data/groq-config.json with a fresh key (gsk_OCdJpmPA07H4KOs5m...) because the previous one was returning 403. Their commit message notes: "Cloudflare's bot filter blocks requests from data-center IPs with a generic 403 (tested with old key, new key, and obviously-invalid key — all return the same Cloudflare 403). The user's browser should not have this issue." — so the previous 403 might have been Cloudflare, not a revoked key.
+- Designed the proxy architecture:
+  - Static site stays on GitHub Pages (no move)
+  - Netlify Edge Function (Deno) holds GROQ_API_KEY env var server-side
+  - Browser calls proxyUrl (Netlify function URL) instead of api.groq.com
+  - Function injects Authorization header server-side, forwards to Groq
+  - SSE stream passed through via ReadableStream (streaming still works)
+  - CORS restricted to GitHub Pages origin + localhost for dev
+- Created netlify/edge-functions/groq-proxy.js (129 lines):
+  - Handles OPTIONS preflight (CORS)
+  - Validates request body (messages[] required)
+  - Reads GROQ_API_KEY from Deno.env (with GROQ_KEY fallback)
+  - Forwards to api.groq.com with Authorization header
+  - Passes response body (SSE stream or JSON) through verbatim
+  - Returns proper error responses for: no key, bad JSON, unreachable
+- Created netlify.toml (40 lines): minimal config, publish=netlify/, edge_functions declaration
+- Created netlify/README.md (61 lines): full deploy instructions, curl verify snippet, key rotation steps
+- Updated data/groq-config.json: replaced keyParts with proxyUrl pointing at the Netlify function (defaulted to https://dashboards-groq-proxy.netlify.app/groq-proxy — user can rename their Netlify site to match, or update this field)
+- Updated all 5 client JS files to use the proxy instead of direct api.groq.com calls:
+  - js/api.js: CONFIG.groqKey → CONFIG.proxyUrl; verifyGroqKey → verifyGroq; 4 fetch calls (aiScoreChunks, ocrImageWithGroq, groqChatStream, verifyGroq) now POST to CONFIG.proxyUrl with NO Authorization header
+  - js/app.js: updateProviderPill checks cfg.proxyUrl; calls api.verifyGroq(); setTimeout checks cfg.proxyUrl; settings panel field renamed to #setGroqProxyUrl
+  - js/visual-chat.js, js/contact-chat.js, js/exec-ai-brief.js: each autoLoad fetches cfg.proxyUrl, each groqChat POSTs to CONFIG.proxyUrl with no Authorization header
+- Bumped cache version to v=20260812 on all affected script tags in index.html + executive-chatters-portfolio.html
+- Did NOT include the actual key value in the README (would defeat the purpose) — instead, references where the user can find it (commit 8fef66a, or grab a fresh one from console.groq.com/keys)
+- Resolved local-vs-remote divergence: my local HEAD was at a stray opaque-ID commit (5df74c9) on top of a51e273, while remote had the user's key-update commit (8fef66a) on top of a51e273. Used git stash -u → git reset --hard origin/main → git stash pop to re-apply my 11-file proxy architecture on top of the user's commit.
+- Committed as 3f1b9a6, pushed to origin/main. Verified live after 35s Pages propagation:
+  - data/groq-config.json now has proxyUrl, no keyParts
+  - js/api.js has 16 references to proxyUrl/verifyGroq/CONFIG.proxyUrl
+  - js/api.js has 0 references to api.groq.com (the key never reaches the client)
+
+Stage Summary:
+- The static site stays at https://insightanalyticsca.github.io/dashboards/ — same address, no move
+- The Groq key now lives ONLY on Netlify as the GROQ_API_KEY env var (set via Netlify dashboard)
+- Browser calls a Netlify Edge Function URL (configured in data/groq-config.json as proxyUrl) which forwards to Groq with the Authorization header injected server-side
+- SSE streaming still works — the proxy passes the ReadableStream through verbatim
+- File changes: netlify/edge-functions/groq-proxy.js (new), netlify.toml (new), netlify/README.md (new), data/groq-config.json (keyParts → proxyUrl), js/api.js, js/app.js, js/visual-chat.js, js/contact-chat.js, js/exec-ai-brief.js, index.html, custom-html/executive-chatters-portfolio.html, worklog.md
+
+Deploy steps for the user:
+1. Drag the netlify/ folder onto https://app.netlify.com (or use Netlify CLI)
+2. Site settings → Environment variables → add GROQ_API_KEY = <paste the gsk_... key>
+3. Rename the Netlify site to 'dashboards-groq-proxy' (so the URL matches the default in groq-config.json), OR update data/groq-config.json's proxyUrl to match the Netlify-assigned URL
+4. Trigger a deploy
+5. Refresh the GitHub Pages site — the pill should show 'Groq · live' (green) once the proxy responds with 200

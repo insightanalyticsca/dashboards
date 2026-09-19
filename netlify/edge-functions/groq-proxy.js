@@ -43,6 +43,39 @@ export default async (request, context) => {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
   }
 
+  // GET /groq-proxy?op=models → forward to Groq /v1/models
+  // (used to discover which models are actually available on this account)
+  if (request.method === 'GET') {
+    const url = new URL(request.url);
+    if (url.searchParams.get('op') === 'models') {
+      const GROQ_KEY = Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
+      if (!GROQ_KEY) {
+        return new Response(
+          JSON.stringify({ error: 'GROQ_API_KEY env var not set on the edge function' }),
+          { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+        );
+      }
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/models', {
+          headers: { 'Authorization': 'Bearer ' + GROQ_KEY }
+        });
+        const body = await groqRes.text();
+        return new Response(body, {
+          status: groqRes.status,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+        });
+      } catch (e) {
+        return new Response(
+          JSON.stringify({ error: 'Failed to reach Groq', detail: e.message }),
+          { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
+        );
+      }
+    }
+    return new Response(JSON.stringify({ ok: true, service: 'groq-proxy' }), {
+      headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+    });
+  }
+
   if (request.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
@@ -90,7 +123,7 @@ export default async (request, context) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: body.model || 'llama-3.3-70b-versatile',
+        model: body.model || 'qwen/qwen3.8-27b',
         messages: body.messages,
         temperature: body.temperature ?? 0.3,
         max_tokens: body.max_tokens ?? 800,
