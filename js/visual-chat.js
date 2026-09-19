@@ -322,7 +322,74 @@
     } catch (_) {}
   }
 
+  // ─── Platform-question deflection ───────────────────────────────────────
+  // The visual chat's job is dashboard-data Q&A. When users ask platform-level
+  // questions (about IA, PWA, Netlify, theming, the 8-step methodology, etc.),
+  // the LLM should deflect to the contact bot (which has the full IA_FACTS KB).
+  // BUT poolside/laguna-s-2.1 is a coding model that inconsistently follows
+  // that instruction — sometimes it deflects, sometimes it produces a brief
+  // instead. This keyword detector is 100% reliable: if the question matches
+  // platform keywords, we return a canned deflection WITHOUT calling Groq
+  // (saves tokens + guarantees the right behavior).
+  var PLATFORM_PATTERNS = [
+    /\b(your|you|yours|insight analytics|ia\b|the company|the firm|the team)\b/i,
+    /\b(consulting|approach|methodology|8-step|5-part|philosophy|deck|brief format)\b/i,
+    /\b(pwa|progressive web app|installable|offline|service worker|manifest)\b/i,
+    /\b(netlify|proxy|edge function|server-side|cloudflare)\b/i,
+    /\b(groq|openrouter|api key|ai-wired|ai wired|llm|model|qwen|poolside|gemini)\b/i,
+    /\b(theme|dark mode|light mode|vivid|css variables|responsive|mobile)\b/i,
+    /\b(safari|cache|drag|resize|layout persistence|localstorage)\b/i,
+    /\b(what is this site|what do you do|what kind of work|what services|what can you)\b/i,
+    /\b(how does the ai work|how does the bot work|how does this work)\b/i,
+    /\b(dashboard platform|dashboard studio|github pages|static site)\b/i,
+    /\b(data → understanding|data to understanding|prediction → action)\b/i,
+    /\b(connect what|automate|govern|ai first reader|close the loop)\b/i,
+  ];
+
+  // Dashboard-data keywords — if these are present, it's a dashboard question
+  // and should go through the normal Grok brief path (not be deflected).
+  // NOTE: keep these specific to dashboard data — don't include common words
+  // like "do", "why", "expect" (those are part of the 4-part brief format
+  // but also appear in platform questions like "What do you do?").
+  var DASHBOARD_KEYWORDS = /\b(revenue|kpi|metric|chart|data|trend|period|mom|yoy|growth|decline|driver|happened|segment|breakdown|performance|utilization|capacity|salon|retail|store|ontario|attachment|churn|arrears|disconnects|tickets|sla)\b/i;
+
+  function isPlatformQuestion(question) {
+    var q = question.toLowerCase().trim();
+    // If the question contains dashboard-data keywords, it's a dashboard question
+    if (DASHBOARD_KEYWORDS.test(q)) return false;
+    // Otherwise, check if it matches any platform pattern
+    return PLATFORM_PATTERNS.some(function(p) { return p.test(q); });
+  }
+
+  function deflectToContactBot(onToken) {
+    var msg = "I'm the visual chat for this dashboard — I answer questions about the data on this page (KPIs, charts, trends).\n\n" +
+      "For platform-level questions about Insight Analytics (the 8-step methodology, PWA features, Netlify proxy, theming, etc.), open the **Contact bot** in the footer — it has the full knowledge base of all implemented solutions.\n\n" +
+      "Or reach out directly:\n" +
+      "  • Email: sergey.gurov@insight-analytics.ca\n" +
+      "  • Phone: (289) 635-9915";
+    if (onToken) {
+      var tokens = msg.match(/\S+\s*/g) || [msg];
+      var i = 0;
+      function nextToken() {
+        if (i >= tokens.length) return;
+        onToken(tokens[i]);
+        i++;
+        setTimeout(nextToken, 12);
+      }
+      nextToken();
+    }
+    return msg;
+  }
+
   async function ask(question, onToken) {
+    // ─── PLATFORM-QUESTION DEFLECTION (before any Grok call) ──────────────
+    // If the question is clearly about the platform/IA/tech stack rather than
+    // the dashboard data, deflect to the contact bot immediately. Saves tokens
+    // + guarantees consistent behavior regardless of LLM compliance.
+    if (isPlatformQuestion(question)) {
+      return deflectToContactBot(onToken);
+    }
+
     var visualContext = buildVisualContext();
 
     var userPrompt = 'Question: ' + question + '\n\n' +

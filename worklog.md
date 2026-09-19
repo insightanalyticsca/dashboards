@@ -454,3 +454,49 @@ Stage Summary:
 - BUT Gemini free tier is currently overloaded (503) AND gemini-flash-latest is a reasoning model with low visible output
 - When Gemini load drops, briefs will work but may be truncated due to the visible-output cap
 - File changes: netlify/edge-functions/groq-proxy.js (rewritten), data/groq-config.json (model name), js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js (model name + reasoning_effort param), index.html + custom-html/executive-chatters-portfolio.html (cache bust), worklog.md
+
+---
+Task ID: swap-gemini-to-openrouter
+Agent: main
+Task: User provided OpenRouter key (sk-or-v1-...). Swap from Gemini (which was a reasoning model with visible-output cap + intermittent 503s) to OpenRouter.
+
+Work Log:
+- Rewrote netlify/edge-functions/groq-proxy.js: changed UPSTREAM_URL from generativelanguage.googleapis.com to openrouter.ai/api/v1/chat/completions (OpenAI-compatible). Added filter to strip provider-specific params (e.g., reasoning_effort) before forwarding.
+- Deployed via Netlify CLI: netlify deploy --prod --dir=netlify (succeeded)
+- Set OPENROUTER_API_KEY env var via netlify env:set (server-side, key never in repo)
+- Redeployed so the edge function picks up the new env var
+
+- Listed all 22 free (:free suffix) models available on this OpenRouter account:
+  - qwen/qwen3.8-27b:free, google/gemma-4-31b-it:free, google/gemma-4-26b-a4b-it:free, z-ai/glm-5.2:free → all 429 upstream rate-limited (shared pool exhausted)
+  - deepseek/deepseek-v4-flash-0731:free, liquid/lfm-2.5-2.6b:free → empty responses
+  - thinkingmachines/inkling-small:free → 403 (agent-only)
+  - nvidia/nemotron-3-super-120b-a12b:free → WORKS but reasoning model (382 reasoning tokens per call)
+  - poolside/laguna-s-2.1:free → WORKS, non-reasoning (0 reasoning tokens), complete response ✓
+
+- Tested 4-part brief with the two working models:
+  - nemotron: 91 prompt + 500 completion + 382 reasoning = 591 total. Finish reason: length (truncated).
+  - poolside: 93 prompt + 183 completion + 0 reasoning = 276 total. Finish reason: stop (complete). Real business reasoning in WHY section: "Retail growth likely benefited from expanded distribution or promotional activity, while salon stagnation suggests ongoing challenges in professional channels, possibly due to market saturation or reduced foot traffic."
+
+- SELECTED: poolside/laguna-s-2.1:free
+  - Non-reasoning model — 0 thinking tokens, full visible output
+  - Complete 4-part brief in 183 tokens (vs nemotron's 500+ truncated)
+  - 1000 req/day free tier (if user adds $5 credit) or 50 req/day (without)
+
+- Updated data/groq-config.json: groqModel = 'poolside/laguna-s-2.1:free'
+- sed-replaced 'gemini-flash-latest' → 'poolside/laguna-s-2.1:free' across all 4 client JS files (2 in api.js, 1 in each other)
+- REMOVED reasoning_effort: 'none' from all 4 groqChat request bodies (was Gemini-specific, not needed for OpenRouter — poolside is non-reasoning)
+- Bumped cache version to v=20260819 on api.js + all Chatters scripts
+
+- Resolved local-vs-remote divergence (local had stray opaque-ID commit 7976dd5 on top of 0bc01ea). Used git reset --soft origin/main to re-apply my 9-file changes on top of remote.
+- Committed as e5df3ff, pushed to origin/main. Verified live after 30s Pages propagation:
+  - data/groq-config.json has poolside/laguna-s-2.1:free
+  - api.js has 2 refs to poolside, 0 refs to reasoning_effort
+  - Proxy responds with HTTP 200 + real 4-part brief via OpenRouter
+
+KNOWN ISSUE: OpenRouter intermittently returns 429 for large requests (likely per-minute rate limit on the shared pool for free models). Small requests (max_tokens=5) succeed immediately; large requests (max_tokens=500) sometimes 429 transiently. Retrying after 15-30s usually works. Adding $5 credit to the account would unlock 1000 req/day (vs 50 without) and may reduce 429 frequency.
+
+Stage Summary:
+- OpenRouter swap is wired end-to-end and live
+- poolside/laguna-s-2.1:free produces complete 4-part briefs with real business reasoning
+- No reasoning tokens burned (vs Gemini's 500+ thinking tokens per call)
+- File changes: netlify/edge-functions/groq-proxy.js (rewritten), data/groq-config.json, js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js (model name + remove reasoning_effort), index.html + custom-html/executive-chatters-portfolio.html (cache bust), worklog.md
