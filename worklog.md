@@ -414,3 +414,43 @@ Stage Summary:
 - Mail icon still renders white on violet→purple (was already visible, still is — just consistent now)
 - Hover/touch still changes color to --theme-hot (orange/red) for visual feedback
 - File changes: css/canvas-host.css (+1 line: !important), custom-html/executive-chatters-portfolio.html (cache bust), worklog.md
+
+---
+Task ID: swap-groq-to-gemini
+Agent: main
+Task: User wants alternative to Groq without new account. I explained all production LLM APIs require accounts but Google Gemini can be used with an existing Google account. User provided a Gemini key (AQ.Ab8R...).
+
+Work Log:
+- Rewrote netlify/edge-functions/groq-proxy.js: changed UPSTREAM_URL from api.groq.com to generativelanguage.googleapis.com/v1beta/openai/chat/completions (Gemini's OpenAI-compatible endpoint — same request/response format, just different upstream)
+- Removed the failed Netlify Blobs cache layer from the previous attempt (the local bundler couldn't resolve 'netlify:blobs' import — keep the edge function simple, rely on client-side localStorage cache)
+- Deployed via Netlify CLI: netlify deploy --prod --dir=netlify (succeeded)
+- Set GEMINI_API_KEY env var via netlify env:set (server-side, key never in repo)
+- Redeployed so the edge function picks up the new env var
+- Verified the key works: proxy returns 200 OK for chat completions
+- Discovered only `gemini-flash-latest` is available on this account — all other Gemini model names (gemini-1.5-flash, gemini-2.0-flash, gemini-2.5-flash, gemini-1.5-pro, etc.) return 404 "is not found for API version v1main"
+- Discovered gemini-flash-latest is a REASONING model (likely Gemini 2.5 Flash):
+  - With max_tokens=500, only ~5-20 visible output tokens come back
+  - finish_reason='length' even at high max_tokens
+  - The total_tokens count includes hidden "thinking" tokens (e.g., total=538 with prompt=17 + completion=20 visible = 37, so 501 thinking tokens)
+- Workaround wired: all 4 client JS files (api.js, visual-chat.js, contact-chat.js, exec-ai-brief.js) now include `reasoning_effort: 'none'` in their request bodies — this helped (5→20 visible tokens) but doesn't fully fix the cap
+- Updated data/groq-config.json: groqModel = 'gemini-flash-latest'
+- sed-replaced 'qwen/qwen3.8-27b' → 'gemini-flash-latest' as fallback model name in all 4 client JS files
+- Bumped cache version to v=20260818 on api.js + all Chatters scripts
+- Resolved local-vs-remote divergence (local had stray opaque-ID commit e1dd623 on top of 2a3c98d). Used git reset --soft origin/main to re-apply my 9-file changes on top of remote.
+- Committed as 0bc01ea, pushed to origin/main. Verified live after 30s Pages propagation: groq-config.json has gemini-flash-latest
+
+KNOWN ISSUES (current state):
+1. Gemini free tier intermittently returns 503 'This model is currently experiencing high demand' — service-wide overload on gemini-flash-latest. Retrying later usually works.
+2. When Gemini does respond, gemini-flash-latest caps visible output at ~5-20 tokens (reasoning model issue). The reasoning_effort='none' parameter helps but doesn't fully fix — Gemini's OpenAI-compat endpoint still limits visible output.
+3. The 4-part AI Brief needs ~200-500 visible tokens, so Gemini's current cap is too low for full briefs. May need to:
+   - Wait for Google to add a non-reasoning Flash model back to the API
+   - OR use OpenRouter with a non-reasoning free model (e.g., meta-llama/llama-3.1-8b-instruct:free)
+   - OR upgrade to Groq paid tier ($0.20/M tokens, would cost ~$0.50/day for the demo)
+
+Stage Summary:
+- Swap from Groq → Gemini is wired up end-to-end (edge function + env var + model name + reasoning_effort param)
+- Proxy is live at https://dashboards-groq-proxy.netlify.app/groq-proxy
+- Key is server-side, never in client JS or repo
+- BUT Gemini free tier is currently overloaded (503) AND gemini-flash-latest is a reasoning model with low visible output
+- When Gemini load drops, briefs will work but may be truncated due to the visible-output cap
+- File changes: netlify/edge-functions/groq-proxy.js (rewritten), data/groq-config.json (model name), js/api.js + js/visual-chat.js + js/contact-chat.js + js/exec-ai-brief.js (model name + reasoning_effort param), index.html + custom-html/executive-chatters-portfolio.html (cache bust), worklog.md

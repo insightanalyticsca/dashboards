@@ -19,7 +19,7 @@
     // AI provider
     provider: localStorage.getItem('docchat.provider') || 'groq',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
-    groqModel: localStorage.getItem('docchat.groq.model') || 'gemini-flash-latest',
+    groqModel: localStorage.getItem('docchat.groq.model') || 'poolside/laguna-s-2.1:free',
     ollamaBase: localStorage.getItem('docchat.ollama.base') || 'http://localhost:11434',
     ollamaModel: localStorage.getItem('docchat.ollama.model') || 'gemma3:1b',
     // Embedding endpoint (Groq doesn't offer embeddings — keep Ollama)
@@ -240,7 +240,6 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
           messages: [{ role: 'user', content: prompt }],
           temperature: 0.1,
           max_tokens: 100,
-          reasoning_effort: 'none'
         })
       });
       if (!res.ok) throw new Error(`Groq rank failed: ${res.status}`);
@@ -362,7 +361,6 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
           }],
           temperature: 0.1,
           max_tokens: 2000,
-          reasoning_effort: 'none'
         })
       });
 
@@ -450,7 +448,6 @@ Return format: [0, 3, 1] (just the array, no explanation)`;
         temperature: 0.4,
         max_tokens: 800,
         stream: true,
-        reasoning_effort: 'none'
       })
     });
 
@@ -621,7 +618,7 @@ Keep responses to 3-5 sentences unless the user asks for more detail.`;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: CONFIG.groqModel || 'gemini-flash-latest',
+          model: CONFIG.groqModel || 'poolside/laguna-s-2.1:free',
           messages: [{ role: 'user', content: 'ping' }],
           max_tokens: 1,
           stream: false

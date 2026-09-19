@@ -107,7 +107,7 @@
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
-    groqModel: localStorage.getItem('docchat.groq.model') || 'gemini-flash-latest'
+    groqModel: localStorage.getItem('docchat.groq.model') || 'poolside/laguna-s-2.1:free'
   };
 
   // Expose a promise so ask() can wait for the config to finish loading
@@ -175,7 +175,6 @@
         temperature: 0.3,
         max_tokens: 500,
         stream: true,
-        reasoning_effort: 'none'
       })
     });
     if (!res.ok) {

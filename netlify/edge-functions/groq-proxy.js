@@ -1,26 +1,34 @@
 // ════════════════════════════════════════════════════════════════════════════
-//  groq-proxy → gemini-proxy — Netlify Edge Function
+//  groq-proxy → openrouter-proxy — Netlify Edge Function
 //
-//  Originally forwarded to Groq. As of this commit, forwards to Google
-//  Gemini's OpenAI-compatible endpoint instead — same request/response
-//  format, just a different upstream. The function name + path stay as
-//  "groq-proxy" for backward compat (the client JS still calls /groq-proxy).
+//  Originally forwarded to Groq, then to Gemini, now to OpenRouter.
+//  The function name + path stay as "groq-proxy" for backward compat
+//  (the client JS still calls /groq-proxy).
 //
-//  The Gemini key is held server-side as the GEMINI_API_KEY environment
-//  variable on the Netlify site. The browser never sees it.
-//
-//  Gemini's OpenAI-compatible endpoint:
-//    POST https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
-//    Authorization: Bearer {GEMINI_API_KEY}
+//  OpenRouter's OpenAI-compatible endpoint:
+//    POST https://openrouter.ai/api/v1/chat/completions
+//    Authorization: Bearer {OPENROUTER_API_KEY}
 //    Body: { model, messages, temperature, max_tokens, stream }
 //    Response: standard OpenAI format (SSE for streaming, JSON otherwise)
+//
+//  Free models on OpenRouter (marked with :free suffix):
+//    - meta-llama/llama-3.1-8b-instruct:free       (default — non-reasoning)
+//    - meta-llama/llama-3.3-70b-instruct:free      (sometimes available)
+//    - google/gemma-2-9b-it:free
+//    - mistralai/mistral-7b-instruct:free
+//    - qwen/qwen-2.5-7b-instruct:free
+//
+//  Rate limits (free tier):
+//    - Without $5 credits: 50 requests/day across all :free models
+//    - With $5+ credits:   1000 requests/day across all :free models
+//    - Resets at 00:00 UTC daily
 //
 //  CORS restricted to the GitHub Pages origin (and localhost for dev).
 //  ════════════════════════════════════════════════════════════════════════════
 
-const UPSTREAM_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
-const MODELS_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const UPSTREAM_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const MODELS_URL = 'https://openrouter.ai/api/v1/models';
+const DEFAULT_MODEL = 'meta-llama/llama-3.1-8b-instruct:free';
 
 const ALLOWED_ORIGINS = [
   'https://insightanalyticsca.github.io',
@@ -50,20 +58,20 @@ export default async (request, context) => {
   }
 
   // Read the API key from the Netlify env var
-  const API_KEY = Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
+  const API_KEY = Deno.env.get('OPENROUTER_API_KEY') || Deno.env.get('GEMINI_API_KEY') || Deno.env.get('GROQ_API_KEY') || Deno.env.get('GROQ_KEY');
   if (!API_KEY) {
     return new Response(
-      JSON.stringify({ error: 'GEMINI_API_KEY env var not set on the edge function' }),
+      JSON.stringify({ error: 'OPENROUTER_API_KEY env var not set on the edge function' }),
       { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
     );
   }
 
-  // GET /groq-proxy?op=models → list available Gemini models
+  // GET /groq-proxy?op=models → list available OpenRouter models
   if (request.method === 'GET') {
     const url = new URL(request.url);
     if (url.searchParams.get('op') === 'models') {
       try {
-        const res = await fetch(MODELS_URL + '?pageSize=100', {
+        const res = await fetch(MODELS_URL, {
           headers: { 'Authorization': 'Bearer ' + API_KEY }
         });
         const body = await res.text();
@@ -73,12 +81,12 @@ export default async (request, context) => {
         });
       } catch (e) {
         return new Response(
-          JSON.stringify({ error: 'Failed to reach Gemini', detail: e.message }),
+          JSON.stringify({ error: 'Failed to reach OpenRouter', detail: e.message }),
           { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
         );
       }
     }
-    return new Response(JSON.stringify({ ok: true, service: 'gemini-proxy' }), {
+    return new Response(JSON.stringify({ ok: true, service: 'openrouter-proxy' }), {
       headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
     });
   }
@@ -108,8 +116,17 @@ export default async (request, context) => {
     });
   }
 
-  // Forward to Gemini's OpenAI-compatible endpoint — same body format,
-  // Gemini accepts { model, messages, temperature, max_tokens, stream }
+  // Filter out provider-specific params that OpenRouter doesn't understand
+  // (e.g., Gemini's reasoning_effort — keep the body clean OpenAI format)
+  const cleanBody = {
+    model: body.model || DEFAULT_MODEL,
+    messages: body.messages,
+    temperature: body.temperature ?? 0.3,
+    max_tokens: body.max_tokens ?? 800,
+    stream: body.stream ?? true
+  };
+
+  // Forward to OpenRouter
   let upstreamRes;
   try {
     upstreamRes = await fetch(UPSTREAM_URL, {
@@ -118,23 +135,17 @@ export default async (request, context) => {
         'Authorization': 'Bearer ' + API_KEY,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: body.model || DEFAULT_MODEL,
-        messages: body.messages,
-        temperature: body.temperature ?? 0.3,
-        max_tokens: body.max_tokens ?? 800,
-        stream: body.stream ?? true
-      })
+      body: JSON.stringify(cleanBody)
     });
   } catch (e) {
     return new Response(
-      JSON.stringify({ error: 'Failed to reach Gemini', detail: e.message }),
+      JSON.stringify({ error: 'Failed to reach OpenRouter', detail: e.message }),
       { status: 502, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }
     );
   }
 
-  // Pass through the response — Gemini streams text/event-stream when stream:true,
-  // we pass the ReadableStream through verbatim so the browser sees the same SSE.
+  // Pass through the response — OpenRouter streams text/event-stream when
+  // stream:true, we pass the ReadableStream through verbatim
   const respHeaders = {
     'Content-Type': upstreamRes.headers.get('content-type') || 'application/json',
     ...corsHeaders(origin)

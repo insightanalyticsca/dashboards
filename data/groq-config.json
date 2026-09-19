@@ -1,5 +1,5 @@
 {
   "provider": "groq",
   "proxyUrl": "https://dashboards-groq-proxy.netlify.app/groq-proxy",
-  "groqModel": "gemini-flash-latest"
+  "groqModel": "poolside/laguna-s-2.1:free"
 }
