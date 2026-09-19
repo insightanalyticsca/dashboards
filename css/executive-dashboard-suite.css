@@ -740,6 +740,51 @@ html, body, #app {
     outline: 1px solid rgba(8, 8, 238, .3);
 }
 
+/* ─── Frozen canvas: hide drag/resize handles by default ─────────────────── */
+/* The canvas starts frozen — users can't accidentally drag/resize.          */
+/* Clicking "Edit" removes this class → handles appear.                       */
+.exec-canvas-frozen .exec-layout-move,
+.exec-canvas-frozen .exec-layout-resize {
+    display: none !important;
+}
+
+.exec-canvas-frozen .exec-visual {
+    cursor: default;
+}
+
+/* ─── Edit button (in the header) ─────────────────────────────────────────── */
+.exec-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(99, 102, 241, 0.30);
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--exec-primary, #6366f1);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.exec-edit-btn:hover {
+    background: rgba(99, 102, 241, 0.18);
+    border-color: rgba(99, 102, 241, 0.50);
+    transform: translateY(-1px);
+}
+
+.exec-edit-btn.is-active {
+    background: linear-gradient(135deg, #6366f1, #06b6d4);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.exec-edit-btn i {
+    font-size: 10px;
+}
+
 .exec-layout-changing {
     user-select: none;
 }

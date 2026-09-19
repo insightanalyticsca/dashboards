@@ -291,6 +291,33 @@
     var header = app.querySelector('.canvas-header');
     if (header) header.appendChild(resetBtn);
 
+    // Add Edit button: freeze/unfreeze drag+resize
+    // By default the canvas is FROZEN — drag/resize handles are hidden.
+    // Clicking "Edit" unfreezes → handles appear → user can drag/resize.
+    // Clicking "Done" re-freezes + saves layout.
+    var editBtn = document.createElement('button');
+    editBtn.className = 'canvas-edit-btn';
+    editBtn.type = 'button';
+    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+    editBtn.title = 'Click to unlock editing — then drag the ⠿ handle to move tiles, or drag the bottom-right corner to resize. Click Done to save your layout and freeze.';
+    var canvasEl = app.querySelector('.canvas-page') || app.querySelector('[data-canvas]') || canvas;
+    if (canvasEl) canvasEl.classList.add('canvas-frozen');
+    var editing = false;
+    editBtn.addEventListener('click', function() {
+      editing = !editing;
+      if (editing) {
+        if (canvasEl) canvasEl.classList.remove('canvas-frozen');
+        editBtn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+        editBtn.classList.add('is-active');
+      } else {
+        if (canvasEl) canvasEl.classList.add('canvas-frozen');
+        editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+        editBtn.classList.remove('is-active');
+        saveLayout();
+      }
+    });
+    if (header) header.appendChild(editBtn);
+
     // ══════════════════════════════════════════════════════════════════════════
     //  Fetch data + create tiles
     // ══════════════════════════════════════════════════════════════════════════

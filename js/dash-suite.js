@@ -605,6 +605,7 @@
         <div class="exec-title">${esc(payload.title || '')}</div>
         <div class="exec-header-right">
           <div class="exec-asof">${esc(payload.asOfLabel || '')}</div>
+          <button class="exec-edit-btn" type="button" id="execEditBtn" title="Click to unlock editing — then drag the ⠿ handle to move visuals, or drag the bottom-right corner to resize. Click Done to save your layout and freeze."><i class="fa-solid fa-pen-to-square"></i> Edit</button>
           <button class="exec-reset-btn" type="button" onclick="if(confirm('Reset all visuals to default positions?')) { window.__execResetLayout(); }"><i class="fa-solid fa-rotate-left"></i> Reset</button>
         </div>
       </header>
@@ -678,6 +679,31 @@
 
         const canvas = app.querySelector('.exec-canvas');
         charts.splice(0).forEach(chart => chart.dispose());
+
+        // ─── Edit button: freeze/unfreeze drag+resize ───────────────────────
+        // By default the canvas is FROZEN — drag/resize handles are hidden
+        // (CSS: .exec-canvas-frozen .exec-layout-move/resize { display: none }).
+        // Clicking "Edit" removes the frozen class → handles appear → user can
+        // drag ⠿ to move or drag the bottom-right corner to resize.
+        // Clicking "Done" (the button text changes) re-freezes + saves layout.
+        const editBtn = app.querySelector('#execEditBtn');
+        if (editBtn) {
+            canvas.classList.add('exec-canvas-frozen');
+            let editing = false;
+            editBtn.addEventListener('click', function() {
+                editing = !editing;
+                if (editing) {
+                    canvas.classList.remove('exec-canvas-frozen');
+                    editBtn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+                    editBtn.classList.add('is-active');
+                } else {
+                    canvas.classList.add('exec-canvas-frozen');
+                    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+                    editBtn.classList.remove('is-active');
+                    saveLayout();
+                }
+            });
+        }
 
         models.forEach((model, index) => {
             const section = document.createElement('section');

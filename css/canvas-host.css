@@ -355,6 +355,44 @@ html, body {
 }
 .canvas-reset-btn:active { transform: translateY(0); }
 
+/* ─── Edit button: freeze/unfreeze drag+resize ───────────────────────────── */
+.canvas-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(99, 102, 241, 0.30);
+  background: rgba(99, 102, 241, 0.08);
+  color: var(--theme-primary, #6366f1);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms cubic-bezier(.22, 1, .36, 1);
+  white-space: nowrap;
+}
+.canvas-edit-btn:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.50);
+  transform: translateY(-1px);
+}
+.canvas-edit-btn.is-active {
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+.canvas-edit-btn i { font-size: 10px; }
+
+/* Frozen canvas: hide drag/resize handles by default */
+.canvas-frozen .canvas-layout-move,
+.canvas-frozen .canvas-layout-resize {
+  display: none !important;
+}
+.canvas-frozen .canvas-tile {
+  cursor: default;
+}
+
 /* ════════════════════════════════════════════════════════════════════════════
    RESPONSIVE — mobile/PWA
    Tiles ALWAYS keep the same column layout as desktop (12-col grid).
