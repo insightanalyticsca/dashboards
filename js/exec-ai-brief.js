@@ -15,7 +15,7 @@
   var CONFIG = {
     provider: localStorage.getItem('docchat.provider') || 'demo',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
-    groqModel: localStorage.getItem('docchat.groq.model') || 'poolside/laguna-s-2.1:free'
+    groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
   };
 
   // Expose a promise so callers can wait for the config to load before

@@ -247,7 +247,9 @@
     }
   ],
   "notes": [
-    "Final bill recovery rate improved 2.1pts MoM via enhanced deposit application workflow.",
-    "Average recovery time reduced from 47 to 38 days."
+    "WHAT HAPPENED: Final bill recovery rate improved 2.1pts MoM via enhanced deposit application workflow. Average recovery time reduced from 47 to 38 days.",
+    "WHY: The 9-day reduction in recovery time (47 → 38) is significant and likely reflects the new deposit application workflow catching final bills earlier in the process. The 2.1pt recovery rate improvement suggests the workflow is both faster AND more effective — not just speeding through cases but actually collecting more.",
+    "WHAT TO EXPECT: If the workflow continues to mature, recovery time should stabilize around 35-38 days (diminishing returns below that). The recovery rate should keep improving slightly as the team gains experience with the new process.",
+    "WHAT TO DO: Pull a recovery-rate breakdown by final-bill-amount band to see if the improvement is uniform or concentrated in specific bill sizes — small final bills may need a different workflow than large ones."
   ]
 }

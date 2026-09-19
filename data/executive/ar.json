@@ -179,11 +179,11 @@
     },
     {
       "id": "ar-collections-line",
-      "title": "Collections vs New AR (CAD \u00d71000)",
+      "title": "Collections vs New AR (CAD ×1000)",
       "kind": "line",
       "width": "wide",
       "valueFormat": "currency",
-      "leftAxisTitle": "CAD (\u00d71000)",
+      "leftAxisTitle": "CAD (×1000)",
       "rightAxisTitle": "",
       "categories": [
         "Jun 25",
@@ -346,7 +346,9 @@
     }
   ],
   "notes": [
-    "Receivables balance decreased $0.4M MoM driven by commercial collections.",
-    "91+ day bucket elevated due to 3 large bankruptcy filings \u2014 see bankruptcy visual."
+    "WHAT HAPPENED: Receivables balance decreased $0.4M MoM driven by commercial collections. 91+ day bucket elevated due to 3 large bankruptcy filings this period.",
+    "WHY: The receivables decline likely reflects successful collection outreach on commercial accounts, while the 91+ day elevation points to a concentration risk — 3 large bankruptcies moved into the oldest aging bucket, suggesting the collections team should focus on early-stage intervention before accounts reach 91+ days.",
+    "WHAT TO EXPECT: If the bankruptcy pattern continues, the 91+ day bucket will keep growing while the overall balance trend stays favorable — the aging mix is deteriorating even as total AR improves.",
+    "WHAT TO DO: Prioritize the 3 bankruptcy filings for write-off decisions, and pull a store-level breakdown of the 61-90 day bucket to identify which accounts are at risk of slipping into 91+ next period."
   ]
 }

@@ -61,11 +61,11 @@
   "charts": [
     {
       "id": "payments-trend",
-      "title": "Payments Volume (CAD \u00d71000)",
+      "title": "Payments Volume (CAD ×1000)",
       "kind": "bar",
       "width": "wide",
       "valueFormat": "currency",
-      "leftAxisTitle": "CAD (\u00d71000)",
+      "leftAxisTitle": "CAD (×1000)",
       "rightAxisTitle": "",
       "categories": [
         "Jun 25",
@@ -297,7 +297,9 @@
     }
   ],
   "notes": [
-    "Auto-pay adoption crossed 60% threshold in commercial segment.",
-    "Average payment processing time improved 0.4 days MoM."
+    "WHAT HAPPENED: Auto-pay adoption crossed 60% threshold in commercial segment. Average payment processing time improved 0.4 days MoM.",
+    "WHY: The 60% commercial auto-pay threshold is a meaningful milestone — once adoption crosses 60%, the remaining 40% are likely the harder-to-convert accounts (smaller businesses, variable cash flow). The 0.4-day processing time improvement is modest but consistent with operational efficiency gains from fewer manual payment processing touches.",
+    "WHAT TO EXPECT: If the current trend continues, commercial auto-pay adoption should plateau around 65-68% within the next 2-3 periods as the convertible segment is exhausted. Processing time gains will be marginal from here.",
+    "WHAT TO DO: Segment the remaining 40% non-auto-pay commercial accounts by payment frequency and amount — identify which subset would benefit from a targeted auto-pay incentive, and which are structurally unsuitable (e.g., project-based billing)."
   ]
 }
