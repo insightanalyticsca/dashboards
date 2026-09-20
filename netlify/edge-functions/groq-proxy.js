@@ -132,7 +132,14 @@ export default async (request, context) => {
   const origin = request.headers.get('origin') || '';
 
   // ─── Log every visit (IP, geo, UA, timestamp) ──────────────────────────
-  logVisit(request, context);
+  // Skip logging for the admin polling endpoint (op=visits) — otherwise the
+  // 5-second auto-poll creates a self-referential loop where every poll
+  // logs itself as a "visit". Also skip op=models (admin/debugging endpoint).
+  const _url = new URL(request.url);
+  const _op = _url.searchParams.get('op');
+  if (_op !== 'visits' && _op !== 'models') {
+    logVisit(request, context);
+  }
 
   if (request.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
