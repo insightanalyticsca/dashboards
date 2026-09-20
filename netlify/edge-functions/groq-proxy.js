@@ -35,7 +35,7 @@ function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Page, X-Page-Url',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin'
   };
@@ -63,14 +63,23 @@ function logVisit(request, context) {
   const headers = request.headers;
   const geo = context.geo || {};
   var referrer = headers.get('referer') || headers.get('referrer') || 'direct';
-  var page = 'direct';
-  if (referrer && referrer !== 'direct') {
-    try {
-      var refUrl = new URL(referrer);
-      page = refUrl.pathname.replace(/^\/dashboards\/?/, '') || 'index.html';
-      if (refUrl.hash) page += refUrl.hash;
-    } catch(e) {
-      page = referrer.slice(0, 80);
+  // Page the visitor was on — try explicit headers first (X-Page), then query
+  // param (beacon sends ?page=...), then derive from Referer (may be stripped
+  // to origin by browser Referrer-Policy for cross-origin requests)
+  var page = headers.get('x-page') || '';
+  if (!page) {
+    try { page = new URL(request.url).searchParams.get('page') || ''; } catch(_) {}
+  }
+  if (!page) {
+    page = 'direct';
+    if (referrer && referrer !== 'direct') {
+      try {
+        var refUrl = new URL(referrer);
+        page = refUrl.pathname.replace(/^\/dashboards\/?/, '') || 'index.html';
+        if (refUrl.hash) page += refUrl.hash;
+      } catch(e) {
+        page = referrer.slice(0, 80);
+      }
     }
   }
   var ip = headers.get('x-nf-client-connection-ip') ||

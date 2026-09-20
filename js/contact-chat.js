@@ -167,7 +167,7 @@
     var res = await fetch(CONFIG.proxyUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json', 'X-Page': window.location.pathname
       },
       body: JSON.stringify({
         model: CONFIG.groqModel,
