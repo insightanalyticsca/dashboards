@@ -47,16 +47,22 @@ function corsHeaders(origin) {
 // a single edge — most users in the same region hit the same instance.
 const memCache = new Map();
 
-// ─── Visit logging (in-memory, per edge instance) ──────────────────────────
+// ─── Visit logging + persistent cumulative stats ───────────────────────────
 const visitLog = [];
 const MAX_VISITS = 500;
 const ADMIN_PASSWORD = 'Domino88!!';
+const BLOB_STORE = 'visit-stats';
+const BLOB_KEY = 'cumulative';
+
+// In-memory cumulative stats (restored from Blob on startup)
+var cumulative = { totalVisits: 0, ips: {}, devices: {} };
+var blobLoaded = false;
+var blobWritesPending = 0;
 
 function logVisit(request, context) {
   const headers = request.headers;
   const geo = context.geo || {};
   var referrer = headers.get('referer') || headers.get('referrer') || 'direct';
-  // Extract the actual PAGE the visitor was on (from the Referer header)
   var page = 'direct';
   if (referrer && referrer !== 'direct') {
     try {
@@ -67,22 +73,86 @@ function logVisit(request, context) {
       page = referrer.slice(0, 80);
     }
   }
-  const visit = {
-    ts: new Date().toISOString(),
-    ip: headers.get('x-nf-client-connection-ip') ||
+  var ip = headers.get('x-nf-client-connection-ip') ||
         headers.get('cf-connecting-ip') ||
-        headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-        'unknown',
-    country: geo.country?.name || geo.country || 'unknown',
-    city: geo.city?.name || geo.city || 'unknown',
-    page: page,
-    method: request.method,
-    ua: headers.get('user-agent') || 'unknown'
-  };
+        (headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+        'unknown';
+  var ua = headers.get('user-agent') || 'unknown';
+  var device = parseDeviceUA(ua);
+  var country = geo.country?.name || geo.country || 'unknown';
+  var city = geo.city?.name || geo.city || 'unknown';
+
+  const visit = { ts: new Date().toISOString(), ip, country, city, page, method: request.method, ua };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
+
+  // Update cumulative stats
+  cumulative.totalVisits++;
+  cumulative.ips[ip] = (cumulative.ips[ip] || 0) + 1;
+  cumulative.devices[device] = (cumulative.devices[device] || 0) + 1;
+  blobWritesPending++;
+
+  // Write to Blob every 5 visits (reduces API calls)
+  if (blobWritesPending >= 5) {
+    blobWritesPending = 0;
+    writeCumulative();
+  }
   return visit;
 }
+
+function parseDeviceUA(ua) {
+  if (!ua || ua === 'unknown') return 'unknown';
+  var browser = 'Other';
+  if (ua.indexOf('Edg/') >= 0) browser = 'Edge';
+  else if (ua.indexOf('OPR/') >= 0) browser = 'Opera';
+  else if (ua.indexOf('Chrome/') >= 0) browser = 'Chrome';
+  else if (ua.indexOf('Firefox/') >= 0) browser = 'Firefox';
+  else if (ua.indexOf('Safari/') >= 0 && ua.indexOf('Chrome/') < 0) browser = 'Safari';
+  else if (ua.indexOf('curl') >= 0 || ua.indexOf('python') >= 0) browser = 'Bot';
+  var os = 'Other';
+  if (ua.indexOf('iPhone') >= 0) os = 'iPhone';
+  else if (ua.indexOf('iPad') >= 0) os = 'iPad';
+  else if (ua.indexOf('Android') >= 0) os = 'Android';
+  else if (ua.indexOf('Mac OS') >= 0 || ua.indexOf('Macintosh') >= 0) os = 'macOS';
+  else if (ua.indexOf('Windows') >= 0) os = 'Windows';
+  else if (ua.indexOf('Linux') >= 0) os = 'Linux';
+  return browser + ' · ' + os;
+}
+
+// ─── Netlify Blobs REST API (no import needed) ────────────────────────────
+async function readCumulative() {
+  var siteId = Deno.env.get('NETLIFY_SITE_ID');
+  var token = Deno.env.get('NETLIFY_API_TOKEN');
+  if (!siteId || !token) return;
+  var url = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
+  try {
+    var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+    if (res.status === 200) {
+      var data = await res.json();
+      if (data && typeof data.totalVisits === 'number') {
+        cumulative = data;
+        blobLoaded = true;
+      }
+    }
+  } catch(e) { /* first run — blob doesn't exist yet */ }
+}
+
+async function writeCumulative() {
+  var siteId = Deno.env.get('NETLIFY_SITE_ID');
+  var token = Deno.env.get('NETLIFY_API_TOKEN');
+  if (!siteId || !token) return;
+  var url = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
+  try {
+    await fetch(url, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(cumulative)
+    });
+  } catch(e) { /* silent — retry on next batch */ }
+}
+
+// Restore cumulative stats from Blob on startup (fire-and-forget)
+readCumulative();
 
 async function sha256(text) {
   const data = new TextEncoder().encode(text);
@@ -159,6 +229,28 @@ export default async (request, context) => {
       );
     }
 
+    // op=stats — PUBLIC endpoint (no password) for the lander footer pill
+    // Returns cumulative distinct device count (persistent across deploys)
+    if (op === 'stats') {
+      // If blob hasn't loaded yet, try a synchronous read
+      if (!blobLoaded) {
+        await readCumulative();
+      }
+      // Also write pending stats
+      if (blobWritesPending > 0) {
+        blobWritesPending = 0;
+        writeCumulative();
+      }
+      return new Response(JSON.stringify({
+        devices: Object.keys(cumulative.devices || {}).length,
+        ips: Object.keys(cumulative.ips || {}).length,
+        visits: cumulative.totalVisits || 0
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+      });
+    }
+
     // op=visits — admin endpoint, requires password
     if (op === 'visits') {
       const pwd = url.searchParams.get('password') || url.searchParams.get('pwd') || '';
@@ -168,11 +260,21 @@ export default async (request, context) => {
           headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
         });
       }
-      // Return visits newest-first
+      // Write pending stats on admin poll
+      if (blobWritesPending > 0) {
+        blobWritesPending = 0;
+        writeCumulative();
+      }
+      // Return visits newest-first + cumulative stats from persistent blob
       const visits = [...visitLog].reverse();
       return new Response(JSON.stringify({
         count: visits.length,
         visits,
+        cumulative: {
+          totalVisits: cumulative.totalVisits || 0,
+          distinctIPs: Object.keys(cumulative.ips || {}).length,
+          distinctDevices: Object.keys(cumulative.devices || {}).length
+        },
         edge: context.geo?.country?.name || 'unknown',
         capturedAt: new Date().toISOString()
       }), {
