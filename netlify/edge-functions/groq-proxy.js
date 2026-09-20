@@ -93,7 +93,9 @@ function logVisit(request, context) {
   blobWritesPending++;
 
   // Write to Blob every 5 visits (reduces API calls)
-  if (blobWritesPending >= 5) {
+  // Guard: don't write until the initial read has completed — otherwise
+  // we overwrite the persistent blob with empty stats on every deploy
+  if (blobWritesPending >= 5 && blobLoaded) {
     blobWritesPending = 0;
     writeCumulative();
   }
@@ -119,40 +121,68 @@ function parseDeviceUA(ua) {
   return browser + ' · ' + os;
 }
 
-// ─── Netlify Blobs REST API (no import needed) ────────────────────────────
+// ─── Netlify Blobs REST API (two-step: API → pre-signed S3 URL) ───────────
 async function readCumulative() {
   var siteId = Deno.env.get('NETLIFY_SITE_ID');
   var token = Deno.env.get('NETLIFY_API_TOKEN');
-  if (!siteId || !token) return;
-  var url = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
+  if (!siteId || !token) { blobLoaded = true; return; }
+  var apiUrl = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
   try {
-    var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-    if (res.status === 200) {
-      var data = await res.json();
-      if (data && typeof data.totalVisits === 'number') {
-        cumulative = data;
-        blobLoaded = true;
+    // Step 1: GET the API → returns a pre-signed S3 URL
+    var apiRes = await fetch(apiUrl, { headers: { 'Authorization': 'Bearer ' + token } });
+    if (apiRes.status === 200) {
+      var apiData = await apiRes.json();
+      var s3Url = apiData.url;
+      if (s3Url) {
+        // Step 2: GET the actual data from S3
+        var s3Res = await fetch(s3Url);
+        if (s3Res.status === 200) {
+          var data = await s3Res.json();
+          if (data && typeof data.totalVisits === 'number') {
+            cumulative = data;
+          }
+        }
       }
     }
   } catch(e) { /* first run — blob doesn't exist yet */ }
+  blobLoaded = true;
 }
 
 async function writeCumulative() {
   var siteId = Deno.env.get('NETLIFY_SITE_ID');
   var token = Deno.env.get('NETLIFY_API_TOKEN');
   if (!siteId || !token) return;
-  var url = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
+  var apiUrl = 'https://api.netlify.com/api/v1/sites/' + siteId + '/blobs/' + BLOB_STORE + '/' + BLOB_KEY;
   try {
-    await fetch(url, {
+    // Step 1: PUT to the API → returns a pre-signed S3 URL
+    var apiRes = await fetch(apiUrl, {
       method: 'PUT',
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify(cumulative)
+      headers: { 'Authorization': 'Bearer ' + token }
     });
+    if (apiRes.status === 200) {
+      var apiData = await apiRes.json();
+      var s3Url = apiData.url;
+      if (s3Url) {
+        // Step 2: PUT the actual JSON data to S3
+        await fetch(s3Url, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cumulative)
+        });
+      }
+    }
   } catch(e) { /* silent — retry on next batch */ }
 }
 
-// Restore cumulative stats from Blob on startup (fire-and-forget)
-readCumulative();
+// Restore cumulative stats from Blob on startup (fire-and-forget, but
+// guarded by blobLoaded — no writes happen until this completes)
+readCumulative().then(function() {
+  // Once loaded, flush any pending writes that were blocked
+  if (blobWritesPending > 0) {
+    blobWritesPending = 0;
+    writeCumulative();
+  }
+});
 
 async function sha256(text) {
   const data = new TextEncoder().encode(text);
@@ -237,7 +267,7 @@ export default async (request, context) => {
         await readCumulative();
       }
       // Also write pending stats
-      if (blobWritesPending > 0) {
+      if (blobWritesPending > 0 && blobLoaded) {
         blobWritesPending = 0;
         writeCumulative();
       }
@@ -261,7 +291,7 @@ export default async (request, context) => {
         });
       }
       // Write pending stats on admin poll
-      if (blobWritesPending > 0) {
+      if (blobWritesPending > 0 && blobLoaded) {
         blobWritesPending = 0;
         writeCumulative();
       }
