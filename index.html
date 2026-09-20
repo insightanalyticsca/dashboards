@@ -368,17 +368,38 @@
   </div>
 </div>
 
-<!-- Visit history viewer (full-screen overlay) -->
+<!-- Visit history viewer (full-screen overlay, auto-polling) -->
 <div id="adminVisitPanel" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg,#f8fafc);overflow-y:auto;">
-  <div style="max-width:1200px;margin:0 auto;padding:20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--text,#0f172a);">📊 Visit History</div>
-        <div id="adminVisitCount" style="font-size:11px;color:var(--muted,#94a3b8);">Loading…</div>
+  <div style="max-width:1100px;margin:0 auto;padding:20px;">
+    <!-- Header with live indicator + close -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:adminPulse 2s ease-in-out infinite;"></span>
+        <span style="font-size:16px;font-weight:700;color:var(--text,#0f172a);">Live Visitor Feed</span>
+        <span id="statUpdated" style="font-size:10px;color:var(--muted,#94a3b8);"></span>
       </div>
       <button id="adminCloseBtn" style="padding:6px 14px;border:1px solid var(--card-border,rgba(0,0,0,0.15));border-radius:8px;background:transparent;color:var(--text-soft,#64748b);font-size:12px;cursor:pointer;">✕ Close</button>
     </div>
-    <div id="adminVisitTable" style="font-size:12px;"></div>
+    <style>@keyframes adminPulse{0%,100%{opacity:0.7;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}</style>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+      <div style="padding:16px 20px;border-radius:12px;border:1px solid rgba(99,102,241,0.15);background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(6,182,212,0.04));">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted,#94a3b8);margin-bottom:4px;">Total Visits</div>
+        <div id="statTotal" style="font-size:28px;font-weight:800;color:var(--text,#0f172a);line-height:1;">—</div>
+      </div>
+      <div style="padding:16px 20px;border-radius:12px;border:1px solid rgba(16,185,129,0.15);background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(34,197,94,0.04));">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted,#94a3b8);margin-bottom:4px;">Distinct IPs</div>
+        <div id="statIPs" style="font-size:28px;font-weight:800;color:#10b981;line-height:1;">—</div>
+      </div>
+      <div style="padding:16px 20px;border-radius:12px;border:1px solid rgba(245,158,11,0.15);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(239,68,68,0.04));">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted,#94a3b8);margin-bottom:4px;">Distinct Devices</div>
+        <div id="statDevices" style="font-size:28px;font-weight:800;color:#f59e0b;line-height:1;">—</div>
+      </div>
+    </div>
+
+    <!-- Visit table -->
+    <div id="adminVisitTable"></div>
     <div id="adminVisitError" style="color:var(--danger,#ef4444);font-size:12px;display:none;"></div>
   </div>
 </div>
@@ -387,8 +408,30 @@
 // Beacon: log this visit on page load
 new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beacon&cb=' + Date.now();
 
-// Admin gear: subtle, reveals on hover
+// ─── Parse user-agent into short "Browser · OS" string ─────────────────────
+function parseDevice(ua) {
+  if (!ua || ua === 'unknown') return 'unknown';
+  var browser = 'Other';
+  if (ua.indexOf('Edg/') >= 0) browser = 'Edge';
+  else if (ua.indexOf('OPR/') >= 0) browser = 'Opera';
+  else if (ua.indexOf('Chrome/') >= 0) browser = 'Chrome';
+  else if (ua.indexOf('Firefox/') >= 0) browser = 'Firefox';
+  else if (ua.indexOf('Safari/') >= 0 && ua.indexOf('Chrome/') < 0) browser = 'Safari';
+  else if (ua.indexOf('curl') >= 0 || ua.indexOf('python') >= 0) browser = 'Bot';
+  var os = 'Other';
+  if (ua.indexOf('iPhone') >= 0) os = 'iPhone';
+  else if (ua.indexOf('iPad') >= 0) os = 'iPad';
+  else if (ua.indexOf('Android') >= 0) os = 'Android';
+  else if (ua.indexOf('Mac OS') >= 0 || ua.indexOf('Macintosh') >= 0) os = 'macOS';
+  else if (ua.indexOf('Windows') >= 0) os = 'Windows';
+  else if (ua.indexOf('Linux') >= 0) os = 'Linux';
+  return browser + ' · ' + os;
+}
+
+// ─── Admin gear + password + auto-polling visit feed ───────────────────────
 (function() {
+  var PROXY = 'https://dashboards-groq-proxy.netlify.app/groq-proxy';
+  var POLL_MS = 5000;
   var gear = document.getElementById('adminGear');
   var pwdModal = document.getElementById('adminPasswordModal');
   var pwdInput = document.getElementById('adminPasswordInput');
@@ -397,9 +440,10 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
   var pwdError = document.getElementById('adminPasswordError');
   var visitPanel = document.getElementById('adminVisitPanel');
   var visitTable = document.getElementById('adminVisitTable');
-  var visitCount = document.getElementById('adminVisitCount');
   var visitError = document.getElementById('adminVisitError');
   var closeBtn = document.getElementById('adminCloseBtn');
+  var pollTimer = null;
+  var adminPwd = null;
 
   gear.addEventListener('mouseenter', function() { gear.style.opacity = '0.6'; });
   gear.addEventListener('mouseleave', function() { gear.style.opacity = '0.3'; });
@@ -414,11 +458,79 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
   pwdCancel.addEventListener('click', closePwd);
   pwdModal.addEventListener('click', function(e) { if (e.target === pwdModal) closePwd(); });
 
+  function fetchVisits() {
+    var url = PROXY + '?op=visits&password=' + encodeURIComponent(adminPwd);
+    fetch(url, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+      .then(function(r) { return r.status === 403 ? null : r.json(); })
+      .then(function(data) {
+        if (!data) { stopPolling(); visitPanel.style.display = 'none'; return; }
+        renderVisits(data);
+      })
+      .catch(function() { /* silent retry on next poll */ });
+  }
+
+  function renderVisits(data) {
+    // Compute distinct IPs + devices
+    var ipMap = {};
+    var devMap = {};
+    data.visits.forEach(function(v) {
+      ipMap[v.ip] = (ipMap[v.ip] || 0) + 1;
+      var d = parseDevice(v.ua);
+      devMap[d] = (devMap[d] || 0) + 1;
+    });
+    var nIPs = Object.keys(ipMap).length;
+    var nDevs = Object.keys(devMap).length;
+
+    // Update summary cards
+    document.getElementById('statTotal').textContent = data.count;
+    document.getElementById('statIPs').textContent = nIPs;
+    document.getElementById('statDevices').textContent = nDevs;
+    document.getElementById('statUpdated').textContent = '· updated ' + new Date().toLocaleTimeString();
+
+    // Simplified table: Time | IP | Country | Page | Device
+    var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;">';
+    html += '<table style="border-collapse:collapse;font-size:11px;width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">';
+    html += '<thead><tr style="background:rgba(99,102,241,0.06);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
+    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">When</th>';
+    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">IP</th>';
+    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">From</th>';
+    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Page</th>';
+    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Device</th>';
+    html += '</tr></thead><tbody>';
+    data.visits.forEach(function(v, i) {
+      var bg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.025)';
+      var time = v.ts ? new Date(v.ts).toLocaleTimeString([], {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '—';
+      var dev = parseDevice(v.ua);
+      var loc = v.city && v.city !== 'unknown' ? v.city + ', ' + v.country : v.country;
+      html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);background:' + bg + ';">';
+      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text,#0f172a);font-weight:600;">' + time + '</td>';
+      html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.ip || '—') + '</td>';
+      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (loc || '—') + '</td>';
+      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (v.page || '—') + '</td>';
+      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + dev + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    visitTable.innerHTML = html;
+    visitError.style.display = 'none';
+  }
+
+  function startPolling(pwd) {
+    adminPwd = pwd;
+    fetchVisits();
+    pollTimer = setInterval(fetchVisits, POLL_MS);
+  }
+
+  function stopPolling() {
+    if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    adminPwd = null;
+  }
+
   pwdSubmit.addEventListener('click', function() {
     var pwd = pwdInput.value;
     if (!pwd) { pwdError.textContent = 'Enter password'; pwdError.style.display = 'block'; return; }
-    // Fetch visit log with the password
-    var url = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=visits&password=' + encodeURIComponent(pwd);
+    // Quick auth check
+    var url = PROXY + '?op=visits&password=' + encodeURIComponent(pwd);
     fetch(url, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
       .then(function(r) {
         if (r.status === 403) { pwdError.textContent = 'Wrong password'; pwdError.style.display = 'block'; return null; }
@@ -428,36 +540,8 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
         if (!data) return;
         closePwd();
         visitPanel.style.display = 'block';
-        visitCount.textContent = data.count + ' visits · edge: ' + (data.edge || 'unknown') + ' · captured ' + new Date(data.capturedAt).toLocaleString();
-        visitError.style.display = 'none';
-        // Render table — clean, consistent 11px font, horizontal scroll for long UA
-        var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
-        html += '<table style="border-collapse:collapse;font-size:11px;width:max-content;min-width:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;">';
-        // Header
-        html += '<thead><tr style="background:linear-gradient(180deg,rgba(99,102,241,0.06),transparent);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
-        html += '<th style="padding:10px 14px;white-space:nowrap;position:sticky;left:0;background:rgba(99,102,241,0.08);z-index:2;">Time</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">IP</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">Country</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">City</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">Page Visited</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">Method</th>';
-        html += '<th style="padding:10px 14px;white-space:nowrap;">User-Agent</th>';
-        html += '</tr></thead><tbody>';
-        data.visits.forEach(function(v, i) {
-          var rowBg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.03)';
-          var timeBg = i % 2 === 0 ? 'rgba(99,102,241,0.04)' : 'rgba(99,102,241,0.07)';
-          html += '<tr style="border-bottom:1px solid var(--card-border,rgba(0,0,0,0.04));background:' + rowBg + ';">';
-          html += '<td style="padding:7px 14px;white-space:nowrap;position:sticky;left:0;background:' + timeBg + ';z-index:1;color:var(--text,#0f172a);font-weight:600;">' + (v.ts ? new Date(v.ts).toLocaleString() : '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (v.ip || '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.country || '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.city || '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (v.page || '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (v.method || '—') + '</td>';
-          html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + (v.ua || '—') + '</td>';
-          html += '</tr>';
-        });
-        html += '</tbody></table></div>';
-        visitTable.innerHTML = html;
+        renderVisits(data);
+        startPolling(pwd);
       })
       .catch(function(e) {
         pwdError.textContent = 'Error: ' + e.message;
@@ -466,8 +550,7 @@ new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beaco
   });
 
   pwdInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') pwdSubmit.click(); });
-
-  closeBtn.addEventListener('click', function() { visitPanel.style.display = 'none'; });
+  closeBtn.addEventListener('click', function() { visitPanel.style.display = 'none'; stopPolling(); });
 })();
 </script>
 </body>
