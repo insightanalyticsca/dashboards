@@ -413,12 +413,12 @@
 // Beacon: log this visit on page load (includes page path)
 new Image().src = 'https://dashboards-groq-proxy.netlify.app/groq-proxy?op=beacon&page=' + encodeURIComponent(window.location.pathname.replace(/^\/dashboards\/?/, '') || 'index.html') + '&cb=' + Date.now();
 
-// Footer pill: just the number (cumulative distinct IPs — no label, no tooltip)
+// Footer pill: just the number (cumulative distinct device types — no label, no tooltip)
 fetch('https://dashboards-groq-proxy.netlify.app/groq-proxy?op=stats', { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
   .then(function(r) { return r.json(); })
   .then(function(d) {
     var el = document.getElementById('visitorCount');
-    if (el) el.textContent = d.ips || 0;
+    if (el) el.textContent = d.devices || 0;
   })
   .catch(function() {});
 
