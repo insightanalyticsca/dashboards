@@ -82,10 +82,27 @@ function logVisit(request, context) {
       }
     }
   }
-  var ip = headers.get('x-nf-client-connection-ip') ||
-        headers.get('cf-connecting-ip') ||
-        (headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
-        'unknown';
+
+  // ─── Extract the REAL visitor IP (not CDN/proxy IP) ──────────────────────
+  // Priority order (per Fastly/CDN best practices):
+  //   1. Fastly-Client-IP — Fastly's locked copy of the first client IP
+  //   2. X-Forwarded-For — first (leftmost) IP is the real visitor
+  //   3. X-Real-IP — clean copy of the original IP
+  //   4. x-nf-client-connection-ip — Netlify's own IP detection
+  //   5. cf-connecting-ip — Cloudflare's IP (if behind CF)
+  //   6. Raw socket IP (fallback — may be a CDN/proxy IP, not the real visitor)
+  // NOTE: Apple iCloud Private Relay masks the IP at the device level via
+  // Fastly — in that case, even Fastly-Client-IP will be a Fastly-owned IP
+  // (typically 2a04:4e41:...). This is mathematically impossible to bypass.
+  var ip = headers.get('fastly-client-ip') ||
+           (headers.get('x-forwarded-for') || '').split(',')[0].trim() ||
+           headers.get('x-real-ip') ||
+           headers.get('x-nf-client-connection-ip') ||
+           headers.get('cf-connecting-ip') ||
+           'unknown';
+  // Validate: strip brackets from IPv6, trim whitespace
+  ip = ip.replace(/^\[|\]$/g, '').trim();
+
   var ua = headers.get('user-agent') || 'unknown';
   var device = parseDeviceUA(ua);
   var country = geo.country?.name || geo.country || 'unknown';
