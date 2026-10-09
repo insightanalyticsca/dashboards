@@ -534,7 +534,7 @@ body[data-variant="blue"] {
     border-radius: 10px;
     border: 1px solid rgba(99, 102, 241, 0.10);
     background: rgba(255, 255, 255, 0.04);
-    overflow: hidden;
+    overflow: visible;
     transition: transform 200ms cubic-bezier(.22, 1, .36, 1), box-shadow 200ms;
 }
 
