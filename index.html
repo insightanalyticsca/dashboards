@@ -24,8 +24,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="./css/styles.css?v=20261009">
-  <link rel="stylesheet" href="./css/theme-vivid.css?v=20261009">
+  <link rel="stylesheet" href="./css/styles.css?v=20261010">
+  <link rel="stylesheet" href="./css/theme-vivid.css?v=20261010">
 </head>
 <body>
 
@@ -291,9 +291,9 @@
 <!-- ════════════════════════ SCRIPTS ════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts-liquidfill@3/dist/echarts-liquidfill.min.js"></script>
-<script src="./js/api.js?v=20261009"></script>
-<script src="./js/charts.js?v=20261009"></script>
-<script src="./js/app.js?v=20261009"></script>
+<script src="./js/api.js?v=20261010"></script>
+<script src="./js/charts.js?v=20261010"></script>
+<script src="./js/app.js?v=20261010"></script>
 
 <script>
   // Wire secondary hero CTA + utility buttons
@@ -338,9 +338,9 @@
   });
 </script>
 
-<script src="./js/theme-toggle.js?v=20261009"></script>
+<script src="./js/theme-toggle.js?v=20261010"></script>
 <!-- Pull-to-refresh + service worker -->
-<script src="./js/pull-to-refresh.js?v=20261009"></script>
+<script src="./js/pull-to-refresh.js?v=20261010"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -414,8 +414,25 @@
 </div>
 
 <script>
-// Page-load signal ping (site=dashboards so the activity panel can filter by site)
-new Image().src = 'https://startling-belekoy-b0ec70.netlify.app/groq-proxy?op=beacon&page=' + encodeURIComponent(window.location.pathname.replace(/^\/dashboards\/?/, '') || 'index.html') + '&site=dashboards&cb=' + Date.now();
+// ─── Client-side bot filter — skip the beacon for automated clients ──
+// Detects crawlers, scrapers, test scripts, headless browsers via UA.
+function isAutomated() {
+  var ua = (navigator.userAgent || '').toLowerCase();
+  var patterns = ['bot', 'crawl', 'spider', 'scrape', 'curl', 'wget',
+    'python', 'headless', 'phantom', 'selenium', 'puppeteer', 'playwright',
+    'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
+    'yandexbot', 'ahrefsbot', 'semrushbot', 'facebookexternalhit',
+    'twitterbot', 'linkedinbot', 'scrapy', 'httpx', 'node-fetch', 'axios'];
+  for (var i = 0; i < patterns.length; i++) {
+    if (ua.indexOf(patterns[i]) >= 0) return true;
+  }
+  return false;
+}
+// Page-load signal ping (site=dashboards so the activity panel can filter by site).
+// Skip for automated clients — don't count bots as real visits.
+if (!isAutomated()) {
+  new Image().src = 'https://startling-belekoy-b0ec70.netlify.app/groq-proxy?op=beacon&page=' + encodeURIComponent(window.location.pathname.replace(/^\/dashboards\/?/, '') || 'index.html') + '&site=dashboards&cb=' + Date.now();
+}
 
 
 // Footer pill: just the number (cumulative distinct device types — no label, no tooltip)
