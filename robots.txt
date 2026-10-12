@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /netlify/
+Disallow: /data/
+
+Sitemap: https://insightanalyticsca.github.io/dashboards/sitemap.xml

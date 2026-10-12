@@ -1,0 +1,278 @@
+{
+  "history": [
+    {
+      "runAt": "2026-10-12T15:43:51.204Z",
+      "pagesOptimized": 56,
+      "totalPages": 56,
+      "changes": [
+        {
+          "page": "custom-html/aging-bankruptcies-by-customer-type.html"
+        },
+        {
+          "page": "custom-html/aging-bankruptcies.html"
+        },
+        {
+          "page": "custom-html/aging-commercial-delta.html"
+        },
+        {
+          "page": "custom-html/aging-disconnects-by-customer-type.html"
+        },
+        {
+          "page": "custom-html/aging-disconnects-reconnects.html"
+        },
+        {
+          "page": "custom-html/aging-electric-commercial-rolling13.html",
+          "title": "Electric Commercial Rolling Aging Dashboard – Custom HTML Analytics",
+          "keywords": "electric commercial rolling aging, rolling stock aging dashboard, custom HTML dashboard, equipment age analysis, commercial electric fleet analytics, aging electric assets, rolling equipment performance, power equipment aging report, commercial electricity asset monitoring, rolling stock lifecycle analytics"
+        },
+        {
+          "page": "custom-html/aging-electric-residential-rolling13.html",
+          "title": "aging electric residential rolling13",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/aging-forecast-monitor.html"
+        },
+        {
+          "page": "custom-html/aging-residential-delta.html",
+          "title": "aging residential delta",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/app100-sqljob-duration-trend.html",
+          "title": "app100 sqljob duration trend",
+          "keywords": "waiting, agent, duration"
+        },
+        {
+          "page": "custom-html/app100-sqljob-failure-details.html",
+          "title": "app100 sqljob failure details",
+          "keywords": "waiting, agent, failure"
+        },
+        {
+          "page": "custom-html/app100-sqljob-health-summary.html",
+          "title": "app100 sqljob health summary",
+          "keywords": "waiting, agent, summary"
+        },
+        {
+          "page": "custom-html/app100-sqljob-run-stacks.html",
+          "title": "app100 sqljob run stacks",
+          "keywords": "waiting, agent"
+        },
+        {
+          "page": "custom-html/ar-buckets-stacked.html",
+          "title": "ar buckets stacked",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/ar-buckets-tabular.html",
+          "title": "ar buckets tabular",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/ar-delta-stacked.html",
+          "title": "ar delta stacked",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/ar-delta-tabular.html",
+          "title": "ar delta tabular",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/csr-aging-dynamics.html",
+          "title": "CSR — Aging Dynamics",
+          "keywords": "aging, dynamics, dashboards, studio, gallery, hourly, march"
+        },
+        {
+          "page": "custom-html/csr-aging-overview.html",
+          "title": "CSR — Aging & Collections Overview",
+          "keywords": "aging, collections, overview, dashboards, studio, gallery, period, march"
+        },
+        {
+          "page": "custom-html/csr-ar-tabular.html",
+          "title": "CSR — AR Tabular Views",
+          "keywords": "tabular, views, dashboards, studio, gallery, period, march"
+        },
+        {
+          "page": "custom-html/csr-electric-arrears.html",
+          "title": "CSR — Electric Arrears",
+          "keywords": "electric, arrears, dashboards, studio, gallery, month, rolling, march"
+        },
+        {
+          "page": "custom-html/csr-page.html",
+          "title": "CSR Dashboard",
+          "keywords": "dashboard"
+        },
+        {
+          "page": "custom-html/csr-top-arrears.html",
+          "title": "CSR — Top Arrears Accounts",
+          "keywords": "arrears, accounts, dashboards, studio, gallery, hourly, march"
+        },
+        {
+          "page": "custom-html/csr-visual.html",
+          "title": "CSR Visual",
+          "keywords": "visual, loading"
+        },
+        {
+          "page": "custom-html/cx-visual.html",
+          "title": "Universal CX Visual",
+          "keywords": "universal, visual, loading"
+        },
+        {
+          "page": "custom-html/executive-ar-portfolio.html",
+          "title": "AR Portfolio",
+          "keywords": "portfolio, dashboards, studio, gallery"
+        },
+        {
+          "page": "custom-html/executive-chatters-portfolio.html",
+          "title": "Executive Operating Dashboard",
+          "keywords": "dashboards, analytics, executive, operating, dashboard, studio, gallery, insight, integrated, click"
+        },
+        {
+          "page": "custom-html/executive-customer-payments.html",
+          "title": "Customer Payments",
+          "keywords": "customer, payments, dashboards, studio, gallery"
+        },
+        {
+          "page": "custom-html/executive-disconnects-bankruptcies.html",
+          "title": "Disconnects and Bankruptcies",
+          "keywords": "disconnects, bankruptcies, dashboards, studio, gallery"
+        },
+        {
+          "page": "custom-html/executive-ebill-performance.html",
+          "title": "E-Bill Performance",
+          "keywords": "performance, dashboards, studio, gallery"
+        },
+        {
+          "page": "custom-html/executive-final-bill-recovery.html",
+          "title": "Final Bill Collections Recovery",
+          "keywords": "final, collections, recovery, dashboards, studio, gallery"
+        },
+        {
+          "page": "custom-html/its-closed-priority.html"
+        },
+        {
+          "page": "custom-html/its-closure-sla-mom.html",
+          "title": "its closure sla mom",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-kb4-failure-ppp.html",
+          "title": "its kb4 failure ppp",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-kb4-phish-mom.html",
+          "title": "its kb4 phish mom",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-kb4-phish-mom_old.html",
+          "title": "its kb4 phish mom_old",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-kb4-training.html",
+          "title": "its kb4 training",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-ocsf-report.html",
+          "title": "its ocsf report",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-open-priority.html",
+          "title": "${cat}: ${formattedVal} (${pctLabel})",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-open-status.html",
+          "title": "${cat}: ${ITS.nf0.format(val)} (${pctLabel})",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-priority-status.html",
+          "title": "its priority status",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-response-sla-mom.html",
+          "title": "its response sla mom",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-security-posture.html",
+          "title": "ITS — Security Posture",
+          "keywords": "security, posture, dashboards, studio, gallery, period"
+        },
+        {
+          "page": "custom-html/its-security-training.html",
+          "title": "ITS — Security & Training",
+          "keywords": "security, training, dashboards, studio, gallery, period"
+        },
+        {
+          "page": "custom-html/its-service-health.html",
+          "title": "ITS — Service Health",
+          "keywords": "service, health, dashboards, studio, gallery, period, march"
+        },
+        {
+          "page": "custom-html/its-sla-performance.html",
+          "title": "ITS — SLA Performance",
+          "keywords": "performance, dashboards, studio, gallery, month, rolling, march"
+        },
+        {
+          "page": "custom-html/its-ticket-management.html",
+          "title": "ITS — Ticket Management",
+          "keywords": "ticket, management, dashboards, studio, gallery, period, march"
+        },
+        {
+          "page": "custom-html/its-ticket-operations.html",
+          "title": "ITS — Ticket Operations",
+          "keywords": "ticket, operations, dashboards, studio, gallery, period, march"
+        },
+        {
+          "page": "custom-html/its-ticket-volume-close.html",
+          "title": "its ticket volume close",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-ticket-volume-open.html",
+          "title": "its ticket volume open",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/its-uptime.html",
+          "title": "its uptime",
+          "keywords": "waiting"
+        },
+        {
+          "page": "custom-html/remote-health-monitor.html",
+          "title": "remote health monitor",
+          "keywords": ""
+        },
+        {
+          "page": "custom-html/risky/risky-client-monitor.html",
+          "title": "Risky client duel monitor",
+          "keywords": "client, risky, without, baseline, narrative, holdout, confidence, capture, clients, precision"
+        },
+        {
+          "page": "custom-html/risky-client-monitor.html",
+          "title": "Risky client duel monitor",
+          "keywords": "client, risky, without, baseline, narrative, holdout, confidence, capture, clients, precision"
+        },
+        {
+          "page": "index.html",
+          "title": "Dashboards Studio — RAG Assistant Demo",
+          "keywords": "dashboards, visuals, backend, files, studio, powered, documents, document, enter, analytics"
+        },
+        {
+          "page": "visuals.html",
+          "title": "Visuals — Dashboards Studio Demo",
+          "keywords": "visuals, executive, charts, table, versions, dashboards, postmessage, version, canvas, iframes"
+        }
+      ]
+    }
+  ],
+  "lastRun": "2026-10-12T15:43:51.204Z"
+}
