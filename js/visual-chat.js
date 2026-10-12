@@ -11,7 +11,7 @@
 
   // ─── Config (same as api.js) ──────────────────────────────────────────────
   var CONFIG = {
-    provider: localStorage.getItem('docchat.provider') || 'demo',
+    provider: localStorage.getItem('docchat.provider') || 'groq',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
   };
@@ -22,6 +22,7 @@
   // canned offline message even though the proxy IS configured in
   // data/groq-config.json.
   var configPromise = (function autoLoad() {
+    if (CONFIG.proxyUrl) return Promise.resolve();
     return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cfg) {

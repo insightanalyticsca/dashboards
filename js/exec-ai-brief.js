@@ -12,16 +12,22 @@
   'use strict';
 
   // ─── Config (mirror visual-chat.js + contact-chat.js) ────────────────────
+  // Default to 'groq' (not 'demo') because data/groq-config.json always sets
+  // the provider + proxyUrl. This prevents the premature "Groq not connected"
+  // fallback that happened when configPromise hadn't resolved yet.
   var CONFIG = {
-    provider: localStorage.getItem('docchat.provider') || 'demo',
+    provider: localStorage.getItem('docchat.provider') || 'groq',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
   };
 
-  // Expose a promise so callers can wait for the config to load before
-  // deciding whether Groq is truly available. This prevents premature
-  // fallback to static content while the async config fetch is in flight.
+  // If we have a proxyUrl in localStorage already, configPromise resolves
+  // instantly. If not, we fetch groq-config.json. Either way, runBrief()
+  // awaits this promise before checking CONFIG — so there's no race.
   var configPromise = (function () {
+    // Fast path: already have proxyUrl in localStorage — no fetch needed
+    if (CONFIG.proxyUrl) return Promise.resolve();
+    // Slow path: fetch groq-config.json
     return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (cfg) {
