@@ -3,4 +3,8 @@ Allow: /
 Disallow: /netlify/
 Disallow: /data/
 
+# Allow Googlebot-Extended for AI Overview / AI Mode inclusion
+User-agent: Googlebot-Extended
+Allow: /
+
 Sitemap: https://insightanalyticsca.github.io/dashboards/sitemap.xml

@@ -1,0 +1,222 @@
+{
+  "custom-html/aging-bankruptcies-by-customer-type.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-bankruptcies.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-commercial-delta.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-disconnects-by-customer-type.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-disconnects-reconnects.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-electric-commercial-rolling13.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-electric-residential-rolling13.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-forecast-monitor.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/aging-residential-delta.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/app100-sqljob-duration-trend.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/app100-sqljob-failure-details.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/app100-sqljob-health-summary.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/app100-sqljob-run-stacks.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/ar-buckets-stacked.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/ar-buckets-tabular.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/ar-delta-stacked.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/ar-delta-tabular.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/csr-aging-dynamics.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-aging-overview.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-ar-tabular.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-electric-arrears.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-page.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-top-arrears.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/csr-visual.html": {
+    "related": [],
+    "topic": "csr"
+  },
+  "custom-html/cx-visual.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/executive-ar-portfolio.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/executive-chatters-portfolio.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/executive-customer-payments.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/executive-disconnects-bankruptcies.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/executive-ebill-performance.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/executive-final-bill-recovery.html": {
+    "related": [],
+    "topic": "executive"
+  },
+  "custom-html/its-closed-priority.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-closure-sla-mom.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-kb4-failure-ppp.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-kb4-phish-mom.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-kb4-training.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-ocsf-report.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-open-priority.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-open-status.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-priority-status.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-response-sla-mom.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-security-posture.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-security-training.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-service-health.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-sla-performance.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-ticket-management.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-ticket-operations.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-ticket-volume-close.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-ticket-volume-open.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/its-uptime.html": {
+    "related": [],
+    "topic": "its"
+  },
+  "custom-html/remote-health-monitor.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/risky/risky-client-monitor.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "custom-html/risky-client-monitor.html": {
+    "related": [],
+    "topic": "general"
+  },
+  "index.html": {
+    "related": [],
+    "topic": "home"
+  },
+  "visuals.html": {
+    "related": [],
+    "topic": "gallery"
+  }
+}

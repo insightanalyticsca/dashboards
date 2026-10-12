@@ -7,15 +7,22 @@
   <meta property="og:title" content="">
   <meta property="og:description" content="">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/aging-forecast-monitor.html"
+  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/<a href="./custom-html/csr-aging-dynamics.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">aging</a>-forecast-monitor.html"
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="">
   <meta name="twitter:description" content="">>>>
   <meta charset="utf-8" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title></title>
-  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
     :root{
       --bg:#ffffff;
@@ -125,7 +132,26 @@
   })();
   </script>
 
-  <script type="application/ld+json">undefined</script>
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-12T18:48:05.050Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"WebPage","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-forecast-monitor.html#page","name":"","description":"aging -forecast-monitor.html\" >>> Hourly retrain • Aging forecast intelligence Aging forecast duel Daily trailing-year view with compact live filtering. This HT","url":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-forecast-monitor.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-12","dateModified":"2026-10-12T18:48:05.050Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Aging Forecast Monitor","item":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-forecast-monitor.html"}]}]}</script>
 </head>
 <body>
 <div class="app">
@@ -232,7 +258,7 @@
     payload: { summary: {}, points: [] },
     config: {},
     meta: {},
-    filters: { service: "All", category: "All", categoryGroup: "All", agingBucket: "All" },
+    filters: { <a href="./custom-html/its-service-health.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">service</a>: "All", category: "All", categoryGroup: "All", agingBucket: "All" },
     selected: { actual: true, wo: true, s2: true },
     chart: null,
     timer: null,
@@ -333,7 +359,7 @@
       return;
     }
 
-    const started = performance.now();
+    const started = <a href="./custom-html/executive-ebill-performance.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">performance</a>.now();
     const duration = 900;
 
     function frame(now){
@@ -812,7 +838,7 @@ function buildNarrativeHtml(summary){
         pointsObject: firstNonBlank(raw.normalPointsObject, raw.NormalPointsObject, "vw_connector_aging_forecast_points_latest"),
         summarySchema: firstNonBlank(raw.normalSummarySchema, raw.NormalSummarySchema, baseSchema, "dbo"),
         summaryObject: firstNonBlank(raw.normalSummaryObject, raw.NormalSummaryObject, "vw_connector_aging_forecast_summary_latest"),
-        description: "Normal mode reads the original latest-run forecast views. Use it as the benchmark/full-quality run for validation and comparison."
+        description: "Normal mode reads the original latest-run forecast <a href="./custom-html/csr-ar-tabular.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">views</a>. Use it as the benchmark/full-quality run for validation and comparison."
       },
       fast: {
         id: "fast",
@@ -823,7 +849,7 @@ function buildNarrativeHtml(summary){
         pointsObject: firstNonBlank(raw.fastPointsObject, raw.FastPointsObject, "vw_connector_aging_forecast_points_latest_fast"),
         summarySchema: firstNonBlank(raw.fastSummarySchema, raw.FastSummarySchema, baseSchema, "dbo"),
         summaryObject: firstNonBlank(raw.fastSummaryObject, raw.FastSummaryObject, "vw_connector_aging_forecast_summary_latest_fast"),
-        description: "Fast mode reads the separate fast-run views. It is meant for quicker retraining/live monitoring; metrics may differ because the training path is optimized for speed."
+        description: "Fast mode reads the separate fast-run views. It is meant for quicker retraining/live monitoring; metrics may differ because the <a href="./custom-html/its-security-training.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">training</a> path is optimized for speed."
       }
     };
   }
@@ -1196,7 +1222,7 @@ function wireUi(){
 })();
 </script>
 <!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261007"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261007"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

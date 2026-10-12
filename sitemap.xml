@@ -190,121 +190,115 @@
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-closed-priority.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-closure-sla-mom.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-kb4-failure-ppp.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-kb4-phish-mom.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-kb4-phish-mom_old.html</loc>
-    <lastmod>2026-10-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-kb4-training.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-ocsf-report.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-open-priority.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-open-status.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-priority-status.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-response-sla-mom.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-security-posture.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-security-training.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-service-health.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-sla-performance.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-ticket-management.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-ticket-operations.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-ticket-volume-close.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-ticket-volume-open.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/its-uptime.html</loc>
     <lastmod>2026-10-12</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insightanalyticsca.github.io/dashboards/custom-html/remote-health-monitor.html</loc>

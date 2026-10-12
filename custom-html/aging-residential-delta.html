@@ -4,7 +4,7 @@
   <meta name="description" content=""
   <meta name="keywords" content=""
 
-  <meta property="og:title" content="aging residential delta">
+  <meta property="og:title" content="<a href="./custom-html/csr-aging-dynamics.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">aging</a> residential delta">
   <meta property="og:description" content="">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/aging-residential-delta.html"
@@ -13,6 +13,12 @@
   <meta name="twitter:title" content="aging residential delta">
   <meta name="twitter:description" content="">>>>
     <meta charset="utf-8">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
     <style>
@@ -180,7 +186,26 @@
         }
     </style>
 
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"aging residential delta","description":"","applicationCategory":"BusinessApplication","url":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-residential-delta.html","keywords":""}</script>
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-12T18:48:05.050Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"WebPage","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-residential-delta.html#page","name":"","description":"aging residential delta\"> >>> service worker -->","url":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-residential-delta.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-12","dateModified":"2026-10-12T18:48:05.050Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Aging Residential Delta","item":"https://insightanalyticsca.github.io/dashboards/custom-html/aging-residential-delta.html"}]}]}</script>
 </head>
 
 <body>
@@ -359,7 +384,7 @@
 
             function buildTable(rows) {
                 if (!Array.isArray(rows) || !rows.length) {
-                    throw new Error("No rows array reached visual. Expected rows with Bucket, Period, Amount.");
+                    throw new Error("No rows array reached <a href="./custom-html/csr-visual.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">visual</a>. Expected rows with Bucket, Period, Amount.");
                 }
 
                 const byPeriod = new Map();
@@ -559,8 +584,8 @@
             ;
         })();
     </script>
-<!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261007"></script>
+<!-- Pull-to-refresh + <a href="./custom-html/its-service-health.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">service</a> worker -->
+<script defer src="../js/pull-to-refresh.js?v=20261007"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
