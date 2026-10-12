@@ -27,8 +27,6 @@ jobs:
           node-version: '20'
 
       - name: Run SEO optimizer
-        env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: node .github/scripts/seo-optimizer.mjs
 
       - name: Check for changes

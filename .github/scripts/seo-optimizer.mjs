@@ -20,6 +20,7 @@ import { join, dirname, basename } from 'path';
 const SITE_URL = 'https://insightanalyticsca.github.io/dashboards';
 const GROQ_KEY = process.env.GROQ_API_KEY || '';
 const GROQ_MODEL = 'openai/gpt-oss-120b';
+const GROQ_PROXY = 'https://startling-belekoy-b0ec70.netlify.app/groq-proxy';
 const REPO_ROOT = process.cwd();
 
 // ─── Collect all HTML pages ──────────────────────────────────────────────
@@ -65,8 +66,12 @@ function extractContent(html) {
 
 // ─── Ask Groq for SEO recommendations ───────────────────────────────────
 async function getSeoRecommendations(filePath, content) {
-  if (!GROQ_KEY) {
-    console.log('  No GROQ_API_KEY — using heuristic fallback');
+  // Use direct Groq key if available, otherwise use the Netlify edge function proxy
+  const hasDirectKey = !!GROQ_KEY;
+  const hasProxy = !hasDirectKey; // proxy has the key server-side
+
+  if (!hasDirectKey && !hasProxy) {
+    console.log('  No Groq access — using heuristic fallback');
     return heuristicSeo(filePath, content);
   }
 
@@ -106,28 +111,70 @@ Rules:
 - Return ONLY the JSON, no markdown fences`;
 
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: GROQ_MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.3,
-        max_tokens: 800
-      })
-    });
+    let res;
+    if (hasDirectKey) {
+      // Direct Groq API call
+      res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: GROQ_MODEL,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.3,
+          max_tokens: 800
+        })
+      });
+    } else {
+      // Use the Netlify edge function proxy (has Groq key server-side)
+      res = await fetch(`${GROQ_PROXY}?op=chat`, {
+        method: 'POST',
+        headers: {
+          'Origin': 'https://insightanalyticsca.github.io',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: prompt }],
+          model: GROQ_MODEL,
+          temperature: 0.3,
+          max_tokens: 800,
+          stream: false
+        })
+      });
+    }
 
     if (!res.ok) {
       console.log(`  Groq error ${res.status} — using fallback`);
       return heuristicSeo(filePath, content);
     }
 
-    const json = await res.json();
+    // The proxy streams SSE — collect all chunks
+    const contentType = res.headers.get('content-type') || '';
+    let json;
+
+    if (contentType.includes('text/event-stream') || contentType.includes('stream')) {
+      // Parse SSE stream
+      const text = await res.text();
+      let fullContent = '';
+      for (const line of text.split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.choices?.[0]?.delta?.content) {
+            fullContent += evt.choices[0].delta.content;
+          }
+        } catch {}
+      }
+      json = { choices: [{ message: { content: fullContent } }] };
+    } else {
+      json = await res.json();
+    }
+
     let text = json.choices?.[0]?.message?.content || '{}';
-    // Strip markdown fences if present
     text = text.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
     return JSON.parse(text);
   } catch (e) {
