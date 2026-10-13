@@ -261,12 +261,15 @@
       <div class="chat-shell">
         <div class="chat-messages" id="chatMessages"></div>
 
-        <div style="padding: 0 22px; display:flex; flex-wrap:wrap; gap:6px;">
-          <button class="pill chat-prompt-chip" data-q="What was Q1 2026 total revenue?">Q1 revenue?</button>
-          <button class="pill chat-prompt-chip" data-q="What is the FCR target for customer service?">FCR target?</button>
-          <button class="pill chat-prompt-chip" data-q="How is the AR aging distributed in March 2026?">AR aging?</button>
-          <button class="pill chat-prompt-chip" data-q="What is the Severity 1 incident response target?">Severity 1?</button>
-          <button class="pill chat-prompt-chip" data-q="What is the current phishing click rate?">Phishing rate?</button>
+        <!-- Collapsible predefined questions -->
+        <div id="quickAskPanel" style="border-top:1px solid var(--border,rgba(0,0,0,0.08));background:rgba(99,102,241,0.03);">
+          <button id="quickAskToggle" style="width:100%;padding:8px 14px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:700;color:var(--muted,#94a3b8);text-transform:uppercase;letter-spacing:0.04em;">
+            <span><i class="fa-solid fa-lightbulb" style="margin-right:6px;color:#f59e0b;"></i> Quick Ask — predefined questions</span>
+            <i class="fa-solid fa-chevron-down" id="quickAskChevron" style="transition:transform .2s;"></i>
+          </button>
+          <div id="quickAskContent" style="display:none;padding:6px 14px 12px;max-height:240px;overflow-y:auto;">
+            <!-- Categories will be injected by JS -->
+          </div>
         </div>
 
         <div class="chat-composer">

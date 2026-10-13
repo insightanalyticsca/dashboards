@@ -455,13 +455,109 @@
     });
     send.addEventListener('click', handleSend);
 
-    // Quick-prompt chips
+    // Quick Ask — collapsible predefined questions organized by category
+    const QUICK_ASK = {
+      'Dashboards & Analytics': [
+        'What dashboards are available on this site?',
+        'What is the Chatters executive dashboard?',
+        'How does the AR Portfolio dashboard work?',
+        'What CSR reports are available?',
+        'What IT service management metrics are tracked?',
+        'How are executive dashboards different from CSR dashboards?',
+        'What ECharts visualizations are used?',
+        'How does the heatmap chart work?'
+      ],
+      'Revenue & AR Aging': [
+        'What was Q1 2026 total revenue?',
+        'How is the AR aging distributed in March 2026?',
+        'What is the total AR balance?',
+        'Which commercial accounts have the highest balances?',
+        'What is the 90+ days aging bucket amount?',
+        'How has the AR aging trend changed over 13 months?',
+        'What is the residential vs commercial AR split?',
+        'What are the top arrears accounts?'
+      ],
+      'IT & Security': [
+        'What is the Severity 1 incident response target?',
+        'What is the current phishing click rate?',
+        'What is the FCR target for customer service?',
+        'How many open vs closed tickets are there?',
+        'What is the ticket volume trend?',
+        'What is the SLA compliance rate?',
+        'What security posture metrics are tracked?',
+        'How is the KB4 security training going?'
+      ],
+      'Payments & Collections': [
+        'What are the daily customer payment trends?',
+        'How do monthly payments compare year over year?',
+        'What is the collection rate?',
+        'How many bankruptcies were filed in 2024?',
+        'What is the senior CC email volume?',
+        'What is the Mitel call centre performance?',
+        'What is the queue spectrum response time?'
+      ],
+      'AI & Technology': [
+        'How does the AI chat work?',
+        'What is the RAG system architecture?',
+        'How does the Groq integration work?',
+        'Can the AI analyze uploaded documents?',
+        'How does the visual chat feature work?',
+        'What is the executive AI brief?',
+        'How does the pull-to-refresh work?',
+        'Is this a PWA?'
+      ],
+      'Chatters Beauty Chain': [
+        'What is Chatters revenue per store?',
+        'What is the revenue per visit?',
+        'What is the retail vs services revenue split?',
+        'What is the retail attachment rate?',
+        'How does appointment capacity utilization vary by day?',
+        'What is the revenue forecast for next 4 weeks?',
+        'Which provinces have the highest store productivity?',
+        'What is the stylist productivity by tier?'
+      ]
+    };
+
+    // Build the Quick Ask panel
+    const qaContent = document.getElementById('quickAskContent');
+    const qaToggle = document.getElementById('quickAskToggle');
+    const qaChevron = document.getElementById('quickAskChevron');
+
+    if (qaContent) {
+      let qaHtml = '';
+      for (const [category, questions] of Object.entries(QUICK_ASK)) {
+        qaHtml += `<div style="margin-bottom:8px;">`;
+        qaHtml += `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted,#94a3b8);margin-bottom:4px;padding:0 2px;">${escapeHtml(category)}</div>`;
+        qaHtml += `<div style="display:flex;flex-wrap:wrap;gap:4px;">`;
+        for (const q of questions) {
+          qaHtml += `<button class="pill chat-prompt-chip" data-q="${escapeHtml(q)}" style="font-size:10px;padding:3px 8px;cursor:pointer;border:1px solid rgba(99,102,241,0.2);background:rgba(99,102,241,0.06);color:var(--text,#0f172a);border-radius:12px;white-space:nowrap;">${escapeHtml(q.split('?')[0] + '?')}</button>`;
+        }
+        qaHtml += `</div></div>`;
+      }
+      qaContent.innerHTML = qaHtml;
+    }
+
+    // Toggle collapse
+    if (qaToggle) {
+      let qaOpen = false;
+      qaToggle.addEventListener('click', () => {
+        qaOpen = !qaOpen;
+        qaContent.style.display = qaOpen ? 'block' : 'none';
+        qaChevron.style.transform = qaOpen ? 'rotate(180deg)' : '';
+      });
+    }
+
+    // Wire all prompt chips — auto-send on click (not just fill input)
     $$('.chat-prompt-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         input.value = chip.dataset.q;
         autoResize(input);
         updateSendButton();
-        input.focus();
+        // Auto-send immediately
+        handleSend();
+        // Collapse the panel after sending
+        if (qaContent) qaContent.style.display = 'none';
+        if (qaChevron) qaChevron.style.transform = '';
       });
     });
   }
