@@ -52,7 +52,7 @@ function render(payload){const rows=U.rowsOf(payload).slice();if(!rows.length){d
 window.addEventListener('message',e=>{if(!e.data||!String(e.data.type||'').startsWith('dashboard-custom-html:')||String(e.data.type||'').endsWith(':resize'))return;render(e.data.payload||e.data||{})});
 </script>
 <!-- Pull-to-refresh + service worker -->
-<script defer src="../js/pull-to-refresh.js?v=20261016"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261017"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

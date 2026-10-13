@@ -156,8 +156,9 @@
             return 3;
         }
         if (item.width === 'wide') return 12;
-        if (item.width === 'third') return 4;
         if (item.width === 'two-thirds') return 8;
+        if (item.width === 'third') return 4;
+        if (item.width === 'half') return 6;
         return 6;
     }
 
@@ -165,12 +166,14 @@
         if (item.__type === 'metric') return 2.1;
         if (item.__type === 'table') {
             const rowCount = Array.isArray(item.rows) ? item.rows.length : 0;
-            const base = String(item.kind || '').toLowerCase() === 'hierarchy' ? 4.8 : 4.1;
-            const rowUnits = Math.min(4.8, Math.max(0, rowCount - 4) * 0.18);
-            return Math.max(item.width === 'wide' ? 4.8 : 4.4, base + rowUnits);
+            // Base 3.5 + 0.45 per row (enough for all rows to be visible)
+            return 3.5 + Math.max(4, rowCount) * 0.45;
         }
-        if (item.kind === 'pie') return 4.1;
-        return item.width === 'wide' ? 4.7 : 4.3;
+        if (item.kind === 'pie' || item.kind === 'donut') return 4.5;
+        if (item.kind === 'heatmap') return 5.5;
+        if (item.kind === 'combo') return 5.5;
+        // Default: give enough height so charts aren't cut off
+        return item.width === 'wide' ? 5.5 : 5.0;
     }
 
     function buildVisualModels(payload) {
@@ -224,7 +227,7 @@
             };
         });
 
-        state.canvasMinHeight = Math.max(960, Math.round(totalUnits * 120));
+        state.canvasMinHeight = Math.max(1200, Math.round(totalUnits * 140));
         return result;
     }
 
