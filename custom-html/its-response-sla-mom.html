@@ -1,24 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="description" content="Waiting for SQL data…"
-  <meta name="keywords" content="waiting"
-
-  <meta property="og:title" content="its response sla mom">
-  <meta property="og:description" content="Waiting for SQL data…">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/its-response-sla-mom.html"
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="its response sla mom">
-  <meta name="twitter:description" content="Waiting for SQL data…">>>>
     <meta charset="utf-8">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
         html, body {
@@ -330,28 +313,7 @@
             color: #171777;
         }
     </style>
-  <link rel="stylesheet" href="../css/<a href="./custom-html/executive-chatters-portfolio.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">executive</a>-<a href="./custom-html/csr-page.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">dashboard</a>-suite.css?v=20261013">
-
-  <style>
-  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
-  main > section:nth-child(n+3),
-  .canvas-grid > .canvas-tile:nth-child(n+5),
-  .grid-analytics > div:nth-child(n+5),
-  .sector-block:nth-child(n+3),
-  #analytics,
-  #library {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-  /* CSS containment — isolate layout/paint */
-  .canvas-tile, .exec-visual, .card, .tile {
-    contain: layout style paint;
-  }
-  </style>
-
-  <meta name="dateModified" content="2026-10-12T18:48:05.050Z">
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/its-response-sla-mom.html#page","name":"","description":"Waiting for SQL data…","url":"https://insightanalyticsca.github.io/dashboards/custom-html/its-response-sla-mom.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-12","dateModified":"2026-10-12T18:48:05.050Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Its Response Sla Mom","item":"https://insightanalyticsca.github.io/dashboards/custom-html/its-response-sla-mom.html"}]}]}</script>
+  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
 </head>
 
 <body>
@@ -414,7 +376,7 @@ function roleFrom(payload){
     payload?.Role ||
     payload?.templateId ||
     payload?.config?.templateId ||
-    "<a href="./custom-html/its-ticket-management.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">ticket</a>-open"
+    "ticket-open"
   ).toLowerCase();
 }
 
@@ -856,8 +818,8 @@ window.addEventListener("message",e=>{
   if(String(e.data.type).endsWith(":resize")) return;
   render(e.data);
 });</script>
-<!-- Pull-to-refresh + <a href="./custom-html/its-service-health.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">service</a> worker -->
-<script defer src="../js/pull-to-refresh.js?v=20261013"></script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

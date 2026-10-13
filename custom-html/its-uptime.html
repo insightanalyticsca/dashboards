@@ -1,53 +1,15 @@
 <!doctype html>
-<html><head>
-  <meta name="description" content="Waiting for live data..."
-  <meta name="keywords" content="waiting"
-
-  <meta property="og:title" content="its uptime">
-  <meta property="og:description" content="Waiting for live data...">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/its-uptime.html"
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="its uptime">
-  <meta name="twitter:description" content="Waiting for live data...">>>><meta charset="utf-8">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Arial,sans-serif;color:#10146F}*{box-sizing:border-box}.empty-state{width:100%;height:100%;display:grid;place-items:center;color:#65697B;font-size:10px;font-weight:850;text-align:center;background:rgba(255,255,255,.45);border-radius:8px;padding:12px 5px}.tiny-error{color:#9f1239;font-size:10px;font-weight:800;white-space:pre-wrap;text-align:left}.its-card{width:100%;height:100%;box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,rgba(255,255,255,.80),rgba(226,230,236,.74));border:1px solid rgba(16,20,111,.14);border-radius:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 10px 24px rgba(16,20,111,.12);padding:7px 8px 6px 8px;overflow:hidden;color:#10146F}.its-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}.its-title{font-size:12px;font-weight:800;line-height:1;color:#10146F;white-space:nowrap}.its-pill{font-size:9px;font-weight:800;color:#10146F;background:rgba(255,255,255,.62);border:1px solid rgba(16,20,111,.11);border-radius:999px;padding:3px 7px;white-space:nowrap}.its-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}.k{background:rgba(255,255,255,.55);border:1px solid rgba(16,20,111,.08);border-radius:10px;padding:4px 6px;min-width:0}.kl{font-size:8px;color:#65697B;font-weight:700;text-transform:uppercase;letter-spacing:.03em}.kv{font-size:14px;font-weight:900;color:#10146F;line-height:1.1}.main-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:10px;line-height:1.05}th{background:#10146F;color:white;padding:5px 6px;text-align:left;font-weight:900;border-right:1px solid rgba(255,255,255,.18)}th:nth-child(1){width:43%}th:nth-child(2){width:19%;text-align:right}th:nth-child(3){width:19%;text-align:right}th:nth-child(4){width:19%}.cat-row td{background:#10146F;color:white;font-weight:900;padding:5px 7px;border-top:1px solid rgba(255,255,255,.25);border-bottom:1px solid rgba(255,255,255,.35);white-space:nowrap}.fake-toggle{display:inline-block;width:16px;margin-right:4px;opacity:.95}.svc-row{position:relative}.svc-row td{background:rgba(210,210,214,.92);color:#10146F;padding:5px 7px;border-bottom:1px solid rgba(255,255,255,.55);white-space:nowrap}.svc-row:hover td{filter:brightness(.985)}.svc-row:hover::after{content:attr(data-tip);position:absolute;right:4px;top:-28px;max-width:300px;padding:6px 8px;border-radius:9px;background:rgba(16,20,111,.94);color:#fff;font-size:9px;font-weight:800;line-height:1.25;box-shadow:0 8px 18px rgba(16,20,111,.22);z-index:30;pointer-events:none;white-space:normal}.svc-row td:nth-child(1){width:43%}.svc-row td:nth-child(2){width:19%}.svc-row td:nth-child(3){width:19%}.svc-row td:nth-child(4){width:19%}.indent{padding-left:26px!important}.svc{color:#10146F;font-weight:500;overflow:hidden;text-overflow:ellipsis}.num{text-align:right;font-variant-numeric:tabular-nums}.stat{font-weight:700;overflow:hidden;text-overflow:ellipsis}.status-icon{display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px;border:1px solid rgba(16,20,111,.35)}.circle{border-radius:99px}.triangle{width:0;height:0;background:transparent!important;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:12px solid #E6A42D;border-top:0;border-radius:0;vertical-align:-2px}.empty{text-align:center;color:#65697B;font-size:10px;font-weight:800;background:rgba(255,255,255,.45);border-radius:8px;padding:12px 5px}.foot{margin-top:5px;font-size:8.5px;color:#10146F;font-weight:800;line-height:1.25}
-</style>  <link rel="stylesheet" href="../css/<a href="./custom-html/executive-chatters-portfolio.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">executive</a>-<a href="./custom-html/csr-page.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">dashboard</a>-suite.css?v=20261013">
-
-  <style>
-  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
-  main > section:nth-child(n+3),
-  .canvas-grid > .canvas-tile:nth-child(n+5),
-  .grid-analytics > div:nth-child(n+5),
-  .sector-block:nth-child(n+3),
-  #analytics,
-  #library {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-  /* CSS containment — isolate layout/paint */
-  .canvas-tile, .exec-visual, .card, .tile {
-    contain: layout style paint;
-  }
-  </style>
-
-  <meta name="dateModified" content="2026-10-12T18:48:05.050Z">
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/its-uptime.html#page","name":"","description":"Waiting for live data...","url":"https://insightanalyticsca.github.io/dashboards/custom-html/its-uptime.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-12","dateModified":"2026-10-12T18:48:05.050Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Its Uptime","item":"https://insightanalyticsca.github.io/dashboards/custom-html/its-uptime.html"}]}]}</script>
+</style>  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
 </head><body><div id="root"><div class="empty-state">Waiting for live data...</div></div>
 <script>
 (() => {
   'use strict';
   const root = document.getElementById('root');
   const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const fmt0 = v => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).<a href="./custom-html/its-open-status.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">format</a>(Number.isFinite(Number(v)) ? Number(v) : 0);
+  const fmt0 = v => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Number.isFinite(Number(v)) ? Number(v) : 0);
   const fmtPct0 = v => new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(Number.isFinite(Number(v)) ? Number(v) : 0) + '%';
   const fmt1 = v => (Number.isFinite(Number(v)) ? Number(v) : 0).toFixed(1);
   const fmt3 = v => (Number.isFinite(Number(v)) ? Number(v) : 0).toFixed(3);
@@ -149,7 +111,7 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
     });
     const data = base.map(r => ({
       category: U.txt(r, ['category','Category'], 'Uncategorized') || 'Uncategorized',
-      <a href="./custom-html/its-service-health.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">service</a>: U.txt(r, ['Service','service','friendly_name','service_name','url'], 'Service') || 'Service',
+      service: U.txt(r, ['Service','service','friendly_name','service_name','url'], 'Service') || 'Service',
       up: U.val(r, ['uptime_pct','UptimePct','uptime'], 0),
       sla: U.val(r, ['sla_pct','SlaPct','target'], 99.999),
       status: U.txt(r, ['sla_breach_status','SlaBreachStatus','status'], 'Met') || 'Met'
@@ -183,7 +145,7 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
   U.receive(render);
 })();
 </script><!-- Pull-to-refresh + service worker -->
-<script defer src="../js/pull-to-refresh.js?v=20261013"></script>
+<script src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

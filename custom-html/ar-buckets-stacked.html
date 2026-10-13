@@ -1,24 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="description" content=""
-  <meta name="keywords" content=""
-
-  <meta property="og:title" content="ar buckets stacked">
-  <meta property="og:description" content="">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/ar-buckets-stacked.html"
-
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="ar buckets stacked">
-  <meta name="twitter:description" content="">>>>
 <meta charset="utf-8">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 :root{--ink:#171777;--muted:#69708d;--border:#dfe2ef}
@@ -36,27 +19,6 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-box{width:100%;height:100%;background:#fff7f7;color:#9b1c1c;padding:8px;overflow:auto;font-size:10px;line-height:1.35;font-weight:700;white-space:pre-wrap}
 </style>
-
-  <style>
-  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
-  main > section:nth-child(n+3),
-  .canvas-grid > .canvas-tile:nth-child(n+5),
-  .grid-analytics > div:nth-child(n+5),
-  .sector-block:nth-child(n+3),
-  #analytics,
-  #library {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-  /* CSS containment — isolate layout/paint */
-  .canvas-tile, .exec-visual, .card, .tile {
-    contain: layout style paint;
-  }
-  </style>
-
-  <meta name="dateModified" content="2026-10-12T18:48:05.050Z">
-
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"WebPage","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/ar-buckets-stacked.html#page","name":"","description":">>> service worker -->","url":"https://insightanalyticsca.github.io/dashboards/custom-html/ar-buckets-stacked.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-12","dateModified":"2026-10-12T18:48:05.050Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Ar Buckets Stacked","item":"https://insightanalyticsca.github.io/dashboards/custom-html/ar-buckets-stacked.html"}]}]}</script>
 </head>
 <body>
 <div id="root"></div>
@@ -128,14 +90,14 @@ function buildModel(rows){
   arr=arr.filter(x=>x.bucketSeen||x.totalSeen).sort((a,b)=>a.date-b.date).slice(-MAX_WEEKS);
   return arr;
 }
-function getTitle(ctx,rows){const t=ciGet(ctx,"title")||ciGet(ctx,"label");if(t)return String(t);const cg=ciGet(rows[0]||{},"CategoryGroup");return String(cg||"").toLowerCase().includes("commercial")?"Commercial <a href="./custom-html/csr-electric-arrears.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">Arrears</a> Distribution":"Residential Arrears Distribution"}
+function getTitle(ctx,rows){const t=ciGet(ctx,"title")||ciGet(ctx,"label");if(t)return String(t);const cg=ciGet(rows[0]||{},"CategoryGroup");return String(cg||"").toLowerCase().includes("commercial")?"Commercial Arrears Distribution":"Residential Arrears Distribution"}
 function loadEcharts(){return new Promise((resolve,reject)=>{if(window.echarts){resolve(window.echarts);return}const candidates=["/lib/echarts/echarts.min.js","/js/echarts.min.js","https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"];let i=0;function next(){if(i>=candidates.length){reject(new Error("ECharts library not found. Add echarts.min.js at /lib/echarts/echarts.min.js or allow CDN."));return}const s=document.createElement("script");s.src=candidates[i++];s.onload=()=>window.echarts?resolve(window.echarts):next();s.onerror=next;document.head.appendChild(s)}next()})}
 function optionFor(model,echarts){
   const labels=model.map(p=>mmdd(p.date));
   const anyBuckets=model.some(p=>!p.totalOnly);
   const series=[];
   if(anyBuckets){
-    BUCKETS.forEach((b,i)=>series.push({name:b.label,type:"bar",stack:"<a href="./custom-html/csr-aging-dynamics.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">aging</a>",barWidth:"46%",emphasis:{focus:"series"},itemStyle:{borderRadius:i===BUCKETS.length-1?[7,7,0,0]:0,color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:b.colors[1]},{offset:1,color:b.colors[0]}])},data:model.map(p=>p.totalOnly?0:n(p.v[b.key]))}));
+    BUCKETS.forEach((b,i)=>series.push({name:b.label,type:"bar",stack:"aging",barWidth:"46%",emphasis:{focus:"series"},itemStyle:{borderRadius:i===BUCKETS.length-1?[7,7,0,0]:0,color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:b.colors[1]},{offset:1,color:b.colors[0]}])},data:model.map(p=>p.totalOnly?0:n(p.v[b.key]))}));
   }else{
     series.push({name:"Total only",type:"bar",barWidth:"44%",itemStyle:{borderRadius:[7,7,0,0],color:new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:"#DDF76D"},{offset:1,color:"#BBFF05"}])},data:model.map(p=>n(p.total))});
   }
@@ -173,8 +135,8 @@ window.update=receive;window.init=receive;window.setData=receive;window.onData=r
 if(window.DashVisualContext)receive(window.DashVisualContext);else if(window.__DashVisualContext)receive(window.__DashVisualContext);else if(window.__DASH_VISUAL_CONTEXT__)receive(window.__DASH_VISUAL_CONTEXT__);
 })();
 </script>
-<!-- Pull-to-refresh + <a href="./custom-html/its-service-health.html" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">service</a> worker -->
-<script defer src="../js/pull-to-refresh.js?v=20261013"></script>
+<!-- Pull-to-refresh + service worker -->
+<script src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
