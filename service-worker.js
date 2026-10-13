@@ -1,4 +1,4 @@
-var CACHE = 'dashboards-v14';
+var CACHE = 'dashboards-v15';
 var SHELL = [
   '/dashboards/',
   '/dashboards/index.html',

@@ -313,41 +313,54 @@ function autoLink(html, currentRelPath, allPages) {
   for (const page of allPages) {
     if (page.relPath === currentRelPath) continue;
     if (page.relPath === 'index.html' || page.relPath === 'visuals.html') continue;
-    // Extract meaningful words from title
     const titleWords = page.title.toLowerCase()
       .replace(/[^a-z0-9\s]/g, ' ')
       .split(/\s+/)
-      .filter(w => w.length > 4);
+      .filter(w => w.length > 5);  // longer words only — less false matches
     for (const word of titleWords) {
-      if (!linkMap[word] || page.title.length < linkMap[word].title.length) {
-        linkMap[word] = page;
+      if (!linkMap[word]) linkMap[word] = page;
+    }
+  }
+
+  // Split HTML into safe zones (inside tags) and text zones (between tags)
+  // Only inject links in text zones — NEVER inside <head>, attributes, <script>, <style>
+  const parts = html.split(/(<[^>]+>)/g);
+  let linksAdded = 0;
+  const MAX_LINKS = 3;
+  let inHead = false;
+  let inScript = false;
+  let inStyle = false;
+
+  for (let i = 0; i < parts.length; i++) {
+    // Skip tag parts (odd indices from the split)
+    if (parts[i].startsWith('<')) {
+      const tag = parts[i].toLowerCase();
+      if (tag.includes('<head')) inHead = true;
+      if (tag.includes('</head')) inHead = false;
+      if (tag.includes('<script')) inScript = true;
+      if (tag.includes('</script')) inScript = false;
+      if (tag.includes('<style')) inStyle = true;
+      if (tag.includes('</style')) inStyle = false;
+      continue;
+    }
+    // Skip if inside head, script, or style
+    if (inHead || inScript || inStyle) continue;
+    // Skip very short text fragments
+    if (parts[i].trim().length < 10) continue;
+
+    for (const [keyword, page] of Object.entries(linkMap)) {
+      if (linksAdded >= MAX_LINKS) break;
+      const regex = new RegExp(`\\b(${escapeRegex(keyword)})\\b`, 'i');
+      if (regex.test(parts[i])) {
+        const targetUrl = page.relPath.startsWith('custom-html/') ? `./${page.relPath}` : `../${page.relPath}`;
+        parts[i] = parts[i].replace(regex, `<a href="${targetUrl}">${keyword}</a>`);
+        linksAdded++;
+        break; // one link per text fragment
       }
     }
   }
 
-  let modified = html;
-  let linksAdded = 0;
-  const MAX_LINKS = 5;
-
-  for (const [keyword, page] of Object.entries(linkMap)) {
-    if (linksAdded >= MAX_LINKS) break;
-    // Match keyword in text content (not inside tags)
-    const regex = new RegExp(`\\b(${escapeRegex(keyword)})\\b(?![^<]*</)`, 'gi');
-    const targetUrl = page.relPath.startsWith('custom-html/') ? `./${page.relPath}` : `../${page.relPath}`;
-    // Only replace first occurrence, and skip if already linked
-    let replaced = false;
-    modified = modified.replace(regex, (match) => {
-      if (replaced) return match;
-      // Check if we're inside an <a> tag
-      const before = modified.slice(Math.max(0, modified.indexOf(match) - 100), modified.indexOf(match));
-      if (before.lastIndexOf('<a ') > before.lastIndexOf('</a>')) return match; // inside a link
-      replaced = true;
-      linksAdded++;
-      return `<a href="${targetUrl}" style="color:inherit;text-decoration:underline;text-decoration-color:rgba(99,102,241,0.3);">${match}</a>`;
-    });
-  }
-
-  return { html: modified, linksAdded };
+  return { html: parts.join(''), linksAdded };
 }
 
 function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
