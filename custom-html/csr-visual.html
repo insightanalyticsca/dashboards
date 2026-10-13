@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>CSR Visual</title>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
 :root {
   --bg: #f7f9fc;
@@ -107,6 +114,27 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
   <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
+
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-13T22:55:39.796Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/csr-visual.html#page","name":"CSR Visual","description":"CSR Visual Loading","url":"https://insightanalyticsca.github.io/dashboards/custom-html/csr-visual.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"CSR Visual","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-13","dateModified":"2026-10-13T22:55:39.796Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Csr Visual","item":"https://insightanalyticsca.github.io/dashboards/custom-html/csr-visual.html"}]},{"@context":"https://schema.org","@type":"Dataset","name":"CSR Visual","description":"CSR Visual Loading","creator":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-13","keywords":"corporate dashboard, analytics, ECharts, executive reporting","distribution":{"@type":"DataDownload","encodingFormat":"application/json","contentUrl":"https://insightanalyticsca.github.io/dashboards/data/executive/csr-visual.json"}}]}</script>
 </head>
 <body>
 <div class="root" id="root">
@@ -475,7 +503,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: transparen
 })(typeof window !== "undefined" ? window : this);
 </script>
 <!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261015"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

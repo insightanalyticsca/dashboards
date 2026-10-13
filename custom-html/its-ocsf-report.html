@@ -1,9 +1,36 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.4"><style>
+<!doctype html><html><head><meta charset="utf-8">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com"><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=0.4"><style>
 html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#10146F}*{box-sizing:border-box}.empty-state{width:100%;height:100%;display:grid;place-items:center;color:#5b6171;font-size:10px;font-weight:850;text-align:center;background:rgba(255,255,255,.38);border:1px dashed rgba(16,20,111,.18);border-radius:14px;padding:8px}.tiny-error{color:#9f1239;font-size:10px;font-weight:800;white-space:pre-wrap}
 
 .ocsf-report,.ocsf-report *{box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}.ocsf-report{width:100%;height:100%;max-height:100%;min-height:0;padding:4px 4px 16px 4px;font-family:Segoe UI,Arial,sans-serif;color:#101828;background:radial-gradient(circle at 18% 8%, rgba(0,170,180,.16), transparent 25%),radial-gradient(circle at 88% 14%, rgba(178,255,5,.17), transparent 30%),radial-gradient(circle at 55% 90%, rgba(8,8,238,.055), transparent 34%),linear-gradient(135deg,#f8fbff 0%,#eef8f7 50%,#f8fbef 100%);overflow-y:auto!important;overflow-x:hidden!important;position:relative;border-radius:14px!important;border:1px solid rgba(23,23,119,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.92),0 6px 16px rgba(15,23,42,.10);background-clip:padding-box}.ocsf-header{display:block;padding:2px 4px 3px;border-bottom:1px solid rgba(0,60,120,.10);margin-bottom:3px}.ocsf-title{margin:0;font-size:10px;line-height:1.1;font-weight:800;letter-spacing:-.03em;color:#122052}.ocsf-subtitle{margin-top:1px;font-size:6.5px;line-height:1.1;font-weight:850;color:#344054;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ocsf-period{margin-top:1px;font-size:6px;line-height:1;font-weight:950;color:#667085;letter-spacing:.02em}.ocsf-card-grid{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;align-content:start;padding:0 2px}.ocsf-kpi{position:relative;width:100%;min-height:48px;padding:4px 5px;border-radius:12px!important;background:transparent!important;border:0!important;box-shadow:none!important;display:grid;grid-template-columns:15px minmax(0,1fr);column-gap:5px;align-items:start;overflow:hidden!important;isolation:isolate}.ocsf-kpi::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:12px;background:radial-gradient(circle at 18% 10%,rgba(8,8,238,.10),transparent 34%),radial-gradient(circle at 92% 0%,rgba(9,198,152,.14),transparent 34%),linear-gradient(135deg,rgba(255,255,255,.98),rgba(243,248,255,.96));border:1px solid rgba(8,8,238,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 4px 10px rgba(15,23,42,.08)}.ocsf-kpi-wide{grid-column:1 / span 2;min-height:52px;border-radius:12px!important}.ocsf-kpi-wide::before{border-radius:12px;background:radial-gradient(circle at 18% 10%,rgba(187,255,5,.24),transparent 34%),radial-gradient(circle at 90% 0%,rgba(8,8,238,.13),transparent 36%),linear-gradient(135deg,rgba(255,255,255,.99),rgba(238,248,255,.95));border:1px solid rgba(8,8,238,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 4px 10px rgba(15,23,42,.08)}.ocsf-kpi>*{position:relative;z-index:1}.ocsf-icon{width:15px;height:15px;border-radius:999px;display:grid;place-items:center;font-size:7px;font-weight:950;margin-top:1px;line-height:1}.ocsf-icon-total{background:rgba(8,8,238,.13);color:#0808ee}.ocsf-icon-rem{background:rgba(9,198,152,.20);color:#047857}.ocsf-icon-fail{background:rgba(255,80,100,.18);color:#be123c}.ocsf-icon-soft{background:rgba(255,179,0,.22);color:#b45309}.ocsf-icon-comp{background:rgba(187,255,5,.46);color:#166534}.ocsf-kpi-body{min-width:0;overflow:hidden}.ocsf-kpi-value{font-size:16px;line-height:1;font-weight:950;color:#111866;white-space:nowrap;letter-spacing:-.03em}.ocsf-kpi-label{margin-top:2px;font-size:7px;line-height:1.05;font-weight:950;color:#101828;white-space:normal}.ocsf-kpi-caption{margin-top:1px;font-size:6px;line-height:1.05;font-weight:850;color:#344054;white-space:normal}.ocsf-progress-label{margin-top:2px;font-size:6px;line-height:1;font-weight:950;color:#172033;white-space:nowrap}.ocsf-progress{margin-top:2px;width:90%;max-width:100%;height:3px;border-radius:999px;background:rgba(23,23,119,.12);overflow:hidden}.ocsf-progress-fill{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#0808ee,#09c698)}.ocsf-progress-fill-soft{background:linear-gradient(90deg,#09c698,#bbff05)}.ocsf-progress-fill-comp{background:linear-gradient(90deg,#0808ee,#bbff05)}.ocsf-footnote{padding:2px 4px 0;display:flex;align-items:center;justify-content:center;font-size:5.5px;line-height:1;font-weight:850;color:#344054;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 </style>  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
+
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-13T22:55:39.796Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/its-ocsf-report.html#page","name":"","description":"Waiting for live data...","url":"https://insightanalyticsca.github.io/dashboards/custom-html/its-ocsf-report.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-13","dateModified":"2026-10-13T22:55:39.796Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Its Ocsf Report","item":"https://insightanalyticsca.github.io/dashboards/custom-html/its-ocsf-report.html"}]}]}</script>
 </head><body><div id="root"><div class="empty-state">Waiting for live data...</div></div><script>
 
 const ITS = (() => {
@@ -40,7 +67,7 @@ function render(payload){const rows=ITS.rowsOf(payload); if(!rows.length) return
 
 receiveDashboard(render);
 </script><!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261015"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

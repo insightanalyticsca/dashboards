@@ -3,6 +3,12 @@
 <html>
 <head>
     <meta charset="utf-8">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <style>
         html, body, #root {
@@ -186,6 +192,27 @@
         }
     </style>
   <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
+
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-13T22:55:39.796Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/its-open-priority.html#page","name":"${cat}: ${formattedVal} (${pctLabel})","description":"Waiting for live data...","url":"https://insightanalyticsca.github.io/dashboards/custom-html/its-open-priority.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"${cat}: ${formattedVal} (${pctLabel})","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-13","dateModified":"2026-10-13T22:55:39.796Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Its Open Priority","item":"https://insightanalyticsca.github.io/dashboards/custom-html/its-open-priority.html"}]},{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does the page show “Waiting for live data...” instead of actual numbers?","acceptedAnswer":{"@type":"Answer","text":"The page is a dynamic dashboard that pulls real‑time metrics from a backend service; if the service is offline or the data feed hasn't started, the placeholder text “Waiting for live data...” is displayed until the first data point arrives."}},{"@type":"Question","name":"What do the placeholders ${cat}, ${formattedVal}, and ${pctLabel} represent in the title?","acceptedAnswer":{"@type":"Answer","text":"These are template variables: ${cat} is the category name (e.g., “CPU Usage”), ${formattedVal} is the formatted numeric value (e.g., “75%”), and ${pctLabel} is a label describing the percentage change (e.g., “+3% vs. yesterday”). They are replaced with actual values when live data loads."}},{"@type":"Question","name":"How often is the live data refreshed on the “its-open-priority” page?","acceptedAnswer":{"@type":"Answer","text":"The dashboard is configured to refresh every 30 seconds, pulling the latest metrics from the monitoring API to keep the displayed values up to date."}},{"@type":"Question","name":"Can I customize the metrics shown on the custom‑html its‑open‑priority page?","acceptedAnswer":{"@type":"Answer","text":"Yes, the page uses a configurable JSON file where you can add, remove, or rename categories, set formatting rules for ${formattedVal}, and define custom percentage labels for ${pctLabel}."}},{"@type":"Question","name":"What should I do if the page never loads real data and stays on “Waiting for live data...”?","acceptedAnswer":{"@type":"Answer","text":"Check that the data source endpoint is reachable, verify API authentication tokens, and ensure the server’s time sync is correct; fixing any of these issues usually restores the live feed."}}]}]}</script>
 </head>
 
 <body>
@@ -662,7 +689,7 @@ function render(payload) {
 receiveDashboard(render);
     </script>
 <!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261015"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {

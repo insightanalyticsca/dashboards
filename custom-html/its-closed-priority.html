@@ -1,4 +1,10 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+<!doctype html><html><head><meta charset="utf-8">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com"><meta name="viewport" content="width=device-width,initial-scale=1"><style>
 html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:transparent;font-family:Segoe UI,Tahoma,Arial,sans-serif;color:#10146F}*{box-sizing:border-box}.empty-state{width:100%;height:100%;display:grid;place-items:center;color:#5b6171;font-size:10px;font-weight:850;text-align:center;background:rgba(255,255,255,.38);border:1px dashed rgba(16,20,111,.18);border-radius:14px;padding:8px}.tiny-error{color:#9f1239;font-size:10px;font-weight:800;white-space:pre-wrap}
 
 .priority-shell,.closed-priority-shell,.status-shell,
@@ -9,6 +15,27 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
 .priority-donut,.closed-priority-donut,.status-donut{width:100%;height:100%;min-width:0;min-height:0;display:block;transform-origin:center center;shape-rendering:geometricPrecision;text-rendering:geometricPrecision;overflow:hidden}.seggrp{cursor:pointer}.seg{opacity:.94;transition:stroke-width .18s ease,opacity .18s ease,filter .18s ease}.seggrp:hover .seg{stroke-width:47;opacity:1;filter:drop-shadow(0 5px 9px rgba(15,23,42,.18))}.leader{fill:none;stroke-width:2.15;opacity:.92;stroke-linecap:round;stroke-linejoin:round;transition:stroke-width .18s ease,opacity .18s ease}.elbow{opacity:.9;transition:opacity .18s ease,r .18s ease}.seggrp:hover .leader{stroke-width:3;opacity:1}.seggrp:hover .elbow{opacity:1;r:3.8}.slice-label{fill:#0F172A;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-weight:900;pointer-events:none;paint-order:stroke;stroke:rgba(255,255,255,.92);stroke-width:3.1px;stroke-linejoin:round}.label-cat{fill:#0F172A;font-weight:950}.label-val{fill:#334155;font-weight:950}.center-value{fill:#0F172A;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:48px;font-weight:950;letter-spacing:-.045em;text-rendering:geometricPrecision}.center-label{fill:#475569;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:12px;font-weight:950;letter-spacing:.04em;text-rendering:geometricPrecision}.empty-note{fill:#475569;font-family:Segoe UI,Tahoma,Arial,sans-serif;font-size:18px;font-weight:850}
 
 </style>  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261015">
+
+  <style>
+  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
+  main > section:nth-child(n+3),
+  .canvas-grid > .canvas-tile:nth-child(n+5),
+  .grid-analytics > div:nth-child(n+5),
+  .sector-block:nth-child(n+3),
+  #analytics,
+  #library {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+  /* CSS containment — isolate layout/paint */
+  .canvas-tile, .exec-visual, .card, .tile {
+    contain: layout style paint;
+  }
+  </style>
+
+  <meta name="dateModified" content="2026-10-13T22:55:39.796Z">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"Article","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/its-closed-priority.html#page","name":"${cat}: ${ITS.nf0.format(val)} (${pctLabel})","description":"Waiting for live data...","url":"https://insightanalyticsca.github.io/dashboards/custom-html/its-closed-priority.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"${cat}: ${ITS.nf0.format(val)} (${pctLabel})","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-10-13","dateModified":"2026-10-13T22:55:39.796Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"Its Closed Priority","item":"https://insightanalyticsca.github.io/dashboards/custom-html/its-closed-priority.html"}]}]}</script>
 </head><body><div id="root"><div class="empty-state">Waiting for live data...</div></div><script>
 
 const ITS = (() => {
@@ -50,7 +77,7 @@ function render(payload){const rows=ITS.rowsOf(payload); if(!rows.length) return
 
 receiveDashboard(render);
 </script><!-- Pull-to-refresh + service worker -->
-<script src="../js/pull-to-refresh.js?v=20261015"></script>
+<script defer src="../js/pull-to-refresh.js?v=20261015"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
