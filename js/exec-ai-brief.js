@@ -48,7 +48,7 @@
     var suite = document.body.dataset.suite;
     if (!suite) return null;
     // Executive suites use data/executive/<suite>.json
-    var execKeys = ['ar', 'payments', 'disconnects', 'ebill', 'finalbill', 'chatters'];
+    var execKeys = ['ar', 'payments', 'disconnects', 'ebill', 'finalbill', 'chatters', 'meridian', 'velocity', 'sentinel'];
     if (execKeys.indexOf(suite) >= 0) return '../data/executive/' + suite + '.json';
     // CSR + ITS suites use data/versions/<suite>.json
     if (suite.indexOf('csr-') === 0 || suite.indexOf('its-') === 0) {
