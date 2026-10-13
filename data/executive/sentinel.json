@@ -1,0 +1,124 @@
+{
+  "key": "sentinel-risk-treasury",
+  "title": "Sentinel — Real-Time Risk & Treasury Intelligence",
+  "variant": "cyan",
+  "asOfLabel": "Live · Nov 2026 · Demo Build",
+  "generatedUtc": "2026-11-04T14:32:00Z",
+  "metrics": [
+    {"key": "lcr", "label": "Liquidity Coverage Ratio", "value": 128, "format": "percent", "period": "Intraday", "mom": 3.0, "yoy": 8.0, "momLabel": "WoW", "yoyLabel": "YoY", "deltaMode": "percent", "positiveIsGood": true},
+    {"key": "var", "label": "Value at Risk (99%, 1d)", "value": 4200000, "format": "currency", "period": "Today", "mom": -5.2, "yoy": -12.1, "momLabel": "WoW", "yoyLabel": "YoY", "deltaMode": "percent", "positiveIsGood": false},
+    {"key": "fraud-risk", "label": "Fraud at Risk (Today)", "value": 1840000, "format": "currency", "period": "Today", "mom": 8.4, "yoy": 15.2, "momLabel": "DoD", "yoyLabel": "YoY", "deltaMode": "percent", "positiveIsGood": false},
+    {"key": "cet1", "label": "CET1 Capital Ratio", "value": 13.8, "format": "percent", "period": "QTD", "mom": 0.3, "yoy": 0.8, "momLabel": "QoQ", "yoyLabel": "YoY", "deltaMode": "percent", "positiveIsGood": true}
+  ],
+  "charts": [
+    {
+      "id": "lcr-trend",
+      "title": "LCR Trend — 30 Day Intraday",
+      "kind": "line",
+      "width": "wide",
+      "valueFormat": "percent",
+      "leftAxisTitle": "LCR %",
+      "rightAxisTitle": "",
+      "categories": ["D1","D2","D3","D4","D5","D6","D7","D8","D9","D10","D11","D12","D13","D14","D15","D16","D17","D18","D19","D20","D21","D22","D23","D24","D25","D26","D27","D28","D29","D30"],
+      "series": [
+        {"name": "LCR %", "type": "line", "axis": "left", "stack": "", "color": "#0808ee", "smooth": true, "data": [122,124,121,126,128,125,130,127,129,131,128,126,124,127,130,128,125,127,129,131,128,126,124,127,129,128,130,127,129,128]},
+        {"name": "Min (100%)", "type": "line", "axis": "left", "stack": "", "color": "#e53e6b", "smooth": false, "data": [100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100]}
+      ]
+    },
+    {
+      "id": "var-distribution",
+      "title": "P&L Distribution — VaR Tail (99%, 1-day)",
+      "kind": "bar",
+      "width": "half",
+      "valueFormat": "integer",
+      "leftAxisTitle": "Frequency",
+      "rightAxisTitle": "",
+      "categories": ["-8 to -6M", "-6 to -4M", "-4 to -2M", "-2 to 0M", "0 to 2M", "2 to 4M", "4 to 6M"],
+      "series": [
+        {"name": "Frequency", "type": "bar", "axis": "left", "stack": "", "color": "#0808ee", "smooth": false, "data": [12, 184, 1240, 5210, 6840, 4120, 980]},
+        {"name": "VaR Tail", "type": "bar", "axis": "left", "stack": "", "color": "#e53e6b", "smooth": false, "data": [12, 184, 0, 0, 0, 0, 0]}
+      ]
+    },
+    {
+      "id": "exposure-treemap",
+      "title": "Counterparty Exposure by Sector ($M)",
+      "kind": "bar",
+      "width": "half",
+      "valueFormat": "compact",
+      "leftAxisTitle": "Exposure ($M)",
+      "rightAxisTitle": "PD %",
+      "categories": ["CRE", "Technology", "Healthcare", "Energy", "Consumer Retail", "Manufacturing"],
+      "series": [
+        {"name": "Exposure ($M)", "type": "bar", "axis": "left", "stack": "", "color": "#0808ee", "smooth": false, "data": [984, 712, 548, 421, 386, 298]},
+        {"name": "PD %", "type": "line", "axis": "right", "stack": "", "color": "#e53e6b", "smooth": true, "data": [1.8, 0.6, 0.8, 2.4, 3.1, 1.1]}
+      ]
+    },
+    {
+      "id": "credit-heatmap",
+      "title": "Credit Risk Heatmap — Expected Loss by Sector × Rating ($K)",
+      "kind": "heatmap",
+      "width": "half",
+      "valueFormat": "compact",
+      "categories": ["AAA", "AA", "A", "BBB", "BB", "B"],
+      "series": [
+        {"name": "CRE", "type": "heatmap", "axis": "left", "stack": "", "color": "#0808ee", "smooth": false, "data": [0, 12, 84, 248, 412, 180]},
+        {"name": "Technology", "type": "heatmap", "axis": "left", "stack": "", "color": "#09c698", "smooth": false, "data": [0, 8, 42, 96, 120, 48]},
+        {"name": "Healthcare", "type": "heatmap", "axis": "left", "stack": "", "color": "#845ef7", "smooth": false, "data": [0, 6, 38, 82, 140, 64]},
+        {"name": "Energy", "type": "heatmap", "axis": "left", "stack": "", "color": "#BBFF05", "smooth": false, "data": [0, 18, 96, 284, 520, 240]},
+        {"name": "Consumer Retail", "type": "heatmap", "axis": "left", "stack": "", "color": "#e53e6b", "smooth": false, "data": [0, 24, 108, 320, 680, 340]},
+        {"name": "Manufacturing", "type": "heatmap", "axis": "left", "stack": "", "color": "#f0a020", "smooth": false, "data": [0, 4, 22, 68, 142, 84]}
+      ]
+    },
+    {
+      "id": "liquidity-waterfall",
+      "title": "30-Day Liquidity Position ($M)",
+      "kind": "bar",
+      "width": "half",
+      "valueFormat": "compact",
+      "leftAxisTitle": "$M",
+      "rightAxisTitle": "",
+      "categories": ["HQLA Today", "Inflows (30d)", "Outflows (30d)", "Net Position", "Min Required", "Headroom"],
+      "series": [
+        {"name": "$M", "type": "bar", "axis": "left", "stack": "", "color": "#0808ee", "smooth": false, "data": [2840, 1240, -1980, 2100, -1488, 612]}
+      ]
+    },
+    {
+      "id": "fraud-trend",
+      "title": "Fraud Detection Trend — Alerts vs Precision (7 days)",
+      "kind": "combo",
+      "width": "half",
+      "valueFormat": "integer",
+      "leftAxisTitle": "Alerts",
+      "rightAxisTitle": "Precision %",
+      "categories": ["D1", "D2", "D3", "D4", "D5", "D6", "D7"],
+      "series": [
+        {"name": "Alerts", "type": "bar", "axis": "left", "stack": "", "color": "#0808ee", "smooth": false, "data": [7820, 8100, 8340, 7990, 8510, 8280, 8412]},
+        {"name": "Precision %", "type": "line", "axis": "right", "stack": "", "color": "#09c698", "smooth": true, "data": [89, 90, 91, 90, 92, 91, 92]}
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "fraud-alerts",
+      "title": "Live Fraud Alerts — AI-Scored",
+      "width": "wide",
+      "kind": "table",
+      "columns": ["Txn ID", "Type", "Amount", "Risk Score", "AI Reason", "Status"],
+      "columnGroups": [],
+      "formats": {"Amount": "currency", "Risk Score": "percent"},
+      "rows": [
+        {"Txn ID": "TXN-8842130", "Type": "Card Not Present", "Amount": 2840, "Risk Score": 0.94, "AI Reason": "Electronics purchase from new IP in high-risk country; velocity 4× baseline", "Status": "Blocked"},
+        {"Txn ID": "TXN-8842188", "Type": "Account Takeover", "Amount": 18200, "Risk Score": 0.88, "AI Reason": "Password+device change within 2 min; immediate wire request", "Status": "Review"},
+        {"Txn ID": "TXN-8842201", "Type": "Synthetic Identity", "Amount": 9600, "Risk Score": 0.79, "AI Reason": "Account 41 days old, SSN linkage weak, burst of small deposits prior", "Status": "Review"},
+        {"Txn ID": "TXN-8842256", "Type": "Card Not Present", "Amount": 4200, "Risk Score": 0.72, "AI Reason": "Unusual merchant category for this cardholder; 3rd CNP today (baseline 0.4)", "Status": "Review"},
+        {"Txn ID": "TXN-8842289", "Type": "Structuring", "Amount": 9800, "Risk Score": 0.68, "AI Reason": "Multiple sub-$10K deposits across 3 branches in 4 hours; pattern matches structuring typology", "Status": "SAR Filed"}
+      ]
+    }
+  ],
+  "notes": [
+    "WHAT HAPPENED: LCR at 128% (above 100% Basel min, above 125% peer avg). VaR at $4.2M (down 5.2% WoW — risk reduced). 8,412 fraud alerts today, 92% precision, $1.84M at risk.",
+    "WHY: Consumer Retail sector PD at 3.1% (highest). Energy sector PD at 2.4% with $421M exposure — concentration building. 3 structuring patterns detected — potential AML issue. Intraday headroom $612M above regulatory minimum (healthy).",
+    "WHAT WILL HAPPEN: Stress test: if depositors withdraw 8% in a week, LCR drops to 104% by day 12 — still above minimum but buffer thin. If Energy PD rises to 3.0%, expected loss increases $2.8M.",
+    "WHAT TO DO: 1) File SAR on TXN-8842289 (structuring pattern confirmed). 2) Review Energy sector exposure ($421M, PD 2.4%) — consider hedging $100M. 3) Enhance monitoring on Consumer Retail (PD 3.1%, $386M exposure). 4) No action needed on liquidity — $612M headroom is comfortable."
+  ]
+}
