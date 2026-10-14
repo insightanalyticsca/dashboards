@@ -255,46 +255,77 @@
         const tileEl = state.canvasEl.querySelector(`[data-tile-id="chart:${chart.id}"]`);
         const tileW = tileEl ? tileEl.getBoundingClientRect().width : 360;
         const tileH = tileEl ? tileEl.getBoundingClientRect().height : 220;
-        // Tighter fonts — denser look (was 3.5% of width, now 2.7%)
         const labelFont = Math.max(8, Math.min(11, Math.round(tileW * 0.027)));
-        const titleFont = Math.max(9, Math.min(12, Math.round(tileW * 0.032)));
         const colors = palette();
-        // Theme-aware chart colors — read from CSS variables (set by :root or [data-theme="dark"])
-        const styles = getComputedStyle(document.documentElement);
         const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
         const chartTextColor = isDark ? '#e2e8f0' : '#1e293b';
         const chartMutedColor = isDark ? '#94a3b8' : '#64748b';
-        const chartTooltipBg = isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.96)';
-        const chartTooltipBorder = isDark ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.2)';
-        const chartAxisLine = isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.20)';
-        const chartSplitLine = isDark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.10)';
+        const chartAxisColor = isDark ? '#cbd5e1' : '#475569';
+        const chartTooltipBg = isDark ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.96)';
+        const chartTooltipBorder = isDark ? 'rgba(6,182,212,0.35)' : 'rgba(99,102,241,0.20)';
+        const chartTooltipCss = isDark
+            ? 'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;box-shadow:0 8px 24px -8px rgba(0,0,0,.5);'
+            : 'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;box-shadow:0 8px 24px -8px rgba(0,0,0,.2);';
+        const chartAxisLine = isDark ? 'rgba(99,102,241,0.10)' : 'rgba(99,102,241,0.15)';
+        const chartSplitLine = isDark ? 'rgba(148,163,184,0.10)' : 'rgba(99,102,241,0.08)';
         const kind = String(chart.kind || '').toLowerCase();
         const isPie = kind === 'pie' || kind === 'donut';
         const isDonut = kind === 'donut';
         const isHeatmap = kind === 'heatmap';
 
-        // ── PIE / DONUT ──
+        // ── Shared tooltip config (glassmorphism, matches markets-finance) ──
+        const glassTooltip = {
+            backgroundColor: chartTooltipBg,
+            borderColor: chartTooltipBorder,
+            borderWidth: 1,
+            padding: [8, 12],
+            textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600, fontFamily: 'Inter, sans-serif' },
+            extraCssText: chartTooltipCss
+        };
+
+        // Helper: create a vertical gradient fill for a given hex color
+        function gradientFill(hex) {
+            // Convert hex to rgba with alpha
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            return {
+                type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+                colorStops: [
+                    { offset: 0, color: `rgba(${r},${g},${b},0.85)` },
+                    { offset: 1, color: `rgba(${r},${g},${b},0.25)` }
+                ]
+            };
+        }
+
+        // ── PIE / DONUT (with shadow glow + rounded segments) ──
         if (isPie) {
             const s = chart.series[0] || { data: [] };
             const categories = chart.categories || [];
-            const pieData = (s.data || []).map((v, i) => ({
-                value: v,
-                name: categories[i] || `Segment ${i + 1}`,
-                itemStyle: { color: colors[i % colors.length] }
-            }));
+            const pieData = (s.data || []).map((v, i) => {
+                const c = colors[i % colors.length];
+                return {
+                    value: v,
+                    name: categories[i] || `Segment ${i + 1}`,
+                    itemStyle: {
+                        color: gradientFill(c),
+                        borderColor: isDark ? 'rgba(15,23,42,0.8)' : '#fff',
+                        borderWidth: 2,
+                        borderRadius: 4,
+                        shadowBlur: 12,
+                        shadowColor: `rgba(${parseInt(c.slice(1,3),16)},${parseInt(c.slice(3,5),16)},${parseInt(c.slice(5,7),16)},0.4)`
+                    }
+                };
+            });
             const legendRight = tileW > 320;
             return {
-                animationDuration: 400,
+                animationDuration: 600,
                 animationEasing: 'cubicOut',
                 color: colors,
-                tooltip: {
+                tooltip: Object.assign({}, glassTooltip, {
                     trigger: 'item',
-                    formatter: '{b}: {c} ({d}%)',
-                    backgroundColor: chartTooltipBg,
-                    borderColor: 'rgba(99,102,241,0.2)',
-                    borderWidth: 1,
-                    textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 }
-                },
+                    formatter: '{b}: <b style="color:#06b6d4">{c}</b> ({d}%)'
+                }),
                 legend: {
                     type: 'scroll',
                     orient: legendRight ? 'vertical' : 'horizontal',
@@ -302,7 +333,7 @@
                     top: legendRight ? 'middle' : 0,
                     bottom: legendRight ? 'middle' : 0,
                     left: legendRight ? '55%' : 'center',
-                    textStyle: { fontSize: labelFont, color: chartMutedColor, fontWeight: 500 },
+                    textStyle: { fontSize: labelFont, color: chartMutedColor, fontWeight: 600 },
                     itemWidth: 8, itemHeight: 8, itemGap: 6
                 },
                 series: [{
@@ -311,33 +342,33 @@
                     radius: isDonut ? ['38%', '62%'] : '62%',
                     center: legendRight ? ['28%', '50%'] : ['50%', '55%'],
                     avoidLabelOverlap: true,
-                    itemStyle: {
-                        borderColor: '#fff',
-                        borderWidth: 2,
-                        borderRadius: 3
-                    },
                     label: {
                         show: !legendRight,
                         position: 'outer',
                         formatter: '{b}\n{d}%',
                         fontSize: labelFont - 1,
-                        color: '#1e293b',
+                        color: chartTextColor,
                         fontWeight: 600
                     },
                     emphasis: {
-                        label: { show: true, fontSize: labelFont + 1, fontWeight: 800 },
-                        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(99,102,241,0.3)' }
+                        label: { show: true, fontSize: labelFont + 2, fontWeight: 800 },
+                        itemStyle: {
+                            shadowBlur: 24,
+                            shadowColor: 'rgba(6,182,212,0.6)',
+                            borderColor: 'rgba(6,182,212,0.9)',
+                            borderWidth: 2
+                        },
+                        scaleSize: 8
                     },
                     data: pieData
                 }]
             };
         }
 
-        // ── HEATMAP (real ECharts heatmap, not multi-series bar) ──
+        // ── HEATMAP (markets-finance style: multi-color diverging, translucent, glow) ──
         if (isHeatmap) {
             const categoriesX = chart.categories || [];
             const categoriesY = (chart.series || []).map(s => s.name);
-            // Flatten: series[i].data[j] → [j, i, value]
             const data = [];
             let min = Infinity, max = -Infinity;
             (chart.series || []).forEach((s, y) => {
@@ -350,59 +381,80 @@
                 });
             });
             if (!isFinite(min)) { min = 0; max = 100; }
+            // If range crosses zero, use diverging red→amber→green scale
+            // If all positive, use warm yellow→orange→red→purple scale (more jazz than monochrome blue)
+            // If all negative, use reversed diverging
+            const isDiverging = min < 0 && max > 0;
+            const heatColors = isDiverging
+                ? ['#be123c', '#fb7185', '#fb923c', '#fbbf24', '#1e293b', '#34d399', '#10b981', '#047857']
+                : min >= 0
+                    ? ['#fef3c7', '#fde68a', '#fbbf24', '#f59e0b', '#ea580c', '#dc2626', '#9333ea']
+                    : ['#047857', '#10b981', '#34d399', '#1e293b', '#fbbf24', '#fb923c', '#fb7185', '#be123c'];
             return {
-                animationDuration: 400,
-                tooltip: {
-                    position: 'top',
-                    backgroundColor: chartTooltipBg,
-                    borderColor: 'rgba(99,102,241,0.2)',
-                    borderWidth: 1,
-                    textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 },
-                    formatter: params => `${categoriesY[params.value[1]]} · ${categoriesX[params.value[0]]}: <b>${params.value[2]}</b>`
-                },
+                animationDuration: 600,
+                backgroundColor: 'transparent',
+                tooltip: Object.assign({}, glassTooltip, {
+                    formatter: params => `<b style="color:#fff">${categoriesY[params.value[1]]}</b> <span style="color:${chartMutedColor}">${categoriesX[params.value[0]]}</span><br><b style="color:#06b6d4">${params.value[2]}</b>`
+                }),
                 grid: { left: 70, right: 14, top: 8, bottom: 36, containLabel: false },
                 xAxis: {
                     type: 'category',
                     data: categoriesX,
-                    splitArea: { show: true },
-                    axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true },
-                    axisLine: { lineStyle: { color: chartAxisLine } },
-                    axisTick: { show: false }
+                    splitArea: { show: false },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    axisLabel: { color: chartAxisColor, fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, margin: 10 }
                 },
                 yAxis: {
                     type: 'category',
                     data: categoriesY,
-                    splitArea: { show: true },
-                    axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
-                    axisLine: { lineStyle: { color: chartAxisLine } },
-                    axisTick: { show: false }
+                    splitArea: { show: false },
+                    axisLine: { show: false },
+                    axisTick: { show: false },
+                    axisLabel: { color: chartAxisColor, fontSize: labelFont, fontWeight: 500, margin: 12 }
                 },
                 visualMap: {
                     min, max,
-                    calculable: true,
-                    orient: 'horizontal',
-                    left: 'center',
-                    bottom: 0,
-                    textStyle: { fontSize: labelFont - 1, color: '#64748b' },
-                    inRange: { color: ['#dbeafe', '#93c5fd', '#3b82f6', '#1e40af'] }
+                    calculable: false,
+                    show: false,
+                    inRange: { color: heatColors },
+                    outOfRange: { color: isDark ? 'rgba(15,23,42,0.92)' : 'rgba(226,232,240,0.5)' }
                 },
                 series: [{
                     type: 'heatmap',
                     data: data,
                     label: {
-                        show: tileW > 480 && data.length < 30,
-                        fontSize: labelFont - 2,
-                        color: '#1e293b',
-                        fontWeight: 700
+                        show: tileW > 400 && data.length < 30,
+                        fontSize: labelFont - 1,
+                        fontWeight: 700,
+                        color: '#ffffff',
+                        textShadowColor: 'rgba(0,0,0,0.55)',
+                        textShadowBlur: 3,
+                        formatter: function(p) { return p.value[2]; }
+                    },
+                    itemStyle: {
+                        borderRadius: 6,
+                        borderColor: 'transparent',
+                        borderWidth: 0,
+                        shadowBlur: 8,
+                        shadowColor: 'rgba(0,0,0,0.32)',
+                        opacity: 0.82
                     },
                     emphasis: {
-                        itemStyle: { shadowBlur: 8, shadowColor: 'rgba(99,102,241,0.4)' }
+                        itemStyle: {
+                            shadowBlur: 20,
+                            shadowColor: 'rgba(6,182,212,0.75)',
+                            borderColor: 'rgba(6,182,212,0.9)',
+                            borderWidth: 2,
+                            opacity: 1
+                        },
+                        label: { fontSize: labelFont + 1, fontWeight: 800 }
                     }
                 }]
             };
         }
 
-        // ── BAR / LINE / COMBO / STACKEDBAR (standard cartesian) ──
+        // ── BAR / LINE / COMBO / STACKEDBAR (with gradient fills + shadow + glow) ──
         const categories = chart.categories || [];
         const hasSecondAxis = (chart.series || []).some(s => s.axis === 'right');
 
@@ -418,52 +470,88 @@
         const series = (chart.series || []).map((s, idx) => {
             const color = s.color || colors[idx % colors.length];
             const type = s.type === 'line' ? 'line' : 'bar';
-            return {
-                name: s.name,
-                type,
-                yAxisIndex: s.axis === 'right' ? 1 : 0,
-                data: s.data,
-                smooth: !!s.smooth && type === 'line',
-                itemStyle: {
-                    color: color,
-                    borderRadius: type === 'bar' ? [3, 3, 0, 0] : 0
-                },
-                lineStyle: type === 'line' ? { color: color, width: 2.2 } : undefined,
-                symbol: type === 'line' ? 'circle' : 'none',
-                symbolSize: type === 'line' ? 5 : 0,
-                stack: s.stack || (kind === 'stackedbar' ? 'total' : undefined),
-                barCategoryGap: '40%'
-            };
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+
+            if (type === 'line') {
+                return {
+                    name: s.name,
+                    type: 'line',
+                    yAxisIndex: s.axis === 'right' ? 1 : 0,
+                    data: s.data,
+                    smooth: !!s.smooth,
+                    symbol: 'circle',
+                    symbolSize: 6,
+                    lineStyle: {
+                        color: color,
+                        width: 2.5,
+                        shadowBlur: 8,
+                        shadowColor: `rgba(${r},${g},${b},0.5)`
+                    },
+                    itemStyle: { color: color, borderColor: '#fff', borderWidth: 1.5 },
+                    areaStyle: {
+                        color: {
+                            type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
+                            colorStops: [
+                                { offset: 0, color: `rgba(${r},${g},${b},0.20)` },
+                                { offset: 1, color: `rgba(${r},${g},${b},0)` }
+                            ]
+                        }
+                    },
+                    stack: s.stack || undefined
+                };
+            } else {
+                // Bar series — gradient fill + rounded top corners + shadow
+                return {
+                    name: s.name,
+                    type: 'bar',
+                    yAxisIndex: s.axis === 'right' ? 1 : 0,
+                    data: s.data,
+                    itemStyle: {
+                        color: gradientFill(color),
+                        borderRadius: [4, 4, 0, 0],
+                        shadowBlur: 6,
+                        shadowColor: `rgba(${r},${g},${b},0.3)`
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            color: color,
+                            shadowBlur: 16,
+                            shadowColor: `rgba(${r},${g},${b},0.6)`
+                        }
+                    },
+                    stack: s.stack || (kind === 'stackedbar' ? 'total' : undefined),
+                    barCategoryGap: '40%'
+                };
+            }
         });
 
         return {
-            animationDuration: 400,
+            animationDuration: 600,
             animationEasing: 'cubicOut',
             color: colors,
-            tooltip: {
+            tooltip: Object.assign({}, glassTooltip, {
                 trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                backgroundColor: chartTooltipBg,
-                borderColor: 'rgba(99,102,241,0.2)',
-                borderWidth: 1,
-                textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 }
-            },
+                axisPointer: { type: 'shadow', shadowStyle: { color: isDark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.05)' } }
+            }),
             legend: {
                 top: 2, type: 'scroll',
-                textStyle: { fontSize: Math.max(7, labelFont - 1), color: chartMutedColor, fontWeight: 500 },
-                itemWidth: 7, itemHeight: 7, itemGap: 5
+                textStyle: { fontSize: Math.max(7, labelFont - 1), color: chartMutedColor, fontWeight: 600 },
+                itemWidth: 8, itemHeight: 8, itemGap: 6
             },
             grid: { left: 44, right: hasSecondAxis ? 44 : 14, top: 22, bottom: 28, containLabel: false },
             xAxis: {
                 type: 'category',
                 data: categories,
-                axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, rotate: categories.length > 6 ? 25 : 0 },
+                axisLabel: { color: chartAxisColor, fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, rotate: categories.length > 6 ? 25 : 0 },
                 axisLine: { lineStyle: { color: chartAxisLine } },
-                axisTick: { show: false }
+                axisTick: { show: false },
+                splitLine: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { lineStyle: { color: chartSplitLine, type: 'dashed' } } },
-                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { show: false } }] : [])
+                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1), color: chartMutedColor }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { lineStyle: { color: chartSplitLine, type: 'dashed' } }, axisLine: { show: false }, axisTick: { show: false } },
+                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1), color: chartMutedColor }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { show: false }, axisLine: { show: false }, axisTick: { show: false } }] : [])
             ],
             series
         };
