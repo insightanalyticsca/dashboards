@@ -622,7 +622,8 @@ async function main() {
     if (withFresh !== html) { html = withFresh; modified = true; changeLog.techniques.push('freshness'); }
 
     // P1: Automated internal linking
-    const linkResult = autoLink(html, relPath, allPages);
+    // DISABLED: autoLink injects visible <a> tags into body text — causes plain-text SEO leakage
+    const linkResult = { html, linksAdded: 0 };
     if (linkResult.linksAdded > 0) {
       html = linkResult.html;
       modified = true;
