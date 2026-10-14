@@ -72,6 +72,7 @@
             // Exit edit mode if active
             state.canvasEl.classList.add('is-frozen');
             state.canvasEl.classList.remove('is-editing');
+            state.canvasEl.classList.remove('has-manual-layout');
             reclassifyLayout();
             requestAnimationFrame(resizeAllCharts);
         }
@@ -534,9 +535,10 @@
     function reclassifyLayout() {
         const canvas = state.canvasEl;
         if (!canvas) return;
-        // Skip when in edit mode — tiles are absolutely positioned, grid
-        // classification would interfere with manual layout
+        // Skip when in edit mode OR has manual layout overrides — tiles are
+        // absolutely positioned, grid classification would interfere
         if (canvas.classList.contains('is-editing')) return;
+        if (canvas.classList.contains('has-manual-layout')) return;
 
         const gridTemplateCols = getComputedStyle(canvas).gridTemplateColumns;
         const colCount = gridTemplateCols.split(' ').filter(s => s.trim()).length;
@@ -729,6 +731,54 @@
         };
     }
 
+    function hasManualOverrides() {
+        // Check if any tile has geometry overrides (x/y/w/h, not colSpan/rowSpan)
+        return Object.values(state.tileSpans).some(span =>
+            span && typeof span.x === 'number' && typeof span.h === 'number'
+        );
+    }
+
+    function computeCanvasHeightForOverrides() {
+        // Compute canvas height needed to fit all manually-positioned tiles
+        // Each tile's bottom = (y + h) % of canvas. We need canvas tall enough
+        // that the tile with the largest bottom % has room.
+        // Since heights are stored as %, we just need a canvas tall enough
+        // that the absolute heights look right. We pick a comfortable default
+        // and grow it if any tile's bottom % exceeds it.
+        const minHeight = 1200;
+        let maxBottomPct = 100;
+        Object.values(state.tileSpans).forEach(span => {
+            if (span && typeof span.y === 'number' && typeof span.h === 'number') {
+                const bottom = span.y + span.h;
+                if (bottom > maxBottomPct) maxBottomPct = bottom;
+            }
+        });
+        // If any tile extends beyond 100% (which it shouldn't), grow canvas
+        // proportionally so the percentage resolves to a reasonable pixel height
+        const canvasH = Math.max(minHeight, Math.round(minHeight * maxBottomPct / 100));
+        return canvasH;
+    }
+
+    function applyManualLayout() {
+        // Apply manual geometry overrides to all tiles that have them
+        // Used when canvas is NOT in edit mode but has manual overrides
+        const canvas = state.canvasEl;
+        if (!canvas) return;
+        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+        tiles.forEach(tile => {
+            const tileId = tile.dataset.tileId;
+            const saved = getTileGeometry(tileId);
+            if (saved) {
+                applyTileGeometry(tile, saved);
+            } else {
+                // No override for this tile — capture its grid position
+                // (canvas should be in grid mode temporarily to get correct position)
+                const geom = captureTilePositionAsPercent(tile);
+                if (geom) applyTileGeometry(tile, geom);
+            }
+        });
+    }
+
     function enterEditMode() {
         const canvas = state.canvasEl;
         if (!canvas) return;
@@ -750,6 +800,7 @@
         // Now switch canvas to absolute positioning mode (CSS handles this
         // via .is-editing class on canvas)
         canvas.classList.remove('is-frozen');
+        canvas.classList.remove('has-manual-layout');
         canvas.classList.add('is-editing');
         // Resize all charts (their containers may have changed dimensions)
         requestAnimationFrame(resizeAllCharts);
@@ -760,21 +811,44 @@
         if (!canvas) return;
         canvas.classList.add('is-frozen');
         canvas.classList.remove('is-editing');
-        // Tiles retain their inline absolute positions IF user has overrides.
-        // If no overrides saved, clear inline styles so grid takes over.
-        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
-        tiles.forEach(tile => {
-            const tileId = tile.dataset.tileId;
-            const saved = getTileGeometry(tileId);
-            if (!saved) {
-                // No manual override — clear inline styles, return to grid
+
+        // If user has any manual overrides, keep canvas in absolute positioning
+        // mode (don't return to grid — that would collapse tile heights since
+        // % of a shorter canvas = fewer pixels).
+        if (hasManualOverrides()) {
+            canvas.classList.add('has-manual-layout');
+            // Re-apply saved geometry to all tiles (in case some were reset)
+            const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+            tiles.forEach(tile => {
+                const tileId = tile.dataset.tileId;
+                const saved = getTileGeometry(tileId);
+                if (saved) {
+                    applyTileGeometry(tile, saved);
+                } else {
+                    // Tile was reset (no override) — capture from current
+                    // grid position. But canvas is no longer in grid mode...
+                    // Solution: temporarily switch to grid to capture, then back.
+                    // Actually, just clear inline styles so it stays in grid flow.
+                    // But canvas is in absolute mode. So tiles without overrides
+                    // need their position captured from the LAST grid render.
+                    // Simplest: just leave them with their current inline styles
+                    // (they were captured on enterEditMode and never changed).
+                }
+            });
+        } else {
+            // No overrides — return to grid placement
+            const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+            tiles.forEach(tile => {
                 tile.style.left = '';
                 tile.style.top = '';
                 tile.style.width = '';
                 tile.style.height = '';
                 tile.style.zIndex = '';
-            }
-        });
+            });
+            canvas.classList.remove('has-manual-layout');
+            // Re-classify to apply per-row caps etc.
+            reclassifyLayout();
+        }
         requestAnimationFrame(resizeAllCharts);
     }
 
@@ -971,6 +1045,30 @@
         });
 
         reclassifyLayout();
+
+        // If user has saved manual overrides from a previous session, apply them
+        // and switch canvas to absolute positioning mode (with handles hidden).
+        // This preserves the layout they saved, including custom heights/widths.
+        if (hasManualOverrides()) {
+            requestAnimationFrame(() => {
+                // Capture current grid positions for tiles WITHOUT overrides
+                // (so they get inline styles too, then we can switch to absolute)
+                const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+                tiles.forEach(tile => {
+                    const tileId = tile.dataset.tileId;
+                    const saved = getTileGeometry(tileId);
+                    if (saved) {
+                        applyTileGeometry(tile, saved);
+                    } else {
+                        const geom = captureTilePositionAsPercent(tile);
+                        if (geom) applyTileGeometry(tile, geom);
+                    }
+                });
+                canvas.classList.add('has-manual-layout', 'is-frozen');
+                canvas.classList.remove('is-editing');
+                requestAnimationFrame(resizeAllCharts);
+            });
+        }
 
         const editBtn = app.querySelector('#universalEditBtn');
         if (editBtn) {

@@ -541,13 +541,15 @@
 /* When canvas has .is-editing, tiles switch from CSS Grid to absolute
    positioning (set inline via JS). This allows free mix-and-match placement
    — tiles can overlap, be moved anywhere, resized to any dimensions. */
-.universal-canvas.is-editing {
+.universal-canvas.is-editing,
+.universal-canvas.has-manual-layout {
     position: relative;
     display: block;
     grid-template-columns: none;
     min-height: 1600px;
 }
-.universal-canvas.is-editing .universal-tile {
+.universal-canvas.is-editing .universal-tile,
+.universal-canvas.has-manual-layout .universal-tile {
     position: absolute;
     /* x/y/w/h set inline by JS as percentages of canvas */
 }
