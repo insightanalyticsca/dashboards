@@ -242,6 +242,15 @@
         const labelFont = Math.max(8, Math.min(11, Math.round(tileW * 0.027)));
         const titleFont = Math.max(9, Math.min(12, Math.round(tileW * 0.032)));
         const colors = palette();
+        // Theme-aware chart colors — read from CSS variables (set by :root or [data-theme="dark"])
+        const styles = getComputedStyle(document.documentElement);
+        const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+        const chartTextColor = isDark ? '#e2e8f0' : '#1e293b';
+        const chartMutedColor = isDark ? '#94a3b8' : '#64748b';
+        const chartTooltipBg = isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.96)';
+        const chartTooltipBorder = isDark ? 'rgba(99,102,241,0.2)' : 'rgba(99,102,241,0.2)';
+        const chartAxisLine = isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.20)';
+        const chartSplitLine = isDark ? 'rgba(99,102,241,0.08)' : 'rgba(99,102,241,0.10)';
         const kind = String(chart.kind || '').toLowerCase();
         const isPie = kind === 'pie' || kind === 'donut';
         const isDonut = kind === 'donut';
@@ -264,10 +273,10 @@
                 tooltip: {
                     trigger: 'item',
                     formatter: '{b}: {c} ({d}%)',
-                    backgroundColor: 'rgba(15,23,42,0.95)',
+                    backgroundColor: chartTooltipBg,
                     borderColor: 'rgba(99,102,241,0.2)',
                     borderWidth: 1,
-                    textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 }
+                    textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 }
                 },
                 legend: {
                     type: 'scroll',
@@ -276,7 +285,7 @@
                     top: legendRight ? 'middle' : 0,
                     bottom: legendRight ? 'middle' : 0,
                     left: legendRight ? '55%' : 'center',
-                    textStyle: { fontSize: labelFont, color: '#94a3b8', fontWeight: 500 },
+                    textStyle: { fontSize: labelFont, color: chartMutedColor, fontWeight: 500 },
                     itemWidth: 8, itemHeight: 8, itemGap: 6
                 },
                 series: [{
@@ -328,10 +337,10 @@
                 animationDuration: 400,
                 tooltip: {
                     position: 'top',
-                    backgroundColor: 'rgba(15,23,42,0.95)',
+                    backgroundColor: chartTooltipBg,
                     borderColor: 'rgba(99,102,241,0.2)',
                     borderWidth: 1,
-                    textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 },
+                    textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 },
                     formatter: params => `${categoriesY[params.value[1]]} · ${categoriesX[params.value[0]]}: <b>${params.value[2]}</b>`
                 },
                 grid: { left: 70, right: 14, top: 8, bottom: 36, containLabel: false },
@@ -340,7 +349,7 @@
                     data: categoriesX,
                     splitArea: { show: true },
                     axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true },
-                    axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
+                    axisLine: { lineStyle: { color: chartAxisLine } },
                     axisTick: { show: false }
                 },
                 yAxis: {
@@ -348,7 +357,7 @@
                     data: categoriesY,
                     splitArea: { show: true },
                     axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
-                    axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
+                    axisLine: { lineStyle: { color: chartAxisLine } },
                     axisTick: { show: false }
                 },
                 visualMap: {
@@ -417,14 +426,14 @@
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
-                backgroundColor: 'rgba(15,23,42,0.95)',
+                backgroundColor: chartTooltipBg,
                 borderColor: 'rgba(99,102,241,0.2)',
                 borderWidth: 1,
-                textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 }
+                textStyle: { color: chartTextColor, fontSize: labelFont, fontWeight: 600 }
             },
             legend: {
                 top: 2, type: 'scroll',
-                textStyle: { fontSize: Math.max(7, labelFont - 1), color: '#94a3b8', fontWeight: 500 },
+                textStyle: { fontSize: Math.max(7, labelFont - 1), color: chartMutedColor, fontWeight: 500 },
                 itemWidth: 7, itemHeight: 7, itemGap: 5
             },
             grid: { left: 44, right: hasSecondAxis ? 44 : 14, top: 22, bottom: 28, containLabel: false },
@@ -432,12 +441,12 @@
                 type: 'category',
                 data: categories,
                 axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, rotate: categories.length > 6 ? 25 : 0 },
-                axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
+                axisLine: { lineStyle: { color: chartAxisLine } },
                 axisTick: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#94a3b8', fontWeight: 500 }, splitLine: { lineStyle: { color: 'rgba(99,102,241,0.08)', type: 'dashed' } } },
-                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#94a3b8', fontWeight: 500 }, splitLine: { show: false } }] : [])
+                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { lineStyle: { color: chartSplitLine, type: 'dashed' } } },
+                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: chartMutedColor, fontWeight: 500 }, splitLine: { show: false } }] : [])
             ],
             series
         };
@@ -487,6 +496,25 @@
     //
     // Simplification: count CONSECUTIVE stretchable tiles. If their total span
     // would exceed the row, promote the LAST one to fill the gap.
+    // ══ THE THOROUGH CLASSIFIER — per-row cap rules ═══════════════════════════
+    // Caps:
+    //   - max 4 metrics per row (1+1+1+1 = 4 cols)
+    //   - max 2 graphs per row (2+2 = 4 cols for halves, OR 1+1+2 = 4 for thirds+half)
+    //   - chart-wide / table-wide / ai-brief always take a full row
+    //
+    // Algorithm:
+    //   1. Walk tiles in DOM order, simulate placement tracking currentX
+    //   2. If a tile would overflow current row (currentX + span > colCount),
+    //      promote the previous stretchable tile to FILL the remaining cols.
+    //      Promotion chain: third → half → wide. We promote ONE STEP at a time
+    //      until the gap is filled. So 1 col gap → promote third to half (span 2)
+    //      = exactly fills. 2 col gap with a half already placed → no promotion
+    //      needed, just start new row.
+    //   3. If the next tile is a wide (always full row), promote the previous
+    //      stretchable all the way to wide so its row gets a single full-width
+    //      tile instead of leaving a half-empty hole.
+    //   4. At end-of-loop, if final row is partial, promote previous stretchable
+    //      to fill the gap (one step at a time).
     function reclassifyLayout() {
         const canvas = state.canvasEl;
         if (!canvas) return;
@@ -503,10 +531,11 @@
             tile.style.gridColumn = '';
         });
 
-        // Walk tiles, simulate placement, promote lone halves/thirds to wide
-        // when they would leave a partial-row hole.
         let currentX = 0;
-        let lastStretchableIndex = -1;  // index of last tile we can promote
+        let lastStretchableIndex = -1;
+        // Track type counts per row for cap enforcement
+        let rowMetrics = 0;
+        let rowGraphs = 0;
 
         function spanOf(tile) {
             const t = tile.dataset.type;
@@ -517,17 +546,39 @@
         function isStretchable(natural) {
             return natural === 'chart-third' || natural === 'chart-half' || natural === 'table-half';
         }
+        function isGraph(natural) {
+            return natural === 'chart-third' || natural === 'chart-half' || natural === 'chart-wide';
+        }
         function promote(tile) {
             const natural = tile.dataset.naturalType;
             const cur = tile.dataset.type;
             if (natural === 'chart-third') {
-                // third → half → wide
                 if (cur === 'chart-third') tile.dataset.type = 'chart-half';
                 else if (cur === 'chart-half') tile.dataset.type = 'chart-wide';
             } else if (natural === 'chart-half') {
                 tile.dataset.type = 'chart-wide';
             } else if (natural === 'table-half') {
                 tile.dataset.type = 'table-wide';
+            }
+        }
+        function promoteToWide(tile) {
+            let safety = 5;
+            while (tile.dataset.type !== 'chart-wide' && tile.dataset.type !== 'table-wide' && safety-- > 0) {
+                promote(tile);
+            }
+        }
+        function fillGapWithPromotion(prevTile, gap) {
+            // Promote prevTile just enough to fill `gap` cols.
+            // third (span 1) → half (span 2) fills 1-col gap if remaining was 1
+            // half (span 2) → wide (span 4) fills 2-col gap if remaining was 2
+            let prevSpan = spanOf(prevTile);
+            while (prevSpan < gap + prevSpan && prevTile.dataset.type !== 'chart-wide' && prevTile.dataset.type !== 'table-wide') {
+                const before = prevTile.dataset.type;
+                promote(prevTile);
+                if (prevTile.dataset.type === before) break;
+                prevSpan = spanOf(prevTile);
+                // Stop if we've filled the gap
+                if (spanOf(prevTile) >= gap + currentX) break;
             }
         }
 
@@ -538,62 +589,70 @@
             const span = spanOf(tile);
 
             // Wide tiles always take a full row. If we have a partial row
-            // (currentX > 0) with a stretchable tile in it, promote it ALL THE
-            // WAY to wide so the row gets filled by a single full-width tile
-            // instead of leaving a half-empty hole on the right.
+            // with a stretchable tile, promote it to wide (fill the row).
             if (span === colCount) {
                 if (currentX > 0 && currentX < colCount && lastStretchableIndex >= 0) {
-                    const prev = tiles[lastStretchableIndex];
-                    // Promote repeatedly until wide (fills the row)
-                    let safety = 5;
-                    while (prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide' && safety-- > 0) {
-                        promote(prev);
-                    }
+                    promoteToWide(tiles[lastStretchableIndex]);
                 }
                 currentX = 0;
                 lastStretchableIndex = -1;
+                rowMetrics = 0;
+                rowGraphs = 0;
                 continue;
             }
 
-            // Does this tile fit in the current row?
-            if (currentX + span > colCount) {
-                // Doesn't fit. Promote the previous stretchable tile to fill
-                // the remaining space (third→half adds +1 col, half→wide fills row).
-                if (lastStretchableIndex >= 0) {
+            // Per-row cap enforcement:
+            // - max 4 metrics per row (always satisfied since 4 cols × 1 = 4)
+            // - max 2 graphs per row (a third counts as graph; 3 thirds in row OK,
+            //   but 4th should promote last to half so row = 1+1+2=4)
+            const wouldExceedGraphCap = isGraph(natural) && rowGraphs >= 2 && natural !== 'chart-third';
+            // For thirds, allow up to 3 (3×1=3 cols), but the 4th third must wrap
+            const wouldExceedThirdCap = natural === 'chart-third' && rowGraphs >= 3;
+
+            if (wouldExceedGraphCap || wouldExceedThirdCap || currentX + span > colCount) {
+                // Need to wrap to a new row. Promote the previous stretchable
+                // tile to fill the gap if possible.
+                if (lastStretchableIndex >= 0 && currentX < colCount) {
                     const prev = tiles[lastStretchableIndex];
                     const remaining = colCount - currentX;
-                    // Promote until prev's new span >= remaining (or until wide)
+                    // Promote until prev fills the remaining cols (or until wide)
                     let prevSpan = spanOf(prev);
-                    while (prevSpan < remaining && prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide') {
+                    let safety = 5;
+                    while (prevSpan < remaining + (spanOf(prev) - prevSpan) && prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide' && safety-- > 0) {
+                        const before = prev.dataset.type;
                         promote(prev);
-                        const newSpan = spanOf(prev);
-                        if (newSpan === prevSpan) break;
-                        prevSpan = newSpan;
+                        if (prev.dataset.type === before) break;
+                        prevSpan = spanOf(prev);
+                        if (prevSpan >= remaining) break;
                     }
+                    // If still gap, promote all the way to wide
+                    if (spanOf(prev) < colCount) promoteToWide(prev);
                 }
                 currentX = 0;
                 lastStretchableIndex = -1;
-                // Re-check if this tile fits now (its own span hasn't changed)
+                rowMetrics = 0;
+                rowGraphs = 0;
+                // Re-check this tile fits now (its own span hasn't changed)
                 if (span > colCount) continue;
             }
 
             if (isStretchable(natural)) lastStretchableIndex = i;
             else lastStretchableIndex = -1;
+            if (natural === 'metric') rowMetrics++;
+            if (isGraph(natural)) rowGraphs++;
 
             currentX += span;
             if (currentX >= colCount) {
                 currentX = 0;
                 lastStretchableIndex = -1;
+                rowMetrics = 0;
+                rowGraphs = 0;
             }
         }
 
         // Final row check — promote all the way to wide so no half-empty hole
         if (currentX > 0 && currentX < colCount && lastStretchableIndex >= 0) {
-            const prev = tiles[lastStretchableIndex];
-            let safety = 5;
-            while (prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide' && safety-- > 0) {
-                promote(prev);
-            }
+            promoteToWide(tiles[lastStretchableIndex]);
         }
 
         requestAnimationFrame(resizeAllCharts);
@@ -672,12 +731,27 @@
         state.payload = payload;
         const aiBriefTile = buildAiBriefTile(payload);
 
+        // Resolve current theme — read from localStorage first, then html attribute, default to dark
+        // (matches theme-toggle.js which sets 'docchat-theme' key)
+        let currentTheme;
+        try {
+            currentTheme = localStorage.getItem('docchat-theme');
+        } catch (e) {}
+        if (currentTheme !== 'light' && currentTheme !== 'dark') {
+            currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        }
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        document.body.setAttribute('data-theme', currentTheme);
+
         app.innerHTML = `
             <main class="universal-page">
                 <header class="universal-header">
                     <div class="universal-title">${esc(payload.title || '')}</div>
                     <div class="universal-header-right">
                         <div class="universal-asof">${esc(payload.asOfLabel || '')}</div>
+                        <button class="universal-theme-toggle" type="button" id="universalThemeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
+                            <span id="universalThemeIcon"></span>
+                        </button>
                         <button class="universal-btn" type="button" id="universalEditBtn" title="Click to unlock editing — drag the right or bottom edge of any tile to resize."><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="universal-btn" type="button" onclick="if(confirm('Reset all tiles to default size?')) window.__universalResetLayout()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                     </div>
@@ -688,6 +762,31 @@
 
         const canvas = app.querySelector('.universal-canvas');
         state.canvasEl = canvas;
+
+        // Wire theme toggle button
+        const themeBtn = app.querySelector('#universalThemeToggle');
+        const themeIcon = app.querySelector('#universalThemeIcon');
+        function updateThemeIcon() {
+            const t = document.documentElement.getAttribute('data-theme') || 'dark';
+            if (themeIcon) {
+                themeIcon.innerHTML = t === 'dark'
+                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+            }
+        }
+        updateThemeIcon();
+        if (themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+                const next = cur === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                document.body.setAttribute('data-theme', next);
+                try { localStorage.setItem('docchat-theme', next); } catch (e) {}
+                updateThemeIcon();
+                // Re-render charts so their colors match the new theme
+                requestAnimationFrame(resizeAllCharts);
+            });
+        }
 
         (payload.metrics || []).forEach((m, i) => canvas.appendChild(buildMetricTile(m, i)));
         (payload.charts || []).forEach((c, i) => canvas.appendChild(buildChartTile(c, i)));
@@ -776,9 +875,28 @@
     });
 
     window.addEventListener('message', event => {
-        if (event.origin !== window.location.origin) return;
+        // Allow cross-origin messages from parent (theme-toggle.js broadcasts to all iframes)
         const msg = event.data || {};
         const type = String(msg.type || '');
+
+        // Theme broadcast from parent frame (csr-dashboard-theme:apply)
+        if (type === 'csr-dashboard-theme:apply' || type === 'universal-theme:apply') {
+            const theme = msg.theme === 'dark' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-theme', theme);
+            // Update toggle icon if present
+            const iconHost = document.getElementById('universalThemeIcon');
+            if (iconHost) {
+                iconHost.innerHTML = theme === 'dark'
+                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+            }
+            requestAnimationFrame(resizeAllCharts);
+            return;
+        }
+
+        // Same-origin layout/resize messages
+        if (event.origin !== window.location.origin) return;
         if (type === 'dashboard-custom-html:layout') {
             const layout = msg?.payload?.visualLayout ?? msg?.visualLayout ?? {};
             if (layout && typeof layout === 'object') {

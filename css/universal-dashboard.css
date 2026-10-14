@@ -1,50 +1,83 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   UNIVERSAL DASHBOARD CONSTRUCTOR v4 — markets-finance design language
+   UNIVERSAL DASHBOARD CONSTRUCTOR v5 — dual-theme + per-row caps
    ────────────────────────────────────────────────────────────────────────────
-   Based on the markets-finance dashboard at /markets-dashboard/:
-     - Dark mode: --bg #0a0e1a, --panel rgba(15,23,42,.85), subtle borders
-     - Inter (body) + Space Grotesk (numbers) typography
-     - Tight gaps (10-12px), generous internal padding (14-16px)
-     - 10-12px border-radius for soft modern feel
-     - Semantic green/red for changes
-     - High information density (no big white space)
-     - 6-col KPI grid at desktop, 3 at tablet, 2 at mobile
-     - Chart cards 1fr 1fr grid (half-width pairs), .wide spans full row
-     - AI brief 2-col grid at desktop (was 4-col — too thin), 1-col mobile
+   Themes:
+     - LIGHT (default): markets-finance-style but light background
+       bg #f5f7fb, panel #ffffff, border rgba(99,102,241,.12)
+     - DARK: markets-finance dark mode
+       bg #0a0e1a, panel rgba(15,23,42,.85), border rgba(99,102,241,.15)
+   Theme is controlled by <html data-theme="light|dark"> — set by
+   theme-toggle.js (loaded from the host page).
 
-   Visual classification contract (unchanged from v3):
-     metric      → span 1 col, aspect-ratio 5/1
-     chart-third → span 1 col (pies, small KPIs), stretchable
-     chart-half  → span 2 cols (paired charts), stretchable
-     table-half  → span 2 cols, stretchable
-     chart-wide  → span all cols (full row banner)
-     table-wide  → span all cols
-     ai-brief    → span all cols, min-height 220px
+   Per-row cap rules (enforced in reclassifyLayout):
+     - max 4 metrics per row (1 col each × 4 cols = full row)
+     - max 2 graphs per row (2 col each × 2 cols = full row)
+     - max 2 tables per row (rare, but supported)
+     - chart-third pairs into chart-half when alone
+   On mobile (1 col) caps don't apply — everything stacks.
+
+   Visual classification (unchanged):
+     metric, chart-third, chart-half, chart-wide, table-half, table-wide, ai-brief
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* ── Design tokens (mirror markets-finance :root) ──────────────────────────── */
+/* ── Design tokens: LIGHT theme (default) ──────────────────────────────────── */
 :root {
-    --bg: #0a0e1a;
-    --bg2: #0f172a;
-    --panel: rgba(15, 23, 42, 0.85);
-    --border: rgba(99, 102, 241, 0.15);
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --primary: #6366f1;
-    --accent: #06b6d4;
-    --green: #10b981;
-    --red: #ef4444;
-    --amber: #f59e0b;
+    --ud-bg: #f5f7fb;
+    --ud-bg2: #e8eaf2;
+    --ud-panel: #ffffff;
+    --ud-border: rgba(99, 102, 241, 0.12);
+    --ud-border-strong: rgba(99, 102, 241, 0.20);
+    --ud-text: #1e293b;
+    --ud-text-soft: #475569;
+    --ud-muted: #64748b;
+    --ud-primary: #6366f1;
+    --ud-accent: #06b6d4;
+    --ud-green: #10b981;
+    --ud-red: #ef4444;
+    --ud-amber: #f59e0b;
+    --ud-table-head-bg: #1e293b;
+    --ud-table-head-text: #e2e8f0;
+    --ud-table-row-alt: rgba(99, 102, 241, 0.025);
+    --ud-table-row-hover: rgba(99, 102, 241, 0.06);
+    --ud-chart-axis: #94a3b8;
+    --ud-chart-split: rgba(99, 102, 241, 0.08);
+    --ud-chart-tooltip: rgba(255, 255, 255, 0.96);
+    --ud-chart-tooltip-text: #1e293b;
+    --ud-chart-tooltip-border: rgba(99, 102, 241, 0.20);
     --fh: 'Space Grotesk', sans-serif;
     --fb: 'Inter', sans-serif;
-    /* Brand accent colors for series */
     --exec-primary: #6366f1;
     --exec-secondary: #06b6d4;
     --exec-highlight: #10b981;
     --exec-accent: #f59e0b;
 }
 
-/* Load fonts (host HTML already includes preconnect, but include as fallback) */
+/* ── Design tokens: DARK theme (markets-finance style) ─────────────────────── */
+[data-theme="dark"] {
+    --ud-bg: #0a0e1a;
+    --ud-bg2: #0f172a;
+    --ud-panel: rgba(15, 23, 42, 0.85);
+    --ud-border: rgba(99, 102, 241, 0.15);
+    --ud-border-strong: rgba(99, 102, 241, 0.30);
+    --ud-text: #e2e8f0;
+    --ud-text-soft: #cbd5e1;
+    --ud-muted: #64748b;
+    --ud-primary: #6366f1;
+    --ud-accent: #06b6d4;
+    --ud-green: #10b981;
+    --ud-red: #ef4444;
+    --ud-amber: #f59e0b;
+    --ud-table-head-bg: #0f172a;
+    --ud-table-head-text: #64748b;
+    --ud-table-row-alt: rgba(99, 102, 241, 0.025);
+    --ud-table-row-hover: rgba(99, 102, 241, 0.06);
+    --ud-chart-axis: #94a3b8;
+    --ud-chart-split: rgba(99, 102, 241, 0.08);
+    --ud-chart-tooltip: rgba(15, 23, 42, 0.95);
+    --ud-chart-tooltip-text: #e2e8f0;
+    --ud-chart-tooltip-border: rgba(99, 102, 241, 0.20);
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 /* ── Page shell ────────────────────────────────────────────────────────────── */
@@ -52,13 +85,14 @@
 
 .universal-page {
     min-height: calc(100vh - 48px);
-    background: var(--bg);
-    color: var(--text);
+    background: var(--ud-bg);
+    color: var(--ud-text);
     font-family: var(--fb);
     padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    transition: background-color 280ms ease, color 280ms ease;
 }
 
 .universal-header {
@@ -67,14 +101,14 @@
     justify-content: space-between;
     gap: 12px;
     padding: 8px 0;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--ud-border);
 }
 
 .universal-title {
     font-family: var(--fh);
     font-size: clamp(14px, 1.3vw, 17px);
     font-weight: 700;
-    color: var(--text);
+    color: var(--ud-text);
     letter-spacing: -0.01em;
 }
 
@@ -85,7 +119,7 @@
 }
 
 .universal-asof {
-    color: var(--muted);
+    color: var(--ud-muted);
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -94,9 +128,9 @@
 }
 
 .universal-btn {
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
+    border: 1px solid var(--ud-border);
+    background: var(--ud-panel);
+    color: var(--ud-text);
     font-family: var(--fb);
     font-size: 10px;
     font-weight: 700;
@@ -110,21 +144,21 @@
     letter-spacing: 0.05em;
     transition: border-color 200ms, background 200ms;
 }
-.universal-btn:hover { border-color: var(--accent); background: rgba(99, 102, 241, 0.08); }
+.universal-btn:hover { border-color: var(--ud-accent); background: rgba(99, 102, 241, 0.08); }
 .universal-btn.is-active {
-    border-color: var(--accent);
+    border-color: var(--ud-accent);
     background: rgba(6, 182, 212, 0.12);
-    color: var(--accent);
+    color: var(--ud-accent);
 }
 
-/* ══ CANVAS: tight grid, dark background ═════════════════════════════════════ */
+/* ══ CANVAS: tight grid ══════════════════════════════════════════════════════ */
 .universal-canvas {
     container-type: inline-size;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-auto-rows: minmax(80px, auto);
     gap: 10px;
-    background: var(--bg);
+    background: var(--ud-bg);
     min-height: 400px;
 }
 @media (max-width: 1024px) {
@@ -134,23 +168,21 @@
     .universal-canvas { grid-template-columns: 1fr; }
 }
 
-/* ── Tile base: dark glass card, like markets-finance .chart-card ──────────── */
+/* ── Tile base ─────────────────────────────────────────────────────────────── */
 .universal-tile {
     container-type: inline-size;
     position: relative;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: var(--ud-panel);
+    border: 1px solid var(--ud-border);
     border-radius: 10px;
     overflow: hidden;
     min-width: 0;
     min-height: 0;
     transition: border-color 200ms;
 }
-.universal-tile:hover { border-color: rgba(99, 102, 241, 0.35); }
+.universal-tile:hover { border-color: var(--ud-border-strong); }
 
 /* ══ NATURAL GRID SPANS ═════════════════════════════════════════════════════ */
-
-/* Metric: 1 col at desktop, 2 at tablet (half canvas), 1 at mobile (full) */
 .universal-tile[data-natural-type="metric"] {
     grid-column: span 1;
     aspect-ratio: 5 / 2;
@@ -161,7 +193,6 @@
     gap: 3px;
 }
 
-/* chart-third: 1 col desktop, 2 tablet, 1 mobile */
 .universal-tile[data-natural-type="chart-third"] {
     grid-column: span 1;
     aspect-ratio: 4 / 3;
@@ -175,7 +206,6 @@
     }
 }
 
-/* chart-half: 2 cols desktop, 2 tablet (full), 1 mobile */
 .universal-tile[data-natural-type="chart-half"],
 .universal-tile[data-natural-type="table-half"] {
     grid-column: span 2;
@@ -195,7 +225,6 @@
     .universal-tile[data-natural-type="metric"] { aspect-ratio: 5 / 1; }
 }
 
-/* Wide/table/ai-brief: full row */
 .universal-tile[data-natural-type="chart-wide"],
 .universal-tile[data-natural-type="table-wide"],
 .universal-tile[data-natural-type="ai-brief"] {
@@ -205,11 +234,7 @@
 }
 .universal-tile[data-natural-type="chart-wide"] { aspect-ratio: 32 / 7; }
 
-/* ══ PROMOTED SPANS ══════════════════════════════════════════════════════════
-   When JS reclassifies a lone chart-third → chart-half → chart-wide, the
-   tile keeps its data-natural-type (immutable) but changes data-type.
-   These rules override the natural-type span/aspect when data-type is
-   promoted. Use !important to beat the more-specific natural-type selectors. */
+/* ══ PROMOTED SPANS ══════════════════════════════════════════════════════════ */
 .universal-tile[data-type="chart-half"] {
     grid-column: span 2 !important;
     aspect-ratio: 16 / 9 !important;
@@ -224,16 +249,16 @@
     aspect-ratio: auto !important;
 }
 
-/* ── Metric tile internals (mirror .kpi from markets-finance) ─────────────── */
-.universal-tile[data-natural-type="metric"]:nth-child(6n+1) { border-top: 2px solid var(--primary); }
-.universal-tile[data-natural-type="metric"]:nth-child(6n+2) { border-top: 2px solid var(--secondary, var(--accent)); }
-.universal-tile[data-natural-type="metric"]:nth-child(6n+3) { border-top: 2px solid var(--highlight, var(--green)); }
-.universal-tile[data-natural-type="metric"]:nth-child(6n+4) { border-top: 2px solid var(--accent); }
+/* ── Metric tile internals ─────────────────────────────────────────────────── */
+.universal-tile[data-natural-type="metric"]:nth-child(6n+1) { border-top: 2px solid var(--ud-primary); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+2) { border-top: 2px solid var(--ud-accent); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+3) { border-top: 2px solid var(--ud-green); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+4) { border-top: 2px solid var(--ud-amber); }
 .universal-tile[data-natural-type="metric"]:nth-child(6n+5) { border-top: 2px solid #ec4899; }
 .universal-tile[data-natural-type="metric"]:nth-child(6n+6) { border-top: 2px solid #14b8a6; }
 
 .universal-metric-label {
-    color: var(--muted);
+    color: var(--ud-muted);
     font-size: clamp(8px, 0.85cqw, 10px);
     font-weight: 600;
     text-transform: uppercase;
@@ -250,7 +275,7 @@
 
 .universal-metric-value {
     font-family: var(--fh);
-    color: var(--text);
+    color: var(--ud-text);
     font-size: clamp(13px, 2.0cqw, 20px);
     font-weight: 700;
     line-height: 1;
@@ -261,7 +286,7 @@
 }
 
 .universal-metric-period {
-    color: var(--muted);
+    color: var(--ud-muted);
     font-size: clamp(7px, 0.7cqw, 9px);
     font-weight: 600;
     white-space: nowrap;
@@ -282,22 +307,22 @@
     padding: 1px 5px;
     border-radius: 4px;
     background: rgba(100, 116, 139, 0.15);
-    color: var(--muted);
+    color: var(--ud-muted);
     line-height: 1.3;
 }
-.universal-delta[data-tone="good"] { background: rgba(16, 185, 129, 0.15); color: var(--green); }
-.universal-delta[data-tone="bad"]  { background: rgba(239, 68, 68, 0.15);  color: var(--red); }
+.universal-delta[data-tone="good"] { background: rgba(16, 185, 129, 0.15); color: var(--ud-green); }
+.universal-delta[data-tone="bad"]  { background: rgba(239, 68, 68, 0.15);  color: var(--ud-red); }
 
 /* ── Chart / table tile internals ──────────────────────────────────────────── */
 .universal-tile-title {
     font-family: var(--fh);
     padding: 10px 12px 6px;
-    color: var(--text);
+    color: var(--ud-text);
     font-size: clamp(10px, 1.0cqw, 12px);
     font-weight: 600;
     line-height: 1.2;
     letter-spacing: -0.01em;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--ud-border);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -306,7 +331,7 @@
     content: '';
     width: 3px;
     height: 12px;
-    background: var(--accent);
+    background: var(--ud-accent);
     border-radius: 2px;
     flex-shrink: 0;
 }
@@ -326,7 +351,7 @@
 .universal-table-wrap {
     min-height: 0;
     overflow: auto;
-    background: rgba(10, 14, 26, 0.5);
+    background: var(--ud-bg2);
 }
 
 .universal-table {
@@ -334,13 +359,13 @@
     border-collapse: collapse;
     font-family: var(--fb);
     font-size: clamp(9px, 0.85cqw, 11px);
-    color: var(--text);
+    color: var(--ud-text);
 }
 .universal-table thead th {
     position: sticky;
     top: 0;
-    background: var(--bg2);
-    color: var(--muted);
+    background: var(--ud-table-head-bg);
+    color: var(--ud-table-head-text);
     font-weight: 700;
     text-align: left;
     padding: 8px 10px;
@@ -348,24 +373,24 @@
     font-size: clamp(8px, 0.78cqw, 10px);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--ud-border);
 }
 .universal-table tbody td {
     padding: 6px 10px;
-    border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+    border-bottom: 1px solid var(--ud-border);
     white-space: nowrap;
     font-family: var(--fh);
     font-weight: 500;
 }
-.universal-table tbody tr:hover { background: rgba(99, 102, 241, 0.06); }
-.universal-table tbody tr:nth-child(even) { background: rgba(99, 102, 241, 0.025); }
+.universal-table tbody tr:hover { background: var(--ud-table-row-hover); }
+.universal-table tbody tr:nth-child(even) { background: var(--ud-table-row-alt); }
 
-/* ── AI Brief (mirror markets-finance .ai-brief) ─────────────────────────── */
+/* ── AI Brief ──────────────────────────────────────────────────────────────── */
 .universal-tile[data-type="ai-brief"] {
     min-height: 220px;
     padding: 16px 18px;
     border-radius: 12px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--ud-border);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(6, 182, 212, 0.04));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -386,7 +411,7 @@
     border-radius: 8px;
     display: grid;
     place-items: center;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+    background: linear-gradient(135deg, var(--ud-primary), var(--ud-accent));
     color: #fff;
     font-size: 12px;
 }
@@ -394,11 +419,11 @@
     font-family: var(--fh);
     font-size: 14px;
     font-weight: 700;
-    color: var(--text);
+    color: var(--ud-text);
 }
 .universal-ai-sub {
     font-size: 10px;
-    color: var(--muted);
+    color: var(--ud-muted);
     margin-left: auto;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -411,7 +436,7 @@
     border-radius: 999px;
     background: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.25);
-    color: var(--green);
+    color: var(--ud-green);
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
@@ -421,7 +446,7 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--green);
+    background: var(--ud-green);
     animation: universalAiPulse 2s ease-in-out infinite;
 }
 @keyframes universalAiPulse {
@@ -429,7 +454,6 @@
     50% { opacity: 0.4; }
 }
 
-/* 2-col grid like markets-finance (was 4-col — too thin and caused big white space) */
 .universal-ai-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -440,8 +464,8 @@
 }
 
 .universal-ai-cell {
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid var(--border);
+    background: var(--ud-panel);
+    border: 1px solid var(--ud-border);
     border-radius: 8px;
     padding: 12px;
     position: relative;
@@ -453,9 +477,9 @@
     top: 0; left: 0; bottom: 0;
     width: 3px;
 }
-.universal-ai-cell[data-section="what"]::before { background: var(--green); }
-.universal-ai-cell[data-section="why"]::before  { background: var(--amber); }
-.universal-ai-cell[data-section="next"]::before { background: var(--accent); }
+.universal-ai-cell[data-section="what"]::before { background: var(--ud-green); }
+.universal-ai-cell[data-section="why"]::before  { background: var(--ud-amber); }
+.universal-ai-cell[data-section="next"]::before { background: var(--ud-accent); }
 .universal-ai-cell[data-section="do"]::before   { background: #ec4899; }
 
 .universal-ai-cell-head {
@@ -471,7 +495,7 @@
     height: 18px;
     border-radius: 4px;
     background: rgba(99, 102, 241, 0.15);
-    color: var(--accent);
+    color: var(--ud-accent);
     font-size: 10px;
     font-weight: 700;
 }
@@ -480,13 +504,13 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--accent);
+    color: var(--ud-accent);
 }
 .universal-ai-cell-body {
     font-family: var(--fb);
     font-size: clamp(11px, 0.95cqw, 12px);
     line-height: 1.55;
-    color: var(--text);
+    color: var(--ud-text);
 }
 
 /* ── Edit mode ─────────────────────────────────────────────────────────────── */
@@ -520,10 +544,10 @@
     top: 4px; right: 14px;
     z-index: 30;
     width: 18px; height: 18px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--ud-border);
     border-radius: 4px;
-    background: rgba(15, 23, 42, 0.85);
-    color: var(--muted);
+    background: var(--ud-panel);
+    color: var(--ud-muted);
     display: none;
     place-items: center;
     padding: 0;
@@ -540,10 +564,29 @@
 .universal-error {
     padding: 40px;
     text-align: center;
-    color: var(--muted);
+    color: var(--ud-muted);
     font-size: 13px;
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: var(--ud-panel);
+    border: 1px solid var(--ud-border);
     border-radius: 10px;
 }
-.universal-error { color: var(--red); border-color: rgba(239, 68, 68, 0.3); }
+.universal-error { color: var(--ud-red); border-color: rgba(239, 68, 68, 0.3); }
+
+/* ── Theme toggle button ──────────────────────────────────────────────────── */
+.universal-theme-toggle {
+    border: 1px solid var(--ud-border);
+    background: var(--ud-panel);
+    color: var(--ud-text);
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    transition: border-color 200ms, transform 200ms;
+}
+.universal-theme-toggle:hover {
+    border-color: var(--ud-accent);
+    transform: translateY(-1px);
+}
