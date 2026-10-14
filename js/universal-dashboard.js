@@ -321,7 +321,7 @@
         const tileH = tileEl ? tileEl.getBoundingClientRect().height : 220;
         const labelFont = Math.max(8, Math.min(11, Math.round(tileW * 0.027)));
         const colors = palette();
-        const isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+        const isDark = (document.documentElement.getAttribute('data-theme') || 'light') === 'dark';
         const chartTextColor = isDark ? '#e2e8f0' : '#1e293b';
         const chartMutedColor = isDark ? '#94a3b8' : '#64748b';
         const chartAxisColor = isDark ? '#cbd5e1' : '#475569';
@@ -1172,7 +1172,7 @@
             currentTheme = localStorage.getItem('docchat-theme');
         } catch (e) {}
         if (currentTheme !== 'light' && currentTheme !== 'dark') {
-            currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         }
         document.documentElement.setAttribute('data-theme', currentTheme);
         document.body.setAttribute('data-theme', currentTheme);
@@ -1201,7 +1201,7 @@
         const themeBtn = app.querySelector('#universalThemeToggle');
         const themeIcon = app.querySelector('#universalThemeIcon');
         function updateThemeIcon() {
-            const t = document.documentElement.getAttribute('data-theme') || 'dark';
+            const t = document.documentElement.getAttribute('data-theme') || 'light';
             if (themeIcon) {
                 themeIcon.innerHTML = t === 'dark'
                     ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
@@ -1211,7 +1211,7 @@
         updateThemeIcon();
         if (themeBtn) {
             themeBtn.addEventListener('click', () => {
-                const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+                const cur = document.documentElement.getAttribute('data-theme') || 'light';
                 const next = cur === 'dark' ? 'light' : 'dark';
                 document.documentElement.setAttribute('data-theme', next);
                 document.body.setAttribute('data-theme', next);

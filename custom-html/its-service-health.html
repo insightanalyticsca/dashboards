@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,7 +7,7 @@
 <script>
 // Nuke old service worker + all caches so PWA gets fresh files
 (function(){
-  try { localStorage.setItem('docchat-theme','dark'); } catch(e){}
+  try { localStorage.setItem('docchat-theme','light'); } catch(e){}
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(regs){
       regs.forEach(function(r){ r.unregister(); });
@@ -28,16 +28,16 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261018">
-<link rel="stylesheet" href="../css/universal-dashboard.css?v=universal29">
+<link rel="stylesheet" href="../css/universal-dashboard.css?v=universal30">
 <script defer src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <style>
   .topbar { display: none !important; }
   body { background: #0a0e1a; margin: 0; padding: 0; }
 </style>
 </head>
-<body data-suite="its-service-health" data-variant="cyan" data-theme="dark">
+<body data-suite="its-service-health" data-variant="cyan" data-theme="light">
   <div id="app"></div>
-  <script defer src="../js/universal-dashboard.js?v=universal29"></script>
+  <script defer src="../js/universal-dashboard.js?v=universal30"></script>
   <script defer src="../js/theme-toggle.js?v=20261018"></script>
   <script defer src="../js/exec-ai-brief.js?v=20261018"></script>
   <script defer src="../js/pull-to-refresh.js?v=20261018"></script>
