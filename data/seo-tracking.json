@@ -124,11 +124,6 @@
           "keywords": "portfolio, dashboards, studio, gallery"
         },
         {
-          "page": "custom-html/executive-chatters-portfolio.html",
-          "title": "Executive Operating Dashboard",
-          "keywords": "dashboards, analytics, executive, operating, dashboard, studio, gallery, insight, integrated, click"
-        },
-        {
           "page": "custom-html/executive-customer-payments.html",
           "title": "Customer Payments",
           "keywords": "customer, payments, dashboards, studio, gallery"
@@ -773,24 +768,6 @@
             "vagueWords": 0,
             "numbers": 7,
             "density": "0.58",
-            "score": "good"
-          }
-        },
-        {
-          "page": "custom-html/executive-chatters-portfolio.html",
-          "techniques": [
-            "resource-hints",
-            "defer-scripts",
-            "content-visibility",
-            "freshness",
-            "auto-link(3)",
-            "json-ld-graph"
-          ],
-          "factDensity": {
-            "sentences": 11,
-            "vagueWords": 0,
-            "numbers": 6,
-            "density": "0.55",
             "score": "good"
           }
         },
@@ -1710,20 +1687,6 @@
           }
         },
         {
-          "page": "custom-html/executive-chatters-portfolio.html",
-          "techniques": [
-            "auto-link(4)",
-            "json-ld-graph"
-          ],
-          "factDensity": {
-            "sentences": 35,
-            "vagueWords": 0,
-            "numbers": 10,
-            "density": "0.29",
-            "score": "fair"
-          }
-        },
-        {
           "page": "custom-html/executive-customer-payments.html",
           "techniques": [
             "json-ld-graph"
@@ -2533,20 +2496,6 @@
             "numbers": 21,
             "density": "0.45",
             "score": "good"
-          }
-        },
-        {
-          "page": "custom-html/executive-chatters-portfolio.html",
-          "techniques": [
-            "auto-link(4)",
-            "json-ld-graph"
-          ],
-          "factDensity": {
-            "sentences": 35,
-            "vagueWords": 0,
-            "numbers": 10,
-            "density": "0.29",
-            "score": "fair"
           }
         },
         {
@@ -3403,23 +3352,6 @@
         },
         {
           "page": "custom-html/executive-ar-portfolio.html",
-          "techniques": [
-            "resource-hints",
-            "defer-scripts",
-            "content-visibility",
-            "freshness",
-            "json-ld-graph"
-          ],
-          "factDensity": {
-            "sentences": 7,
-            "vagueWords": 0,
-            "numbers": 6,
-            "density": "0.86",
-            "score": "good"
-          }
-        },
-        {
-          "page": "custom-html/executive-chatters-portfolio.html",
           "techniques": [
             "resource-hints",
             "defer-scripts",
