@@ -583,6 +583,7 @@
 
 /* Move handle (⠿) — top-right of tile, drag to move freely */
 .universal-move {
+    touch-action: none;
     position: absolute;
     top: 3px;
     right: 24px;
@@ -601,13 +602,16 @@
     opacity: 0.4;
     transition: opacity 200ms;
 }
-.universal-canvas.is-editing .universal-move { display: grid; }
+.universal-canvas.is-editing .universal-move {
+    touch-action: none; display: grid; }
 .universal-canvas.is-editing .universal-tile:hover .universal-move,
-.universal-tile.universal-tile-active .universal-move { opacity: 1; }
+.universal-tile.universal-tile-active .universal-move {
+    touch-action: none; opacity: 1; }
 
 /* Resize handle (bottom-right corner) — single handle, drag to resize both
    width and height simultaneously (matches old dash-suite.js UX) */
 .universal-resize {
+    touch-action: none;
     position: absolute;
     right: 2px;
     bottom: 2px;
@@ -619,9 +623,11 @@
     opacity: 0.4;
     transition: opacity 200ms;
 }
-.universal-canvas.is-editing .universal-resize { display: block; }
+.universal-canvas.is-editing .universal-resize {
+    touch-action: none; display: block; }
 .universal-canvas.is-editing .universal-tile:hover .universal-resize,
-.universal-tile.universal-tile-active .universal-resize { opacity: 1; }
+.universal-tile.universal-tile-active .universal-resize {
+    touch-action: none; opacity: 1; }
 .universal-resize::after {
     content: '';
     position: absolute;
@@ -642,7 +648,8 @@
 
 /* Frozen state (default) — hide all handles */
 .universal-canvas.is-frozen .universal-move,
-.universal-canvas.is-frozen .universal-resize { display: none !important; }
+.universal-canvas.is-frozen .universal-resize {
+    touch-action: none; display: none !important; }
 
 /* Dragging state — tile floats above siblings during ⠿ drag */
 .universal-tile.universal-tile-dragging {

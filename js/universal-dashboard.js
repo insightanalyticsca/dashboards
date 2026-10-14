@@ -1054,20 +1054,16 @@
         const tileId = tile.dataset.tileId;
         let layoutZ = 0;
 
-        // ── Move + Resize — single begin() function with mode param ──
+        // ── Move + Resize — uses Pointer Events (works on mouse + touch + PWA) ──
         const begin = (event, mode) => {
-            if (event.button !== 0) return;
+            if (event.button !== undefined && event.button !== 0) return;
             event.preventDefault();
             event.stopPropagation();
             const canvasRect = canvas.getBoundingClientRect();
             if (!canvasRect.width || !canvasRect.height) return;
 
-            // Capture this tile to absolute positioning NOW (if not already)
-            // so the drag has a starting point. This is what makes the tile
-            // leave grid flow and become manually positioned.
             captureTileToAbsolute(tile);
 
-            // Read current geometry (from inline style after capture)
             const start = (function() {
                 const left = tile.style.left;
                 const top = tile.style.top;
@@ -1082,20 +1078,23 @@
                         z: Number(tile.style.zIndex || 0)
                     };
                 }
-                // Fallback: capture from current bounding rect
                 return captureTilePositionAsPercent(tile) || { x: 0, y: 0, w: 25, h: 25, z: 0 };
             })();
 
             const pointerX = event.clientX;
             const pointerY = event.clientY;
-            // Bring tile to front while dragging
             layoutZ = Math.max(layoutZ, start.z || 0) + 1;
             start.z = layoutZ;
             applyTileGeometry(tile, start);
             tile.classList.add('universal-tile-active');
             canvas.classList.add('universal-canvas-changing');
 
+            // Capture pointer so we keep getting events even if finger
+            // moves outside the handle element (critical for touch/PWA)
+            try { event.target.setPointerCapture(event.pointerId); } catch (_) {}
+
             const onMove = (moveEvent) => {
+                moveEvent.preventDefault();
                 const dx = ((moveEvent.clientX - pointerX) / canvasRect.width) * 100;
                 const dy = ((moveEvent.clientY - pointerY) / canvasRect.height) * 100;
                 const next = Object.assign({}, start);
@@ -1103,7 +1102,6 @@
                     next.x = clampNumber(start.x + dx, 0, Math.max(0, 100 - start.w));
                     next.y = clampNumber(start.y + dy, 0, Math.max(0, 100 - start.h));
                 } else {
-                    // resize: change w and h simultaneously
                     next.w = clampNumber(start.w + dx, 4, Math.max(4, 100 - start.x));
                     next.h = clampNumber(start.h + dy, 4, Math.max(4, 100 - start.y));
                 }
@@ -1111,13 +1109,13 @@
                 resizeChart(tileId);
             };
 
-            const finish = () => {
-                window.removeEventListener('mousemove', onMove);
-                window.removeEventListener('mouseup', finish);
+            const finish = (finishEvent) => {
+                window.removeEventListener('pointermove', onMove);
+                window.removeEventListener('pointerup', finish);
+                window.removeEventListener('pointercancel', finish);
+                try { if (finishEvent && finishEvent.target) finishEvent.target.releasePointerCapture(finishEvent.pointerId); } catch (_) {}
                 tile.classList.remove('universal-tile-active');
                 canvas.classList.remove('universal-canvas-changing');
-                // Capture final geometry from bounding rect (more reliable
-                // than parsing inline style)
                 const finalGeom = captureTilePositionAsPercent(tile);
                 if (finalGeom) {
                     finalGeom.z = Number(tile.style.zIndex || 0);
@@ -1127,16 +1125,16 @@
                 resizeChart(tileId);
             };
 
-            window.addEventListener('mousemove', onMove);
-            window.addEventListener('mouseup', finish);
+            window.addEventListener('pointermove', onMove);
+            window.addEventListener('pointerup', finish);
+            window.addEventListener('pointercancel', finish);
         };
 
-        // Move via ⠿ handle
-        mv.addEventListener('mousedown', e => begin(e, 'move'));
-        // Resize via corner handle
-        rs.addEventListener('mousedown', e => begin(e, 'resize'));
+        // Pointer events (work on mouse + touch + pen)
+        mv.addEventListener('pointerdown', e => begin(e, 'move'));
+        rs.addEventListener('pointerdown', e => begin(e, 'resize'));
 
-        // Double-click ⠿ resets this tile to default (grid placement)
+        // Double-click/double-tap ⠿ resets this tile to default
         mv.addEventListener('dblclick', e => {
             e.preventDefault();
             e.stopPropagation();
