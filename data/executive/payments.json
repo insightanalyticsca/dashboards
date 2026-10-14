@@ -135,7 +135,7 @@
       "id": "payment-method-pie",
       "title": "Payment Methods",
       "kind": "pie",
-      "width": "narrow",
+      "width": "third",
       "valueFormat": "percent",
       "leftAxisTitle": "",
       "rightAxisTitle": "",
