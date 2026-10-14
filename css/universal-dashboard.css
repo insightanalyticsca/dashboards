@@ -1,103 +1,130 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   UNIVERSAL DASHBOARD CONSTRUCTOR v3 — neat & stunning
+   UNIVERSAL DASHBOARD CONSTRUCTOR v4 — markets-finance design language
    ────────────────────────────────────────────────────────────────────────────
-   Visual classification (every tile gets a data-natural-type at build time
-   that NEVER changes, plus a mutable data-type that reclassifyLayout() can
-   promote on the fly):
+   Based on the markets-finance dashboard at /markets-dashboard/:
+     - Dark mode: --bg #0a0e1a, --panel rgba(15,23,42,.85), subtle borders
+     - Inter (body) + Space Grotesk (numbers) typography
+     - Tight gaps (10-12px), generous internal padding (14-16px)
+     - 10-12px border-radius for soft modern feel
+     - Semantic green/red for changes
+     - High information density (no big white space)
+     - 6-col KPI grid at desktop, 3 at tablet, 2 at mobile
+     - Chart cards 1fr 1fr grid (half-width pairs), .wide spans full row
+     - AI brief 2-col grid at desktop (was 4-col — too thin), 1-col mobile
 
-     natural-type    natural-width   stretchable?
-     ────────────────────────────────────────────────────────────────
-     metric          1/4 canvas       no — always packs 4-up
-     chart-third     1/3 canvas       YES — promotes to chart-half or chart-wide
-     chart-half      1/2 canvas       YES — promotes to chart-wide
-     table-half      1/2 canvas       YES — promotes to table-wide
-     chart-wide      1/1 canvas       no — always full row
-     table-wide      1/1 canvas       no — always full row
-     ai-brief        1/1 canvas       no — always full row, min-height 220px
-
-   Grid: FIXED breakpoints (NOT auto-fit) so column count is predictable
-   at every viewport. 4 cols on desktop, 2 cols on tablet, 1 col on mobile.
-
-   v3 changes (polish + neatness):
-   - Smaller, denser typography (was too big — now ~25% smaller across the board)
-   - Tighter padding (was 14-16px, now 8-10px)
-   - Better aspect ratios (chart-half 16:9 cinematic, chart-wide 32:7 banner)
-   - chart-third type added (was missing — caused third-width charts to render at half width)
-   - Cleaner color system
+   Visual classification contract (unchanged from v3):
+     metric      → span 1 col, aspect-ratio 5/1
+     chart-third → span 1 col (pies, small KPIs), stretchable
+     chart-half  → span 2 cols (paired charts), stretchable
+     table-half  → span 2 cols, stretchable
+     chart-wide  → span all cols (full row banner)
+     table-wide  → span all cols
+     ai-brief    → span all cols, min-height 220px
    ════════════════════════════════════════════════════════════════════════════ */
 
+/* ── Design tokens (mirror markets-finance :root) ──────────────────────────── */
+:root {
+    --bg: #0a0e1a;
+    --bg2: #0f172a;
+    --panel: rgba(15, 23, 42, 0.85);
+    --border: rgba(99, 102, 241, 0.15);
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --primary: #6366f1;
+    --accent: #06b6d4;
+    --green: #10b981;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --fh: 'Space Grotesk', sans-serif;
+    --fb: 'Inter', sans-serif;
+    /* Brand accent colors for series */
+    --exec-primary: #6366f1;
+    --exec-secondary: #06b6d4;
+    --exec-highlight: #10b981;
+    --exec-accent: #f59e0b;
+}
+
+/* Load fonts (host HTML already includes preconnect, but include as fallback) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
 /* ── Page shell ────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 .universal-page {
     min-height: calc(100vh - 48px);
-    padding: 4px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--fb);
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
 }
 
 .universal-header {
-    min-height: 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 0 4px;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
 }
 
 .universal-title {
-    font-size: clamp(13px, 1.2vw, 17px);
-    line-height: 1.1;
-    font-weight: 800;
-    letter-spacing: .1px;
-    color: var(--exec-primary, #0808ee);
+    font-family: var(--fh);
+    font-size: clamp(14px, 1.3vw, 17px);
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
 }
 
 .universal-header-right {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
 }
 
 .universal-asof {
-    color: var(--exec-muted, #64748b);
-    font-size: clamp(9px, 0.75vw, 11px);
+    color: var(--muted);
+    font-size: 10px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     white-space: nowrap;
 }
 
 .universal-btn {
-    border: 1px solid var(--exec-border, #d8deea);
-    background: var(--exec-panel, #fff);
-    color: var(--exec-ink, #1e293b);
-    font-size: clamp(9px, 0.75vw, 11px);
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    font-family: var(--fb);
+    font-size: 10px;
     font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 5px;
+    padding: 5px 10px;
+    border-radius: 6px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    transition: background .15s ease, border-color .15s ease;
+    gap: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: border-color 200ms, background 200ms;
 }
-.universal-btn:hover { background: rgba(99, 102, 241, 0.06); }
+.universal-btn:hover { border-color: var(--accent); background: rgba(99, 102, 241, 0.08); }
 .universal-btn.is-active {
-    background: rgba(99, 102, 241, 0.12);
-    border-color: rgba(99, 102, 241, 0.45);
-    color: #6366f1;
+    border-color: var(--accent);
+    background: rgba(6, 182, 212, 0.12);
+    color: var(--accent);
 }
 
-/* ══ CANVAS: FIXED-BREAKPOINT GRID ════════════════════════════════════════════ */
+/* ══ CANVAS: tight grid, dark background ═════════════════════════════════════ */
 .universal-canvas {
     container-type: inline-size;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-auto-rows: minmax(80px, auto);
-    gap: 6px;
-    padding: 4px;
-    border: 1px solid rgba(216, 222, 234, .72);
-    border-radius: 6px;
-    background: linear-gradient(135deg, rgba(8, 8, 238, .018), transparent 34%),
-                var(--exec-bg, #f7f8fc);
+    gap: 10px;
+    background: var(--bg);
     min-height: 400px;
 }
 @media (max-width: 1024px) {
@@ -107,33 +134,40 @@
     .universal-canvas { grid-template-columns: 1fr; }
 }
 
-/* ── Tile base ─────────────────────────────────────────────────────────────── */
+/* ── Tile base: dark glass card, like markets-finance .chart-card ──────────── */
 .universal-tile {
     container-type: inline-size;
     position: relative;
-    background: var(--exec-panel, #ffffff);
-    border: 1px solid var(--exec-border, #d8deea);
-    border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
     overflow: hidden;
     min-width: 0;
     min-height: 0;
+    transition: border-color 200ms;
 }
+.universal-tile:hover { border-color: rgba(99, 102, 241, 0.35); }
 
-/* ══ NATURAL GRID SPANS (immutable — set at build time) ══════════════════════ */
+/* ══ NATURAL GRID SPANS ═════════════════════════════════════════════════════ */
 
-/* Quarter-width: metrics pack 4-up at desktop */
+/* Metric: 1 col at desktop, 2 at tablet (half canvas), 1 at mobile (full) */
 .universal-tile[data-natural-type="metric"] {
     grid-column: span 1;
-    aspect-ratio: 5 / 1;
+    aspect-ratio: 5 / 2;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
 }
 
-/* Third-width: pie/donut + small KPI cards — packs 3-up at desktop, promotes if alone */
+/* chart-third: 1 col desktop, 2 tablet, 1 mobile */
 .universal-tile[data-natural-type="chart-third"] {
     grid-column: span 1;
     aspect-ratio: 4 / 3;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
 }
-/* At tablet (2 cols), third = 1 col (half canvas). At mobile, 1 col (full). */
 @media (max-width: 1024px) {
     .universal-tile[data-natural-type="chart-third"] {
         grid-column: span 2;
@@ -141,10 +175,12 @@
     }
 }
 
-/* Half-width: spans 2 cols at desktop (true half), 2 at tablet (full), 1 at mobile */
+/* chart-half: 2 cols desktop, 2 tablet (full), 1 mobile */
 .universal-tile[data-natural-type="chart-half"],
 .universal-tile[data-natural-type="table-half"] {
     grid-column: span 2;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 .universal-tile[data-natural-type="chart-half"] { aspect-ratio: 16 / 9; }
 @media (max-width: 600px) {
@@ -156,17 +192,28 @@
     }
     .universal-tile[data-natural-type="chart-half"],
     .universal-tile[data-natural-type="chart-third"] { aspect-ratio: 4 / 3; }
+    .universal-tile[data-natural-type="metric"] { aspect-ratio: 5 / 1; }
 }
 
-/* Full-width: always 1 / -1 */
+/* Wide/table/ai-brief: full row */
 .universal-tile[data-natural-type="chart-wide"],
 .universal-tile[data-natural-type="table-wide"],
 .universal-tile[data-natural-type="ai-brief"] {
     grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
 }
 .universal-tile[data-natural-type="chart-wide"] { aspect-ratio: 32 / 7; }
 
-/* ══ PROMOTED SPANS (when JS reclassifies a lone half/third as wide) ══════════ */
+/* ══ PROMOTED SPANS ══════════════════════════════════════════════════════════
+   When JS reclassifies a lone chart-third → chart-half → chart-wide, the
+   tile keeps its data-natural-type (immutable) but changes data-type.
+   These rules override the natural-type span/aspect when data-type is
+   promoted. Use !important to beat the more-specific natural-type selectors. */
+.universal-tile[data-type="chart-half"] {
+    grid-column: span 2 !important;
+    aspect-ratio: 16 / 9 !important;
+}
 .universal-tile[data-type="chart-wide"] {
     grid-column: 1 / -1 !important;
     aspect-ratio: 32 / 7 !important;
@@ -177,25 +224,21 @@
     aspect-ratio: auto !important;
 }
 
-/* ── Metric tile internals ─────────────────────────────────────────────────── */
-.universal-tile[data-type="metric"] {
-    border-top: 3px solid var(--exec-primary, #0808ee);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 1px;
-    padding: 6px 8px 5px;
-}
-.universal-tile[data-natural-type="metric"]:nth-child(4n+2) { border-top-color: var(--exec-secondary, #09c698); }
-.universal-tile[data-natural-type="metric"]:nth-child(4n+3) { border-top-color: var(--exec-highlight, #BBFF05); }
-.universal-tile[data-natural-type="metric"]:nth-child(4n+4) { border-top-color: var(--exec-accent, #845ef7); }
+/* ── Metric tile internals (mirror .kpi from markets-finance) ─────────────── */
+.universal-tile[data-natural-type="metric"]:nth-child(6n+1) { border-top: 2px solid var(--primary); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+2) { border-top: 2px solid var(--secondary, var(--accent)); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+3) { border-top: 2px solid var(--highlight, var(--green)); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+4) { border-top: 2px solid var(--accent); }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+5) { border-top: 2px solid #ec4899; }
+.universal-tile[data-natural-type="metric"]:nth-child(6n+6) { border-top: 2px solid #14b8a6; }
 
 .universal-metric-label {
-    color: var(--exec-muted, #64748b);
-    font-size: clamp(7px, 0.85cqw, 10px);
-    font-weight: 700;
+    color: var(--muted);
+    font-size: clamp(8px, 0.85cqw, 10px);
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: .3px;
-    line-height: 1.15;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
 }
 
 .universal-metric-main {
@@ -206,59 +249,66 @@
 }
 
 .universal-metric-value {
-    color: var(--exec-ink, #1e293b);
-    font-size: clamp(11px, 1.85cqw, 19px);
-    font-weight: 800;
+    font-family: var(--fh);
+    color: var(--text);
+    font-size: clamp(13px, 2.0cqw, 20px);
+    font-weight: 700;
     line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: -0.02em;
 }
 
 .universal-metric-period {
-    color: var(--exec-muted, #64748b);
-    font-size: clamp(7px, 0.75cqw, 10px);
+    color: var(--muted);
+    font-size: clamp(7px, 0.7cqw, 9px);
     font-weight: 600;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .universal-deltas {
     display: flex;
-    gap: 3px;
+    gap: 4px;
     flex-wrap: wrap;
 }
 
 .universal-delta {
-    border-radius: 999px;
-    padding: 1px 5px;
-    background: #edf2f8;
-    color: var(--exec-muted, #64748b);
-    font-size: clamp(7px, 0.7cqw, 9px);
+    font-family: var(--fh);
+    font-size: clamp(8px, 0.78cqw, 10px);
     font-weight: 700;
-    line-height: 1.2;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: rgba(100, 116, 139, 0.15);
+    color: var(--muted);
+    line-height: 1.3;
 }
-.universal-delta[data-tone="good"] { background: rgba(16, 185, 129, .14); color: #059669; }
-.universal-delta[data-tone="bad"]  { background: rgba(239, 68, 68, .14);  color: #dc2626; }
+.universal-delta[data-tone="good"] { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+.universal-delta[data-tone="bad"]  { background: rgba(239, 68, 68, 0.15);  color: var(--red); }
 
 /* ── Chart / table tile internals ──────────────────────────────────────────── */
-.universal-tile[data-type="chart-half"],
-.universal-tile[data-type="chart-wide"],
-.universal-tile[data-type="table-half"],
-.universal-tile[data-type="table-wide"],
-.universal-tile[data-type="chart-third"] {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-}
-
 .universal-tile-title {
-    min-height: 20px;
-    padding: 5px 8px 3px;
-    border-bottom: 1px solid var(--exec-grid, #e2e8f0);
-    color: var(--exec-primary, #0808ee);
-    font-size: clamp(9px, 0.9cqw, 12px);
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: .1px;
+    font-family: var(--fh);
+    padding: 10px 12px 6px;
+    color: var(--text);
+    font-size: clamp(10px, 1.0cqw, 12px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.universal-tile-title::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
 .universal-chart {
@@ -276,152 +326,167 @@
 .universal-table-wrap {
     min-height: 0;
     overflow: auto;
+    background: rgba(10, 14, 26, 0.5);
 }
 
 .universal-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: clamp(8px, 0.78cqw, 10px);
-    color: #26324a;
+    font-family: var(--fb);
+    font-size: clamp(9px, 0.85cqw, 11px);
+    color: var(--text);
 }
 .universal-table thead th {
     position: sticky;
     top: 0;
-    background: #1e293b;
-    color: #fff;
+    background: var(--bg2);
+    color: var(--muted);
     font-weight: 700;
     text-align: left;
-    padding: 4px 7px;
+    padding: 8px 10px;
     white-space: nowrap;
     font-size: clamp(8px, 0.78cqw, 10px);
-    letter-spacing: .2px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
 }
 .universal-table tbody td {
-    padding: 3px 7px;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.08);
     white-space: nowrap;
+    font-family: var(--fh);
+    font-weight: 500;
 }
-.universal-table tbody tr:nth-child(even) { background: rgba(99, 102, 241, .025); }
-.universal-table tbody tr:hover { background: rgba(99, 102, 241, .08); }
+.universal-table tbody tr:hover { background: rgba(99, 102, 241, 0.06); }
+.universal-table tbody tr:nth-child(even) { background: rgba(99, 102, 241, 0.025); }
 
-/* ── AI Brief ──────────────────────────────────────────────────────────────── */
+/* ── AI Brief (mirror markets-finance .ai-brief) ─────────────────────────── */
 .universal-tile[data-type="ai-brief"] {
-    min-height: 200px;
-    padding: 12px 14px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(99, 102, 241, 0.18);
-    background:
-        linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(6, 182, 212, 0.04) 50%, rgba(139, 92, 246, 0.05) 100%),
-        var(--exec-bg, rgba(255, 255, 255, 0.96));
-    backdrop-filter: blur(10px) saturate(160%);
-    -webkit-backdrop-filter: blur(10px) saturate(160%);
-    box-shadow: 0 3px 14px rgba(99, 102, 241, 0.08), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-    position: relative;
-    overflow: hidden;
+    min-height: 220px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(6, 182, 212, 0.04));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: grid;
     grid-template-rows: auto 1fr;
-    gap: 10px;
-}
-.universal-tile[data-type="ai-brief"]::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.45) 20%, rgba(6, 182, 212, 0.45) 50%, rgba(139, 92, 246, 0.45) 80%, transparent 100%);
+    gap: 14px;
+    aspect-ratio: auto;
 }
 
 .universal-ai-head {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+}
+.universal-ai-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff;
+    font-size: 12px;
 }
 .universal-ai-title {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: clamp(11px, 0.95cqw, 13px);
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #8b5cf6 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
+    font-family: var(--fh);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+.universal-ai-sub {
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .universal-ai-badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 2px 7px 2px 6px;
-    border-radius: 10px;
-    border: 1px solid rgba(16, 185, 129, 0.35);
-    background: rgba(16, 185, 129, 0.10);
-    color: #10b981;
-    font-size: clamp(8px, 0.7cqw, 9px);
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: var(--green);
+    font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.06em;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.universal-ai-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: universalAiPulse 2s ease-in-out infinite;
+}
+@keyframes universalAiPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
 }
 
+/* 2-col grid like markets-finance (was 4-col — too thin and caused big white space) */
 .universal-ai-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
-@media (max-width: 900px) {
-    .universal-ai-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 540px) {
+@media (max-width: 600px) {
     .universal-ai-grid { grid-template-columns: 1fr; }
 }
 
 .universal-ai-cell {
-    padding: 8px 10px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, .55);
-    border: 1px solid rgba(99, 102, 241, .10);
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
     position: relative;
     overflow: hidden;
 }
 .universal-ai-cell::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
 }
-.universal-ai-cell[data-section="what"]::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
-.universal-ai-cell[data-section="why"]::before  { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-.universal-ai-cell[data-section="next"]::before { background: linear-gradient(90deg, #06b6d4, #6366f1); }
-.universal-ai-cell[data-section="do"]::before   { background: linear-gradient(90deg, #8b5cf6, #ec4899); }
+.universal-ai-cell[data-section="what"]::before { background: var(--green); }
+.universal-ai-cell[data-section="why"]::before  { background: var(--amber); }
+.universal-ai-cell[data-section="next"]::before { background: var(--accent); }
+.universal-ai-cell[data-section="do"]::before   { background: #ec4899; }
 
 .universal-ai-cell-head {
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-bottom: 3px;
+    gap: 6px;
+    margin-bottom: 6px;
 }
 .universal-ai-cell-icon {
     display: inline-grid;
     place-items: center;
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
-    background: rgba(99, 102, 241, 0.12);
-    color: #6366f1;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent);
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 700;
 }
 .universal-ai-cell-label {
-    font-size: clamp(8px, 0.78cqw, 10px);
-    font-weight: 800;
+    font-size: clamp(9px, 0.85cqw, 10px);
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--exec-ink, #1e293b);
+    letter-spacing: 0.08em;
+    color: var(--accent);
 }
 .universal-ai-cell-body {
-    font-size: clamp(9px, 0.85cqw, 12px);
-    line-height: 1.4;
-    color: var(--exec-ink, #1e293b);
+    font-family: var(--fb);
+    font-size: clamp(11px, 0.95cqw, 12px);
+    line-height: 1.55;
+    color: var(--text);
 }
 
 /* ── Edit mode ─────────────────────────────────────────────────────────────── */
@@ -434,38 +499,36 @@
     position: absolute;
     z-index: 30;
     opacity: 0;
-    transition: opacity .15s ease;
+    transition: opacity 200ms;
 }
 .universal-canvas.is-editing .universal-resize-x,
-.universal-canvas.is-editing .universal-resize-y {
-    opacity: 1;
-}
+.universal-canvas.is-editing .universal-resize-y { opacity: 1; }
 .universal-resize-x {
     top: 0; right: 0;
     width: 6px; height: 100%;
     cursor: ew-resize;
-    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, .35));
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4));
 }
 .universal-resize-y {
     bottom: 0; left: 0;
     width: 100%; height: 6px;
     cursor: ns-resize;
-    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, .35));
+    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.4));
 }
 .universal-move {
     position: absolute;
-    top: 2px; right: 12px;
+    top: 4px; right: 14px;
     z-index: 30;
-    width: 16px; height: 16px;
-    border: 1px solid rgba(96, 112, 139, .28);
+    width: 18px; height: 18px;
+    border: 1px solid var(--border);
     border-radius: 4px;
-    background: rgba(255, 255, 255, .78);
-    color: var(--exec-muted, #64748b);
+    background: rgba(15, 23, 42, 0.85);
+    color: var(--muted);
     display: none;
     place-items: center;
     padding: 0;
     cursor: grab;
-    font-size: 10px;
+    font-size: 11px;
 }
 .universal-canvas.is-editing .universal-move { display: grid; }
 .universal-canvas.is-frozen .universal-resize-x,
@@ -475,9 +538,12 @@
 /* ── Loading / error ──────────────────────────────────────────────────────── */
 .universal-loading,
 .universal-error {
-    padding: 24px;
+    padding: 40px;
     text-align: center;
-    color: var(--exec-muted, #64748b);
+    color: var(--muted);
     font-size: 13px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
 }
-.universal-error { color: #dc2626; }
+.universal-error { color: var(--red); border-color: rgba(239, 68, 68, 0.3); }

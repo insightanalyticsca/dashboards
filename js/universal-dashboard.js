@@ -218,11 +218,15 @@
         }).join('');
         tile.innerHTML = `
             <div class="universal-ai-head">
-                <span class="universal-ai-title">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>
-                    AI Brief
+                <span class="universal-ai-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>
                 </span>
-                <span class="universal-ai-badge">AI-wired</span>
+                <span class="universal-ai-title">AI Brief</span>
+                <span class="universal-ai-sub">Live analysis</span>
+                <span class="universal-ai-badge">
+                    <span class="universal-ai-badge-dot"></span>
+                    AI-wired
+                </span>
             </div>
             <div class="universal-ai-grid">${cells}</div>
         `;
@@ -260,10 +264,10 @@
                 tooltip: {
                     trigger: 'item',
                     formatter: '{b}: {c} ({d}%)',
-                    backgroundColor: 'rgba(255,255,255,0.96)',
-                    borderColor: '#e2e8f0',
+                    backgroundColor: 'rgba(15,23,42,0.95)',
+                    borderColor: 'rgba(99,102,241,0.2)',
                     borderWidth: 1,
-                    textStyle: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 }
+                    textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 }
                 },
                 legend: {
                     type: 'scroll',
@@ -272,7 +276,7 @@
                     top: legendRight ? 'middle' : 0,
                     bottom: legendRight ? 'middle' : 0,
                     left: legendRight ? '55%' : 'center',
-                    textStyle: { fontSize: labelFont, color: '#1e293b', fontWeight: 600 },
+                    textStyle: { fontSize: labelFont, color: '#94a3b8', fontWeight: 500 },
                     itemWidth: 8, itemHeight: 8, itemGap: 6
                 },
                 series: [{
@@ -324,10 +328,10 @@
                 animationDuration: 400,
                 tooltip: {
                     position: 'top',
-                    backgroundColor: 'rgba(255,255,255,0.96)',
-                    borderColor: '#e2e8f0',
+                    backgroundColor: 'rgba(15,23,42,0.95)',
+                    borderColor: 'rgba(99,102,241,0.2)',
                     borderWidth: 1,
-                    textStyle: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
+                    textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 },
                     formatter: params => `${categoriesY[params.value[1]]} · ${categoriesX[params.value[0]]}: <b>${params.value[2]}</b>`
                 },
                 grid: { left: 70, right: 14, top: 8, bottom: 36, containLabel: false },
@@ -336,7 +340,7 @@
                     data: categoriesX,
                     splitArea: { show: true },
                     axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true },
-                    axisLine: { lineStyle: { color: '#94a3b8' } },
+                    axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
                     axisTick: { show: false }
                 },
                 yAxis: {
@@ -344,7 +348,7 @@
                     data: categoriesY,
                     splitArea: { show: true },
                     axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
-                    axisLine: { lineStyle: { color: '#94a3b8' } },
+                    axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
                     axisTick: { show: false }
                 },
                 visualMap: {
@@ -413,14 +417,14 @@
             tooltip: {
                 trigger: 'axis',
                 axisPointer: { type: 'shadow' },
-                backgroundColor: 'rgba(255,255,255,0.96)',
-                borderColor: '#e2e8f0',
+                backgroundColor: 'rgba(15,23,42,0.95)',
+                borderColor: 'rgba(99,102,241,0.2)',
                 borderWidth: 1,
-                textStyle: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 }
+                textStyle: { color: '#e2e8f0', fontSize: labelFont, fontWeight: 600 }
             },
             legend: {
                 top: 2, type: 'scroll',
-                textStyle: { fontSize: Math.max(7, labelFont - 1), color: '#1e293b', fontWeight: 600 },
+                textStyle: { fontSize: Math.max(7, labelFont - 1), color: '#94a3b8', fontWeight: 500 },
                 itemWidth: 7, itemHeight: 7, itemGap: 5
             },
             grid: { left: 44, right: hasSecondAxis ? 44 : 14, top: 22, bottom: 28, containLabel: false },
@@ -428,12 +432,12 @@
                 type: 'category',
                 data: categories,
                 axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, rotate: categories.length > 6 ? 25 : 0 },
-                axisLine: { lineStyle: { color: '#94a3b8' } },
+                axisLine: { lineStyle: { color: 'rgba(99,102,241,0.15)' } },
                 axisTick: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#e2e8f0', type: 'dashed' } } },
-                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#1e293b', fontWeight: 600 }, splitLine: { show: false } }] : [])
+                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#94a3b8', fontWeight: 500 }, splitLine: { lineStyle: { color: 'rgba(99,102,241,0.08)', type: 'dashed' } } },
+                ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#94a3b8', fontWeight: 500 }, splitLine: { show: false } }] : [])
             ],
             series
         };
@@ -468,6 +472,21 @@
     }
 
     // ══ THE THOROUGH CLASSIFIER ═══════════════════════════════════════════════
+    // Strategy: walk tiles in DOM order. For each tile, compute its span
+    // (depends on natural-type). Pack into rows of `colCount` cols.
+    // When a tile doesn't fit (would leave a hole), promote the PREVIOUS
+    // stretchable tile ONE step up (third→half, half→wide) so its larger
+    // span fills more of the row. If promotion still doesn't fit, the
+    // current tile starts a new row.
+    //
+    // Key insight for thirds: a chart-third at 4 cols takes 1 col. If 4 thirds
+    // appear in a row, they fill the row exactly (4×1=4). If only 3 appear,
+    // they take 3 cols and 1 col is empty — promote the LAST one to half (span 2)
+    // so the row becomes 2+1+1=4 (rearranged). But CSS Grid reorders by DOM
+    // position, so we need to actually have 2+2=4 (two halves) for clean fit.
+    //
+    // Simplification: count CONSECUTIVE stretchable tiles. If their total span
+    // would exceed the row, promote the LAST one to fill the gap.
     function reclassifyLayout() {
         const canvas = state.canvasEl;
         if (!canvas) return;
@@ -484,47 +503,78 @@
             tile.style.gridColumn = '';
         });
 
+        // Walk tiles, simulate placement, promote lone halves/thirds to wide
+        // when they would leave a partial-row hole.
         let currentX = 0;
-        let lastStretchableIndex = -1;
+        let lastStretchableIndex = -1;  // index of last tile we can promote
 
-        function promoteLast() {
-            if (lastStretchableIndex < 0) return;
-            const prev = tiles[lastStretchableIndex];
-            const prevNatural = prev.dataset.naturalType;
-            if (prevNatural === 'chart-third') prev.dataset.type = 'chart-half';
-            else if (prevNatural === 'chart-half') prev.dataset.type = 'chart-wide';
-            else if (prevNatural === 'table-half') prev.dataset.type = 'table-wide';
-            lastStretchableIndex = -1;
-        }
-
-        function spanFor(natural) {
-            if (natural === 'metric') return 1;
-            if (natural === 'chart-third') return 1;
-            if (natural === 'chart-half' || natural === 'table-half') return 2;
+        function spanOf(tile) {
+            const t = tile.dataset.type;
+            if (t === 'metric' || t === 'chart-third') return 1;
+            if (t === 'chart-half' || t === 'table-half') return 2;
             return colCount; // wide / table-wide / ai-brief
         }
-
         function isStretchable(natural) {
             return natural === 'chart-third' || natural === 'chart-half' || natural === 'table-half';
+        }
+        function promote(tile) {
+            const natural = tile.dataset.naturalType;
+            const cur = tile.dataset.type;
+            if (natural === 'chart-third') {
+                // third → half → wide
+                if (cur === 'chart-third') tile.dataset.type = 'chart-half';
+                else if (cur === 'chart-half') tile.dataset.type = 'chart-wide';
+            } else if (natural === 'chart-half') {
+                tile.dataset.type = 'chart-wide';
+            } else if (natural === 'table-half') {
+                tile.dataset.type = 'table-wide';
+            }
         }
 
         for (let i = 0; i < tiles.length; i++) {
             const tile = tiles[i];
             if (tile.getAttribute('data-manual-span') === '1') continue;
-
             const natural = tile.dataset.naturalType;
-            const span = spanFor(natural);
+            const span = spanOf(tile);
 
+            // Wide tiles always take a full row. If we have a partial row
+            // (currentX > 0) with a stretchable tile in it, promote it ALL THE
+            // WAY to wide so the row gets filled by a single full-width tile
+            // instead of leaving a half-empty hole on the right.
             if (span === colCount) {
-                if (currentX > 0 && currentX < colCount) promoteLast();
+                if (currentX > 0 && currentX < colCount && lastStretchableIndex >= 0) {
+                    const prev = tiles[lastStretchableIndex];
+                    // Promote repeatedly until wide (fills the row)
+                    let safety = 5;
+                    while (prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide' && safety-- > 0) {
+                        promote(prev);
+                    }
+                }
                 currentX = 0;
                 lastStretchableIndex = -1;
                 continue;
             }
 
+            // Does this tile fit in the current row?
             if (currentX + span > colCount) {
-                promoteLast();
+                // Doesn't fit. Promote the previous stretchable tile to fill
+                // the remaining space (third→half adds +1 col, half→wide fills row).
+                if (lastStretchableIndex >= 0) {
+                    const prev = tiles[lastStretchableIndex];
+                    const remaining = colCount - currentX;
+                    // Promote until prev's new span >= remaining (or until wide)
+                    let prevSpan = spanOf(prev);
+                    while (prevSpan < remaining && prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide') {
+                        promote(prev);
+                        const newSpan = spanOf(prev);
+                        if (newSpan === prevSpan) break;
+                        prevSpan = newSpan;
+                    }
+                }
                 currentX = 0;
+                lastStretchableIndex = -1;
+                // Re-check if this tile fits now (its own span hasn't changed)
+                if (span > colCount) continue;
             }
 
             if (isStretchable(natural)) lastStretchableIndex = i;
@@ -537,7 +587,14 @@
             }
         }
 
-        if (currentX > 0 && currentX < colCount) promoteLast();
+        // Final row check — promote all the way to wide so no half-empty hole
+        if (currentX > 0 && currentX < colCount && lastStretchableIndex >= 0) {
+            const prev = tiles[lastStretchableIndex];
+            let safety = 5;
+            while (prev.dataset.type !== 'chart-wide' && prev.dataset.type !== 'table-wide' && safety-- > 0) {
+                promote(prev);
+            }
+        }
 
         requestAnimationFrame(resizeAllCharts);
     }
