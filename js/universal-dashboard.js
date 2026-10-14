@@ -47,17 +47,33 @@
     }
     loadLayout();
 
+    // Clamp a number to [min, max] range. Returns min if value is not finite.
+    // Used by layout geometry functions (x/y/w/h percentages).
+    function clampNumber(value, min, max) {
+        const n = Number(value);
+        return Math.min(max, Math.max(min, Number.isFinite(n) ? n : min));
+    }
+
     window.__universalResetLayout = function () {
         try { localStorage.removeItem(SPAN_KEY); } catch (e) {}
         state.tileSpans = {};
         if (state.canvasEl) {
             state.canvasEl.querySelectorAll('[data-tile-id]').forEach(tile => {
+                // Clear all inline positioning so CSS Grid takes over
+                tile.style.left = '';
+                tile.style.top = '';
+                tile.style.width = '';
+                tile.style.height = '';
+                tile.style.zIndex = '';
                 tile.style.gridColumn = '';
                 tile.style.gridRow = '';
                 tile.removeAttribute('data-manual-span');
             });
+            // Exit edit mode if active
+            state.canvasEl.classList.add('is-frozen');
+            state.canvasEl.classList.remove('is-editing');
             reclassifyLayout();
-            resizeAllCharts();
+            requestAnimationFrame(resizeAllCharts);
         }
     };
 
@@ -518,6 +534,9 @@
     function reclassifyLayout() {
         const canvas = state.canvasEl;
         if (!canvas) return;
+        // Skip when in edit mode — tiles are absolutely positioned, grid
+        // classification would interfere with manual layout
+        if (canvas.classList.contains('is-editing')) return;
 
         const gridTemplateCols = getComputedStyle(canvas).gridTemplateColumns;
         const colCount = gridTemplateCols.split(' ').filter(s => s.trim()).length;
@@ -658,13 +677,108 @@
         requestAnimationFrame(resizeAllCharts);
     }
 
-    function wireResizeHandles(canvas, tile) {
-        const rx = document.createElement('div');
-        rx.className = 'universal-resize-x';
-        rx.title = 'Drag to resize width';
-        const ry = document.createElement('div');
-        ry.className = 'universal-resize-y';
-        ry.title = 'Drag to resize height';
+    // ══ Layout handles — mirrors old dash-suite.js UX ═══════════════════════════
+    // Two handles per tile:
+    //   ⠿ (top-right)  → drag to move freely (changes x%, y%)
+    //   corner (bottom-right) → drag to resize (changes w%, h% simultaneously)
+    // Double-click ⠿ → reset tile to default position
+    //
+    // Edit mode UX:
+    //   - When canvas enters edit mode, JS converts each tile's current grid
+    //     placement to absolute % coords (x, y, w, h) and applies them inline.
+    //   - Canvas switches from `display: grid` to `position: relative` via CSS.
+    //   - This allows free mix-and-match: tiles can overlap, be moved anywhere,
+    //     resized to any dimensions.
+    //   - On exit: tiles keep their manual positions (saved to localStorage).
+    //     Reset button clears all overrides.
+    function getTileGeometry(tileId) {
+        // Read from saved overrides, or return null (use grid placement)
+        const override = state.tileSpans[tileId];
+        if (override && typeof override.x === 'number') {
+            return {
+                x: clampNumber(override.x, 0, 100),
+                y: clampNumber(override.y, 0, 100),
+                w: clampNumber(override.w, 4, 100),
+                h: clampNumber(override.h, 4, 100),
+                z: Number(override.z || 0)
+            };
+        }
+        return null;
+    }
+
+    function applyTileGeometry(tile, geometry) {
+        if (!tile || !geometry) return;
+        tile.style.left = geometry.x + '%';
+        tile.style.top = geometry.y + '%';
+        tile.style.width = geometry.w + '%';
+        tile.style.height = geometry.h + '%';
+        tile.style.zIndex = String(geometry.z || 0);
+    }
+
+    function captureTilePositionAsPercent(tile) {
+        // Convert current pixel position to % of canvas
+        const canvasRect = state.canvasEl.getBoundingClientRect();
+        const tileRect = tile.getBoundingClientRect();
+        if (!canvasRect.width || !canvasRect.height) return null;
+        return {
+            x: clampNumber(((tileRect.left - canvasRect.left) / canvasRect.width) * 100, 0, 100),
+            y: clampNumber(((tileRect.top - canvasRect.top) / canvasRect.height) * 100, 0, 100),
+            w: clampNumber((tileRect.width / canvasRect.width) * 100, 4, 100),
+            h: clampNumber((tileRect.height / canvasRect.height) * 100, 4, 100),
+            z: 0
+        };
+    }
+
+    function enterEditMode() {
+        const canvas = state.canvasEl;
+        if (!canvas) return;
+        // Capture each tile's current grid position as % coords BEFORE switching
+        // canvas to absolute positioning (which would lose layout info)
+        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+        tiles.forEach(tile => {
+            // If user already has a saved manual override, use it
+            const tileId = tile.dataset.tileId;
+            const saved = getTileGeometry(tileId);
+            if (saved) {
+                applyTileGeometry(tile, saved);
+            } else {
+                // Capture current grid-rendered position
+                const geom = captureTilePositionAsPercent(tile);
+                if (geom) applyTileGeometry(tile, geom);
+            }
+        });
+        // Now switch canvas to absolute positioning mode (CSS handles this
+        // via .is-editing class on canvas)
+        canvas.classList.remove('is-frozen');
+        canvas.classList.add('is-editing');
+        // Resize all charts (their containers may have changed dimensions)
+        requestAnimationFrame(resizeAllCharts);
+    }
+
+    function exitEditMode() {
+        const canvas = state.canvasEl;
+        if (!canvas) return;
+        canvas.classList.add('is-frozen');
+        canvas.classList.remove('is-editing');
+        // Tiles retain their inline absolute positions IF user has overrides.
+        // If no overrides saved, clear inline styles so grid takes over.
+        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+        tiles.forEach(tile => {
+            const tileId = tile.dataset.tileId;
+            const saved = getTileGeometry(tileId);
+            if (!saved) {
+                // No manual override — clear inline styles, return to grid
+                tile.style.left = '';
+                tile.style.top = '';
+                tile.style.width = '';
+                tile.style.height = '';
+                tile.style.zIndex = '';
+            }
+        });
+        requestAnimationFrame(resizeAllCharts);
+    }
+
+    function wireLayoutHandles(canvas, tile) {
         const mv = document.createElement('button');
         mv.type = 'button';
         mv.className = 'universal-move';
@@ -672,131 +786,118 @@
         mv.title = 'Drag to move this tile. Double-click to reset.';
         mv.innerHTML = '⠿';
 
-        // Double-click resets size + position to natural
+        const rs = document.createElement('span');
+        rs.className = 'universal-resize';
+        rs.title = 'Drag to resize';
+
+        tile.append(mv, rs);
+
+        const tileId = tile.dataset.tileId;
+        let layoutZ = 0;
+
+        // ── Move + Resize — single begin() function with mode param ──
+        const begin = (event, mode) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const canvasRect = canvas.getBoundingClientRect();
+            if (!canvasRect.width || !canvasRect.height) return;
+
+            // Read current geometry (from inline style, fallback to bounding rect)
+            const start = (function() {
+                const left = tile.style.left;
+                const top = tile.style.top;
+                const width = tile.style.width;
+                const height = tile.style.height;
+                if (left && top && width && height) {
+                    return {
+                        x: parseFloat(left) || 0,
+                        y: parseFloat(top) || 0,
+                        w: parseFloat(width) || 25,
+                        h: parseFloat(height) || 25,
+                        z: Number(tile.style.zIndex || 0)
+                    };
+                }
+                // Fallback: capture from current bounding rect
+                return captureTilePositionAsPercent(tile) || { x: 0, y: 0, w: 25, h: 25, z: 0 };
+            })();
+
+            const pointerX = event.clientX;
+            const pointerY = event.clientY;
+            // Bring tile to front while dragging
+            layoutZ = Math.max(layoutZ, start.z || 0) + 1;
+            start.z = layoutZ;
+            applyTileGeometry(tile, start);
+            tile.classList.add('universal-tile-active');
+            canvas.classList.add('universal-canvas-changing');
+
+            const onMove = (moveEvent) => {
+                const dx = ((moveEvent.clientX - pointerX) / canvasRect.width) * 100;
+                const dy = ((moveEvent.clientY - pointerY) / canvasRect.height) * 100;
+                const next = Object.assign({}, start);
+                if (mode === 'move') {
+                    next.x = clampNumber(start.x + dx, 0, Math.max(0, 100 - start.w));
+                    next.y = clampNumber(start.y + dy, 0, Math.max(0, 100 - start.h));
+                } else {
+                    // resize: change w and h simultaneously
+                    next.w = clampNumber(start.w + dx, 4, Math.max(4, 100 - start.x));
+                    next.h = clampNumber(start.h + dy, 4, Math.max(4, 100 - start.y));
+                }
+                applyTileGeometry(tile, next);
+                resizeChart(tileId);
+            };
+
+            const finish = () => {
+                window.removeEventListener('mousemove', onMove);
+                window.removeEventListener('mouseup', finish);
+                tile.classList.remove('universal-tile-active');
+                canvas.classList.remove('universal-canvas-changing');
+                // Capture final geometry from bounding rect (more reliable
+                // than parsing inline style)
+                const finalGeom = captureTilePositionAsPercent(tile);
+                if (finalGeom) {
+                    finalGeom.z = Number(tile.style.zIndex || 0);
+                    state.tileSpans[tileId] = finalGeom;
+                }
+                saveLayout();
+                resizeChart(tileId);
+            };
+
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', finish);
+        };
+
+        // Move via ⠿ handle
+        mv.addEventListener('mousedown', e => begin(e, 'move'));
+        // Resize via corner handle
+        rs.addEventListener('mousedown', e => begin(e, 'resize'));
+
+        // Double-click ⠿ resets this tile to default (grid placement)
         mv.addEventListener('dblclick', e => {
             e.preventDefault();
             e.stopPropagation();
-            tile.style.gridColumn = '';
-            tile.style.gridRow = '';
-            tile.style.transform = '';
-            tile.style.zIndex = '';
-            tile.removeAttribute('data-manual-span');
-            delete state.tileSpans[tile.dataset.tileId];
+            delete state.tileSpans[tileId];
             saveLayout();
-            reclassifyLayout();
-            resizeAllCharts();
-        });
-
-        tile.append(mv, rx, ry);
-
-        // ── Resize handles (right edge = width, bottom edge = height) ──
-        const beginResize = (mode) => (event) => {
-            if (event.button !== 0) return;
-            event.preventDefault();
-            event.stopPropagation();
-            const startX = event.clientX;
-            const startY = event.clientY;
-            const startW = tile.getBoundingClientRect().width;
-            const startH = tile.getBoundingClientRect().height;
-            const cols = getComputedStyle(canvas).gridTemplateColumns.split(' ').filter(s => s.trim()).length;
-            const canvasW = canvas.getBoundingClientRect().width;
-            const colWidth = (canvasW - 10 * (cols - 1)) / cols;
-            const rowHeight = 80;
-
-            const move = (ev) => {
-                if (mode === 'x') {
-                    const dx = ev.clientX - startX;
-                    const newCols = Math.max(1, Math.min(cols, Math.round((startW + dx) / colWidth)));
-                    tile.style.gridColumn = `span ${newCols}`;
-                    tile.setAttribute('data-manual-span', '1');
-                } else if (mode === 'y') {
-                    const dy = ev.clientY - startY;
-                    const newRows = Math.max(1, Math.round((startH + dy) / rowHeight));
-                    tile.style.gridRow = `span ${newRows}`;
-                    tile.setAttribute('data-manual-span', '1');
-                }
-                resizeChart(tile.dataset.tileId);
-            };
-            const end = () => {
-                document.removeEventListener('mousemove', move);
-                document.removeEventListener('mouseup', end);
-                const gc = tile.style.gridColumn;
-                const gr = tile.style.gridRow;
-                const colSpan = gc ? parseInt(gc.match(/span\s+(\d+)/)?.[1] || '0', 10) : 0;
-                const rowSpan = gr ? parseInt(gr.match(/span\s+(\d+)/)?.[1] || '0', 10) : 0;
-                if (colSpan || rowSpan) {
-                    state.tileSpans[tile.dataset.tileId] = { colSpan, rowSpan };
-                }
-                saveLayout();
-                resizeChart(tile.dataset.tileId);
-            };
-            document.addEventListener('mousemove', move);
-            document.addEventListener('mouseup', end);
-        };
-        rx.addEventListener('mousedown', beginResize('x'));
-        ry.addEventListener('mousedown', beginResize('y'));
-
-        // ── Move handle (⠿ drag) — reorder tile in DOM based on drag direction ──
-        // Visual approach: while dragging, translate the tile freely (transform).
-        // On release, detect which sibling tile the cursor is over and swap
-        // DOM positions with it. This makes "move" feel like free-drag but
-        // snaps back to the grid on release.
-        mv.addEventListener('mousedown', (event) => {
-            if (event.button !== 0) return;
-            event.preventDefault();
-            event.stopPropagation();
-            const startX = event.clientX;
-            const startY = event.clientY;
-            const tileRect = tile.getBoundingClientRect();
-            const offsetX = startX - tileRect.left;
-            const offsetY = startY - tileRect.top;
-
-            // Lift the tile visually above siblings during drag
-            tile.style.zIndex = '1000';
-            tile.style.transition = 'none';
-            tile.classList.add('universal-tile-dragging');
-
-            const onMove = (ev) => {
-                const dx = ev.clientX - startX;
-                const dy = ev.clientY - startY;
-                tile.style.transform = `translate(${dx}px, ${dy}px)`;
-            };
-            const onUp = (ev) => {
-                document.removeEventListener('mousemove', onMove);
-                document.removeEventListener('mouseup', onUp);
-                tile.style.transform = '';
-                tile.style.zIndex = '';
-                tile.style.transition = '';
-                tile.classList.remove('universal-tile-dragging');
-
-                // Find which sibling tile the cursor is over (excluding self)
-                const targetEl = document.elementFromPoint(ev.clientX, ev.clientY);
-                const dropTile = targetEl ? targetEl.closest('.universal-tile') : null;
-                if (dropTile && dropTile !== tile && canvas.contains(dropTile)) {
-                    // Swap DOM positions
-                    const tilesParent = tile.parentNode;
-                    const tileNext = tile.nextSibling;
-                    const dropNext = dropTile.nextSibling;
-                    if (tileNext === dropTile) {
-                        // tile is immediately before dropTile — swap order
-                        tilesParent.insertBefore(dropTile, tile);
-                    } else if (dropNext === tile) {
-                        // dropTile is immediately before tile — swap order
-                        tilesParent.insertBefore(tile, dropTile);
-                    } else {
-                        // Non-adjacent swap
-                        tilesParent.insertBefore(tile, dropNext);
-                        tilesParent.insertBefore(dropTile, tileNext);
-                    }
-                    // Re-run layout classification + resize all charts
-                    reclassifyLayout();
-                    requestAnimationFrame(resizeAllCharts);
-                }
-            };
-            document.addEventListener('mousemove', onMove);
-            document.addEventListener('mouseup', onUp);
+            // Clear inline styles so grid takes over
+            tile.style.left = '';
+            tile.style.top = '';
+            tile.style.width = '';
+            tile.style.height = '';
+            tile.style.zIndex = '';
+            // If we're in edit mode, re-capture position from new grid placement
+            if (canvas.classList.contains('is-editing')) {
+                requestAnimationFrame(() => {
+                    const geom = captureTilePositionAsPercent(tile);
+                    if (geom) applyTileGeometry(tile, geom);
+                    resizeChart(tileId);
+                });
+            } else {
+                reclassifyLayout();
+                requestAnimationFrame(resizeAllCharts);
+            }
         });
     }
+
 
     function render(payload) {
         state.payload = payload;
@@ -866,7 +967,7 @@
 
         canvas.querySelectorAll('[data-tile-id]').forEach(tile => {
             applySavedSpans(tile);
-            wireResizeHandles(canvas, tile);
+            wireLayoutHandles(canvas, tile);
         });
 
         reclassifyLayout();
@@ -877,13 +978,11 @@
             editBtn.addEventListener('click', () => {
                 editing = !editing;
                 if (editing) {
-                    canvas.classList.remove('is-frozen');
-                    canvas.classList.add('is-editing');
+                    enterEditMode();
                     editBtn.innerHTML = '<i class="fa-solid fa-check"></i><span class="universal-btn-text">Done</span>';
                     editBtn.classList.add('is-active');
                 } else {
-                    canvas.classList.add('is-frozen');
-                    canvas.classList.remove('is-editing');
+                    exitEditMode();
                     editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i><span class="universal-btn-text">Edit</span>';
                     editBtn.classList.remove('is-active');
                     saveLayout();

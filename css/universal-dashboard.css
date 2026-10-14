@@ -538,38 +538,35 @@
 }
 
 /* ── Edit mode ─────────────────────────────────────────────────────────────── */
+/* When canvas has .is-editing, tiles switch from CSS Grid to absolute
+   positioning (set inline via JS). This allows free mix-and-match placement
+   — tiles can overlap, be moved anywhere, resized to any dimensions. */
+.universal-canvas.is-editing {
+    position: relative;
+    display: block;
+    grid-template-columns: none;
+    min-height: 1600px;
+}
 .universal-canvas.is-editing .universal-tile {
-    outline: 2px dashed rgba(99, 102, 241, 0.35);
-    outline-offset: -2px;
-}
-.universal-resize-x,
-.universal-resize-y {
     position: absolute;
-    z-index: 30;
-    opacity: 0;
-    transition: opacity 200ms;
+    /* x/y/w/h set inline by JS as percentages of canvas */
 }
-.universal-canvas.is-editing .universal-resize-x,
-.universal-canvas.is-editing .universal-resize-y { opacity: 1; }
-.universal-resize-x {
-    top: 0; right: 0;
-    width: 6px; height: 100%;
-    cursor: ew-resize;
-    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.4));
+
+.universal-canvas.is-editing .universal-tile {
+    outline: 1px dashed rgba(99, 102, 241, 0.35);
+    outline-offset: -1px;
 }
-.universal-resize-y {
-    bottom: 0; left: 0;
-    width: 100%; height: 6px;
-    cursor: ns-resize;
-    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.4));
-}
+
+/* Move handle (⠿) — top-right of tile, drag to move freely */
 .universal-move {
     position: absolute;
-    top: 4px; right: 14px;
+    top: 3px;
+    right: 24px;
     z-index: 30;
-    width: 18px; height: 18px;
-    border: 1px solid var(--ud-border);
-    border-radius: 4px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--ud-border-strong);
+    border-radius: 5px;
     background: var(--ud-panel);
     color: var(--ud-muted);
     display: none;
@@ -577,11 +574,51 @@
     padding: 0;
     cursor: grab;
     font-size: 11px;
+    opacity: 0.4;
+    transition: opacity 200ms;
 }
 .universal-canvas.is-editing .universal-move { display: grid; }
-.universal-canvas.is-frozen .universal-resize-x,
-.universal-canvas.is-frozen .universal-resize-y,
-.universal-canvas.is-frozen .universal-move { display: none !important; }
+.universal-canvas.is-editing .universal-tile:hover .universal-move,
+.universal-tile.universal-tile-active .universal-move { opacity: 1; }
+
+/* Resize handle (bottom-right corner) — single handle, drag to resize both
+   width and height simultaneously (matches old dash-suite.js UX) */
+.universal-resize {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    z-index: 30;
+    width: 17px;
+    height: 17px;
+    cursor: nwse-resize;
+    display: none;
+    opacity: 0.4;
+    transition: opacity 200ms;
+}
+.universal-canvas.is-editing .universal-resize { display: block; }
+.universal-canvas.is-editing .universal-tile:hover .universal-resize,
+.universal-tile.universal-tile-active .universal-resize { opacity: 1; }
+.universal-resize::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--ud-accent);
+    border-bottom: 2px solid var(--ud-accent);
+}
+
+/* Tile is being dragged/resized — active state */
+.universal-tile.universal-tile-active {
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25);
+    outline: 1px solid rgba(99, 102, 241, 0.5) !important;
+    z-index: 100 !important;
+}
+
+/* Frozen state (default) — hide all handles */
+.universal-canvas.is-frozen .universal-move,
+.universal-canvas.is-frozen .universal-resize { display: none !important; }
 
 /* Dragging state — tile floats above siblings during ⠿ drag */
 .universal-tile.universal-tile-dragging {
