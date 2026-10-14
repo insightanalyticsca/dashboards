@@ -78,25 +78,89 @@
         }
     };
 
-    // ── Palette: harmonized brand colors + supplementary hues ──
-    // Each series gets a different color from this list (cycling).
+    // ── Pastel palette with per-load hue rotation ──
+    // On each page load, pick a random hue offset (0-360°) and shift all
+    // palette colors by that offset. This gives each dashboard a slightly
+    // different feel without being jarring. Saturation is kept low (~50%)
+    // for a pastel, soft look.
+    //
+    // Implementation: convert each hex to HSL, shift the hue, desaturate,
+    // convert back to hex.
+    function hexToHsl(hex) {
+        const r = parseInt(hex.slice(1, 3), 16) / 255;
+        const g = parseInt(hex.slice(3, 5), 16) / 255;
+        const b = parseInt(hex.slice(5, 7), 16) / 255;
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        if (max === min) { h = s = 0; }
+        else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+                case g: h = ((b - r) / d + 2); break;
+                case b: h = ((r - g) / d + 4); break;
+            }
+            h /= 6;
+        }
+        return [h * 360, s * 100, l * 100];
+    }
+    function hslToHex(h, s, l) {
+        h = ((h % 360) + 360) % 360 / 360;
+        s = Math.max(0, Math.min(100, s)) / 100;
+        l = Math.max(0, Math.min(100, l)) / 100;
+        let r, g, b;
+        if (s === 0) { r = g = b = l; }
+        else {
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+        const toHex = x => Math.round(x * 255).toString(16).padStart(2, '0');
+        return '#' + toHex(r) + toHex(g) + toHex(b);
+    }
+
+    // Pick a random hue offset on each load (0-360°)
+    // Stored in a closure so all palette() calls in this session use the same offset
+    const HUE_OFFSET = Math.floor(Math.random() * 360);
+    // Pastel saturation target (~45-55%) and lightness boost
+    const PASTEL_SAT = 48;
+    const PASTEL_LIGHTNESS_BOOST = 8;
+
     function palette() {
-        const s = getComputedStyle(document.documentElement);
-        const v = [
-            s.getPropertyValue('--exec-primary').trim() || '#0808ee',
-            s.getPropertyValue('--exec-secondary').trim() || '#09c698',
-            s.getPropertyValue('--exec-highlight').trim() || '#BBFF05',
-            s.getPropertyValue('--exec-accent').trim() || '#845ef7',
-            '#0ea5e9',   // sky blue
+        const baseColors = [
+            '#6366f1',   // indigo
+            '#06b6d4',   // cyan
+            '#10b981',   // emerald
             '#f59e0b',   // amber
             '#ec4899',   // pink
-            '#10b981',   // emerald
-            '#6366f1',   // indigo
-            '#e53e6b',   // rose
+            '#8b5cf6',   // violet
             '#14b8a6',   // teal
-            '#f97316'    // orange
+            '#f97316',   // orange
+            '#3b82f6',   // blue
+            '#ef4444',   // red
+            '#84cc16',   // lime
+            '#a855f7'    // purple
         ];
-        return [...new Set(v)];
+        // Shift hue + desaturate for pastel look
+        return baseColors.map(hex => {
+            const [h, s, l] = hexToHsl(hex);
+            return hslToHex(
+                h + HUE_OFFSET,
+                PASTEL_SAT,
+                Math.min(75, l + PASTEL_LIGHTNESS_BOOST)
+            );
+        });
     }
 
     function esc(v) {
@@ -381,15 +445,16 @@
                 });
             });
             if (!isFinite(min)) { min = 0; max = 100; }
-            // If range crosses zero, use diverging red→amber→green scale
-            // If all positive, use warm yellow→orange→red→purple scale (more jazz than monochrome blue)
-            // If all negative, use reversed diverging
+            // Pastel heatmap color scales — soft, not too vivid
+            // If data crosses zero: pastel diverging (rose→amber→slate→mint→emerald)
+            // If all positive: warm pastel (cream→peach→rose→lavender)
+            // If all negative: reversed diverging
             const isDiverging = min < 0 && max > 0;
             const heatColors = isDiverging
-                ? ['#be123c', '#fb7185', '#fb923c', '#fbbf24', '#1e293b', '#34d399', '#10b981', '#047857']
+                ? ['#fda4af', '#fdba74', '#fde68a', '#e2e8f0', '#a7f3d0', '#6ee7b7', '#5eead4']
                 : min >= 0
-                    ? ['#fef3c7', '#fde68a', '#fbbf24', '#f59e0b', '#ea580c', '#dc2626', '#9333ea']
-                    : ['#047857', '#10b981', '#34d399', '#1e293b', '#fbbf24', '#fb923c', '#fb7185', '#be123c'];
+                    ? ['#fef3c7', '#fde68a', '#fcd34d', '#fdba74', '#fca5a5', '#c4b5fd', '#a5b4fc']
+                    : ['#5eead4', '#6ee7b7', '#a7f3d0', '#e2e8f0', '#fde68a', '#fdba74', '#fda4af'];
             return {
                 animationDuration: 600,
                 backgroundColor: 'transparent',
@@ -424,13 +489,22 @@
                     type: 'heatmap',
                     data: data,
                     label: {
-                        show: tileW > 400 && data.length < 30,
-                        fontSize: labelFont - 1,
+                        show: true,
+                        fontSize: labelFont,
                         fontWeight: 700,
-                        color: '#ffffff',
-                        textShadowColor: 'rgba(0,0,0,0.55)',
-                        textShadowBlur: 3,
-                        formatter: function(p) { return p.value[2]; }
+                        // Dark text reads well on pastel cells (light backgrounds)
+                        color: '#1e293b',
+                        textShadowColor: 'rgba(255,255,255,0.7)',
+                        textShadowBlur: 2,
+                        formatter: function(p) {
+                            const v = p.value[2];
+                            if (v === null || v === undefined) return '';
+                            // Format large numbers compactly
+                            if (Math.abs(v) >= 1e6) return (v/1e6).toFixed(1) + 'M';
+                            if (Math.abs(v) >= 1e3) return (v/1e3).toFixed(1) + 'K';
+                            if (Number.isInteger(v)) return String(v);
+                            return v.toFixed(1);
+                        }
                     },
                     itemStyle: {
                         borderRadius: 6,
