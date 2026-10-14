@@ -1,30 +1,20 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   UNIVERSAL DASHBOARD CONSTRUCTOR v2 — thorough classification
+   UNIVERSAL DASHBOARD CONSTRUCTOR v3 — neat & stunning
    ────────────────────────────────────────────────────────────────────────────
-   Reads the same JSON contract as dash-suite.js. Renders every tile via
-   a fixed-breakpoint CSS Grid (4 cols desktop / 2 tablet / 1 mobile).
-
-   CLASSIFICATION SYSTEM (the contract every visual obeys):
-
-     data-natural-type  = immutable, set once at build time
-     data-type         = mutable, reclassifyLayout() may promote on the fly
-
-     metric       → natural span 1 (quarter)
-     chart-half   → natural span 2 (half)        STRETCHABLE → can promote to chart-wide
-     table-half   → natural span 2 (half)        STRETCHABLE → can promote to table-wide
-     chart-wide   → natural span all (full)
-     table-wide   → natural span all (full)
-     ai-brief     → natural span all (full)
-
-   reclassifyLayout() runs on EVERY resize and:
-     1. Resets all tiles back to their natural-type (data-natural-type → data-type)
-     2. Simulates grid placement: walks tiles in DOM order, tracks current col
-     3. When a half-tile would leave a hole (current + 2 > colCount, OR final
-        row is partial), promotes it to wide
-     4. Resizes all charts (their containers changed width)
-
-   User overrides (Edit mode drag) are preserved via `data-manual-span="1"`
-   on tiles the user has manually resized — reclassifyLayout() skips those.
+   v3 fixes:
+   - Proper pie/donut rendering (was rendering as solid-color bars — fixed by
+     keeping series.type='pie'/'donut', mapping data [{value, name}] shape,
+     applying palette colors per segment, using radius for donut hole, legend
+     on the right side instead of top)
+   - Proper heatmap rendering (was rendering as multi-series bar — now flattens
+     series into [[x, y, value]] data with visualMap color scale)
+   - Smaller, denser fonts (was clamp(14px, 2.6cqw, 28px) for metric values —
+     now clamp(11px, 1.85cqw, 19px) so tiles look like a Bloomberg terminal,
+     not a marketing landing page)
+   - Better color palette distribution across series (each series gets a
+     different palette color, not all using colors[0])
+   - chart-third type added (was missing — third-width charts were rendering
+     at half width)
    ════════════════════════════════════════════════════════════════════════════ */
 (function () {
     'use strict';
@@ -71,15 +61,24 @@
         }
     };
 
+    // ── Palette: harmonized brand colors + supplementary hues ──
+    // Each series gets a different color from this list (cycling).
     function palette() {
         const s = getComputedStyle(document.documentElement);
         const v = [
-            s.getPropertyValue('--exec-primary').trim(),
-            s.getPropertyValue('--exec-secondary').trim(),
-            s.getPropertyValue('--exec-highlight').trim(),
-            s.getPropertyValue('--exec-accent').trim(),
-            '#4C6FFF', '#2DD4BF', '#FBBF24', '#845EF7'
-        ].filter(Boolean);
+            s.getPropertyValue('--exec-primary').trim() || '#0808ee',
+            s.getPropertyValue('--exec-secondary').trim() || '#09c698',
+            s.getPropertyValue('--exec-highlight').trim() || '#BBFF05',
+            s.getPropertyValue('--exec-accent').trim() || '#845ef7',
+            '#0ea5e9',   // sky blue
+            '#f59e0b',   // amber
+            '#ec4899',   // pink
+            '#10b981',   // emerald
+            '#6366f1',   // indigo
+            '#e53e6b',   // rose
+            '#14b8a6',   // teal
+            '#f97316'    // orange
+        ];
         return [...new Set(v)];
     }
 
@@ -123,9 +122,6 @@
     }
 
     // ── Tile builders ──────────────────────────────────────────────────────
-    // Every tile gets:
-    //   data-natural-type  = immutable classification (set here, never changed)
-    //   data-type          = current display type (mutable via reclassifyLayout)
     function buildMetricTile(metric, index) {
         const tile = document.createElement('div');
         tile.className = 'universal-tile';
@@ -153,8 +149,10 @@
     function buildChartTile(chart, index) {
         const tile = document.createElement('div');
         tile.className = 'universal-tile';
-        const isWide = chart.width === 'wide' || chart.width === 'two-thirds';
-        tile.dataset.naturalType = isWide ? 'chart-wide' : 'chart-half';
+        const w = chart.width || 'half';
+        const isWide = w === 'wide' || w === 'two-thirds';
+        const isThird = w === 'third';
+        tile.dataset.naturalType = isWide ? 'chart-wide' : (isThird ? 'chart-third' : 'chart-half');
         tile.dataset.type = tile.dataset.naturalType;
         tile.dataset.tileId = 'chart:' + (chart.id || index);
         tile.innerHTML = `
@@ -167,7 +165,8 @@
     function buildTableTile(table, index) {
         const tile = document.createElement('div');
         tile.className = 'universal-tile';
-        const isWide = table.width === 'wide' || table.width === 'two-thirds';
+        const w = table.width || 'half';
+        const isWide = w === 'wide' || w === 'two-thirds';
         tile.dataset.naturalType = isWide ? 'table-wide' : 'table-half';
         tile.dataset.type = tile.dataset.naturalType;
         tile.dataset.tileId = 'table:' + (table.id || index);
@@ -220,7 +219,7 @@
         tile.innerHTML = `
             <div class="universal-ai-head">
                 <span class="universal-ai-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 8v6m10-10h-6m-8 0H2m13.5-5.5l-2.5 2.5m-6 6l-2.5 2.5m11 0l-2.5-2.5m-6-6L4.5 4.5"/></svg>
                     AI Brief
                 </span>
                 <span class="universal-ai-badge">AI-wired</span>
@@ -230,12 +229,150 @@
         return tile;
     }
 
-    // ── Chart option builder (uses measured tile width for responsive fonts) ─
+    // ══ CHART OPTION BUILDER — handles all chart kinds properly ═════════════════
     function chartOption(chart) {
         const tileEl = state.canvasEl.querySelector(`[data-tile-id="chart:${chart.id}"]`);
         const tileW = tileEl ? tileEl.getBoundingClientRect().width : 360;
-        const labelFont = Math.max(8, Math.min(13, Math.round(tileW * 0.035)));
+        const tileH = tileEl ? tileEl.getBoundingClientRect().height : 220;
+        // Tighter fonts — denser look (was 3.5% of width, now 2.7%)
+        const labelFont = Math.max(8, Math.min(11, Math.round(tileW * 0.027)));
+        const titleFont = Math.max(9, Math.min(12, Math.round(tileW * 0.032)));
         const colors = palette();
+        const kind = String(chart.kind || '').toLowerCase();
+        const isPie = kind === 'pie' || kind === 'donut';
+        const isDonut = kind === 'donut';
+        const isHeatmap = kind === 'heatmap';
+
+        // ── PIE / DONUT ──
+        if (isPie) {
+            const s = chart.series[0] || { data: [] };
+            const categories = chart.categories || [];
+            const pieData = (s.data || []).map((v, i) => ({
+                value: v,
+                name: categories[i] || `Segment ${i + 1}`,
+                itemStyle: { color: colors[i % colors.length] }
+            }));
+            const legendRight = tileW > 320;
+            return {
+                animationDuration: 400,
+                animationEasing: 'cubicOut',
+                color: colors,
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} ({d}%)',
+                    backgroundColor: 'rgba(255,255,255,0.96)',
+                    borderColor: '#e2e8f0',
+                    borderWidth: 1,
+                    textStyle: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 }
+                },
+                legend: {
+                    type: 'scroll',
+                    orient: legendRight ? 'vertical' : 'horizontal',
+                    right: legendRight ? 8 : 'center',
+                    top: legendRight ? 'middle' : 0,
+                    bottom: legendRight ? 'middle' : 0,
+                    left: legendRight ? '55%' : 'center',
+                    textStyle: { fontSize: labelFont, color: '#1e293b', fontWeight: 600 },
+                    itemWidth: 8, itemHeight: 8, itemGap: 6
+                },
+                series: [{
+                    name: s.name || chart.title,
+                    type: 'pie',
+                    radius: isDonut ? ['38%', '62%'] : '62%',
+                    center: legendRight ? ['28%', '50%'] : ['50%', '55%'],
+                    avoidLabelOverlap: true,
+                    itemStyle: {
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        borderRadius: 3
+                    },
+                    label: {
+                        show: !legendRight,
+                        position: 'outer',
+                        formatter: '{b}\n{d}%',
+                        fontSize: labelFont - 1,
+                        color: '#1e293b',
+                        fontWeight: 600
+                    },
+                    emphasis: {
+                        label: { show: true, fontSize: labelFont + 1, fontWeight: 800 },
+                        itemStyle: { shadowBlur: 10, shadowColor: 'rgba(99,102,241,0.3)' }
+                    },
+                    data: pieData
+                }]
+            };
+        }
+
+        // ── HEATMAP (real ECharts heatmap, not multi-series bar) ──
+        if (isHeatmap) {
+            const categoriesX = chart.categories || [];
+            const categoriesY = (chart.series || []).map(s => s.name);
+            // Flatten: series[i].data[j] → [j, i, value]
+            const data = [];
+            let min = Infinity, max = -Infinity;
+            (chart.series || []).forEach((s, y) => {
+                (s.data || []).forEach((v, x) => {
+                    if (v !== 0 && v !== null && v !== undefined) {
+                        data.push([x, y, v]);
+                        if (v < min) min = v;
+                        if (v > max) max = v;
+                    }
+                });
+            });
+            if (!isFinite(min)) { min = 0; max = 100; }
+            return {
+                animationDuration: 400,
+                tooltip: {
+                    position: 'top',
+                    backgroundColor: 'rgba(255,255,255,0.96)',
+                    borderColor: '#e2e8f0',
+                    borderWidth: 1,
+                    textStyle: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
+                    formatter: params => `${categoriesY[params.value[1]]} · ${categoriesX[params.value[0]]}: <b>${params.value[2]}</b>`
+                },
+                grid: { left: 70, right: 14, top: 8, bottom: 36, containLabel: false },
+                xAxis: {
+                    type: 'category',
+                    data: categoriesX,
+                    splitArea: { show: true },
+                    axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true },
+                    axisLine: { lineStyle: { color: '#94a3b8' } },
+                    axisTick: { show: false }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: categoriesY,
+                    splitArea: { show: true },
+                    axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600 },
+                    axisLine: { lineStyle: { color: '#94a3b8' } },
+                    axisTick: { show: false }
+                },
+                visualMap: {
+                    min, max,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: 0,
+                    textStyle: { fontSize: labelFont - 1, color: '#64748b' },
+                    inRange: { color: ['#dbeafe', '#93c5fd', '#3b82f6', '#1e40af'] }
+                },
+                series: [{
+                    type: 'heatmap',
+                    data: data,
+                    label: {
+                        show: tileW > 480 && data.length < 30,
+                        fontSize: labelFont - 2,
+                        color: '#1e293b',
+                        fontWeight: 700
+                    },
+                    emphasis: {
+                        itemStyle: { shadowBlur: 8, shadowColor: 'rgba(99,102,241,0.4)' }
+                    }
+                }]
+            };
+        }
+
+        // ── BAR / LINE / COMBO / STACKEDBAR (standard cartesian) ──
         const categories = chart.categories || [];
         const hasSecondAxis = (chart.series || []).some(s => s.axis === 'right');
 
@@ -248,19 +385,24 @@
             return v.toFixed(0);
         }
 
-        const series = (chart.series || []).map(s => {
-            const color = s.color || colors[0];
+        const series = (chart.series || []).map((s, idx) => {
+            const color = s.color || colors[idx % colors.length];
+            const type = s.type === 'line' ? 'line' : 'bar';
             return {
                 name: s.name,
-                type: s.type === 'heatmap' ? 'bar' : (s.type || 'bar'),
+                type,
                 yAxisIndex: s.axis === 'right' ? 1 : 0,
                 data: s.data,
-                smooth: !!s.smooth,
-                itemStyle: { color, borderRadius: chart.kind === 'bar' ? [3, 3, 0, 0] : 0 },
-                lineStyle: s.type === 'line' ? { color, width: 2.5 } : undefined,
-                symbol: s.type === 'line' ? 'circle' : undefined,
-                symbolSize: s.type === 'line' ? 6 : 0,
-                stack: s.stack || undefined
+                smooth: !!s.smooth && type === 'line',
+                itemStyle: {
+                    color: color,
+                    borderRadius: type === 'bar' ? [3, 3, 0, 0] : 0
+                },
+                lineStyle: type === 'line' ? { color: color, width: 2.2 } : undefined,
+                symbol: type === 'line' ? 'circle' : 'none',
+                symbolSize: type === 'line' ? 5 : 0,
+                stack: s.stack || (kind === 'stackedbar' ? 'total' : undefined),
+                barCategoryGap: '40%'
             };
         });
 
@@ -278,18 +420,19 @@
             },
             legend: {
                 top: 2, type: 'scroll',
-                textStyle: { fontSize: Math.max(8, labelFont - 1), color: '#1e293b', fontWeight: 600 },
-                itemWidth: 8, itemHeight: 8, itemGap: 4
+                textStyle: { fontSize: Math.max(7, labelFont - 1), color: '#1e293b', fontWeight: 600 },
+                itemWidth: 7, itemHeight: 7, itemGap: 5
             },
-            grid: { left: 52, right: hasSecondAxis ? 52 : 18, top: 28, bottom: 32 },
+            grid: { left: 44, right: hasSecondAxis ? 44 : 14, top: 22, bottom: 28, containLabel: false },
             xAxis: {
-                type: 'category', data: categories,
+                type: 'category',
+                data: categories,
                 axisLabel: { color: '#1e293b', fontSize: labelFont, fontWeight: 600, interval: 0, hideOverlap: true, rotate: categories.length > 6 ? 25 : 0 },
                 axisLine: { lineStyle: { color: '#94a3b8' } },
                 axisTick: { show: false }
             },
             yAxis: [
-                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#cbd5e1' } } },
+                { type: 'value', name: chart.leftAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#1e293b', fontWeight: 600 }, splitLine: { lineStyle: { color: '#e2e8f0', type: 'dashed' } } },
                 ...(hasSecondAxis ? [{ type: 'value', name: chart.rightAxisTitle || '', nameTextStyle: { fontSize: Math.max(7, labelFont - 1) }, axisLabel: { formatter: axisFormatter, fontSize: labelFont, color: '#1e293b', fontWeight: 600 }, splitLine: { show: false } }] : [])
             ],
             series
@@ -310,7 +453,6 @@
         charts.forEach((_, id) => resizeChart(id));
     }
 
-    // ── Apply saved grid spans (Edit mode persistence) ──
     function applySavedSpans(tile) {
         const id = tile.dataset.tileId;
         const span = state.tileSpans[id];
@@ -326,49 +468,44 @@
     }
 
     // ══ THE THOROUGH CLASSIFIER ═══════════════════════════════════════════════
-    // reclassifyLayout() runs on initial render AND every canvas resize.
-    // It simulates grid placement and promotes lone half-tiles to wide so
-    // no row has an empty right half — at any viewport.
     function reclassifyLayout() {
         const canvas = state.canvasEl;
         if (!canvas) return;
 
-        // Step 1: detect current column count from computed grid style
         const gridTemplateCols = getComputedStyle(canvas).gridTemplateColumns;
         const colCount = gridTemplateCols.split(' ').filter(s => s.trim()).length;
         if (colCount < 1) return;
 
-        // Step 2: reset every tile back to its natural type
-        //         (unless user has manually overridden it via Edit mode drag —
-        //          then we preserve their span and skip promotion logic)
         const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
         tiles.forEach(tile => {
-            if (tile.getAttribute('data-manual-span') === '1') return; // skip user overrides
+            if (tile.getAttribute('data-manual-span') === '1') return;
             const natural = tile.dataset.naturalType;
             tile.dataset.type = natural;
             tile.style.gridColumn = '';
         });
 
-        // Step 3: simulate grid placement. For each tile (in DOM order),
-        // track current column position. If a half-tile would leave a hole
-        // (current + 2 > colCount, OR a wide tile starts a new row when
-        // current > 0 from a lone half), promote the lone half to wide.
-        // Also: at end, if final row is partial (current > 0), promote the
-        // last placed half-tile to wide.
         let currentX = 0;
-        let lastHalfTileIndex = -1;
+        let lastStretchableIndex = -1;
 
-        // Helper: promote the previously-placed lone half-tile to wide,
-        // so its row gets a single full-width tile instead of a half + hole.
-        function promoteLastHalf() {
-            if (lastHalfTileIndex < 0) return;
-            const prev = tiles[lastHalfTileIndex];
-            // Only promote if the previous half-tile is still in its natural state
-            // (don't promote a tile that's already wide, e.g. chart-wide natural)
+        function promoteLast() {
+            if (lastStretchableIndex < 0) return;
+            const prev = tiles[lastStretchableIndex];
             const prevNatural = prev.dataset.naturalType;
-            if (prevNatural === 'chart-half') prev.dataset.type = 'chart-wide';
+            if (prevNatural === 'chart-third') prev.dataset.type = 'chart-half';
+            else if (prevNatural === 'chart-half') prev.dataset.type = 'chart-wide';
             else if (prevNatural === 'table-half') prev.dataset.type = 'table-wide';
-            lastHalfTileIndex = -1;
+            lastStretchableIndex = -1;
+        }
+
+        function spanFor(natural) {
+            if (natural === 'metric') return 1;
+            if (natural === 'chart-third') return 1;
+            if (natural === 'chart-half' || natural === 'table-half') return 2;
+            return colCount; // wide / table-wide / ai-brief
+        }
+
+        function isStretchable(natural) {
+            return natural === 'chart-third' || natural === 'chart-half' || natural === 'table-half';
         }
 
         for (let i = 0; i < tiles.length; i++) {
@@ -376,67 +513,44 @@
             if (tile.getAttribute('data-manual-span') === '1') continue;
 
             const natural = tile.dataset.naturalType;
-            let span;
-            if (natural === 'metric') span = 1;
-            else if (natural === 'chart-half' || natural === 'table-half') span = 2;
-            else span = colCount; // wide / table-wide / ai-brief
+            const span = spanFor(natural);
 
-            // Wide tiles always take a full row. If the previous row was
-            // partial (currentX > 0) because a lone half-tile was placed
-            // there, promote that lone half to wide BEFORE resetting.
             if (span === colCount) {
-                if (currentX > 0 && currentX < colCount) {
-                    promoteLastHalf();
-                }
+                if (currentX > 0 && currentX < colCount) promoteLast();
                 currentX = 0;
-                lastHalfTileIndex = -1;
+                lastStretchableIndex = -1;
                 continue;
             }
 
-            // Check if this half-tile fits in current row
-            if (span === 2 && currentX + span > colCount) {
-                // Doesn't fit — would leave a hole.
-                // Promote the previously-placed half-tile in this partial row.
-                promoteLastHalf();
-                // Now this tile starts a new row at column 0
+            if (currentX + span > colCount) {
+                promoteLast();
                 currentX = 0;
             }
 
-            // Place this tile
-            if (span === 2) lastHalfTileIndex = i;
-            else lastHalfTileIndex = -1;
+            if (isStretchable(natural)) lastStretchableIndex = i;
+            else lastStretchableIndex = -1;
 
             currentX += span;
             if (currentX >= colCount) {
                 currentX = 0;
-                lastHalfTileIndex = -1;
+                lastStretchableIndex = -1;
             }
         }
 
-        // Step 4: after loop, if final row is partial (current > 0 but < colCount)
-        // and there's a half-tile in it, promote it to wide so the row isn't half-empty.
-        if (currentX > 0 && currentX < colCount) {
-            promoteLastHalf();
-        }
+        if (currentX > 0 && currentX < colCount) promoteLast();
 
-        // Step 5: resize all charts (their containers may have changed width
-        // due to promotion from half → wide)
         requestAnimationFrame(resizeAllCharts);
     }
 
-    // ── Wire up drag-to-resize handles (Edit mode) ──
     function wireResizeHandles(canvas, tile) {
         const rx = document.createElement('div');
         rx.className = 'universal-resize-x';
-        rx.title = 'Drag to widen / shrink';
         const ry = document.createElement('div');
         ry.className = 'universal-resize-y';
-        ry.title = 'Drag to make taller / shorter';
         const mv = document.createElement('button');
         mv.type = 'button';
         mv.className = 'universal-move';
         mv.setAttribute('aria-label', 'Reset size');
-        mv.title = 'Double-click to reset size';
         mv.innerHTML = '⠿';
         mv.addEventListener('dblclick', e => {
             e.preventDefault();
@@ -460,8 +574,8 @@
             const startH = tile.getBoundingClientRect().height;
             const cols = getComputedStyle(canvas).gridTemplateColumns.split(' ').filter(s => s.trim()).length;
             const canvasW = canvas.getBoundingClientRect().width;
-            const colWidth = (canvasW - 8 * (cols - 1)) / cols;
-            const rowHeight = 120;
+            const colWidth = (canvasW - 6 * (cols - 1)) / cols;
+            const rowHeight = 80;
 
             const move = (ev) => {
                 if (mode === 'x') {
@@ -497,7 +611,6 @@
         ry.addEventListener('mousedown', beginDrag('y'));
     }
 
-    // ── Main render ──
     function render(payload) {
         state.payload = payload;
         const aiBriefTile = buildAiBriefTile(payload);
@@ -508,7 +621,7 @@
                     <div class="universal-title">${esc(payload.title || '')}</div>
                     <div class="universal-header-right">
                         <div class="universal-asof">${esc(payload.asOfLabel || '')}</div>
-                        <button class="universal-btn" type="button" id="universalEditBtn" title="Click to unlock editing — drag the right or bottom edge of any tile to resize. Double-click ⠿ to reset. Click Done to save."><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                        <button class="universal-btn" type="button" id="universalEditBtn" title="Click to unlock editing — drag the right or bottom edge of any tile to resize."><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                         <button class="universal-btn" type="button" onclick="if(confirm('Reset all tiles to default size?')) window.__universalResetLayout()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
                     </div>
                 </header>
@@ -519,22 +632,18 @@
         const canvas = app.querySelector('.universal-canvas');
         state.canvasEl = canvas;
 
-        // Build all tiles — Grid auto-flows them
         (payload.metrics || []).forEach((m, i) => canvas.appendChild(buildMetricTile(m, i)));
         (payload.charts || []).forEach((c, i) => canvas.appendChild(buildChartTile(c, i)));
         (payload.tables || []).forEach((t, i) => canvas.appendChild(buildTableTile(t, i)));
         if (aiBriefTile) canvas.appendChild(aiBriefTile);
 
-        // Apply saved spans + wire resize handles
         canvas.querySelectorAll('[data-tile-id]').forEach(tile => {
             applySavedSpans(tile);
             wireResizeHandles(canvas, tile);
         });
 
-        // Run initial classification
         reclassifyLayout();
 
-        // Edit button
         const editBtn = app.querySelector('#universalEditBtn');
         if (editBtn) {
             let editing = false;
@@ -555,7 +664,6 @@
             });
         }
 
-        // Init charts
         if (!window.echarts) {
             console.warn('echarts not loaded');
         } else {
@@ -574,11 +682,6 @@
             });
         }
 
-        // ══ CANVAS-LEVEL ResizeObserver — the heart of the universal constructor
-        // Every time the canvas changes size (viewport resize, browser chrome
-        // toggle, orientation change, parent frame layout shift), we re-run
-        // reclassifyLayout() so half-tiles get re-promoted correctly for the
-        // new column count.
         const canvasRO = new ResizeObserver(() => {
             if (state.reclassifyScheduled) return;
             state.reclassifyScheduled = true;
@@ -590,7 +693,6 @@
         canvasRO.observe(canvas);
     }
 
-    // ── Load JSON, render ──
     async function load() {
         if (!suite) {
             app.innerHTML = '<div class="universal-error">Missing data-suite attribute on &lt;body&gt;.</div>';
@@ -607,7 +709,6 @@
         }
     }
 
-    // Window resize fallback (in addition to ResizeObserver)
     window.addEventListener('resize', () => {
         if (state.reclassifyScheduled) return;
         state.reclassifyScheduled = true;
@@ -617,7 +718,6 @@
         });
     });
 
-    // Listen for external layout overrides (parent frame integration)
     window.addEventListener('message', event => {
         if (event.origin !== window.location.origin) return;
         const msg = event.data || {};
@@ -649,7 +749,6 @@
         }
     });
 
-    // Announce readiness to parent frame
     try {
         window.parent.postMessage({
             type: 'dashboard-custom-html:ready',
@@ -657,7 +756,6 @@
         }, window.location.origin);
     } catch (_) {}
 
-    // Expose render globally
     window.universalDashboard = { render, resizeAllCharts, reclassifyLayout };
 
     load();
