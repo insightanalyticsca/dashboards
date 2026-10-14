@@ -4,7 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ITS — Service Health</title>
-<script>try{localStorage.setItem('docchat-theme','dark');}catch(e){}</script>
+<script>
+// Nuke old service worker + all caches so PWA gets fresh files
+(function(){
+  try { localStorage.setItem('docchat-theme','dark'); } catch(e){}
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){ r.unregister(); });
+    });
+  }
+  if ('caches' in window) {
+    caches.keys().then(function(names){
+      names.forEach(function(n){ caches.delete(n); });
+    });
+  }
+})();
+</script>
 <link rel="stylesheet" href="../css/canvas-host.css?v=20261018">
 <link rel="stylesheet" href="../css/theme-vivid.css?v=20261018">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
