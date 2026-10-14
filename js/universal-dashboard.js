@@ -661,26 +661,36 @@
     function wireResizeHandles(canvas, tile) {
         const rx = document.createElement('div');
         rx.className = 'universal-resize-x';
+        rx.title = 'Drag to resize width';
         const ry = document.createElement('div');
         ry.className = 'universal-resize-y';
+        ry.title = 'Drag to resize height';
         const mv = document.createElement('button');
         mv.type = 'button';
         mv.className = 'universal-move';
-        mv.setAttribute('aria-label', 'Reset size');
+        mv.setAttribute('aria-label', 'Drag to move. Double-click to reset.');
+        mv.title = 'Drag to move this tile. Double-click to reset.';
         mv.innerHTML = '⠿';
+
+        // Double-click resets size + position to natural
         mv.addEventListener('dblclick', e => {
             e.preventDefault();
+            e.stopPropagation();
             tile.style.gridColumn = '';
             tile.style.gridRow = '';
+            tile.style.transform = '';
+            tile.style.zIndex = '';
             tile.removeAttribute('data-manual-span');
             delete state.tileSpans[tile.dataset.tileId];
             saveLayout();
             reclassifyLayout();
             resizeAllCharts();
         });
+
         tile.append(mv, rx, ry);
 
-        const beginDrag = (mode) => (event) => {
+        // ── Resize handles (right edge = width, bottom edge = height) ──
+        const beginResize = (mode) => (event) => {
             if (event.button !== 0) return;
             event.preventDefault();
             event.stopPropagation();
@@ -690,7 +700,7 @@
             const startH = tile.getBoundingClientRect().height;
             const cols = getComputedStyle(canvas).gridTemplateColumns.split(' ').filter(s => s.trim()).length;
             const canvasW = canvas.getBoundingClientRect().width;
-            const colWidth = (canvasW - 6 * (cols - 1)) / cols;
+            const colWidth = (canvasW - 10 * (cols - 1)) / cols;
             const rowHeight = 80;
 
             const move = (ev) => {
@@ -723,8 +733,69 @@
             document.addEventListener('mousemove', move);
             document.addEventListener('mouseup', end);
         };
-        rx.addEventListener('mousedown', beginDrag('x'));
-        ry.addEventListener('mousedown', beginDrag('y'));
+        rx.addEventListener('mousedown', beginResize('x'));
+        ry.addEventListener('mousedown', beginResize('y'));
+
+        // ── Move handle (⠿ drag) — reorder tile in DOM based on drag direction ──
+        // Visual approach: while dragging, translate the tile freely (transform).
+        // On release, detect which sibling tile the cursor is over and swap
+        // DOM positions with it. This makes "move" feel like free-drag but
+        // snaps back to the grid on release.
+        mv.addEventListener('mousedown', (event) => {
+            if (event.button !== 0) return;
+            event.preventDefault();
+            event.stopPropagation();
+            const startX = event.clientX;
+            const startY = event.clientY;
+            const tileRect = tile.getBoundingClientRect();
+            const offsetX = startX - tileRect.left;
+            const offsetY = startY - tileRect.top;
+
+            // Lift the tile visually above siblings during drag
+            tile.style.zIndex = '1000';
+            tile.style.transition = 'none';
+            tile.classList.add('universal-tile-dragging');
+
+            const onMove = (ev) => {
+                const dx = ev.clientX - startX;
+                const dy = ev.clientY - startY;
+                tile.style.transform = `translate(${dx}px, ${dy}px)`;
+            };
+            const onUp = (ev) => {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+                tile.style.transform = '';
+                tile.style.zIndex = '';
+                tile.style.transition = '';
+                tile.classList.remove('universal-tile-dragging');
+
+                // Find which sibling tile the cursor is over (excluding self)
+                const targetEl = document.elementFromPoint(ev.clientX, ev.clientY);
+                const dropTile = targetEl ? targetEl.closest('.universal-tile') : null;
+                if (dropTile && dropTile !== tile && canvas.contains(dropTile)) {
+                    // Swap DOM positions
+                    const tilesParent = tile.parentNode;
+                    const tileNext = tile.nextSibling;
+                    const dropNext = dropTile.nextSibling;
+                    if (tileNext === dropTile) {
+                        // tile is immediately before dropTile — swap order
+                        tilesParent.insertBefore(dropTile, tile);
+                    } else if (dropNext === tile) {
+                        // dropTile is immediately before tile — swap order
+                        tilesParent.insertBefore(tile, dropTile);
+                    } else {
+                        // Non-adjacent swap
+                        tilesParent.insertBefore(tile, dropNext);
+                        tilesParent.insertBefore(dropTile, tileNext);
+                    }
+                    // Re-run layout classification + resize all charts
+                    reclassifyLayout();
+                    requestAnimationFrame(resizeAllCharts);
+                }
+            };
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        });
     }
 
     function render(payload) {

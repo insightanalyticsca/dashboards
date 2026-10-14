@@ -559,6 +559,16 @@
 .universal-canvas.is-frozen .universal-resize-y,
 .universal-canvas.is-frozen .universal-move { display: none !important; }
 
+/* Dragging state — tile floats above siblings during ⠿ drag */
+.universal-tile.universal-tile-dragging {
+    cursor: grabbing !important;
+    opacity: 0.85;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.30), 0 4px 16px rgba(99, 102, 241, 0.20) !important;
+    z-index: 1000 !important;
+    pointer-events: none;
+}
+.universal-tile-dragging * { pointer-events: none !important; }
+
 /* ── Loading / error ──────────────────────────────────────────────────────── */
 .universal-loading,
 .universal-error {
