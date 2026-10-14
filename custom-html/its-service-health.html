@@ -1,35 +1,100 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <link rel="canonical" href="https://insight-analytics.ca/">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>ITS — Service Health</title>
-  <link rel="stylesheet" href="../css/canvas-host.css?v=20261017">
-  <link rel="stylesheet" href="../css/theme-vivid.css?v=20261017">
+  <link rel="stylesheet" href="../css/canvas-host.css?v=20261018">
+  <link rel="stylesheet" href="../css/theme-vivid.css?v=20261018">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261017">
+  <link rel="stylesheet" href="../css/executive-dashboard-suite.css?v=20261018">
 
   <style>
-  /* P1: content-visibility: auto — skip rendering off-screen sections (50-80% INP win) */
-  main > section:nth-child(n+3),
-  .canvas-grid > .canvas-tile:nth-child(n+5),
-  .grid-analytics > div:nth-child(n+5),
-  .sector-block:nth-child(n+3),
-  #analytics,
-  #library {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
+  /* Topbar — match universal dashboard header: dark, clean, minimal */
+  .topbar {
+    background: #0a0e1a !important;
+    border-bottom: 1px solid rgba(99,102,241,0.15) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 8px 16px !important;
   }
-  /* CSS containment — isolate layout/paint */
-  .canvas-tile, .exec-visual, .card, .tile {
-    contain: layout style paint;
+  .topbar .brand-name {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #e2e8f0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+  }
+  .topbar .navlink, .topbar .topbar-actions a {
+    color: #94a3b8 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border: 1px solid rgba(99,102,241,0.15) !important;
+    border-radius: 5px !important;
+    padding: 4px 8px !important;
+  }
+  .topbar .navlink:hover, .topbar .topbar-actions a:hover {
+    border-color: #06b6d4 !important;
+    background: rgba(6,182,212,0.08) !important;
+    color: #06b6d4 !important;
+  }
+  /* Canvas page background — dark like universal */
+  .canvas-page {
+    background: #0a0e1a !important;
+    color: #e2e8f0 !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .canvas-header {
+    border-bottom: 1px solid rgba(99,102,241,0.15) !important;
+  }
+  .canvas-title {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #e2e8f0 !important;
+    font-size: clamp(14px, 1.3vw, 17px) !important;
+    font-weight: 700 !important;
+  }
+  .canvas-asof {
+    color: #64748b !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+  }
+  /* Canvas tiles — dark glass cards like universal */
+  .canvas-tile {
+    background: rgba(15,23,42,0.85) !important;
+    border: 1px solid rgba(99,102,241,0.15) !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+  .canvas-tile-title {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #e2e8f0 !important;
+    border-bottom: 1px solid rgba(99,102,241,0.15) !important;
+  }
+  .canvas-tile-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: #06b6d4;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  /* Notes — match universal AI brief style */
+  .canvas-notes {
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(6,182,212,0.04)) !important;
+    border: 1px solid rgba(99,102,241,0.15) !important;
+    border-radius: 12px !important;
+    padding: 16px 18px !important;
+    color: #e2e8f0 !important;
   }
   </style>
 
