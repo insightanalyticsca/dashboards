@@ -1,0 +1,84 @@
+{
+  "key": "its-service-health",
+  "title": "ITS — Service Health",
+  "variant": "cyan",
+  "asOfLabel": "Period: February 2026",
+  "generatedUtc": "2026-02-28T00:00:00Z",
+  "metrics": [
+    {"key": "overall-uptime", "label": "Overall Uptime", "value": 99.974, "format": "percent", "period": "MTD", "mom": 0.02, "yoy": 0.05, "momLabel": "MoM", "yoyLabel": "YoY", "deltaMode": "points", "positiveIsGood": true},
+    {"key": "sla-compliance", "label": "SLA Compliance", "value": 96, "format": "percent", "period": "MTD", "mom": -1.5, "yoy": 0.8, "momLabel": "MoM", "yoyLabel": "YoY", "deltaMode": "points", "positiveIsGood": true},
+    {"key": "breaches", "label": "SLA Breaches", "value": 1, "format": "integer", "period": "MTD", "mom": 0, "yoy": -2, "momLabel": "MoM", "yoyLabel": "YoY", "deltaMode": "points", "positiveIsGood": false},
+    {"key": "services-monitored", "label": "Services Monitored", "value": 12, "format": "integer", "period": "Current", "mom": 0, "yoy": 3, "momLabel": "MoM", "yoyLabel": "YoY", "deltaMode": "points", "positiveIsGood": true}
+  ],
+  "charts": [
+    {
+      "id": "uptime-by-service",
+      "title": "Uptime % by Service — vs SLA Target",
+      "kind": "bar",
+      "width": "wide",
+      "valueFormat": "percent",
+      "leftAxisTitle": "Uptime %",
+      "categories": ["Exchange Online", "Customer Portal", "REST API Gateway", "Corporate VPN", "DNS", "Backup", "File Share", "Print Services"],
+      "series": [
+        {"name": "Uptime %", "type": "bar", "axis": "left", "stack": "", "color": "#6366f1", "smooth": false, "data": [99.971, 99.949, 99.984, 99.901, 99.999, 99.995, 99.980, 99.963]},
+        {"name": "SLA Target", "type": "line", "axis": "left", "stack": "", "color": "#ef4444", "smooth": false, "data": [99.95, 99.95, 99.95, 99.95, 99.95, 99.95, 99.95, 99.95]}
+      ]
+    },
+    {
+      "id": "sla-heatmap",
+      "title": "SLA Status Heatmap — Service × Month",
+      "kind": "heatmap",
+      "width": "half",
+      "valueFormat": "percent",
+      "categories": ["Oct 2025", "Nov 2025", "Dec 2025", "Jan 2026", "Feb 2026"],
+      "series": [
+        {"name": "Exchange Online", "type": "heatmap", "axis": "left", "stack": "", "color": "#6366f1", "smooth": false, "data": [99.98, 99.96, 99.97, 99.95, 99.97]},
+        {"name": "Customer Portal", "type": "heatmap", "axis": "left", "stack": "", "color": "#06b6d4", "smooth": false, "data": [99.95, 99.92, 99.94, 99.96, 99.95]},
+        {"name": "REST API Gateway", "type": "heatmap", "axis": "left", "stack": "", "color": "#10b981", "smooth": false, "data": [99.99, 99.98, 99.98, 99.99, 99.98]},
+        {"name": "Corporate VPN", "type": "heatmap", "axis": "left", "stack": "", "color": "#f59e0b", "smooth": false, "data": [99.96, 99.93, 99.91, 99.94, 99.90]},
+        {"name": "DNS", "type": "heatmap", "axis": "left", "stack": "", "color": "#ec4899", "smooth": false, "data": [100, 100, 100, 100, 100]},
+        {"name": "Backup", "type": "heatmap", "axis": "left", "stack": "", "color": "#8b5cf6", "smooth": false, "data": [99.99, 99.99, 99.98, 99.99, 100]}
+      ]
+    },
+    {
+      "id": "ticket-volume-trend",
+      "title": "Ticket Volume Trend — Open vs Closed (12 months)",
+      "kind": "combo",
+      "width": "half",
+      "valueFormat": "number",
+      "leftAxisTitle": "Tickets",
+      "categories": ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
+      "series": [
+        {"name": "Opened", "type": "bar", "axis": "left", "stack": "", "color": "#6366f1", "smooth": false, "data": [142, 156, 138, 167, 189, 201, 178, 165, 152, 143, 158, 134]},
+        {"name": "Closed", "type": "line", "axis": "left", "stack": "", "color": "#10b981", "smooth": true, "data": [138, 149, 141, 162, 185, 198, 175, 168, 156, 148, 161, 129]}
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "id": "service-status",
+      "title": "Service Status Matrix — All Services",
+      "width": "wide",
+      "kind": "table",
+      "columns": ["Service", "Category", "Uptime %", "SLA Target", "Status", "Breach"],
+      "columnGroups": [],
+      "formats": {"Uptime %": "percent", "SLA Target": "percent"},
+      "rows": [
+        {"Service": "Exchange Online", "Category": "Email", "Uptime %": 99.971, "SLA Target": 99.95, "Status": "Met", "Breach": "—"},
+        {"Service": "Customer Portal", "Category": "Web Portal", "Uptime %": 99.949, "SLA Target": 99.95, "Status": "Marginal", "Breach": "0.001%"},
+        {"Service": "REST API Gateway", "Category": "API", "Uptime %": 99.984, "SLA Target": 99.95, "Status": "Met", "Breach": "—"},
+        {"Service": "Corporate VPN", "Category": "Network", "Uptime %": 99.901, "SLA Target": 99.95, "Status": "Breach", "Breach": "0.049%"},
+        {"Service": "DNS", "Category": "Network", "Uptime %": 99.999, "SLA Target": 99.95, "Status": "Met", "Breach": "—"},
+        {"Service": "Backup", "Category": "Infrastructure", "Uptime %": 99.995, "SLA Target": 99.95, "Status": "Met", "Breach": "—"},
+        {"Service": "File Share", "Category": "Infrastructure", "Uptime %": 99.980, "SLA Target": 99.95, "Status": "Met", "Breach": "—"},
+        {"Service": "Print Services", "Category": "Infrastructure", "Uptime %": 99.963, "SLA Target": 99.95, "Status": "Met", "Breach": "—"}
+      ]
+    }
+  ],
+  "notes": [
+    "WHAT HAPPENED: Overall uptime 99.974% — within SLA. VPN breached SLA (99.91% vs 99.95% target). All other 7 services met or exceeded SLA targets.",
+    "WHY: VPN breach caused by hardware failure on primary gateway (Feb 14, 4h downtime). Failover triggered but took 18 minutes — beyond the 5-minute RTO target. Aging VPN concentrator (4 years old) is the root cause.",
+    "WHAT WILL HAPPEN: VPN hardware replacement scheduled for March 15. During replacement, 30-minute planned downtime window. Risk of second breach if hardware fails before replacement — estimated 12% probability.",
+    "WHAT TO DO: 1) Expedite VPN hardware procurement (ETA March 10). 2) Pre-stage failover configuration to reduce switchover from 18min to 3min. 3) Review Customer Portal marginal uptime (99.949% — 0.001% below SLA) for trend analysis."
+  ]
+}
