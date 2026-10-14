@@ -823,8 +823,8 @@
                         <button class="universal-theme-toggle" type="button" id="universalThemeToggle" title="Toggle light/dark theme" aria-label="Toggle theme">
                             <span id="universalThemeIcon"></span>
                         </button>
-                        <button class="universal-btn" type="button" id="universalEditBtn" title="Click to unlock editing — drag the right or bottom edge of any tile to resize."><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                        <button class="universal-btn" type="button" onclick="if(confirm('Reset all tiles to default size?')) window.__universalResetLayout()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                        <button class="universal-btn" type="button" id="universalEditBtn" title="Click to unlock editing — drag the ⠿ handle to move tiles, drag the right or bottom edge to resize. Double-click ⠿ to reset."><i class="fa-solid fa-pen-to-square"></i><span class="universal-btn-text">Edit</span></button>
+                        <button class="universal-btn" type="button" onclick="if(confirm('Reset all tiles to default size?')) window.__universalResetLayout()" title="Reset all tiles to default size and order"><i class="fa-solid fa-rotate-left"></i><span class="universal-btn-text">Reset</span></button>
                     </div>
                 </header>
                 <div class="universal-canvas is-frozen"></div>
@@ -879,12 +879,12 @@
                 if (editing) {
                     canvas.classList.remove('is-frozen');
                     canvas.classList.add('is-editing');
-                    editBtn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+                    editBtn.innerHTML = '<i class="fa-solid fa-check"></i><span class="universal-btn-text">Done</span>';
                     editBtn.classList.add('is-active');
                 } else {
                     canvas.classList.add('is-frozen');
                     canvas.classList.remove('is-editing');
-                    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit';
+                    editBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i><span class="universal-btn-text">Edit</span>';
                     editBtn.classList.remove('is-active');
                     saveLayout();
                 }
