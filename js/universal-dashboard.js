@@ -782,27 +782,18 @@
     function enterEditMode() {
         const canvas = state.canvasEl;
         if (!canvas) return;
-        // Capture each tile's current grid position as % coords BEFORE switching
-        // canvas to absolute positioning (which would lose layout info)
-        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
-        tiles.forEach(tile => {
-            // If user already has a saved manual override, use it
-            const tileId = tile.dataset.tileId;
-            const saved = getTileGeometry(tileId);
-            if (saved) {
-                applyTileGeometry(tile, saved);
-            } else {
-                // Capture current grid-rendered position
-                const geom = captureTilePositionAsPercent(tile);
-                if (geom) applyTileGeometry(tile, geom);
-            }
-        });
-        // Now switch canvas to absolute positioning mode (CSS handles this
-        // via .is-editing class on canvas)
+        // OLD WAY (broken): captured ALL tiles' grid positions and converted
+        // to absolute. This caused tiles to overlap because grid auto-rows
+        // are different from absolute % positions.
+        //
+        // NEW WAY: just show the drag/resize handles over the existing grid.
+        // Tiles stay in their grid placement until the user manually drags
+        // or resizes them. At that point, THAT tile switches to absolute
+        // positioning (its grid position is captured on first drag).
         canvas.classList.remove('is-frozen');
-        canvas.classList.remove('has-manual-layout');
         canvas.classList.add('is-editing');
-        // Resize all charts (their containers may have changed dimensions)
+        canvas.classList.remove('has-manual-layout');
+        // Don't touch tile styles — they keep their grid placement
         requestAnimationFrame(resizeAllCharts);
     }
 
@@ -812,31 +803,14 @@
         canvas.classList.add('is-frozen');
         canvas.classList.remove('is-editing');
 
-        // If user has any manual overrides, keep canvas in absolute positioning
-        // mode (don't return to grid — that would collapse tile heights since
-        // % of a shorter canvas = fewer pixels).
+        // If any tile has been manually positioned (has inline left/top styles),
+        // keep canvas in absolute positioning mode so heights don't collapse.
+        // Tiles WITHOUT manual overrides stay in grid flow.
         if (hasManualOverrides()) {
             canvas.classList.add('has-manual-layout');
-            // Re-apply saved geometry to all tiles (in case some were reset)
-            const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
-            tiles.forEach(tile => {
-                const tileId = tile.dataset.tileId;
-                const saved = getTileGeometry(tileId);
-                if (saved) {
-                    applyTileGeometry(tile, saved);
-                } else {
-                    // Tile was reset (no override) — capture from current
-                    // grid position. But canvas is no longer in grid mode...
-                    // Solution: temporarily switch to grid to capture, then back.
-                    // Actually, just clear inline styles so it stays in grid flow.
-                    // But canvas is in absolute mode. So tiles without overrides
-                    // need their position captured from the LAST grid render.
-                    // Simplest: just leave them with their current inline styles
-                    // (they were captured on enterEditMode and never changed).
-                }
-            });
         } else {
-            // No overrides — return to grid placement
+            canvas.classList.remove('has-manual-layout');
+            // Clear any inline styles so all tiles return to grid placement
             const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
             tiles.forEach(tile => {
                 tile.style.left = '';
@@ -845,11 +819,27 @@
                 tile.style.height = '';
                 tile.style.zIndex = '';
             });
-            canvas.classList.remove('has-manual-layout');
-            // Re-classify to apply per-row caps etc.
             reclassifyLayout();
         }
         requestAnimationFrame(resizeAllCharts);
+    }
+
+    // When user starts dragging/resizing a tile, capture its current grid
+    // position to absolute coordinates ONCE (so the drag has a starting point).
+    // This tile then leaves grid flow and becomes absolutely positioned.
+    function captureTileToAbsolute(tile) {
+        // Only capture if not already absolute (no inline left/top)
+        if (tile.style.left && tile.style.top) return;
+        const tileId = tile.dataset.tileId;
+        // If user has a saved override, use it
+        const saved = getTileGeometry(tileId);
+        if (saved) {
+            applyTileGeometry(tile, saved);
+            return;
+        }
+        // Capture current grid-rendered position
+        const geom = captureTilePositionAsPercent(tile);
+        if (geom) applyTileGeometry(tile, geom);
     }
 
     function wireLayoutHandles(canvas, tile) {
@@ -877,7 +867,12 @@
             const canvasRect = canvas.getBoundingClientRect();
             if (!canvasRect.width || !canvasRect.height) return;
 
-            // Read current geometry (from inline style, fallback to bounding rect)
+            // Capture this tile to absolute positioning NOW (if not already)
+            // so the drag has a starting point. This is what makes the tile
+            // leave grid flow and become manually positioned.
+            captureTileToAbsolute(tile);
+
+            // Read current geometry (from inline style after capture)
             const start = (function() {
                 const left = tile.style.left;
                 const top = tile.style.top;
@@ -1046,23 +1041,20 @@
 
         reclassifyLayout();
 
-        // If user has saved manual overrides from a previous session, apply them
-        // and switch canvas to absolute positioning mode (with handles hidden).
-        // This preserves the layout they saved, including custom heights/widths.
+        // If user has saved manual overrides from a previous session, apply
+        // them. Only tiles WITH overrides get inline left/top (becoming
+        // absolute). Tiles WITHOUT overrides stay in grid flow.
         if (hasManualOverrides()) {
             requestAnimationFrame(() => {
-                // Capture current grid positions for tiles WITHOUT overrides
-                // (so they get inline styles too, then we can switch to absolute)
                 const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
                 tiles.forEach(tile => {
                     const tileId = tile.dataset.tileId;
                     const saved = getTileGeometry(tileId);
                     if (saved) {
                         applyTileGeometry(tile, saved);
-                    } else {
-                        const geom = captureTilePositionAsPercent(tile);
-                        if (geom) applyTileGeometry(tile, geom);
                     }
+                    // Don't touch tiles without overrides — let them stay
+                    // in grid placement
                 });
                 canvas.classList.add('has-manual-layout', 'is-frozen');
                 canvas.classList.remove('is-editing');

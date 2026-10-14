@@ -538,23 +538,33 @@
 }
 
 /* ── Edit mode ─────────────────────────────────────────────────────────────── */
-/* When canvas has .is-editing, tiles switch from CSS Grid to absolute
-   positioning (set inline via JS). This allows free mix-and-match placement
-   — tiles can overlap, be moved anywhere, resized to any dimensions. */
+/* When canvas has .is-editing, drag/resize handles appear on each tile.
+   Tiles stay in CSS Grid placement until the user manually drags or
+   resizes one. At that point, the JS sets inline left/top/width/height on
+   THAT tile, and only then does it switch to position: absolute. */
 .universal-canvas.is-editing,
 .universal-canvas.has-manual-layout {
     position: relative;
-    display: block;
-    grid-template-columns: none;
-    min-height: 1600px;
-}
-.universal-canvas.is-editing .universal-tile,
-.universal-canvas.has-manual-layout .universal-tile {
-    position: absolute;
-    /* x/y/w/h set inline by JS as percentages of canvas */
+    /* Keep grid display so untouched tiles stay in their grid placement.
+       Only tiles with inline left/top become absolute (via the rule below). */
 }
 
-.universal-canvas.is-editing .universal-tile {
+/* When user has manually positioned tiles, ensure canvas is tall enough
+   to fit absolute-positioned tiles. Without this, absolute tiles could
+   extend past the canvas bottom edge and overlap content below. */
+.universal-canvas.has-manual-layout {
+    min-height: 1600px;
+}
+
+/* A tile becomes absolute-positioned ONLY when it has inline left set
+   (i.e. user has manually moved/resized it, OR loaded from saved overrides).
+   Selector: .universal-tile with style attribute containing "left:" */
+.universal-canvas.is-editing .universal-tile[style*="left:"],
+.universal-canvas.has-manual-layout .universal-tile[style*="left:"] {
+    position: absolute;
+}
+
+.universal-canvas.is-editing .universal-tile[style*="left:"] {
     outline: 1px dashed rgba(99, 102, 241, 0.35);
     outline-offset: -1px;
 }
