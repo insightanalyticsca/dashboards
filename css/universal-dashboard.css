@@ -537,34 +537,37 @@
     color: var(--ud-text);
 }
 
-/* ── Edit mode ─────────────────────────────────────────────────────────────── */
-/* When canvas has .is-editing, drag/resize handles appear on each tile.
-   Tiles stay in CSS Grid placement until the user manually drags or
-   resizes one. At that point, the JS sets inline left/top/width/height on
-   THAT tile, and only then does it switch to position: absolute. */
+/* ── Edit mode ───────────────────────────────────────────────────────────────
+   When canvas has .is-editing, DISABLE ALL universal class layout rules:
+     - Canvas switches from display:grid → display:block (no more grid flow)
+     - ALL tiles become position:absolute (positioned via inline left/top/w/h)
+     - aspect-ratio rules disabled (tile sizes set by inline width/height)
+     - natural-type grid-column rules disabled
+   This gives the user FREE drag/resize without any grid interference.
+   On Edit click, JS captures each tile's current rendered position ONCE
+   (in the next animation frame, after grid has rendered) and converts it
+   to absolute coordinates. After that, the grid is irrelevant. */
 .universal-canvas.is-editing,
 .universal-canvas.has-manual-layout {
+    display: block !important;
+    grid-template-columns: none !important;
     position: relative;
-    /* Keep grid display so untouched tiles stay in their grid placement.
-       Only tiles with inline left/top become absolute (via the rule below). */
-}
-
-/* When user has manually positioned tiles, ensure canvas is tall enough
-   to fit absolute-positioned tiles. Without this, absolute tiles could
-   extend past the canvas bottom edge and overlap content below. */
-.universal-canvas.has-manual-layout {
     min-height: 1600px;
 }
 
-/* A tile becomes absolute-positioned ONLY when it has inline left set
-   (i.e. user has manually moved/resized it, OR loaded from saved overrides).
-   Selector: .universal-tile with style attribute containing "left:" */
-.universal-canvas.is-editing .universal-tile[style*="left:"],
-.universal-canvas.has-manual-layout .universal-tile[style*="left:"] {
-    position: absolute;
+/* ALL tiles in edit mode → position:absolute (no more grid flow).
+   Inline left/top/width/height set by JS captureTileToAbsolute(). */
+.universal-canvas.is-editing .universal-tile,
+.universal-canvas.has-manual-layout .universal-tile {
+    position: absolute !important;
+    /* Disable aspect-ratio (was constraining tile heights via CSS) */
+    aspect-ratio: auto !important;
+    /* Disable grid-column rules (was constraining tile widths) */
+    grid-column: auto !important;
+    grid-row: auto !important;
 }
 
-.universal-canvas.is-editing .universal-tile[style*="left:"] {
+.universal-canvas.is-editing .universal-tile {
     outline: 1px dashed rgba(99, 102, 241, 0.35);
     outline-offset: -1px;
 }

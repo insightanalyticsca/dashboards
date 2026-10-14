@@ -782,18 +782,51 @@
     function enterEditMode() {
         const canvas = state.canvasEl;
         if (!canvas) return;
-        // OLD WAY (broken): captured ALL tiles' grid positions and converted
-        // to absolute. This caused tiles to overlap because grid auto-rows
-        // are different from absolute % positions.
-        //
-        // NEW WAY: just show the drag/resize handles over the existing grid.
-        // Tiles stay in their grid placement until the user manually drags
-        // or resizes them. At that point, THAT tile switches to absolute
-        // positioning (its grid position is captured on first drag).
+        // CRITICAL: capture canvas height and all tile positions FIRST,
+        // BEFORE applying any inline styles. Setting inline width/height
+        // on grid items causes the grid to re-layout, which changes the
+        // canvas height. By capturing first and applying all at once,
+        // we preserve the original layout.
+        const canvasRect = canvas.getBoundingClientRect();
+        if (!canvasRect.width || !canvasRect.height) return;
+
+        // Step 1: Capture all tile positions into an array (no DOM mutation yet)
+        const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
+        const geometries = tiles.map(tile => {
+            const tileId = tile.dataset.tileId;
+            // If user has a saved manual override from a previous session, use it
+            const saved = getTileGeometry(tileId);
+            if (saved) return { tile, geom: saved };
+            // Otherwise capture current grid-rendered position
+            const tileRect = tile.getBoundingClientRect();
+            return {
+                tile,
+                geom: {
+                    x: clampNumber(((tileRect.left - canvasRect.left) / canvasRect.width) * 100, 0, 100),
+                    y: clampNumber(((tileRect.top - canvasRect.top) / canvasRect.height) * 100, 0, 100),
+                    w: clampNumber((tileRect.width / canvasRect.width) * 100, 4, 100),
+                    h: clampNumber((tileRect.height / canvasRect.height) * 100, 4, 100),
+                    z: 0
+                }
+            };
+        });
+
+        // Step 2: Set canvas min-height to current grid-rendered height.
+        // This MUST happen before applying tile styles, because once tiles
+        // get inline width/height, the grid re-layouts and canvas height changes.
+        canvas.style.minHeight = Math.round(canvasRect.height) + 'px';
+
+        // Step 3: Apply all captured geometries at once
+        geometries.forEach(({ tile, geom }) => {
+            applyTileGeometry(tile, geom);
+        });
+
+        // Step 4: Switch to edit mode. CSS applies position:absolute + display:block.
+        // Because tiles now have inline left/top/w/h AND canvas min-height is
+        // preserved, tiles stay exactly where they were.
         canvas.classList.remove('is-frozen');
-        canvas.classList.add('is-editing');
         canvas.classList.remove('has-manual-layout');
-        // Don't touch tile styles — they keep their grid placement
+        canvas.classList.add('is-editing');
         requestAnimationFrame(resizeAllCharts);
     }
 
@@ -1041,21 +1074,37 @@
 
         reclassifyLayout();
 
-        // If user has saved manual overrides from a previous session, apply
-        // them. Only tiles WITH overrides get inline left/top (becoming
-        // absolute). Tiles WITHOUT overrides stay in grid flow.
+        // If user has saved manual overrides from a previous session, apply them
+        // to ALL tiles and switch canvas to absolute positioning mode.
+        // Uses same capture-first approach as enterEditMode() to prevent
+        // canvas height collapse.
         if (hasManualOverrides()) {
             requestAnimationFrame(() => {
+                const canvasRect = canvas.getBoundingClientRect();
+                if (!canvasRect.width || !canvasRect.height) return;
+                // Capture all tile positions FIRST
                 const tiles = Array.from(canvas.querySelectorAll('.universal-tile'));
-                tiles.forEach(tile => {
+                const geometries = tiles.map(tile => {
                     const tileId = tile.dataset.tileId;
                     const saved = getTileGeometry(tileId);
-                    if (saved) {
-                        applyTileGeometry(tile, saved);
-                    }
-                    // Don't touch tiles without overrides — let them stay
-                    // in grid placement
+                    if (saved) return { tile, geom: saved };
+                    const tileRect = tile.getBoundingClientRect();
+                    return {
+                        tile,
+                        geom: {
+                            x: clampNumber(((tileRect.left - canvasRect.left) / canvasRect.width) * 100, 0, 100),
+                            y: clampNumber(((tileRect.top - canvasRect.top) / canvasRect.height) * 100, 0, 100),
+                            w: clampNumber((tileRect.width / canvasRect.width) * 100, 4, 100),
+                            h: clampNumber((tileRect.height / canvasRect.height) * 100, 4, 100),
+                            z: 0
+                        }
+                    };
                 });
+                // Set canvas min-height BEFORE applying tile styles
+                canvas.style.minHeight = Math.round(canvasRect.height) + 'px';
+                // Apply all geometries at once
+                geometries.forEach(({ tile, geom }) => applyTileGeometry(tile, geom));
+                // Switch to manual layout mode (handles hidden, absolute positioning)
                 canvas.classList.add('has-manual-layout', 'is-frozen');
                 canvas.classList.remove('is-editing');
                 requestAnimationFrame(resizeAllCharts);
