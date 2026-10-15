@@ -33,12 +33,12 @@
 
     const SPAN_KEY = 'universal-layout-' + suite;
     function saveLayout() {
-        try { localStorage.setItem(SPAN_KEY, JSON.stringify(state.tileSpans)); }
+        try { sessionStorage.setItem(SPAN_KEY, JSON.stringify(state.tileSpans)); }
         catch (e) {}
     }
     function loadLayout() {
         try {
-            const saved = localStorage.getItem(SPAN_KEY);
+            const saved = sessionStorage.getItem(SPAN_KEY);
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (parsed && typeof parsed === 'object') state.tileSpans = parsed;
@@ -55,7 +55,7 @@
     }
 
     window.__universalResetLayout = function () {
-        try { localStorage.removeItem(SPAN_KEY); } catch (e) {}
+        try { sessionStorage.removeItem(SPAN_KEY); } catch (e) {}
         state.tileSpans = {};
         if (state.canvasEl) {
             state.canvasEl.querySelectorAll('[data-tile-id]').forEach(tile => {
