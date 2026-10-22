@@ -11116,7 +11116,887 @@
           }
         }
       ]
+    },
+    {
+      "runAt": "2026-10-22T11:20:17.050Z",
+      "pagesOptimized": 63,
+      "totalPages": 63,
+      "techniques": [
+        "googlebot-extended",
+        "preconnect-preload",
+        "defer-scripts",
+        "content-visibility",
+        "faq-schema",
+        "howto-schema",
+        "org-person-schema",
+        "auto-linking",
+        "fact-density",
+        "freshness",
+        "breadcrumbs",
+        "speakable",
+        "dataset-schema",
+        "image-seo",
+        "social-tags",
+        "json-ld-graph"
+      ],
+      "changes": [
+        {
+          "page": "custom-html/aging-bankruptcies-by-customer-type.html",
+          "techniques": [
+            "resource-hints",
+            "faq-schema",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 154,
+            "vagueWords": 1,
+            "numbers": 113,
+            "density": "0.73",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-bankruptcies.html",
+          "techniques": [
+            "resource-hints",
+            "faq-schema",
+            "title-opt",
+            "description-opt",
+            "social-tags",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 187,
+            "vagueWords": 1,
+            "numbers": 146,
+            "density": "0.78",
+            "score": "good"
+          },
+          "keywords": "aging bankruptcies, bankruptcy trends, insolvency analysis, long-term bankruptcies, creditor recovery, legal system, financial distress, bankruptcy data, case aging, court backlog"
+        },
+        {
+          "page": "custom-html/aging-commercial-delta.html",
+          "techniques": [
+            "resource-hints",
+            "faq-schema",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 149,
+            "vagueWords": 1,
+            "numbers": 142,
+            "density": "0.95",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-disconnects-by-customer-type.html",
+          "techniques": [
+            "resource-hints",
+            "faq-schema",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 157,
+            "vagueWords": 1,
+            "numbers": 121,
+            "density": "0.77",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-disconnects-reconnects.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 176,
+            "vagueWords": 0,
+            "numbers": 129,
+            "density": "0.73",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-electric-commercial-rolling13.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 141,
+            "vagueWords": 0,
+            "numbers": 160,
+            "density": "1.13",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-electric-residential-rolling13.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 150,
+            "vagueWords": 0,
+            "numbers": 169,
+            "density": "1.13",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-forecast-monitor.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 664,
+            "vagueWords": 1,
+            "numbers": 371,
+            "density": "0.56",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/aging-residential-delta.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 162,
+            "vagueWords": 1,
+            "numbers": 131,
+            "density": "0.81",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/app100-sqljob-duration-trend.html",
+          "techniques": [
+            "title-opt",
+            "description-opt",
+            "social-tags",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 116,
+            "vagueWords": 0,
+            "numbers": 135,
+            "density": "1.16",
+            "score": "good"
+          },
+          "keywords": "SQL Agent, job duration, duration trend, SQL Server monitoring, performance analysis, job execution time, scheduling optimization, live dashboard, database performance, SQL job analytics"
+        },
+        {
+          "page": "custom-html/app100-sqljob-failure-details.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 122,
+            "vagueWords": 0,
+            "numbers": 140,
+            "density": "1.15",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/app100-sqljob-health-summary.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 139,
+            "vagueWords": 0,
+            "numbers": 162,
+            "density": "1.17",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/app100-sqljob-run-stacks.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 239,
+            "vagueWords": 0,
+            "numbers": 281,
+            "density": "1.18",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/ar-buckets-stacked.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 190,
+            "vagueWords": 2,
+            "numbers": 242,
+            "density": "1.27",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/ar-buckets-tabular.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 216,
+            "vagueWords": 1,
+            "numbers": 252,
+            "density": "1.17",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/ar-delta-stacked.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 182,
+            "vagueWords": 2,
+            "numbers": 164,
+            "density": "0.90",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/ar-delta-tabular.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 210,
+            "vagueWords": 1,
+            "numbers": 131,
+            "density": "0.62",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-aging-dynamics.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 53,
+            "vagueWords": 0,
+            "numbers": 34,
+            "density": "0.64",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-aging-overview.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 54,
+            "vagueWords": 0,
+            "numbers": 38,
+            "density": "0.70",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-ar-tabular.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 52,
+            "vagueWords": 0,
+            "numbers": 30,
+            "density": "0.58",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-electric-arrears.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 52,
+            "vagueWords": 0,
+            "numbers": 36,
+            "density": "0.69",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-page.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 74,
+            "vagueWords": 0,
+            "numbers": 30,
+            "density": "0.41",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-top-arrears.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 51,
+            "vagueWords": 0,
+            "numbers": 31,
+            "density": "0.61",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/csr-visual.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 285,
+            "vagueWords": 1,
+            "numbers": 346,
+            "density": "1.21",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/cx-visual.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 662,
+            "vagueWords": 2,
+            "numbers": 891,
+            "density": "1.35",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-ar-portfolio.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-customer-payments.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 48,
+            "vagueWords": 0,
+            "numbers": 22,
+            "density": "0.46",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-disconnects-bankruptcies.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 47,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.43",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-ebill-performance.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 60,
+            "vagueWords": 0,
+            "numbers": 32,
+            "density": "0.53",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-final-bill-recovery.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-meridian-universal.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-meridian.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-operations-universal.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-sentinel-universal.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-sentinel.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-velocity-universal.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/executive-velocity.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 45,
+            "vagueWords": 0,
+            "numbers": 20,
+            "density": "0.44",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-closed-priority.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 151,
+            "vagueWords": 0,
+            "numbers": 157,
+            "density": "1.04",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-closure-sla-mom.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 212,
+            "vagueWords": 0,
+            "numbers": 290,
+            "density": "1.37",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-kb4-failure-ppp.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 191,
+            "vagueWords": 0,
+            "numbers": 245,
+            "density": "1.28",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-kb4-phish-mom.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 165,
+            "vagueWords": 0,
+            "numbers": 183,
+            "density": "1.11",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-kb4-training.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 151,
+            "vagueWords": 0,
+            "numbers": 191,
+            "density": "1.26",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-ocsf-report.html",
+          "techniques": [
+            "faq-schema",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 171,
+            "vagueWords": 0,
+            "numbers": 261,
+            "density": "1.53",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-open-priority.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 190,
+            "vagueWords": 0,
+            "numbers": 154,
+            "density": "0.81",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-open-status.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 154,
+            "vagueWords": 0,
+            "numbers": 157,
+            "density": "1.02",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-priority-status.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 158,
+            "vagueWords": 0,
+            "numbers": 181,
+            "density": "1.15",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-response-sla-mom.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 211,
+            "vagueWords": 0,
+            "numbers": 290,
+            "density": "1.37",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-security-posture.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 47,
+            "vagueWords": 0,
+            "numbers": 26,
+            "density": "0.55",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-security-training.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 49,
+            "vagueWords": 0,
+            "numbers": 34,
+            "density": "0.69",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-service-health-universal.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 40,
+            "vagueWords": 0,
+            "numbers": 17,
+            "density": "0.42",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-service-health.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 48,
+            "vagueWords": 0,
+            "numbers": 29,
+            "density": "0.60",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-sla-performance.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 46,
+            "vagueWords": 0,
+            "numbers": 31,
+            "density": "0.67",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-ticket-management.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 48,
+            "vagueWords": 0,
+            "numbers": 29,
+            "density": "0.60",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-ticket-operations.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 50,
+            "vagueWords": 0,
+            "numbers": 32,
+            "density": "0.64",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-ticket-volume-close.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 211,
+            "vagueWords": 0,
+            "numbers": 290,
+            "density": "1.37",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-ticket-volume-open.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 211,
+            "vagueWords": 0,
+            "numbers": 290,
+            "density": "1.37",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/its-uptime.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 197,
+            "vagueWords": 0,
+            "numbers": 199,
+            "density": "1.01",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/remote-health-monitor.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 226,
+            "vagueWords": 0,
+            "numbers": 184,
+            "density": "0.81",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/risky/risky-client-monitor.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 375,
+            "vagueWords": 0,
+            "numbers": 276,
+            "density": "0.74",
+            "score": "good"
+          }
+        },
+        {
+          "page": "custom-html/risky-client-monitor.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 375,
+            "vagueWords": 0,
+            "numbers": 275,
+            "density": "0.73",
+            "score": "good"
+          }
+        },
+        {
+          "page": "google9b227dc55f933619.html",
+          "techniques": [
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 1,
+            "vagueWords": 0,
+            "numbers": 0,
+            "density": "0.00",
+            "score": "poor"
+          }
+        },
+        {
+          "page": "index.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 292,
+            "vagueWords": 0,
+            "numbers": 166,
+            "density": "0.57",
+            "score": "good"
+          }
+        },
+        {
+          "page": "visuals.html",
+          "techniques": [
+            "resource-hints",
+            "json-ld-graph"
+          ],
+          "factDensity": {
+            "sentences": 116,
+            "vagueWords": 2,
+            "numbers": 136,
+            "density": "1.17",
+            "score": "good"
+          }
+        }
+      ]
     }
   ],
-  "lastRun": "2026-10-21T11:21:29.157Z"
+  "lastRun": "2026-10-22T11:20:17.050Z"
 }
