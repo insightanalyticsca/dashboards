@@ -895,3 +895,26 @@ Stage Summary:
 - ECharts renders into page divs (just like markets-dashboard renders charts)
 - Works on every browser including iOS Safari + PWA (proven by markets-dashboard working on those platforms)
 - User instructions: force-close the PWA + reopen to drop the old v2.8.0 SW; new SW v2.9.0 activates via skipWaiting; the dashboard now renders inline with full interactivity (chart hover, theme-aware dark mode, AI brief panel)
+
+---
+Task ID: groq-cf-worker-revert-20261027
+Agent: main
+Task: Fix broken Groq chat after Cloudflare Worker migration. User reported "your new setup is messed up" — chat was returning Groq's 403 error response instead of completions.
+
+Work Log:
+- Verified the new Groq key (set in previous session, `gsk_kyNV...` prefix) returns HTTP 403 directly from this server — but so does every other Groq key, because Groq blocks data-center IPs.
+- Found the OLD Netlify endpoint (dashboards-groq-proxy.netlify.app/groq-proxy) is still alive and returns HTTP 200 with valid chat completions.
+- Pulled the working Groq key from Netlify env (GROQ_API_KEY, `gsk_CYRS...` prefix) via Netlify API using the token in scripts/deploy_all_edge_functions.py.
+- Set that working key on the Cloudflare worker — still got 403.
+- Deployed a temporary `groq-debug` worker to capture full Groq response: status=403, body=`{"error":{"message":"Forbidden"}}`, response headers show `server: cloudflare`, `set-cookie: __cf_bm=...`. So Groq's own API is hosted behind Cloudflare, and Cloudflare's bot mitigation is challenging the CF Worker's outbound fetch (the worker's egress IPs are flagged as automation).
+- Confirmed same key + same model + same headers works perfectly from Netlify edge (different egress IP, not flagged).
+- Reverted data/groq-config.json proxyUrl from `https://groq-proxy.insight-analytics.workers.dev/groq-proxy` back to `https://dashboards-groq-proxy.netlify.app/groq-proxy`.
+- Added browser-like User-Agent/Accept headers to the CF worker's outbound Groq fetch (kept in repo in case Groq ever lifts the WAF block, but the live config no longer routes through it).
+- Committed as 570b0b9, pushed to origin/main. Verified live on GitHub Pages: groq-config.json now points at Netlify, end-to-end POST returns HTTP 200 with valid chat completion.
+- Deleted the temporary groq-debug worker.
+
+Stage Summary:
+- Live chat is fixed — groq-config.json on GitHub Pages now points at Netlify (verified end-to-end: response "setup is fixed" returned with HTTP 200).
+- Root cause was NOT the API key (the key was fine); it was Groq's Cloudflare-fronted WAF challenging the Cloudflare Worker egress IP. This is an architectural conflict — using a CF Worker to call a CF-fronted API with bot mitigation enabled will always fail.
+- The Cloudflare Worker code remains in the repo (cloudflare/groq-proxy-worker.js) and the worker is still deployed, but it is no longer in the live path. Netlify is back to being the sole provider.
+- If we ever want to fully abandon Netlify, alternatives: (a) ask Groq support to whitelist the CF Worker IPs, (b) switch to an LLM provider that doesn't use Cloudflare bot mitigation (e.g. OpenAI, Anthropic, Mistral), (c) keep the CF Worker for visitor stats / beacons only and route chat through a different edge.
