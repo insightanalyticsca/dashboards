@@ -28,6 +28,18 @@ const VISIT_RETENTION_MS = 72 * 60 * 60 * 1000;
 const MAX_VISITS = 500;
 const MAX_VISITS_KV = 2000;
 
+// Browser-like headers for outbound Groq calls. Groq's edge rejects the
+// default `Cloudflare-Workers` UA with a generic 403 Forbidden (verified
+// Oct 2026 — same key works from Netlify edge and from curl with a real
+// browser UA, but fails from a CF Worker with the default UA).
+const GROQ_FETCH_HEADERS = {
+  'Authorization': '',  // filled in per-call
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  'Accept-Language': 'en-US,en;q=0.9'
+};
+
 const ALLOWED_ORIGINS = [
   'https://insight-analytics.ca',
   'https://www.insight-analytics.ca',
@@ -299,7 +311,7 @@ export default {
       if (op === 'models') {
         const GROQ_KEY = env.GROQ_API_KEY;
         if (!GROQ_KEY) return new Response(JSON.stringify({ error: 'GROQ_API_KEY not set' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
-        try { const r = await fetch('https://api.groq.com/openai/v1/models', { headers: { 'Authorization': 'Bearer ' + GROQ_KEY } }); const d = await r.json(); return new Response(JSON.stringify(d), { status: r.status, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); } catch (e) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); }
+        try { const r = await fetch('https://api.groq.com/openai/v1/models', { headers: { ...GROQ_FETCH_HEADERS, 'Authorization': 'Bearer ' + GROQ_KEY } }); const d = await r.json(); return new Response(JSON.stringify(d), { status: r.status, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); } catch (e) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); }
       }
 
       return new Response(JSON.stringify({ ok: true, service: 'groq-proxy (Cloudflare Worker)', cache: 'memory+kv' }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
@@ -329,8 +341,8 @@ export default {
         }
       }
 
-      const groqRes = await fetch(GROQ_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + GROQ_KEY }, body: JSON.stringify({ ...body, model, stream: isStreaming }) });
-      if (!groqRes.ok) { const err = await groqRes.text(); return new Response(err, { status: groqRes.status, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); }
+      const groqRes = await fetch(GROQ_URL, { method: 'POST', headers: { ...GROQ_FETCH_HEADERS, 'Authorization': 'Bearer ' + GROQ_KEY }, body: JSON.stringify({ ...body, model, stream: isStreaming }) });
+      if (!groqRes.ok) { const err = await groqRes.text(); return new Response(JSON.stringify({ error: 'Groq API error', status: groqRes.status, groqResponse: err.slice(0, 500), keyPrefix: GROQ_KEY.slice(0, 10) + '...' }), { status: groqRes.status, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); }
 
       if (isStreaming) {
         const enc = new TextEncoder(); let fullText = '';
