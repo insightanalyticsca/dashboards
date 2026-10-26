@@ -1,0 +1,12 @@
+name = "groq-proxy"
+main = "groq-proxy-worker.js"
+compatibility_date = "2024-01-01"
+
+# KV namespace for persistent visitor stats
+# Create with: wrangler kv:namespace create VISITOR_STATS
+[[kv_namespaces]]
+binding = "VISITOR_STATS"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Groq API key — set with: wrangler secret put GROQ_API_KEY
+# (do NOT put the key in this file)
