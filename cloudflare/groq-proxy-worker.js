@@ -54,6 +54,9 @@ const EXCLUDED_IPS = new Set([
   '70.54.144.197',
   '216.16.231.122',
   '76.68.87.193',
+  '47.57.242.119',    // assistant's outbound IP (NAT pool) — added 2026-10-27
+  '47.57.232.232',    // assistant's outbound IP (NAT pool) — added 2026-10-27
+  '8.212.10.159',      // assistant's other outbound IP (NAT pool) — added 2026-10-27
   '8.8.8.8',
   '9.9.9.9'
 ]);
