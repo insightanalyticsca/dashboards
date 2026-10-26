@@ -11,7 +11,7 @@
 
   // ─── Config (same as api.js) ──────────────────────────────────────────────
   var CONFIG = {
-    provider: localStorage.getItem('docchat.provider') || 'groq',
+    provider: localStorage.getItem('docchat.provider') || 'demo',
     proxyUrl: localStorage.getItem('docchat.groq.proxyUrl') || '',
     groqModel: localStorage.getItem('docchat.groq.model') || 'qwen/qwen3.8-27b'
   };
@@ -22,7 +22,6 @@
   // canned offline message even though the proxy IS configured in
   // data/groq-config.json.
   var configPromise = (function autoLoad() {
-    if (CONFIG.proxyUrl) return Promise.resolve();
     return fetch('../data/groq-config.json', { cache: 'no-store' })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(cfg) {
@@ -367,7 +366,7 @@
       "For platform-level questions about Insight Analytics (the 8-step methodology, PWA features, Netlify proxy, theming, etc.), open the **Contact bot** in the footer — it has the full knowledge base of all implemented solutions.\n\n" +
       "Or reach out directly:\n" +
       "  • Email: dev@insight-analytics.ca\n" +
-      "  • Phone: (289) 635-9915";
+      "  • Phone: (289) 635-3051 or (289) 635-9915";
     if (onToken) {
       var tokens = msg.match(/\S+\s*/g) || [msg];
       var i = 0;
