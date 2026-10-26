@@ -918,3 +918,32 @@ Stage Summary:
 - Root cause was NOT the API key (the key was fine); it was Groq's Cloudflare-fronted WAF challenging the Cloudflare Worker egress IP. This is an architectural conflict — using a CF Worker to call a CF-fronted API with bot mitigation enabled will always fail.
 - The Cloudflare Worker code remains in the repo (cloudflare/groq-proxy-worker.js) and the worker is still deployed, but it is no longer in the live path. Netlify is back to being the sole provider.
 - If we ever want to fully abandon Netlify, alternatives: (a) ask Groq support to whitelist the CF Worker IPs, (b) switch to an LLM provider that doesn't use Cloudflare bot mitigation (e.g. OpenAI, Anthropic, Mistral), (c) keep the CF Worker for visitor stats / beacons only and route chat through a different edge.
+
+---
+Task ID: groq-cf-worker-still-used-20261027
+Agent: main
+Task: User asked "so cloudflare worker is not used for anything anymore?" — clarify and fix any remaining broken chat calls.
+
+Work Log:
+- Audited all references to `insight-analytics.workers.dev` across the repo. Found 7 files referencing it.
+- The Cloudflare Worker is STILL actively used for visitor tracking (these don't call Groq upstream, so they keep working fine):
+  - `?op=beacon` — page-load tracking pixel (index.html)
+  - `?op=stats` — public visitor count in the footer pill (index.html)
+  - `?op=visits`, `?op=devices`, `?op=reset` — admin panel (index.html)
+  - Persistent visitor stats live in the CF KV namespace (VISITOR_STATS, id 09d0bd477f8e43749af6f2dd5694d67c)
+- BUT — discovered 4 blog JS files had hardcoded GROQ_PROXY constants pointing at the CF Worker, so their AI features were still broken:
+  - js/blog-pipeline-builder.js (pipeline-builder blog demo)
+  - js/blog-load-forecast.js (weather-load-forecast blog demo)
+  - js/blog-markets-dashboard.js (markets-dashboard AI brief)
+  - js/blog-fuzzy-match.js (fuzzy-address-matching blog demo)
+- Confirmed all 4 returned HTTP 403 (verified via curl through the live CF Worker URL).
+- Updated all 4 to use https://dashboards-groq-proxy.netlify.app/groq-proxy.
+- Also fixed an inaccurate help-text string in js/contact-chat.js — the section header said "NETLIFY PROXY ARCHITECTURE" but the body line listed the CF Worker URL. Now consistent: both mention Netlify.
+- Initial push was rejected by GitHub secret-scanning push protection — the previous worklog entry had inlined the full Groq API keys (gsk_kyNV... and gsk_CYRS...). Redacted both to truncated prefixes (gsk_kyNV... / gsk_CYRS...), re-committed, pushed cleanly as 390331b.
+- Verified live: all 4 blog JS files now serve the Netlify URL on https://insightanalyticsca.github.io/dashboards/js/*.
+
+Stage Summary:
+- Cloudflare Worker remains in service for visitor stats / beacons / admin panel (KV-backed, persistent). NOT deprecated.
+- All chat-completion paths now route through Netlify (data/groq-config.json + the 4 blog JS files + contact-chat.js).
+- Worker code (cloudflare/groq-proxy-worker.js) is kept in the repo in case Groq ever lifts the WAF block on CF Worker egress — but it is no longer used for any chat traffic.
+- If a future agent wants to fully decommission the worker, they must first migrate the visitor-stats stack (?op=beacon, ?op=stats, ?op=visits, ?op=devices, ?op=reset, the KV namespace) to Netlify or another backend. That's a separate piece of work.
