@@ -1061,3 +1061,31 @@ Stage Summary:
 - Anti-loan framing on cover subtitle + page 5 "What is next" — VLM confirmed zero ambiguity
 - Source script: /home/z/my-project/scripts/build_capability_brief.py (re-runnable if user wants further edits)
 - Cover HTML: /home/z/my-project/scripts/capability-brief-cover.html
+
+---
+Task ID: capability-brief-v3-determinism-20261027
+Agent: main
+Task: User rejected v2 of the capability brief. The corrected argument: AI is NOT the discoverer; AI is the narrator. Deterministic metadata discovery (procs, functions, view definitions) does the actual work; AI only words what the deterministic layer has already proved. No hallucination surface because the model is never asked to invent the underlying facts. The automation runs top-to-bottom — no human in the loop asking for definitions mid-pipeline.
+
+Work Log:
+- Rewrote the "AI at the Center" section as "AI Words It. The Discovery Is Deterministic." — completely new framing:
+  - Para 1: The standard analytics engagement opens with a six-week discovery phase because the answers live in procs/functions/view definitions nobody has time to read by hand.
+  - Para 2: Insight Analytics inverts that pipeline. Metadata discovery apps walk even less-documented backends (SQL Server, Oracle, multidimensional cubes, controlled files, SaaS APIs) and extract actual business rules from procs, functions, view definitions. The discovered rules are deterministic, version-controlled, and verifiable — they are source code, parsed and structured, not model output.
+  - Para 3: That is what makes the AI safe. The model never discovers data. It never invents a KPI definition. It never guesses what a column means. The deterministic layer has already done that work. The AI reads the discovered definitions and the variance results, then writes the brief, answers the follow-up, and advises the next action. Every claim links back to a discovered rule the analyst can audit. There is no hallucination surface — the model is only asked to narrate what the deterministic layer has already proved.
+- Updated page 4 chapter title from "Proven in Production. AI at the Center." to "Proven in Production. Determinism First."
+- Updated page 5 chapter title from "The Competitive Edge" to "Determinism + Competitive Edge" and added the full determinism section as the page lead.
+- Updated 3-column competitive edge table — column 2 changed from "AI AT THE CENTER" to "DETERMINISM FIRST, AI NARRATES". Body text rewritten: "Metadata discovery apps walk even less-documented backends and extract the actual business rules from procs, functions and view definitions. The model never discovers data — it narrates what the deterministic layer has already proved. No hallucination surface. No invented KPIs."
+- Updated cover subtitle from "AI at the center, not bolted on." to "Deterministic discovery; AI narrates."
+- Updated cover engine tags: removed "AI-NATIVE", added "DETERMINISTIC DISCOVERY" + "AI NARRATES · NO HALLUCINATIONS". Removed "NETLIFY EDGE" tag (not relevant to the message).
+- Layout: doc grew to 6 pages (was 5). Cover + 5 body. Restructured page 4 (was Proven + AI-Center) and page 5 (was Competitive Edge + What's Next) to flow: page 4 = Proven in Production (4 solution categories grid), page 5 = AI Words It (determinism) + Why this works (3-col table with founder positioning), page 6 = Technology-agnostic + What's next.
+- Compressed determinism section from 3 paragraphs to 2 (merged the discovery phase + the inversion paragraphs) to fit on page 5 alongside the 3-column competitive edge table.
+- VLM verification: cover 10/10, page 5 (determinism + competitive edge) 10/10, page 6 (closing) 10/10. VLM specifically confirmed all three pillars: (1) deterministic discovery makes AI safe, (2) 3-column table with the three correct headers, (3) MBA Finance + databases + multidim + translator positioning in column 3.
+- pdf_qa.py: 11 checks pass, 1 warning (intentional cover margin asymmetry).
+
+Stage Summary:
+- Final deliverable: /home/z/my-project/download/insight-analytics-capability-brief.pdf (6 pages, 251 KB, A4)
+- 1 cover (HUD Template 01) + 5 body pages
+- Page flow: (1) Cover (2) Monday Morning Vision (3) Pipeline (4) Proven in Production (4 solution categories) (5) Determinism + Competitive Edge (6) Tech-agnostic + What's Next
+- The corrected AI argument is now the structural centerpiece of the doc, not buried inside the engine section.
+- Founder positioning (MBA Finance + database/multidim career + IT/business translator) lands clearly in the competitive-edge 3-column table.
+- Source: /home/z/my-project/scripts/build_capability_brief.py + capability-brief-cover.html (re-runnable if further edits needed)
