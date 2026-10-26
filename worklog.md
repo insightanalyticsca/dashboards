@@ -1034,3 +1034,30 @@ Stage Summary:
 - Vertical patterns table with KPIs + chart patterns + demo URLs
 - Source script preserved: /home/z/my-project/scripts/build_capability_brief.py (re-runnable if user wants edits)
 - Cover HTML preserved: /home/z/my-project/scripts/capability-brief-cover.html
+
+---
+Task ID: capability-brief-v2-rewrite-20261027
+Agent: main
+Task: User rejected v1 of the capability brief. Three real shifts requested: (1) lead with the Monday-morning vision (Chatters-brief style "day in the operating model"), (2) reframe production proof as solution categories NOT industries deployed (the industry table was "not correct"), (3) cement AI integration as the center not a feature, with the founder positioning (MBA Finance + database/multidim career + IT/business translator) as the competitive edge. "Kill with logic" — argument-driven, not feature-list. "Stress agnostic." User also worried the advisor might think they want a loan — the doc must make it unmistakable they want clients, not capital.
+
+Work Log:
+- Rewrote cover subtitle/tags: removed "50+ production deployments" and the industry list. New subtitle: "From operating signals to accountable action. AI at the center, not bolted on. Technology-agnostic. Proven in production across four solution categories. An established practice seeking client engagements — not capital." New tags: AI-NATIVE, TECH-AGNOSTIC, ECHARTS 5.5, GROQ, NETLIFY EDGE, SQL · API · POWER BI.
+- Restructured body from 3 chapters to 4:
+  - Ch 1 (page 2): Before the Meeting, the Business Is Ready — Monday Morning Vision. Hook paragraph + 5-row timeline table (6:45 AM / 7:00 AM / 8:00 AM / ALL DAY / FRIDAY) + "First Read" mock brief (OVERALL/CHANGE/RISK/CUSTOMER/ACTION) + tagline "Less Time Collecting the Business. More Time Shaping It."
+  - Ch 2 (page 3): From Operating Signals to Accountable Action — 6-stage pipeline table (Signals → Integrate → Standardize → Intelligence → Deliver → Act & Learn) with governance banner across every stage. Caption: "A deployed production core. Configured to your systems, definitions and priorities — not rebuilt from scratch."
+  - Ch 3 (page 4): Proven in Production. AI at the Center. — 4 solution categories (Operational Web Apps / Executive & Service Intelligence / Finance & Reporting Automation / Integration & Operational Monitoring) in a 2×2 grid with NO industry naming. Then "AI at the Center, Not Bolted On" — two paragraphs of logical argument: most BI vendors added AI as a feature in 2024, we started with AI as connective tissue in 2023; the difference is structural (separate numbers vs governed data; plausible-sounding vs defensible answers; the AI sits at stage 04 not stage 05 because intelligence is not a presentation layer).
+  - Ch 4 (page 5): Why This Works, and Why Me — opening paragraph kills with logic by naming both failure modes (pure-programmer dashboards that answer no business question; pure-finance consultancies that write perfect KPI definitions but cannot build the pipeline that populates them). 3-column competitive edge table (A Working Foundation / AI at the Center / Bilingual: IT & Business). The third column is the founder positioning: "MBA in Finance, career in databases and multidimensional analytics. Can talk to IT about pipelines, schemas and slowly-changing dimensions, and to the C-suite about decisions, trade-offs and risk in the same meeting. Translator, not vendor." Then "Technology-agnostic by design" section listing the actual data sources supported (SQL Server, Snowflake, BigQuery, Postgres, Oracle, Power BI, Excel, files, SaaS APIs). Then "What is next" with the anti-loan framing preserved from v1.
+- VLM verification on all 5 pages: 9/10 each. VLM caught one bug (CUSTOMER label wrapping to 2 lines) — fixed by widening brief-table column 1 from 24mm to 28mm. VLM caught one tone issue ("We require you to let us standardize" sounded coercive) — softened to "We do not ask you to rip and replace your stack to use the engine. We do ask you to standardize the definitions, the keys, and the KPI rules — because that standardization is what makes the AI defensible and the delivery repeatable."
+- VLM confirmed the "kill with logic" approach worked: "The argument is defensible and evidence-based, not merely assertive. It doesn't just claim 'our way is better'; it explains the mechanism of failure (invention of numbers vs surfacing of existing signals) and provides a concrete architectural proof-point (Stage 04 vs Stage 05 in the pipeline)."
+- VLM confirmed the founder positioning lands: "The column header BILINGUAL: IT & BUSINESS is particularly strong branding for this specific hybrid profile."
+- VLM confirmed the anti-loan framing is unambiguous: "There is zero ambiguity here. The section uses explicit negation to rule out fundraising."
+
+Stage Summary:
+- Final deliverable: /home/z/my-project/download/insight-analytics-capability-brief.pdf (5 pages, 253 KB, A4)
+- 1 cover (HUD Template 01, cyan vertical anchor) + 4 body pages (Monday Morning Vision → Pipeline → Proven in Production + AI at Center → Competitive Edge + What's Next)
+- No industries named anywhere in the doc — production proof framed as 4 solution categories instead
+- AI at the Center argued logically with a mechanism-based case (not assertion)
+- Founder positioning (MBA Finance + databases + IT/business translator) explicit in the competitive-edge 3-column table
+- Anti-loan framing on cover subtitle + page 5 "What is next" — VLM confirmed zero ambiguity
+- Source script: /home/z/my-project/scripts/build_capability_brief.py (re-runnable if user wants further edits)
+- Cover HTML: /home/z/my-project/scripts/capability-brief-cover.html
