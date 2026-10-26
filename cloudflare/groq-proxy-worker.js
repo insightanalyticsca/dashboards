@@ -74,15 +74,17 @@ const visitLog = [];
 let cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
 let kvLoaded = false;
 
-async function readKV(key) {
-  try { return await VISITOR_STATS.get(key); } catch (e) { return null; }
+async function readKV(env, key) {
+  if (!env || !env.VISITOR_STATS) return null;
+  try { return await env.VISITOR_STATS.get(key); } catch (e) { return null; }
 }
-async function writeKV(key, value) {
-  try { await VISITOR_STATS.put(key, value); } catch (e) {}
+async function writeKV(env, key, value) {
+  if (!env || !env.VISITOR_STATS) return;
+  try { await env.VISITOR_STATS.put(key, value); } catch (e) {}
 }
 
-async function readCumulative() {
-  const data = await readKV('cumulative-v2');
+async function readCumulative(env) {
+  const data = await readKV(env, 'cumulative-v2');
   if (data) {
     try {
       const parsed = JSON.parse(data);
@@ -127,7 +129,7 @@ async function readCumulative() {
           }
           if (corrected) {
             // Persist immediately so we don't re-subtract on the next cold start.
-            await writeKV('cumulative-v2', JSON.stringify(cumulative));
+            await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
           }
         }
       }
@@ -136,13 +138,13 @@ async function readCumulative() {
   kvLoaded = true;
 }
 
-async function writeCumulative() {
+async function writeCumulative(env) {
   if (!kvLoaded) return;
-  await writeKV('cumulative-v2', JSON.stringify(cumulative));
+  await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
 }
 
-async function readVisitLogKV() {
-  const data = await readKV('visits-72h');
+async function readVisitLogKV(env) {
+  const data = await readKV(env, 'visits-72h');
   if (!data) return [];
   try {
     const visits = JSON.parse(data);
@@ -152,10 +154,10 @@ async function readVisitLogKV() {
   } catch (e) { return []; }
 }
 
-async function writeVisitLogKV(newVisits) {
+async function writeVisitLogKV(env, newVisits) {
   if (newVisits.length === 0) return;
   try {
-    const existing = await readVisitLogKV();
+    const existing = await readVisitLogKV(env);
     const merged = [...existing, ...newVisits];
     const seen = new Set();
     const deduped = merged.filter(v => {
@@ -166,7 +168,7 @@ async function writeVisitLogKV(newVisits) {
     });
     deduped.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
     const trimmed = deduped.slice(0, MAX_VISITS_KV);
-    await writeKV('visits-72h', JSON.stringify(trimmed));
+    await writeKV(env, 'visits-72h', JSON.stringify(trimmed));
   } catch (e) {}
 }
 
@@ -202,9 +204,38 @@ function parseDeviceUA(ua) {
   return browser + ' · ' + os;
 }
 
-async function logVisit(request, ctx) {
+// Redact the last octet (IPv4) or last hextet+suffix (IPv6) of an IP for
+// display in the admin panel. Raw IPv6 like 2a09:bac2:17d9:123::1d:10c
+// becomes 2a09:bac2:17d9:123::1d:xxx — preserves the network prefix so the
+// admin can still see "same /64 network" patterns without exposing the
+// full client address. IPv4 keeps the existing pattern (47.57.232.xxx).
+function redactIp(ip) {
+  if (!ip || ip === 'unknown') return ip;
+  // IPv6 (contains ':')
+  if (ip.indexOf(':') >= 0) {
+    // Strip any zone ID (%eth0 etc.)
+    var base = ip.split('%')[0];
+    // Match the last segment after the last ':'
+    var lastColon = base.lastIndexOf(':');
+    if (lastColon > 0) {
+      return base.slice(0, lastColon + 1) + 'xxx';
+    }
+    return base + '...';
+  }
+  // IPv4 — keep existing pattern: 47.57.232.xxx
+  return ip.replace(/(\d+\.\d+\.\d+)\.\d+/, '$1.xxx');
+}
+
+async function logVisit(request, env, ctx) {
   const headers = request.headers;
-  var geo = ctx.cf || {};
+  // Geo data: in modern Workers, request.cf is populated (not ctx.cf, which
+  // was the older API and now returns null). Fall back through:
+  //   1. request.cf (preferred — full city/country/lat/long/etc.)
+  //   2. ctx.cf (older compat — may be null in modern runtime)
+  //   3. cf-ipcountry header (always available, country only)
+  var cf = request.cf || ctx.cf || {};
+  var country = cf.country || cf.countryName || headers.get('cf-ipcountry') || 'unknown';
+  var city = cf.city || 'unknown';
   var referrer = headers.get('referer') || 'direct';
   var page = headers.get('x-page') || '';
   if (!page) { try { page = new URL(request.url).searchParams.get('page') || ''; } catch(_) {} }
@@ -224,8 +255,6 @@ async function logVisit(request, ctx) {
   if (isBotUA(ua)) return null;
 
   var device = parseDeviceUA(ua);
-  var country = geo.country || geo.countryName || 'unknown';
-  var city = geo.city || 'unknown';
   var site = 'main';
   try { var _sp = new URL(request.url).searchParams; if (_sp.get('site')) site = _sp.get('site'); } catch(_) {}
   if (site !== 'main' && site !== 'dashboards') site = 'main';
@@ -249,8 +278,10 @@ async function logVisit(request, ctx) {
   cumulative.sites[site].devices[device] = (cumulative.sites[site].devices[device] || 0) + 1;
   if (uid) cumulative.sites[site].uuids[uid] = (cumulative.sites[site].uuids[uid] || 0) + 1;
 
-  await writeCumulative();
-  if (visitLog.length % 5 === 0) writeVisitLogKV(visitLog.slice(-10));
+  await writeCumulative(env);
+  // Visit-log KV write is done via ctx.waitUntil at the fetch handler level
+  // (so the worker stays alive long enough for the write to complete even
+  // after the response is returned to the client).
   return visit;
 }
 
@@ -269,8 +300,15 @@ export default {
 
     // Log visits (only for beacon/page-loads, not polling/admin)
     if (!isPost && op !== 'visits' && op !== 'stats' && op !== 'devices' && op !== 'models' && op !== 'reset') {
-      if (!kvLoaded) await readCumulative();
-      await logVisit(request, ctx);
+      if (!kvLoaded) await readCumulative(env);
+      await logVisit(request, env, ctx);
+      // Use ctx.waitUntil to keep the runtime alive for the visit-log write
+      // (which is fire-and-forget inside logVisit). Without this, Cloudflare
+      // terminates the worker when the response is returned, killing the
+      // pending KV write before it completes.
+      // (logVisit already awaits writeCumulative, but the visit-log write
+      // inside it is intentionally non-awaited to keep response latency low.)
+      try { ctx.waitUntil(writeVisitLogKV(env, visitLog.slice(-10))); } catch(e) {}
     }
 
     if (request.method === 'OPTIONS') {
@@ -291,14 +329,14 @@ export default {
         cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
         visitLog.length = 0;
         kvLoaded = true;
-        await writeCumulative();
-        await writeKV('visits-72h', JSON.stringify([]));
+        await writeCumulative(env);
+        await writeKV(env, 'visits-72h', JSON.stringify([]));
         return new Response(JSON.stringify({ success: true, message: 'All visitor counters reset to 0', resetAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
       // op=stats
       if (op === 'stats') {
-        if (!kvLoaded) await readCumulative();
+        if (!kvLoaded) await readCumulative(env);
         var sites = cumulative.sites || {};
         return new Response(JSON.stringify({
           devices: Object.keys(cumulative.devices || {}).length,
@@ -315,14 +353,14 @@ export default {
       if (op === 'devices') {
         const pwd = url.searchParams.get('password') || '';
         if (pwd !== ADMIN_PASSWORD) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
-        if (!kvLoaded) await readCumulative();
+        if (!kvLoaded) await readCumulative(env);
         const siteFilter = url.searchParams.get('site');
         var bucket = cumulative; var bucketLabel = 'combined';
         if (siteFilter === 'main' || siteFilter === 'dashboards') { var s = cumulative.sites || {}; bucket = s[siteFilter] || { totalVisits: 0, ips: {}, devices: {} }; bucketLabel = siteFilter; }
         const deviceList = Object.entries(bucket.devices || {}).filter(([d]) => d.indexOf('Bot') !== 0).map(([d,c]) => ({ device: d, visits: c })).sort((a,b) => b.visits - a.visits);
         var ipGeo = {};
-        try { const bv = await readVisitLogKV(); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'' }; }); } catch(e) {}
-        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: ip.replace(/(\d+\.\d+\.\d+)\.\d+/,'$1.xxx'), visits: c, country: g.country||'unknown', city: g.city||'unknown', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'' }; }).sort((a,b) => b.visits - a.visits);
+        try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'' }; }); } catch(e) {}
+        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'' }; }).sort((a,b) => b.visits - a.visits);
         return new Response(JSON.stringify({ site: bucketLabel, totalVisits: bucket.totalVisits||0, distinctDevices: deviceList.length, distinctIPs: ipList.length, distinctVisitors: Object.keys(bucket.uuids||{}).length, devices: deviceList, ips: ipList, capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
@@ -330,8 +368,8 @@ export default {
       if (op === 'visits') {
         const pwd = url.searchParams.get('password') || '';
         if (pwd !== ADMIN_PASSWORD) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
-        if (!kvLoaded) await readCumulative();
-        const bv = await readVisitLogKV();
+        if (!kvLoaded) await readCumulative(env);
+        const bv = await readVisitLogKV(env);
         const merged = [...bv, ...visitLog];
         const seen = new Set();
         const deduped = merged.filter(v => { const k = v.ts+'|'+v.ip; if (seen.has(k)) return false; seen.add(k); return true; });
@@ -342,8 +380,11 @@ export default {
         if (sf === 'main' || sf === 'dashboards') recent = recent.filter(v => (v.site||'main') === sf);
         recent = recent.filter(v => !isBotUA(v.ua||''));
         recent.sort((a,b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
+        // Redact IPs (IPv4 last octet → xxx, IPv6 last hextet → xxx) before
+        // sending to the admin panel. Raw IPs are never exposed client-side.
+        recent = recent.map(v => Object.assign({}, v, { ip: redactIp(v.ip) }));
         var cs = (sf && cumulative.sites && cumulative.sites[sf]) ? cumulative.sites[sf] : cumulative;
-        return new Response(JSON.stringify({ count: recent.length, visits: recent, site: sf||'combined', retentionHours: 72, source: 'cloudflare-kv', cumulative: { totalVisits: cs.totalVisits||0, distinctIPs: Object.keys(cs.ips||{}).length, distinctDevices: Object.keys(cs.devices||{}).length, ipCounts: cs.ips||{}, deviceCounts: cs.devices||{} }, edge: ctx.cf?.country||'unknown', capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        return new Response(JSON.stringify({ count: recent.length, visits: recent, site: sf||'combined', retentionHours: 72, source: 'cloudflare-kv', cumulative: { totalVisits: cs.totalVisits||0, distinctIPs: Object.keys(cs.ips||{}).length, distinctDevices: Object.keys(cs.devices||{}).length, ipCounts: Object.fromEntries(Object.entries(cs.ips||{}).map(([ip,c]) => [redactIp(ip), c])), deviceCounts: cs.devices||{} }, edge: request.cf?.country || ctx.cf?.country || 'unknown', capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
       // op=models
