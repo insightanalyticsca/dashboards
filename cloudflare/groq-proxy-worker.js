@@ -53,6 +53,7 @@ const ALLOWED_ORIGINS = [
 const EXCLUDED_IPS = new Set([
   '70.54.144.197',
   '216.16.231.122',
+  '76.68.87.193',
   '8.8.8.8',
   '9.9.9.9'
 ]);
@@ -91,6 +92,44 @@ async function readCumulative() {
         if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } };
         if (!cumulative.sites.main.uuids) cumulative.sites.main.uuids = {};
         if (!cumulative.sites.dashboards.uuids) cumulative.sites.dashboards.uuids = {};
+
+        // ─── One-time reconciliation: subtract prior counts for any IP that
+        // is now in EXCLUDED_IPS but was counted before this fix shipped.
+        // Without this, an owner's old self-visits stay baked into
+        // totalVisits / ips forever. Mirrors the same logic in the Netlify
+        // edge function (see lines ~370 of netlify/edge-functions/groq-proxy.js).
+        // Idempotent: the IP entry is deleted from cumulative.ips so the
+        // next read won't re-subtract.
+        if (cumulative.ips && EXCLUDED_IPS.size > 0) {
+          var corrected = false;
+          for (var excludedIp of EXCLUDED_IPS) {
+            if (cumulative.ips[excludedIp]) {
+              var stale = cumulative.ips[excludedIp];
+              cumulative.totalVisits = Math.max(0, (cumulative.totalVisits || 0) - stale);
+              delete cumulative.ips[excludedIp];
+              corrected = true;
+            }
+          }
+          // Also sweep per-site buckets (main + dashboards)
+          if (cumulative.sites) {
+            for (var siteKey of ['main', 'dashboards']) {
+              var sb = cumulative.sites[siteKey];
+              if (!sb || !sb.ips) continue;
+              for (var excludedIp2 of EXCLUDED_IPS) {
+                if (sb.ips[excludedIp2]) {
+                  var staleSite = sb.ips[excludedIp2];
+                  sb.totalVisits = Math.max(0, (sb.totalVisits || 0) - staleSite);
+                  delete sb.ips[excludedIp2];
+                  corrected = true;
+                }
+              }
+            }
+          }
+          if (corrected) {
+            // Persist immediately so we don't re-subtract on the next cold start.
+            await writeKV('cumulative-v2', JSON.stringify(cumulative));
+          }
+        }
       }
     } catch (e) {}
   }

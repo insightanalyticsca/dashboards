@@ -146,6 +146,7 @@ var blobWritesPending = 0;
 const EXCLUDED_IPS = new Set([
   '70.54.144.197',    // owner — do not self-count
   '216.16.231.122',   // owner's secondary IP — do not self-count
+  '76.68.87.193',     // owner — do not self-count (added 2026-10-27)
   '8.8.8.8',          // test artifact (Google DNS — used in HTTP header injection tests)
   '9.9.9.9'           // test artifact (Quad9 DNS — used in HTTP header injection tests)
 ]);
