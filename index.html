@@ -500,12 +500,12 @@ function isAutomated() {
 // Page-load signal ping (site=dashboards so the activity panel can filter by site).
 // Skip for automated clients — don't count bots as real visits.
 if (!isAutomated()) {
-  new Image().src = 'https://startling-belekoy-b0ec70.netlify.app/groq-proxy?op=beacon&page=' + encodeURIComponent(window.location.pathname.replace(/^\/dashboards\/?/, '') || 'index.html') + '&site=dashboards&cb=' + Date.now();
+  new Image().src = 'https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=beacon&page=' + encodeURIComponent(window.location.pathname.replace(/^\/dashboards\/?/, '') || 'index.html') + '&site=dashboards&cb=' + Date.now();
 }
 
 
 // Footer pill: just the number (cumulative distinct device types — no label, no tooltip)
-fetch('https://startling-belekoy-b0ec70.netlify.app/groq-proxy?op=stats', { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+fetch('https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats', { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
   .then(function(r) { return r.json(); })
   .then(function(d) {
     var el = document.getElementById('visitorCount');
@@ -547,7 +547,7 @@ function parseDeviceOS(ua) {
 
 // ─── Admin gear + password + auto-polling visit feed ───────────────────────
 (function() {
-  var PROXY = 'https://startling-belekoy-b0ec70.netlify.app/groq-proxy';
+  var PROXY = 'https://groq-proxy.insight-analytics.workers.dev/groq-proxy';
   // All endpoints (beacon, stats, visits, devices) use the SAME site so
   // the visit logging, stats display, and admin panel are all consistent.
   // The old site (dashboards-groq-proxy) had 733 visits of history but
