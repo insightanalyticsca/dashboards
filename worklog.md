@@ -976,3 +976,19 @@ Stage Summary:
 - Main-site Groq proxy URL fixed (was broken since the CF Worker migration — same root cause as the dashboards repo fix from earlier today).
 - Demo uses the same ECharts engine, same palette, same chart option patterns as the 50+ production deployments (per the user's request: "We will use the same engine with the ECharts and with the classified templates").
 - The .NET/Visual Studio source in the uploaded zip is reference architecture only — the live demo is pure vanilla JS + Groq + ECharts, matching the other blog demos. In production, the spec contract would be wired to real data sources (SQL Server / Snowflake / BigQuery) and saved to dbo.DashboardLayoutVersion instead of localStorage.
+
+---
+Task ID: ai-dashboard-builder-bugfixes-20261027
+Agent: main
+Task: User reported two bugs on the new AI dashboard builder: (1) "no UI for the builder, texts only" and (2) "Couldn't build the dashboard / Failed to fetch".
+
+Work Log:
+- Bug 1 (no UI): Root cause was a JavaScript init-order issue. The inline ADB_CSS template literal was declared at line 921 of blog-ai-dashboard-builder.js, but the bootstrap code (init()) at line 912 ran IMMEDIATELY for a deferred script (document.readyState is 'interactive' when a defer script runs, not 'loading'). JavaScript hoists the `var ADB_CSS` declaration but not the assignment, so ADB_CSS was undefined when init() injected it into the <style> tag. The style ended up with empty textContent. CSS never applied. Fixed by moving the ADB_CSS declaration to line 900 (before the init function). Same content, just relocated.
+- Bug 2 (Failed to fetch): Root cause was a stale Netlify deploy. I had switched all main-site Groq proxy URLs to dashboards-groq-proxy.netlify.app in commit 435bf60 (matching what data/groq-config.json had been using). But that Netlify site has a STALE deployed edge function — its CORS allowlist does NOT include https://insight-analytics.ca. Verified via CORS preflight: deployed function returned 'access-control-allow-origin: https://insightanalyticsca.github.io' for a request from https://insight-analytics.ca (the corsHeaders() function falls back to ALLOWED_ORIGINS[0] when origin not in allowlist). Browser blocked the actual POST. Fixed by switching all main-site references to https://startling-belekoy-b0ec70.netlify.app — the canonical Netlify site per scripts/deploy_all_edge_functions.py. Verified end-to-end: CORS preflight returns the correct origin, POST returns HTTP 200.
+- Updated 8 files in the main site repo (insight-analytics). Bumped cache-bust version on ai-dashboard-builder.html to v=1.0.2-fix-css-and-cors so returning visitors get the fixed JS immediately.
+- NOTE: The dashboards repo (insightanalyticsca.github.io/dashboards/) was NOT affected by bug 2 — its origin IS https://insightanalyticsca.github.io which dashboards-groq-proxy.netlify.app's stale allowlist still accepts. Left that repo alone.
+- Committed as 5c15388, pushed to origin/main. Verified live: ADB_CSS now declared before init on line 900, JS uses canonical Netlify URL, HTML loads v=1.0.2, end-to-end POST returns HTTP 200.
+
+Stage Summary:
+- Both bugs fixed. Live demo at https://insight-analytics.ca/blog/ai-dashboard-builder should now render correctly styled UI AND successfully call Groq through the canonical Netlify proxy.
+- Long-term note: there are TWO Netlify sites with the groq-proxy edge function deployed — `dashboards-groq-proxy.netlify.app` (stale CORS allowlist, no insight-analytics.ca) and `startling-belekoy-b0ec70.netlify.app` (current). The canonical one per the deploy script is `startling-belekoy-b0ec70`. We should consider either (a) re-deploying the current edge function to dashboards-groq-proxy, or (b) renaming startling-belekoy-b0ec70 to dashboards-groq-proxy and deactivating the stale one, or (c) just continuing to use the startling-belekoy URL across both repos.
