@@ -126,10 +126,12 @@ const visitLog = [];
 const MAX_VISITS = 500;
 const ADMIN_PASSWORD = 'Domino88!!';
 const BLOB_STORE = 'visit-stats';
-const BLOB_KEY = 'cumulative';
+const BLOB_KEY = 'cumulative-v2';  // bumped from 'cumulative' — resets all counters to 0
 
 // In-memory cumulative stats (restored from Blob on startup)
-var cumulative = { totalVisits: 0, ips: {}, devices: {} };
+// Now includes uuids map for device-based deduplication (same phone on WiFi
+// vs cellular = same UUID = same visitor, even though IP changes).
+var cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
 var blobLoaded = false;
 var blobWritesPending = 0;
 
@@ -220,7 +222,17 @@ async function logVisit(request, context) {
   try { var _sp = new URL(request.url).searchParams; if (_sp.get('site')) site = _sp.get('site'); } catch(_) {}
   if (site !== 'main' && site !== 'dashboards') site = 'main';  // sanitize
 
-  const visit = { ts: new Date().toISOString(), ip, country, city, page, method: request.method, ua, site };
+  // ─── UUID-based visitor fingerprinting ──────────────────────────────
+  // The browser generates a persistent UUID in localStorage and sends it
+  // with each beacon (?uid=...). Same UUID = same device/person, even
+  // when the IP changes (e.g., phone on WiFi vs cellular). This is the
+  // primary deduplication key. If no UUID is sent (old beacon), fall
+  // back to IP-based tracking.
+  var uid = '';
+  try { uid = _sp.get('uid') || ''; } catch(_) {}
+  if (!uid || uid.length < 8) uid = '';  // sanitize
+
+  const visit = { ts: new Date().toISOString(), ip, country, city, page, method: request.method, ua, site, uid };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
 
@@ -228,14 +240,16 @@ async function logVisit(request, context) {
   cumulative.totalVisits++;
   cumulative.ips[ip] = (cumulative.ips[ip] || 0) + 1;
   cumulative.devices[device] = (cumulative.devices[device] || 0) + 1;
+  if (uid) cumulative.uuids[uid] = (cumulative.uuids[uid] || 0) + 1;
   // Also update per-site breakdown (new). Sites structure is lazily
   // initialized in readCumulative() — guard here in case the blob
   // hasn't loaded yet on a cold start.
-  if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {} } };
-  if (!cumulative.sites[site]) cumulative.sites[site] = { totalVisits: 0, ips: {}, devices: {} };
+  if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } };
+  if (!cumulative.sites[site]) cumulative.sites[site] = { totalVisits: 0, ips: {}, devices: {}, uuids: {} };
   cumulative.sites[site].totalVisits++;
   cumulative.sites[site].ips[ip] = (cumulative.sites[site].ips[ip] || 0) + 1;
   cumulative.sites[site].devices[device] = (cumulative.sites[site].devices[device] || 0) + 1;
+  if (uid) cumulative.sites[site].uuids[uid] = (cumulative.sites[site].uuids[uid] || 0) + 1;
   blobWritesPending++;
 
   // Write to Blob on EVERY visit AND await the write (was fire-and-forget
@@ -548,6 +562,37 @@ export default async (request, context) => {
       );
     }
 
+    // op=reset — admin endpoint, requires password. Resets ALL cumulative
+    // stats to 0 (totalVisits, ips, devices, uuids, per-site breakdowns).
+    // Also clears the 72h visit log blob. This is the nuclear option —
+    // it wipes everything and starts fresh.
+    if (op === 'reset') {
+      const pwd = url.searchParams.get('password') || url.searchParams.get('pwd') || '';
+      if (pwd !== ADMIN_PASSWORD) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+        });
+      }
+      // Reset in-memory state
+      cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
+      visitLog.length = 0;
+      blobWritesPending = 0;
+      visitBlobWritesPending = 0;
+      blobLoaded = true;  // mark as loaded so writeCumulative() will fire
+      // Write the empty state to the blob (overwrites old data)
+      await writeCumulative();
+      // Also clear the 72h visit log blob
+      try {
+        await ensureVisitStore();
+        if (visitStore) await visitStore.set('visits-72h', JSON.stringify([]));
+      } catch(e) {}
+      return new Response(JSON.stringify({ success: true, message: 'All visitor counters reset to 0', resetAt: new Date().toISOString() }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+      });
+    }
+
     // op=stats — PUBLIC endpoint (no password) for the lander footer pill
     // Returns cumulative distinct device count (persistent across deploys)
     if (op === 'stats') {
@@ -634,18 +679,42 @@ export default async (request, context) => {
         .map(([device, count]) => ({ device, visits: count }))
         .sort((a, b) => b.visits - a.visits);
       // Build IP list sorted by visit count (mask last octet for privacy).
+      // Also include geo data (country, city) from the most recent visit
+      // log entry for that IP, so the admin panel can show a tooltip.
+      // Build a lookup from the visit log: last-known geo per IP.
+      var ipGeo = {};
+      var allVisitsForGeo = [...visitLog];
+      try {
+        const blobVisits = await readVisitLogBlob();
+        allVisitsForGeo = [...blobVisits, ...visitLog];
+      } catch(e) {}
+      allVisitsForGeo.forEach(function(v) {
+        if (v.ip && !ipGeo[v.ip]) {
+          ipGeo[v.ip] = { country: v.country || 'unknown', city: v.city || 'unknown', lastSeen: v.ts, device: v.ua ? parseDeviceUA(v.ua) : 'unknown', uid: v.uid || '' };
+        }
+      });
+      const distinctUuids = Object.keys(bucket.uuids || {}).length;
       const ipList = Object.entries(bucket.ips || {})
         .filter(([ip]) => !EXCLUDED_IPS.has(ip))
-        .map(([ip, count]) => ({
-          ip: ip.replace(/(\d+\.\d+\.\d+)\.\d+/, '$1.xxx'),
-          visits: count
-        }))
+        .map(([ip, count]) => {
+          var geo = ipGeo[ip] || {};
+          return {
+            ip: ip.replace(/(\d+\.\d+\.\d+)\.\d+/, '$1.xxx'),
+            visits: count,
+            country: geo.country || 'unknown',
+            city: geo.city || 'unknown',
+            lastSeen: geo.lastSeen || '',
+            device: geo.device || 'unknown',
+            uid: geo.uid || ''
+          };
+        })
         .sort((a, b) => b.visits - a.visits);
       return new Response(JSON.stringify({
         site: bucketLabel,
         totalVisits: bucket.totalVisits || 0,
         distinctDevices: deviceList.length,
         distinctIPs: ipList.length,
+        distinctVisitors: distinctUuids,  // UUID-based unique visitor count
         devices: deviceList,
         ips: ipList,
         capturedAt: new Date().toISOString()
