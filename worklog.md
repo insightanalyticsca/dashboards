@@ -947,3 +947,32 @@ Stage Summary:
 - All chat-completion paths now route through Netlify (data/groq-config.json + the 4 blog JS files + contact-chat.js).
 - Worker code (cloudflare/groq-proxy-worker.js) is kept in the repo in case Groq ever lifts the WAF block on CF Worker egress — but it is no longer used for any chat traffic.
 - If a future agent wants to fully decommission the worker, they must first migrate the visitor-stats stack (?op=beacon, ?op=stats, ?op=visits, ?op=devices, ?op=reset, the KV namespace) to Netlify or another backend. That's a separate piece of work.
+
+---
+Task ID: ai-dashboard-builder-demo-20261027
+Agent: main
+Task: User provided the Dashboard-Studio-Complete-Solution zip and asked for "one more demo, which is basically going to be the AI-assisted dashboard builder, where people either select from a set of prompts, or just give some brief description as a prompt, and the application itself just builds it on the fly using Grok... We will use the same engine with the ECharts and with the classified templates."
+
+Work Log:
+- Extracted the uploaded Dashboard-Studio zip (a .NET/Visual Studio solution — not deployable to a static site, but used it to understand the dashboard builder concept: Complex-Gemma-Prompt.txt requests a 6-visual dashboard with 3 KPI cards + line chart + horizontal bar + matrix). Used this as the design reference for the demo's flow.
+- Examined existing blog demos on insight-analytics-site (4 demos using Groq + ECharts): pipeline-builder.js (closest pattern — file upload + Groq + ECharts), load-forecast.js, markets-dashboard.js, fuzzy-match.js. Adopted the same architecture: IIFE-wrapped, sessionStorage-based rate limit, HTML-escape everything, no eval/Function, AbortController + timeout.
+- Discovered that the main site (insight-analytics.ca) had the SAME broken CF Worker URL problem I fixed on the dashboards repo earlier today. All 4 blog JS files + both groq-config.json files pointed at groq-proxy.insight-analytics.workers.dev → Groq WAF 403. Fixed all of them to use https://dashboards-groq-proxy.netlify.app/groq-proxy.
+- Built new demo: blog/ai-dashboard-builder.html + js/blog-ai-dashboard-builder.js (1054 lines).
+  - User picks one of 6 preset templates (SaaS / utility / CX / supply chain / banking / IT operations) OR types a brief.
+  - Groq generates a strict JSON spec: { title, description, kpis[4], charts[4] }. Each chart has a type field restricted to bar/line/area/stacked/pie/heatmap/gauge/scatter.
+  - Robust JSON parser: strips ```json fences, finds outermost { ... } in case the model adds prose before/after.
+  - Spec validation: enforces exactly 4 KPIs + exactly 4 charts.
+  - Renders as live ECharts dashboard: 4 KPI cards (top row, with delta arrows) + 4 chart tiles (2x2 grid). Same palette (PALETTE constant), same chart option patterns as production universal-dashboard.js.
+  - Actions: render live, regenerate, save to localStorage, export JSON, show raw JSON for debugging.
+  - End-to-end test confirmed via curl through the Netlify proxy with a representative prompt — qwen/qwen3.8-27b returned a clean, well-formed spec with 4 KPIs + 4 charts in ~1 second.
+- Caught a polish bug during the end-to-end test: the model returned type="donut" for a pie chart despite being told the enum was pie. Without normalization this would have fallen through to a bar chart. Added a forgiving type matcher (donut/doughnut/piechart → pie, column/columns → bar, trend → line, funnel → bar). Unknown types still fall through to bar as the safe default. Committed as a separate small commit so the history is clear.
+- Added blog card to blog/index.html (top of grid — newest first). Added sitemap.xml entry.
+- Pushed two commits: 435bf60 (demo + main-site proxy fix) and 2b5243c (type-synonyms polish). Had to rebase on top of an unrelated auto-generated AI articles commit (0c6856b) that landed during my work — clean rebase, no conflicts.
+- Verified live: blog page returns HTTP 200, JS file loads with the correct Netlify GROQ_PROXY, blog index shows the new card, main-site blog-pipeline-builder.js now uses Netlify.
+- All 5 main-site blog demos (the new AI dashboard builder + the 4 existing ones that were also broken) now route through Netlify.
+
+Stage Summary:
+- New demo live at https://insight-analytics.ca/blog/ai-dashboard-builder
+- Main-site Groq proxy URL fixed (was broken since the CF Worker migration — same root cause as the dashboards repo fix from earlier today).
+- Demo uses the same ECharts engine, same palette, same chart option patterns as the 50+ production deployments (per the user's request: "We will use the same engine with the ECharts and with the classified templates").
+- The .NET/Visual Studio source in the uploaded zip is reference architecture only — the live demo is pure vanilla JS + Groq + ECharts, matching the other blog demos. In production, the spec contract would be wired to real data sources (SQL Server / Snowflake / BigQuery) and saved to dbo.DashboardLayoutVersion instead of localStorage.
