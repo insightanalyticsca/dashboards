@@ -1089,3 +1089,37 @@ Stage Summary:
 - The corrected AI argument is now the structural centerpiece of the doc, not buried inside the engine section.
 - Founder positioning (MBA Finance + database/multidim career + IT/business translator) lands clearly in the competitive-edge 3-column table.
 - Source: /home/z/my-project/scripts/build_capability_brief.py + capability-brief-cover.html (re-runnable if further edits needed)
+
+---
+Task ID: live-tracker-ip-type-classification-20261027
+Agent: main
+Task: User asked: "Can the tracker go to public databases of confirmed bots/crawlers etc and designate probable ip types?" Proposed Tier 1 (Cloudflare's verifiedBotCategory) + Tier 2 (ASN-based classification) — both zero-cost, zero-latency, no external calls. User said "Do 1 and 2".
+
+Work Log:
+- Tier 1: capture request.cf.verifiedBotCategory. Verified via temporary debug worker that the field is populated by Cloudflare for verified bots (Googlebot, Bingbot, Facebook, uptime monitors, etc.). Cloudflare reverse-DNS verifies these, so the label is authoritative — impostor bots with fake Googlebot UA don't get the verified label.
+- Tier 2: built classifyIpType() function in the worker that buckets IPs into probable types using request.cf.asn + request.cf.asOrganization. Bucketed ASNs:
+  - Search Engine: Google (15169, 396982, 36384, 36392), Bing (8068, 26914)
+  - Cloud provider: AWS, Azure, Google Cloud, Alibaba, Tencent, Huawei, DigitalOcean, Linode, Hetzner, Contabo, Akamai, Oracle, plus colo providers
+  - VPN/Proxy: Cloudflare WARP (13335, 209242), M247, GCore, FlokiNET, Clouvider, PacketHub, Lightnode, etc.
+  - Mobile carrier: T-Mobile, AT&T, Verizon, Rogers, Bell, Vodafone, China Mobile, Deutsche Telekom, Orange, etc.
+  - Residential: keyword-match on AS org name (Comcast, Charter, Spectrum, Telus, Shaw, France Telecom, British Telecom, Telefonica, Telmex, KDDI, NTT, SoftBank, Singtel, Telstra, Virgin Media, Sky Broadband, etc.)
+  - Other: ASN present but no match — show AS org name as-is
+  - Unknown ASN: no ASN data
+- Updated visit record schema: each visit now stores ipType, asn, asOrganization alongside existing fields. Stored in KV visits-72h log + surfaced via op=visits and op=devices endpoints.
+- Updated admin panel (index.html):
+  - "Unique IPs (all history)" table: 4 columns (IP / Type / Geo / Visits). Type column color-coded: cyan=verified bot/search, amber=cloud, red=VPN/proxy, green=mobile/residential, gray=other.
+  - "Recent visitors (IP + OS)" breakdown: now shows IP type as color-coded badge between IP and OS columns.
+  - Recent visits table (main session table): added "Type" column between IP and From, color-coded same way.
+- Honest caveat in code comments: classification is approximate. A residential IP can run a bot, a cloud IP can be a real developer's outbound, and a verified bot is legitimate traffic. The label is a "probable type", not a verdict.
+
+End-to-end test results:
+  - Probe visit from this server captured with: ipType='VPN/Proxy · Cloudflare WARP', asn=13335, asOrg='Cloudflare, Inc.'
+  - Verified the AI runtime's traffic routes through Cloudflare WARP IPv6 (2a06:98c0:3600::xxx). This is the same WARP range as the iPhone visitor the user asked about earlier — so the same ASN can be both legitimate (iPhone user) and assistant (this server). The IP type label correctly identifies both as "Cloudflare WARP" — the user can decide whether to also exclude WARP traffic in the future if they want to filter out the assistant's test probes.
+  - ipType, asn, asOrganization fields confirmed present in both op=visits and op=devices JSON responses.
+
+Stage Summary:
+- Cloudflare Worker redeployed (version 4d3d0e51) with classifyIpType + ipType capture
+- Admin panel updated with 3 IP-type-aware tables/breakdowns
+- All classification runs in-worker (no external API calls, no rate limits, no API keys, no latency)
+- Source committed as a3ad46d, pushed to origin/main, verified live
+- Temporary debug workers cleaned up
