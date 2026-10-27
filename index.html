@@ -448,7 +448,7 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;animation:adminPulse 2s ease-in-out infinite;"></span>
         <span style="font-size:16px;font-weight:700;color:var(--text,#0f172a);">Live Visitor Feed</span>
-        <span style="font-size:9px;color:#fff;background:#10b981;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.3px;">v7.2 · ip-type</span>
+        <span style="font-size:9px;color:#fff;background:#10b981;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.3px;">v7.3 · real-bot</span>
         <span id="statUpdated" style="font-size:10px;color:var(--muted,#94a3b8);"></span>
       </div>
       <button id="adminCloseBtn" style="padding:6px 14px;border:1px solid var(--card-border,rgba(0,0,0,0.15));border-radius:8px;background:transparent;color:var(--text-soft,#64748b);font-size:12px;cursor:pointer;">✕ Close</button>
@@ -707,6 +707,9 @@ function parseDeviceOS(ua) {
         ip: v.ip || 'unknown',
         loc: (v.city && v.city !== 'unknown' ? v.city + ', ' : '') + (v.country || 'unknown'),
         ipType: v.ipType || 'Unknown ASN',
+        realLabel: v.realLabel || 'Unknown',
+        realScore: v.realScore != null ? v.realScore : 50,
+        realReason: v.realReason || '',
         page: v.page || '—',
         device: parseDevice(v.ua),  // Browser · OS (for the table display)
         os: parseDeviceOS(v.ua)    // OS only (for the distinct-device count)
@@ -761,7 +764,9 @@ function parseDeviceOS(ua) {
           if (current) sessions.push(current);
           current = {
             ts: v.ts, tsLabel: v.tsLabel,
-            ip: v.ip, loc: v.loc, ipType: v.ipType, page: v.page, device: v.device,
+            ip: v.ip, loc: v.loc, ipType: v.ipType,
+            realLabel: v.realLabel, realScore: v.realScore, realReason: v.realReason,
+            page: v.page, device: v.device,
             reloads: 1,
             lastTs: v.ts, lastLabel: v.tsLabel
           };
@@ -906,6 +911,15 @@ function parseDeviceOS(ua) {
     // fit on a 375px iPhone screen — the Type column gets cut off and the
     // user can't see ISP/type info that's the whole point of the tracker.
     var isMobile = window.matchMedia('(max-width: 640px)').matches;
+    // Color helper for real/bot label badge
+    function realLabelStyle(l) {
+      if (!l) return 'background:rgba(148,163,184,0.1);color:var(--muted,#94a3b8);';
+      if (l === 'Likely Human') return 'background:rgba(16,185,129,0.12);color:#10b981;';
+      if (l === 'Likely Bot') return 'background:rgba(239,68,68,0.12);color:#ef4444;';
+      if (l === 'Verified Bot') return 'background:rgba(8,145,178,0.12);color:#0891b2;';
+      if (l.indexOf('Uncertain') === 0) return 'background:rgba(245,158,11,0.12);color:#f59e0b;';
+      return 'background:rgba(148,163,184,0.1);color:var(--muted,#94a3b8);';
+    }
     var html;
     if (isMobile) {
       // ── Mobile: stacked cards (one per session) ────────────────────────
@@ -914,35 +928,46 @@ function parseDeviceOS(ua) {
         var typeStyleStr = ipTypeStyleRecent(s.ipType);
         var reloadBg = s.reloads > 1 ? 'background:rgba(245,158,11,0.12);color:#f59e0b;' : 'background:rgba(99,102,241,0.06);color:var(--muted,#94a3b8);';
         var reloadText = s.reloads > 1 ? s.reloads + '× reloads' : '1 visit';
+        var realBg = realLabelStyle(s.realLabel);
         html += '<div style="border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:12px;padding:12px 14px;background:var(--bg,#fff);">';
-        // Row 1: When + Reloads badge
-        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;">';
+        // Row 1: When + Real? badge + Reloads badge
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:6px;">';
         html += '<span style="font-size:11px;font-weight:700;color:var(--text,#0f172a);">' + (s.tsLabel || '—') + '</span>';
-        html += '<span style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:10px;' + reloadBg + 'white-space:nowrap;">' + reloadText + '</span>';
+        html += '<div style="display:flex;gap:4px;align-items:center;">';
+        html += '<span style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;' + realBg + 'white-space:nowrap;">' + (s.realLabel || '?') + ' ' + (s.realScore != null ? s.realScore : '?') + '</span>';
+        html += '<span style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;' + reloadBg + 'white-space:nowrap;">' + reloadText + '</span>';
+        html += '</div>';
         html += '</div>';
         // Row 2: IP (mono) + Type badge (color-coded, prominent)
         html += '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:6px;">';
         html += '<span style="font-family:monospace;font-size:11px;font-weight:600;color:var(--text,#0f172a);">' + (s.ip || '—') + '</span>';
         html += '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(99,102,241,0.06);' + typeStyleStr + 'white-space:nowrap;">' + (s.ipType || 'Unknown') + '</span>';
         html += '</div>';
-        // Row 3: From (geo) + Page
+        // Row 3: Reason (only if not empty) — explains the real/bot score
+        if (s.realReason) {
+          html += '<div style="font-size:9px;color:var(--muted,#94a3b8);margin-bottom:6px;font-style:italic;">↳ ' + s.realReason + '</div>';
+        }
+        // Row 4: From (geo) + Page
         html += '<div style="display:flex;flex-wrap:wrap;gap:6px 10px;font-size:10px;margin-bottom:6px;">';
         html += '<span style="color:var(--text-soft,#475569);">📍 ' + (s.loc || '—') + '</span>';
         html += '<span style="color:var(--primary,#6366f1);font-weight:500;">📄 ' + (s.page || '—') + '</span>';
         html += '</div>';
-        // Row 4: Device
+        // Row 5: Device
         html += '<div style="font-size:10px;color:var(--muted,#94a3b8);">💻 ' + (s.device || '—') + '</div>';
         html += '</div>';
       });
       html += '</div>';
     } else {
-      // ── Desktop: traditional 7-column table ───────────────────────────
+      // ── Desktop: traditional table (9 columns with Real/Score/Reason) ─
       html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;">';
       html += '<table style="border-collapse:collapse;font-size:11px;width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">';
       html += '<thead><tr style="background:rgba(99,102,241,0.06);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">When</th>';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">IP</th>';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Type</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Real?</th>';
+      html += '<th style="padding:10px 14px;text-align:center;white-space:nowrap;">Score</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Reason</th>';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">From</th>';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Page</th>';
       html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Device</th>';
@@ -954,6 +979,14 @@ function parseDeviceOS(ua) {
         html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text,#0f172a);font-weight:600;">' + s.tsLabel + '</td>';
         html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (s.ip || '—') + '</td>';
         html += '<td style="padding:7px 14px;white-space:nowrap;' + ipTypeStyleRecent(s.ipType).replace('font-weight:600;', '') + '">' + (s.ipType || 'Unknown') + '</td>';
+        // Real? badge (color-coded)
+        var realBgDesktop = realLabelStyle(s.realLabel);
+        html += '<td style="padding:7px 14px;white-space:nowrap;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;' + realBgDesktop + '">' + (s.realLabel || '?') + '</span></td>';
+        // Score (colored by value)
+        var scoreColor = s.realScore >= 80 ? '#ef4444' : s.realScore >= 60 ? '#f59e0b' : s.realScore >= 40 ? '#94a3b8' : s.realScore >= 20 ? '#10b981' : '#10b981';
+        html += '<td style="padding:7px 14px;text-align:center;white-space:nowrap;font-weight:700;color:' + scoreColor + ';">' + (s.realScore != null ? s.realScore : '?') + '</td>';
+        // Reason (italic muted)
+        html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);font-style:italic;font-size:10px;">' + (s.realReason || '—') + '</td>';
         html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (s.loc || '—') + '</td>';
         html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (s.page || '—') + '</td>';
         html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + s.device + '</td>';

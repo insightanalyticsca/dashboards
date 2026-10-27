@@ -339,6 +339,134 @@ function classifyIpType(cf) {
   return 'Unknown ASN';
 }
 
+// Classify a visit as likely-human vs likely-bot using static signals only.
+// No external API calls, no rate limits, zero added latency.
+// Returns: { label: 'Likely Human'|'Likely Bot'|'Uncertain'|'Verified Bot'|'You',
+//            score: 0-100 (100 = definitely a bot, 0 = definitely human),
+//            reason: short phrase explaining the score }
+//
+// Honest caveats (also surfaced in the Reason field when relevant):
+// - This is a heuristic. Real devs sometimes browse from AWS at 5 AM.
+// - Compromised residential IPs (botnets) will score as "Likely Human".
+// - Cloud IPs running real Chrome UAs are ambiguous; we mark as Uncertain.
+function classifyRealBot(cf, headers, page, ipType) {
+  // Verified bot — Cloudflare-confirmed via reverse DNS. Authoritative.
+  if (cf && cf.verifiedBotCategory) {
+    return {
+      label: 'Verified Bot',
+      score: 100,
+      reason: 'Cloudflare-verified bot (' + cf.verifiedBotCategory + ')'
+    };
+  }
+
+  var score = 50;  // start at uncertain
+  var reasons = [];
+
+  var ua = headers.get('user-agent') || '';
+  var referrer = headers.get('referer') || 'direct';
+  var asn = cf && cf.asn || 0;
+  var ipTypeL = (ipType || '').toLowerCase();
+
+  // ── Signal 1: User-Agent presence ────────────────────────────────────
+  if (!ua || ua === 'unknown') {
+    score += 40;
+    reasons.push('no User-Agent');
+  }
+
+  // ── Signal 2: Referer presence (real browsers usually send one) ────
+  if (referrer === 'direct' || !referrer) {
+    score += 10;
+    reasons.push('no referrer');
+  } else {
+    score -= 15;
+    reasons.push('has referrer');
+  }
+
+  // ── Signal 3: ASN type — cloud/datacenter = strong bot signal ──────
+  if (ipTypeL.indexOf('cloud') === 0) {
+    score += 30;
+    reasons.push('cloud IP');
+  } else if (ipTypeL.indexOf('vpn/proxy') === 0) {
+    score += 25;
+    reasons.push('VPN/proxy IP');
+  } else if (ipTypeL.indexOf('search engine') === 0) {
+    score += 35;
+    reasons.push('search engine ASN');
+  } else if (ipTypeL.indexOf('mobile') === 0) {
+    score -= 25;
+    reasons.push('mobile carrier');
+  } else if (ipTypeL.indexOf('residential') === 0) {
+    score -= 20;
+    reasons.push('residential ISP');
+  } else if (ipTypeL.indexOf('other') === 0) {
+    // Unknown corporate ASN — neutral, slightly suspect
+    score += 5;
+    reasons.push('corporate ASN');
+  }
+
+  // ── Signal 4: Page path — diagnostic URLs are a dead giveaway ─────
+  if (page && (page.indexOf('?test') >= 0 || page.indexOf('?probe') >= 0 ||
+               page.indexOf('?verify') >= 0 || page.indexOf('?tailtest') >= 0)) {
+    score += 50;
+    reasons.push('diagnostic URL');
+  }
+
+  // ── Signal 5: Real-browser UA strings (Chrome/Safari/Firefox/Edge) ─
+  // Real browsers send detailed UAs. Bots sometimes spoof, but if a bot
+  // bothers to spoof, it usually sends a real-looking UA — so this signal
+  // is weak on its own, but combined with cloud IP it lowers confidence.
+  if (ua && ua !== 'unknown') {
+    if (ua.indexOf('Chrome/') >= 0 || ua.indexOf('Safari/') >= 0 ||
+        ua.indexOf('Firefox/') >= 0 || ua.indexOf('Edg/') >= 0) {
+      score -= 10;
+      reasons.push('real browser UA');
+    }
+    // Empty/minimal UA strings are bot signatures
+    if (ua.length < 30) {
+      score += 20;
+      reasons.push('minimal UA');
+    }
+  }
+
+  // Clamp 0-100
+  score = Math.max(0, Math.min(100, score));
+
+  // ── Determine label from score ─────────────────────────────────────
+  var label;
+  if (score >= 80) {
+    label = 'Likely Bot';
+  } else if (score >= 60) {
+    label = 'Uncertain (lean bot)';
+  } else if (score >= 40) {
+    label = 'Uncertain';
+  } else if (score >= 20) {
+    label = 'Uncertain (lean human)';
+  } else {
+    label = 'Likely Human';
+  }
+
+  // ── Override: Cloudflare WARP + missing UA = test traffic ──────────
+  // The combination of WARP + no UA + no referrer + direct hit almost
+  // always indicates a diagnostic probe (curl, iOS Shortcut, privacy
+  // browser). Bump score up.
+  if (ipTypeL.indexOf('cloudflare warp') >= 0 && (!ua || ua === 'unknown')) {
+    score = Math.max(score, 75);
+    label = 'Likely Bot';
+    if (reasons.indexOf('WARP + no UA (test?)') < 0) {
+      reasons.push('WARP + no UA (test?)');
+    }
+  }
+
+  // Cap reasons to 3 most informative
+  reasons = reasons.slice(0, 3);
+
+  return {
+    label: label,
+    score: score,
+    reason: reasons.join(' · ')
+  };
+}
+
 async function logVisit(request, env, ctx) {
   const headers = request.headers;
   // Geo data: in modern Workers, request.cf is populated (not ctx.cf, which
@@ -364,6 +492,9 @@ async function logVisit(request, env, ctx) {
       try { var refUrl = new URL(referrer); page = refUrl.pathname.replace(/^\/dashboards\/?/, '') || 'index.html'; if (refUrl.hash) page += refUrl.hash; } catch(e) { page = referrer.slice(0, 80); }
     }
   }
+  // Real/bot classification — uses static signals (ASN, UA, referrer, page).
+  // Must come AFTER `page` is resolved (it uses page for diagnostic-URL detection).
+  var realBot = classifyRealBot(cf, headers, page, ipType);
 
   var ip = headers.get('cf-connecting-ip') || headers.get('x-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip') || 'unknown';
   ip = ip.replace(/^\[|\]$/g, '').trim();
@@ -382,7 +513,7 @@ async function logVisit(request, env, ctx) {
   try { uid = new URL(request.url).searchParams.get('uid') || ''; } catch(_) {}
   if (!uid || uid.length < 8) uid = '';
 
-  const visit = { ts: new Date().toISOString(), ip, country, city, ipType, asn, asOrganization, page, method: request.method, ua, site, uid };
+  const visit = { ts: new Date().toISOString(), ip, country, city, ipType, asn, asOrganization, realLabel: realBot.label, realScore: realBot.score, realReason: realBot.reason, page, method: request.method, ua, site, uid };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
 
