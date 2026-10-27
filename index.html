@@ -638,17 +638,8 @@ function parseDeviceOS(ua) {
     });
     html += '</tbody></table>';
 
-    // IP table (collapsed — click to expand)
-    html += '<details style="margin-top:10px;">';
-    html += '<summary style="cursor:pointer;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted,#94a3b8);padding:4px 0;">Unique IPs (' + ips.length + ') — click to expand</summary>';
-    html += '<table style="width:100%;border-collapse:collapse;font-size:10px;font-family:monospace;margin-top:4px;">';
-    html += '<thead><tr style="border-bottom:1px solid rgba(0,0,0,0.06);color:var(--muted,#94a3b8);font-weight:600;font-size:9px;text-transform:uppercase;">';
-    html += '<th style="padding:5px 8px;text-align:left;">IP (masked)</th>';
-    html += '<th style="padding:5px 8px;text-align:left;">Type</th>';
-    html += '<th style="padding:5px 8px;text-align:left;">Geo</th>';
-    html += '<th style="padding:5px 8px;text-align:right;">Visits</th>';
-    html += '</tr></thead><tbody>';
-    // Color-code IP type for quick visual scan
+    // IP table (collapsed — click to expand). On mobile, render as cards.
+    var isMobileHistory = window.matchMedia('(max-width: 640px)').matches;
     function ipTypeStyle(t) {
       if (!t) return 'color:var(--muted,#94a3b8);';
       if (t.indexOf('Verified Bot') === 0) return 'color:#0891b2;font-weight:600;';
@@ -660,17 +651,45 @@ function parseDeviceOS(ua) {
       if (t.indexOf('Other') === 0) return 'color:var(--text-soft,#475569);';
       return 'color:var(--muted,#94a3b8);';
     }
-    ips.forEach(function(ip, i) {
-      var bg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.03)';
-      var geoLabel = (ip.city && ip.city !== 'unknown' ? ip.city + ', ' : '') + (ip.country || 'unknown');
-      html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.03);background:' + bg + ';">';
-      html += '<td style="padding:5px 8px;color:var(--text-soft,#475569);white-space:nowrap;">' + (ip.ip || '—') + '</td>';
-      html += '<td style="padding:5px 8px;' + ipTypeStyle(ip.ipType) + 'white-space:nowrap;">' + (ip.ipType || 'Unknown') + '</td>';
-      html += '<td style="padding:5px 8px;color:var(--text-soft,#475569);white-space:nowrap;">' + (geoLabel || '—') + '</td>';
-      html += '<td style="padding:5px 8px;text-align:right;font-weight:700;color:#f59e0b;white-space:nowrap;">' + ip.visits + '</td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table></details>';
+    html += '<details style="margin-top:10px;">';
+    html += '<summary style="cursor:pointer;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted,#94a3b8);padding:4px 0;">Unique IPs (' + ips.length + ') — click to expand</summary>';
+    if (isMobileHistory) {
+      // Mobile: stacked cards
+      html += '<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">';
+      ips.forEach(function(ip, i) {
+        var geoLabel = (ip.city && ip.city !== 'unknown' ? ip.city + ', ' : '') + (ip.country || 'unknown');
+        html += '<div style="border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:10px 12px;background:rgba(99,102,241,0.02);">';
+        html += '<div style="font-family:monospace;font-size:11px;font-weight:600;color:var(--text,#0f172a);margin-bottom:4px;">' + (ip.ip || '—') + '</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin-bottom:4px;">';
+        html += '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.6);' + ipTypeStyle(ip.ipType) + 'white-space:nowrap;">' + (ip.ipType || 'Unknown') + '</span>';
+        html += '<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(245,158,11,0.12);color:#f59e0b;white-space:nowrap;">' + ip.visits + '× visits</span>';
+        html += '</div>';
+        html += '<div style="font-size:10px;color:var(--text-soft,#475569);">📍 ' + (geoLabel || '—') + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    } else {
+      // Desktop: 4-column table
+      html += '<table style="width:100%;border-collapse:collapse;font-size:10px;font-family:monospace;margin-top:4px;">';
+      html += '<thead><tr style="border-bottom:1px solid rgba(0,0,0,0.06);color:var(--muted,#94a3b8);font-weight:600;font-size:9px;text-transform:uppercase;">';
+      html += '<th style="padding:5px 8px;text-align:left;">IP (masked)</th>';
+      html += '<th style="padding:5px 8px;text-align:left;">Type</th>';
+      html += '<th style="padding:5px 8px;text-align:left;">Geo</th>';
+      html += '<th style="padding:5px 8px;text-align:right;">Visits</th>';
+      html += '</tr></thead><tbody>';
+      ips.forEach(function(ip, i) {
+        var bg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.03)';
+        var geoLabel = (ip.city && ip.city !== 'unknown' ? ip.city + ', ' : '') + (ip.country || 'unknown');
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.03);background:' + bg + ';">';
+        html += '<td style="padding:5px 8px;color:var(--text-soft,#475569);white-space:nowrap;">' + (ip.ip || '—') + '</td>';
+        html += '<td style="padding:5px 8px;' + ipTypeStyle(ip.ipType) + 'white-space:nowrap;">' + (ip.ipType || 'Unknown') + '</td>';
+        html += '<td style="padding:5px 8px;color:var(--text-soft,#475569);white-space:nowrap;">' + (geoLabel || '—') + '</td>';
+        html += '<td style="padding:5px 8px;text-align:right;font-weight:700;color:#f59e0b;white-space:nowrap;">' + ip.visits + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+    html += '</details>';
 
     html += '</div>';
     container.innerHTML = html;
@@ -780,7 +799,9 @@ function parseDeviceOS(ua) {
     ipOsEntries.forEach(function(e) {
       var time = e.lastTs ? new Date(e.lastTs).toLocaleDateString(undefined, {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
       var typeColor = ipTypeColor(e.ipType);
-      breakdownHTML += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.03);line-height:1.4;font-size:11px;">';
+      // Use flex-wrap so on narrow viewports the items stack to multiple
+      // lines instead of getting truncated by white-space:nowrap
+      breakdownHTML += '<div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.03);line-height:1.4;font-size:11px;">';
       breakdownHTML += '<span style="font-family:monospace;font-weight:600;color:var(--text,#0f172a);">' + e.ip + '</span>';
       breakdownHTML += '<span style="color:' + typeColor + ';font-weight:600;font-size:10px;white-space:nowrap;">' + (e.ipType || '?') + '</span>';
       breakdownHTML += '<span style="color:var(--text-soft,#475569);">' + e.os + '</span>';
@@ -854,32 +875,69 @@ function parseDeviceOS(ua) {
       if (t.indexOf('Other') === 0) return 'color:var(--text-soft,#475569);';
       return 'color:var(--muted,#94a3b8);';
     }
-    var html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;">';
-    html += '<table style="border-collapse:collapse;font-size:11px;width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">';
-    html += '<thead><tr style="background:rgba(99,102,241,0.06);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">When</th>';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">IP</th>';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Type</th>';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">From</th>';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Page</th>';
-    html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Device</th>';
-    html += '<th style="padding:10px 14px;text-align:center;white-space:nowrap;">Reloads</th>';
-    html += '</tr></thead><tbody>';
-    sessions.forEach(function(s, i) {
-      var bg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.025)';
-      html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);background:' + bg + ';">';
-      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text,#0f172a);font-weight:600;">' + s.tsLabel + '</td>';
-      html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (s.ip || '—') + '</td>';
-      html += '<td style="padding:7px 14px;white-space:nowrap;' + ipTypeStyleRecent(s.ipType).replace('font-weight:600;', '') + '">' + (s.ipType || 'Unknown') + '</td>';
-      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (s.loc || '—') + '</td>';
-      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (s.page || '—') + '</td>';
-      html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + s.device + '</td>';
-      var reloadStyle = s.reloads > 1 ? 'color:#f59e0b;font-weight:700;background:rgba(245,158,11,0.08);border-radius:12px;padding:2px 8px;display:inline-block;' : 'color:var(--muted,#94a3b8);';
-      var reloadText = s.reloads > 1 ? s.reloads + '×' : '1';
-      html += '<td style="padding:7px 14px;text-align:center;white-space:nowrap;"><span style="' + reloadStyle + '">' + reloadText + '</span></td>';
-      html += '</tr>';
-    });
-    html += '</tbody></table></div>';
+    // Mobile-friendly rendering: on narrow viewports (≤640px), render each
+    // session as a stacked card instead of a table row. 7-column tables don't
+    // fit on a 375px iPhone screen — the Type column gets cut off and the
+    // user can't see ISP/type info that's the whole point of the tracker.
+    var isMobile = window.matchMedia('(max-width: 640px)').matches;
+    var html;
+    if (isMobile) {
+      // ── Mobile: stacked cards (one per session) ────────────────────────
+      html = '<div style="display:flex;flex-direction:column;gap:10px;">';
+      sessions.forEach(function(s, i) {
+        var typeStyleStr = ipTypeStyleRecent(s.ipType);
+        var reloadBg = s.reloads > 1 ? 'background:rgba(245,158,11,0.12);color:#f59e0b;' : 'background:rgba(99,102,241,0.06);color:var(--muted,#94a3b8);';
+        var reloadText = s.reloads > 1 ? s.reloads + '× reloads' : '1 visit';
+        html += '<div style="border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:12px;padding:12px 14px;background:var(--bg,#fff);">';
+        // Row 1: When + Reloads badge
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;">';
+        html += '<span style="font-size:11px;font-weight:700;color:var(--text,#0f172a);">' + (s.tsLabel || '—') + '</span>';
+        html += '<span style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:10px;' + reloadBg + 'white-space:nowrap;">' + reloadText + '</span>';
+        html += '</div>';
+        // Row 2: IP (mono) + Type badge (color-coded, prominent)
+        html += '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:6px;">';
+        html += '<span style="font-family:monospace;font-size:11px;font-weight:600;color:var(--text,#0f172a);">' + (s.ip || '—') + '</span>';
+        html += '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(99,102,241,0.06);' + typeStyleStr + 'white-space:nowrap;">' + (s.ipType || 'Unknown') + '</span>';
+        html += '</div>';
+        // Row 3: From (geo) + Page
+        html += '<div style="display:flex;flex-wrap:wrap;gap:6px 10px;font-size:10px;margin-bottom:6px;">';
+        html += '<span style="color:var(--text-soft,#475569);">📍 ' + (s.loc || '—') + '</span>';
+        html += '<span style="color:var(--primary,#6366f1);font-weight:500;">📄 ' + (s.page || '—') + '</span>';
+        html += '</div>';
+        // Row 4: Device
+        html += '<div style="font-size:10px;color:var(--muted,#94a3b8);">💻 ' + (s.device || '—') + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    } else {
+      // ── Desktop: traditional 7-column table ───────────────────────────
+      html = '<div style="overflow-x:auto;border:1px solid var(--card-border,rgba(0,0,0,0.12));border-radius:10px;">';
+      html += '<table style="border-collapse:collapse;font-size:11px;width:100%;font-family:-apple-system,BlinkMacSystemFont,sans-serif;">';
+      html += '<thead><tr style="background:rgba(99,102,241,0.06);border-bottom:2px solid var(--card-border,rgba(0,0,0,0.12));color:var(--muted,#94a3b8);font-weight:700;text-transform:uppercase;letter-spacing:0.04em;font-size:9px;">';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">When</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">IP</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Type</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">From</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Page</th>';
+      html += '<th style="padding:10px 14px;text-align:left;white-space:nowrap;">Device</th>';
+      html += '<th style="padding:10px 14px;text-align:center;white-space:nowrap;">Reloads</th>';
+      html += '</tr></thead><tbody>';
+      sessions.forEach(function(s, i) {
+        var bg = i % 2 === 0 ? 'transparent' : 'rgba(99,102,241,0.025)';
+        html += '<tr style="border-bottom:1px solid rgba(0,0,0,0.04);background:' + bg + ';">';
+        html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text,#0f172a);font-weight:600;">' + s.tsLabel + '</td>';
+        html += '<td style="padding:7px 14px;white-space:nowrap;font-family:monospace;color:var(--text-soft,#475569);">' + (s.ip || '—') + '</td>';
+        html += '<td style="padding:7px 14px;white-space:nowrap;' + ipTypeStyleRecent(s.ipType).replace('font-weight:600;', '') + '">' + (s.ipType || 'Unknown') + '</td>';
+        html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--text-soft,#475569);">' + (s.loc || '—') + '</td>';
+        html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--primary,#6366f1);font-weight:500;">' + (s.page || '—') + '</td>';
+        html += '<td style="padding:7px 14px;white-space:nowrap;color:var(--muted,#94a3b8);">' + s.device + '</td>';
+        var reloadStyle = s.reloads > 1 ? 'color:#f59e0b;font-weight:700;background:rgba(245,158,11,0.08);border-radius:12px;padding:2px 8px;display:inline-block;' : 'color:var(--muted,#94a3b8);';
+        var reloadText = s.reloads > 1 ? s.reloads + '×' : '1';
+        html += '<td style="padding:7px 14px;text-align:center;white-space:nowrap;"><span style="' + reloadStyle + '">' + reloadText + '</span></td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
     html += breakdownHTML;
     visitTable.innerHTML = html;
     visitError.style.display = 'none';
