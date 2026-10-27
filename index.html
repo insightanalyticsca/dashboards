@@ -710,6 +710,29 @@ function parseDeviceOS(ua) {
       };
     });
 
+    // ─── Cache-bust guard: if the worker returns ipType but the rendered
+    // table doesn't have a Type column, the user is seeing a stale cached
+    // HTML. Force-reload with a cache-bust query so they get the new code.
+    // (Service workers cache the page; this guard catches the rare case
+    // where the SW served a stale shell even after deploy.)
+    if (visits.length > 0 && visits[0].ipType && visits[0].ipType !== 'Unknown ASN') {
+      // Visit has ipType — make sure the current HTML can render it.
+      // If we're rendering the OLD code (no Type column in desktop table),
+      // the visit's ipType would be silently dropped. Force a fresh load.
+      var hasTypeCol = document.querySelector('th') && Array.prototype.some.call(
+        document.querySelectorAll('th'), function(th) { return th.textContent.trim() === 'Type'; }
+      );
+      // Only force-reload once per session to avoid loops
+      if (!hasTypeCol && !sessionStorage.getItem('ipTypeReloadDone')) {
+        sessionStorage.setItem('ipTypeReloadDone', '1');
+        // Bust cache via URL param + hard reload
+        var freshUrl = new URL(window.location.href);
+        freshUrl.searchParams.set('_t', Date.now());
+        window.location.replace(freshUrl.toString());
+        return;
+      }
+    }
+
     // ─── Group: same device (IP + browser/OS) + same page within 5 min ─────
     var SESSION_MS = 5 * 60 * 1000;
     // Build groups keyed by ip||device||page → sorted visit arrays

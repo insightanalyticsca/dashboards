@@ -1,4 +1,4 @@
-var CACHE = 'dashboards-v21';
+var CACHE = 'dashboards-v22-ip-type-mobile';
 var SHELL = [
   '/dashboards/',
   '/dashboards/index.html',
