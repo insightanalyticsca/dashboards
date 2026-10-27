@@ -229,6 +229,116 @@ function redactIp(ip) {
   return ip.replace(/(\d+\.\d+\.\d+)\.\d+/, '$1.xxx');
 }
 
+// Classify an IP/ASN into a probable type. Uses ASN + AS organization name
+// from request.cf (free, no external calls). Returns one of:
+//   - 'Verified Bot · <category>'  (Cloudflare-verified bot — Googlebot etc.)
+//   - 'Search Engine'              (Google/Microsoft/Bing ASNs, not verified)
+//   - 'Cloud · <provider>'        (AWS/Azure/GCP/etc. — probable scraper/proxy)
+//   - 'VPN/Proxy · <provider>'     (known commercial VPN/proxy hosts)
+//   - 'Mobile · <carrier>'         (T-Mobile, AT&T, Verizon wireless etc.)
+//   - 'Residential · <ISP>'        (default for known residential ASNs)
+//   - 'Unknown ASN'                (no ASN data — usually a rare network)
+//
+// Honest caveat: this is approximate. A residential IP can run a bot,
+// a cloud IP can be a real developer's outbound, and a verified bot is
+// legitimate traffic. The label is a "probable type", not a verdict.
+function classifyIpType(cf) {
+  if (!cf) return 'Unknown ASN';
+  var botCat = cf.verifiedBotCategory || '';
+  if (botCat) {
+    return 'Verified Bot · ' + botCat;
+  }
+  var asn = cf.asn || 0;
+  var asOrg = (cf.asOrganization || '').toLowerCase();
+
+  // ── Search engine ASNs (not yet verified, but likely a crawler) ──────
+  // 15169 Google, 396982 Google LLC (Cloud), 36384 Google, 36392 Google LLC,
+  // 8068 Microsoft (Bing), 26914 Microsoft Azure (Bing crawl)
+  if (asn === 15169 || asn === 396982 || asn === 36384 || asn === 36392) {
+    return 'Search Engine · Google';
+  }
+  if (asn === 8068 || asn === 26914 || asOrg.indexOf('microsoft') >= 0 && asOrg.indexOf('bing') >= 0) {
+    return 'Search Engine · Bing';
+  }
+
+  // ── Cloud providers (probable scraper/proxy/dev outbound) ──────────
+  // 14618 + 16509 Amazon AWS, 8075 Microsoft Azure, 396982 Google Cloud,
+  // 16509 Google Cloud, 15169 Google Cloud, 19527 Oracle Cloud, 14061 DigitalOcean,
+  // 63949 Linode, 46562 Performive (data center), 24940 Hetzner, 60068 DataCamp,
+  // 51167 Contabo, 212238 Akamai, 20940 Akamai, 16625 Akamai,
+  // 45102 Alibaba Cloud, 55960 Tencent Cloud, 58461 China Telecom Cloud,
+  // 37963 Alibaba, 132203 Tencent Build, 136907 Huawei Cloud
+  var cloudMap = {
+    14618: 'AWS', 16509: 'AWS', 15169: 'Google Cloud', 396982: 'Google Cloud',
+    8075: 'Azure', 19527: 'Oracle Cloud', 14061: 'DigitalOcean',
+    63949: 'Linode', 46562: 'Performive', 24940: 'Hetzner', 60068: 'DataCamp',
+    51167: 'Contabo', 212238: 'Akamai', 20940: 'Akamai', 16625: 'Akamai',
+    204687: 'Rossman (DE)', 396982: 'Google Cloud', 213230: 'Hetzner',
+    46606: 'ServerMania', 36352: 'ColoCrossing', 401192: 'GPU Marketplace',
+    45102: 'Alibaba Cloud', 55960: 'Tencent Cloud', 58461: 'China Telecom Cloud',
+    37963: 'Alibaba', 132203: 'Tencent', 136907: 'Huawei Cloud',
+    45090: 'Shenzhen Tencent', 4134: 'China Telecom', 4837: 'China Unicom',
+    9808: 'China Mobile Cloud', 4812: 'China Telecom Backbone'
+  };
+  if (cloudMap[asn]) {
+    return 'Cloud · ' + cloudMap[asn];
+  }
+
+  // ── Known VPN/proxy hosts ────────────────────────────────────────────
+  // 9009 M247, 35913 DataWeb (DediPath), 199524 GCore, 200651 FlokiNET,
+  // 35540 GTHost, 39351 FlokiNET, 62240 Clouvider, 54825 PacketHub,
+  // 63018 Lightnode, 212725 OrcaWave, 39351 FlokiNET, 41564 OrionNet,
+  // 198093 Sagitta, 209242 Cloudflare (WARP — VPN exit)
+  var vpnMap = {
+    9009: 'M247', 35913: 'DediPath', 199524: 'GCore', 200651: 'FlokiNET',
+    35540: 'GTHost', 39351: 'FlokiNET', 62240: 'Clouvider', 54825: 'PacketHub',
+    63018: 'Lightnode', 212725: 'OrcaWave', 41564: 'OrionNet', 198093: 'Sagitta',
+    13335: 'Cloudflare WARP', 209242: 'Cloudflare WARP', 24940: 'Hetzner VPN',
+    60068: 'DataCamp VPN', 51167: 'Contabo VPN'
+  };
+  if (vpnMap[asn]) {
+    return 'VPN/Proxy · ' + vpnMap[asn];
+  }
+
+  // ── Mobile carriers (probable human on phone) ────────────────────────
+  // 22047 China Mobile, 23493 Vodafone (multi-country), 6315 Shaw Mobile (CA),
+  // 3300 Bell Canada, 577 Bell Canada, 3651 Rogers Wireless (CA), 22995 Rogers (CA),
+  // 4323 T-Mobile (US), 20057 AT&T Wireless (US), 6167 Cellcom, 10507 Verizon Wireless (US),
+  // 22394 Cellular One, 701 Verizon Business, 7018 AT&T, 7029 Windstream
+  var mobileMap = {
+    22047: 'China Mobile', 23493: 'Vodafone', 6315: 'Shaw Mobile',
+    3300: 'Bell Canada', 577: 'Bell Canada', 3651: 'Rogers Wireless',
+    22995: 'Rogers', 4323: 'T-Mobile US', 20057: 'AT&T Wireless',
+    6167: 'Cellcom', 10507: 'Verizon Wireless', 22394: 'Cellular One',
+    7029: 'Windstream', 3320: 'Deutsche Telekom', 3215: 'Orange (FR)',
+    20712: 'Andrews (Telecom)', 26617: 'Mobily'
+  };
+  if (mobileMap[asn]) {
+    return 'Mobile · ' + mobileMap[asn];
+  }
+
+  // ── Residential ISPs (probable human) ────────────────────────────────
+  // Fallback heuristic: if the AS org name contains a known residential ISP
+  // keyword, classify as residential.
+  var residentialKeywords = ['comcast', 'rogers', 'bell canada', 'verizon',
+    'at&t', 'telus', 'shaw', 'cox comm', 'charter', 'spectrum', 'centurylink',
+    'windstream', 'frontier', 'mediatelecom', 'china telecom', 'china unicom',
+    'france telecom', 'british telecom', 'deutsche telekom', 'telefonica',
+    'telmex', 'kddi', 'ntt', 'softbank', 'sk broadband', 'singtel', 'telstra',
+    'virgin media', 'sky broadband', 'plusnet', 'talktalk'];
+  for (var i = 0; i < residentialKeywords.length; i++) {
+    if (asOrg.indexOf(residentialKeywords[i]) >= 0) {
+      return 'Residential · ' + (cf.asOrganization || residentialKeywords[i]);
+    }
+  }
+
+  // Fallback: ASN present but no match — show the AS org name as-is
+  if (asOrg) {
+    return 'Other · ' + cf.asOrganization;
+  }
+  return 'Unknown ASN';
+}
+
 async function logVisit(request, env, ctx) {
   const headers = request.headers;
   // Geo data: in modern Workers, request.cf is populated (not ctx.cf, which
@@ -239,6 +349,12 @@ async function logVisit(request, env, ctx) {
   var cf = request.cf || ctx.cf || {};
   var country = cf.country || cf.countryName || headers.get('cf-ipcountry') || 'unknown';
   var city = cf.city || 'unknown';
+  // IP type classification — uses ASN + AS org + verifiedBotCategory from
+  // request.cf. Zero external calls, zero latency. See classifyIpType()
+  // for the full bucketing logic + honest caveats.
+  var ipType = classifyIpType(cf);
+  var asn = cf.asn || 0;
+  var asOrganization = cf.asOrganization || '';
   var referrer = headers.get('referer') || 'direct';
   var page = headers.get('x-page') || '';
   if (!page) { try { page = new URL(request.url).searchParams.get('page') || ''; } catch(_) {} }
@@ -266,7 +382,7 @@ async function logVisit(request, env, ctx) {
   try { uid = new URL(request.url).searchParams.get('uid') || ''; } catch(_) {}
   if (!uid || uid.length < 8) uid = '';
 
-  const visit = { ts: new Date().toISOString(), ip, country, city, page, method: request.method, ua, site, uid };
+  const visit = { ts: new Date().toISOString(), ip, country, city, ipType, asn, asOrganization, page, method: request.method, ua, site, uid };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
 
@@ -362,8 +478,8 @@ export default {
         if (siteFilter === 'main' || siteFilter === 'dashboards') { var s = cumulative.sites || {}; bucket = s[siteFilter] || { totalVisits: 0, ips: {}, devices: {} }; bucketLabel = siteFilter; }
         const deviceList = Object.entries(bucket.devices || {}).filter(([d]) => d.indexOf('Bot') !== 0).map(([d,c]) => ({ device: d, visits: c })).sort((a,b) => b.visits - a.visits);
         var ipGeo = {};
-        try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'' }; }); } catch(e) {}
-        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'' }; }).sort((a,b) => b.visits - a.visits);
+        try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', ipType: v.ipType||'Unknown ASN', asn: v.asn||0, asOrganization: v.asOrganization||'', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'' }; }); } catch(e) {}
+        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', ipType: g.ipType||'Unknown ASN', asn: g.asn||0, asOrganization: g.asOrganization||'', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'' }; }).sort((a,b) => b.visits - a.visits);
         return new Response(JSON.stringify({ site: bucketLabel, totalVisits: bucket.totalVisits||0, distinctDevices: deviceList.length, distinctIPs: ipList.length, distinctVisitors: Object.keys(bucket.uuids||{}).length, devices: deviceList, ips: ipList, capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
