@@ -518,7 +518,7 @@ fetch('https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats', { 
   .then(function(r) { return r.json(); })
   .then(function(d) {
     var el = document.getElementById('visitorCount');
-    if (el) el.textContent = d.devices || 0;
+    if (el) el.textContent = d.visits || 0;
   })
   .catch(function() {});
 
