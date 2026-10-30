@@ -514,11 +514,11 @@ if (!isAutomated()) {
 
 
 // Footer pill: just the number (cumulative distinct device types — no label, no tooltip)
-fetch('https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats', { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+fetch('https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats', { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
   .then(function(r) { return r.json(); })
   .then(function(d) {
     var el = document.getElementById('visitorCount');
-    if (el) el.textContent = d.visits || 0;
+    if (el) el.textContent = (d.visits || 0) + ' · ' + (d.ips || 0);
   })
   .catch(function() {});
 
@@ -594,7 +594,7 @@ function parseDeviceOS(ua) {
   function fetchVisits() {
     var siteQs = currentSite !== 'combined' ? '&site=' + currentSite : '';
     var url = PROXY + '?op=visits&password=' + encodeURIComponent(adminPwd) + siteQs;
-    fetch(url, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+    fetch(url, { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
       .then(function(r) { return r.status === 403 ? null : r.json(); })
       .then(function(data) {
         if (!data) { stopPolling(); visitPanel.style.display = 'none'; return; }
@@ -603,7 +603,7 @@ function parseDeviceOS(ua) {
       .catch(function() { /* silent retry on next poll */ });
     // Also fetch the full unique device/IP history, filtered by the same site
     var devUrl = PROXY_DEVICES + '?op=devices&password=' + encodeURIComponent(adminPwd) + siteQs;
-    fetch(devUrl, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+    fetch(devUrl, { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
       .then(function(r) { return r.status === 403 ? null : r.json(); })
       .then(function(d) {
         if (d) renderAllHistoryDevices(d);
@@ -1024,7 +1024,7 @@ function parseDeviceOS(ua) {
     if (!pwd) { pwdError.textContent = 'Enter password'; pwdError.style.display = 'block'; return; }
     // Quick auth check
     var url = PROXY + '?op=visits&password=' + encodeURIComponent(pwd);
-    fetch(url, { headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+    fetch(url, { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
       .then(function(r) {
         if (r.status === 403) { pwdError.textContent = 'Wrong password'; pwdError.style.display = 'block'; return null; }
         return r.json();
