@@ -151,7 +151,8 @@ const EXCLUDED_IPS = new Set([
   '47.57.232.232',    // assistant's outbound IP (NAT pool) — added 2026-10-27
   '8.212.10.159',      // assistant's other outbound IP (NAT pool) — added 2026-10-27
   '8.8.8.8',          // test artifact (Google DNS — used in HTTP header injection tests)
-  '9.9.9.9'           // test artifact (Quad9 DNS — used in HTTP header injection tests)
+  '9.9.9.9',           // test artifact (Quad9 DNS)
+  '76.68.87.15',       // owner's WiFi IP — do not self-count
 ]);
 
 async function logVisit(request, context) {
