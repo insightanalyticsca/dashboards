@@ -514,7 +514,7 @@ if (!isAutomated()) {
 
 
 // Footer pill: just the number (cumulative distinct device types — no label, no tooltip)
-fetch('https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats', { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
+fetch('https://startling-belekoy-b0ec70.netlify.app/groq-proxy?op=stats&_t=' + Date.now(), { cache: 'no-store', headers: { 'Origin': 'https://insightanalyticsca.github.io' } })
   .then(function(r) { return r.json(); })
   .then(function(d) {
     var el = document.getElementById('visitorCount');
