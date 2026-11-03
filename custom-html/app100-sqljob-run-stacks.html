@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-  <meta name="description" content="View real-time execution details of SQL Server Agent jobs with our live run stacks page. Quickly identify job steps, durations, and errors for efficient troubleshooting."
-  <meta name="keywords" content="SQL Server, SQL Agent, job monitoring, run stacks, live SQL jobs, job execution, database performance, troubleshooting, real-time monitoring, SQL Server Agent jobs">>
+  <meta name="description" content="Track the progress of your SQL Server Agent jobs instantly with our live view of job rows. Get real-time insights into job execution, status, and metrics.">
+  <meta name="keywords" content="SQL Agent, SQL Server, job monitoring, live job rows, real-time SQL jobs, job execution status, database performance, SQL job stacks">>>
 <meta charset="utf-8">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -40,16 +40,16 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
   
   
   
-  <meta property="og:title" content="Live SQL Agent Job Run Stacks Dashboard">
-  <meta property="og:description" content="Real-time view of SQL Agent job steps, durations, and errors to streamline troubleshooting.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html">
-  <meta property="og:site_name" content="Dashboards Studio">
-  <meta property="og:image" content="https://insightanalyticsca.github.io/dashboards/icons/icon-512.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Live SQL Agent Job Run Stacks Dashboard">
-  <meta name="twitter:description" content="Real-time view of SQL Agent job steps, durations, and errors to streamline troubleshooting.">
-  <meta name="twitter:image" content="https://insightanalyticsca.github.io/dashboards/icons/icon-512.png">
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   
   
@@ -65,7 +65,18 @@ html,body,#root{width:100%;height:100%;margin:0;overflow:hidden;background:trans
   
   
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"WebPage","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html#page","name":"","description":"View real-time execution details of SQL Server Agent jobs with our live run stacks page. Quickly identify job steps, durations, and errors for efficient troubleshooting.","url":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-11-02","dateModified":"2026-11-02T14:59:26.355Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"App100 Sqljob Run Stacks","item":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html"}]}]}</script>
+  <meta property="og:title" content="Live SQL Agent Job Rows Monitoring">
+  <meta property="og:description" content="View live SQL Agent job rows in real time to monitor execution status and performance at a glance.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html">
+  <meta property="og:site_name" content="Dashboards Studio">
+  <meta property="og:image" content="https://insightanalyticsca.github.io/dashboards/icons/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Live SQL Agent Job Rows Monitoring">
+  <meta name="twitter:description" content="View live SQL Agent job rows in real time to monitor execution status and performance at a glance.">
+  <meta name="twitter:image" content="https://insightanalyticsca.github.io/dashboards/icons/icon-512.png">
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@context":"https://schema.org","@type":"Organization","@id":"https://insightanalyticsca.github.io/dashboards/#organization","name":"Insight Analytics","url":"https://insightanalyticsca.github.io","logo":"https://insightanalyticsca.github.io/dashboards/icons/icon-512.png","description":"AI-powered corporate dashboards with Groq streaming, ECharts visualizations, and executive analytics for utilities, IT service management, and beauty retail.","sameAs":["https://github.com/insightanalyticsca","https://insightanalyticsca.github.io","https://www.linkedin.com/company/insight-analytics-ca"]},{"@context":"https://schema.org","@type":"Person","@id":"https://insightanalyticsca.github.io/dashboards/#author","name":"Insight Analytics Team","url":"https://insightanalyticsca.github.io/dashboards","jobTitle":"Data & Analytics Engineer","worksFor":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"knowsAbout":[{"@type":"Thing","name":"ECharts","sameAs":"https://en.wikipedia.org/wiki/Apache_ECharts"},{"@type":"Thing","name":"Power BI","sameAs":"https://en.wikipedia.org/wiki/Microsoft_Power_BI"},{"@type":"Thing","name":"RAG","sameAs":"https://en.wikipedia.org/wiki/Retrieval-augmented_generation"},{"@type":"Thing","name":"PWA","sameAs":"https://en.wikipedia.org/wiki/Progressive_web_app"}]},{"@context":"https://schema.org","@type":"WebPage","@id":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html#page","name":"","description":"View real-time execution details of SQL Server Agent jobs with our live run stacks page. Quickly identify job steps, durations, and errors for efficient troubleshooting.","url":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html","isPartOf":{"@id":"https://insightanalyticsca.github.io/dashboards/#website"},"about":{"@type":"Thing","name":"","sameAs":"https://en.wikipedia.org/wiki/Dashboard_(business)"},"author":{"@id":"https://insightanalyticsca.github.io/dashboards/#author"},"publisher":{"@id":"https://insightanalyticsca.github.io/dashboards/#organization"},"datePublished":"2026-11-03","dateModified":"2026-11-03T13:47:15.613Z","speakable":{"@type":"SpeakableSpecification","cssSelector":["h1",".exec-title",".canvas-title",".tile-title","main > section > h2"]}},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://insightanalyticsca.github.io/dashboards"},{"@type":"ListItem","position":2,"name":"Custom Html","item":"https://insightanalyticsca.github.io/dashboards/custom-html.html"},{"@type":"ListItem","position":3,"name":"App100 Sqljob Run Stacks","item":"https://insightanalyticsca.github.io/dashboards/custom-html/app100-sqljob-run-stacks.html"}]}]}</script>
 </head>
 <body>
 <div id="root"><div class="empty">Waiting for live SQL Agent job rows...</div></div>
