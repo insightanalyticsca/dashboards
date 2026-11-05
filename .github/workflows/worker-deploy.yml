@@ -1,0 +1,97 @@
+name: Deploy Cloudflare Worker
+
+# Auto-deploys the groq-proxy Cloudflare Worker whenever the worker source
+# changes. After the one-time secret setup described in cloudflare/DEPLOY.md,
+# every push that touches cloudflare/groq-proxy-worker.js (or wrangler.toml)
+# ships to production automatically — no manual `wrangler deploy` needed.
+#
+# ONE-TIME SETUP (do this once, then never again):
+#   1. Create a Cloudflare API token at:
+#        https://dash.cloudflare.com/profile/api-tokens
+#      Template: "Edit Cloudflare Workers" (or custom with these perms:
+#        Account / Workers Scripts: Edit
+#        Account / Workers KV Storage: Edit
+#        Account / Account Settings: Read)
+#   2. Add the token as a GitHub Actions secret in this repo:
+#        Settings → Secrets and variables → Actions → New repository secret
+#        Name:  CLOUDFLARE_API_TOKEN
+#        Value: <paste token>
+#   3. (Optional) Add the account ID as a secret too — though it's already
+#      in cloudflare/wrangler.toml in plain text, so this isn't strictly
+#      required. If you do add it, name it CLOUDFLARE_ACCOUNT_ID.
+#
+# After step 2, every push that modifies cloudflare/groq-proxy-worker.js
+# triggers a deploy. You can also click "Run workflow" in the Actions tab
+# to manually trigger a deploy.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cloudflare/groq-proxy-worker.js'
+      - 'cloudflare/wrangler.toml'
+      - '.github/workflows/worker-deploy.yml'
+  workflow_dispatch:  # manual "Run workflow" button in Actions UI
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker-deploy
+  cancel-in-progress: false  # don't interrupt a deploy in progress
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for required secret
+        id: secret-check
+        run: |
+          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
+            echo "::warning::CLOUDFLARE_API_TOKEN secret is not set. Skipping deploy."
+            echo "::notice::To enable auto-deploy, see cloudflare/DEPLOY.md for one-time setup (2 minutes)."
+            echo "has_token=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy Worker
+        if: steps.secret-check.outputs.has_token == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || '1444cd1017fa889e23df6e1db24667ef' }}
+          workingDirectory: cloudflare
+          # No `command` — wrangler-action defaults to `wrangler deploy`
+          # which reads wrangler.toml and uploads the worker script.
+          # Existing secrets (GROQ_API_KEY) on the worker are preserved —
+          # deploy only updates the script source, not the secrets.
+
+      - name: Verify deploy (smoke test)
+        if: steps.secret-check.outputs.has_token == 'true'
+        run: |
+          sleep 5  # give the new version a moment to activate
+          echo "Hitting /groq-proxy?op=stats to verify the new worker is responding..."
+          curl -sS -m 10 -o /tmp/stats.json -w "HTTP %{http_code} | %{time_total}s\n" \
+            "https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats&_t=$(date +%s)"
+          echo
+          echo "Response:"
+          cat /tmp/stats.json
+          echo
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.secret-check.outputs.has_token }}" = "true" ]; then
+            echo "::notice::Worker deployed. Visit https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=stats to verify."
+          else
+            echo "::warning::Deploy skipped — CLOUDFLARE_API_TOKEN secret not set."
+            echo "::notice::Next steps:"
+            echo "::notice:1. Create a Cloudflare API token at https://dash.cloudflare.com/profile/api-tokens"
+            echo "::notice:   (template: Edit Cloudflare Workers)"
+            echo "::notice:2. Add it as repo secret CLOUDFLARE_API_TOKEN at"
+            echo "::notice:   https://github.com/insightanalyticsca/dashboards/settings/secrets/actions"
+            echo "::notice:3. Re-run this workflow (Actions tab → Deploy Cloudflare Worker → Run workflow)"
+          fi

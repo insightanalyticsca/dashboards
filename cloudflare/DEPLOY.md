@@ -3,13 +3,52 @@
 This replaces the Netlify Edge Function. No deploy limits, no monthly
 credit exhaustion. Free tier: 100K requests/day, 1GB KV storage.
 
-## Prerequisites
+## Recommended: GitHub Actions auto-deploy (one-time setup, then never touch again)
+
+A workflow at `.github/workflows/worker-deploy.yml` auto-deploys on every
+push that touches `cloudflare/groq-proxy-worker.js` or `wrangler.toml`.
+After a 2-minute one-time setup, every future worker change ships to
+production automatically — no `wrangler login`, no manual deploys.
+
+### One-time setup (2 minutes)
+
+1. Create a Cloudflare API token:
+   - Go to https://dash.cloudflare.com/profile/api-tokens
+   - Click "Create Token" → use the "Edit Cloudflare Workers" template
+   - Token perms needed:
+     - Account / Workers Scripts: Edit
+     - Account / Workers KV Storage: Edit
+     - Account / Account Settings: Read
+
+2. Add the token as a GitHub Actions secret:
+   - Go to https://github.com/insightanalyticsca/dashboards/settings/secrets/actions
+   - Click "New repository secret"
+   - Name: `CLOUDFLARE_API_TOKEN`
+   - Value: <paste the token from step 1>
+
+3. (Optional) Test the workflow:
+   - Go to https://github.com/insightanalyticsca/dashboards/actions/workflows/worker-deploy.yml
+   - Click "Run workflow" → Run on `main` branch
+   - Watch the run — should turn green in ~30 seconds
+   - The pending worker change (commit `ed33afb` — referrer tracking)
+     ships in that run.
+
+That's it — every push that modifies `cloudflare/groq-proxy-worker.js`
+from now on auto-deploys. The `wrangler deploy` workflow also preserves
+existing worker secrets (GROQ_API_KEY etc.) — deploy only updates the
+script source.
+
+---
+
+## Manual alternative (only if you prefer CLI)
+
+### Prerequisites
 
 1. A Cloudflare account (you already have one for DNS)
 2. `wrangler` CLI installed: `npm install -g wrangler`
 3. Authenticate: `wrangler login`
 
-## Steps
+## Steps (manual)
 
 ### 1. Create the KV namespace
 
