@@ -513,7 +513,38 @@ async function logVisit(request, env, ctx) {
   try { uid = new URL(request.url).searchParams.get('uid') || ''; } catch(_) {}
   if (!uid || uid.length < 8) uid = '';
 
-  const visit = { ts: new Date().toISOString(), ip, country, city, ipType, asn, asOrganization, realLabel: realBot.label, realScore: realBot.score, realReason: realBot.reason, page, method: request.method, ua, site, uid };
+  // ─── Referrer capture (added 2026-11-05) ──────────────────────────────
+  // The classifier at line 376 above already pulled `referrer` from the
+  // Referer header, but only used it to compute the boolean "has referrer /
+  // no referrer" realReason. The actual referrer URL was discarded.
+  //
+  // For marketing insight (which sites link to insight-analytics.ca), we
+  // now capture the origin (scheme + host, no path/query/hash) so you can
+  // see "came from google.com" / "came from linkedin.com" without storing
+  // the full referrer URL (which often contains search query strings that
+  // could leak PII like search terms).
+  //
+  // Same-origin referrers (insight-analytics.ca → insight-analytics.ca)
+  // are discarded — they're internal nav, not a discovery source.
+  // Direct hits (no referrer header) are stored as '' (empty string),
+  // which renders as '—' in the table.
+  var referrerOrigin = '';
+  if (referrer && referrer !== 'direct') {
+    try {
+      var refUrl = new URL(referrer);
+      var refHost = refUrl.hostname.replace(/^www\./, '').toLowerCase();
+      // Drop same-origin referrers (internal navigation: user clicked a
+      // link from /index.html to /faq/ — not useful as a discovery source)
+      if (refHost !== 'insight-analytics.ca' && refHost !== 'insightanalyticsca.github.io') {
+        referrerOrigin = refUrl.protocol + '//' + refUrl.hostname;
+      }
+    } catch(e) {
+      // Referrer was set but not a valid URL (rare). Store as-is, capped.
+      referrerOrigin = referrer.slice(0, 100);
+    }
+  }
+
+  const visit = { ts: new Date().toISOString(), ip, country, city, ipType, asn, asOrganization, realLabel: realBot.label, realScore: realBot.score, realReason: realBot.reason, page, method: request.method, ua, site, uid, referrer: referrerOrigin };
   visitLog.push(visit);
   if (visitLog.length > MAX_VISITS) visitLog.shift();
 
@@ -609,8 +640,8 @@ export default {
         if (siteFilter === 'main' || siteFilter === 'dashboards') { var s = cumulative.sites || {}; bucket = s[siteFilter] || { totalVisits: 0, ips: {}, devices: {} }; bucketLabel = siteFilter; }
         const deviceList = Object.entries(bucket.devices || {}).filter(([d]) => d.indexOf('Bot') !== 0).map(([d,c]) => ({ device: d, visits: c })).sort((a,b) => b.visits - a.visits);
         var ipGeo = {};
-        try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', ipType: v.ipType||'Unknown ASN', asn: v.asn||0, asOrganization: v.asOrganization||'', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'' }; }); } catch(e) {}
-        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', ipType: g.ipType||'Unknown ASN', asn: g.asn||0, asOrganization: g.asOrganization||'', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'' }; }).sort((a,b) => b.visits - a.visits);
+        try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', ipType: v.ipType||'Unknown ASN', asn: v.asn||0, asOrganization: v.asOrganization||'', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'', referrer: v.referrer||'' }; }); } catch(e) {}
+        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', ipType: g.ipType||'Unknown ASN', asn: g.asn||0, asOrganization: g.asOrganization||'', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'', referrer: g.referrer||'' }; }).sort((a,b) => b.visits - a.visits);
         return new Response(JSON.stringify({ site: bucketLabel, totalVisits: bucket.totalVisits||0, distinctDevices: deviceList.length, distinctIPs: ipList.length, distinctVisitors: Object.keys(bucket.uuids||{}).length, devices: deviceList, ips: ipList, capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
