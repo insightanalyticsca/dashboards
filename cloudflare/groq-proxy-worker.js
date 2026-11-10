@@ -61,6 +61,26 @@ const EXCLUDED_IPS = new Set([
   '9.9.9.9'
 ]);
 
+// ─── Excluded visitor UUIDs (added 2026-11-10) ──────────────────────────
+// IP-based exclusion doesn't work for visitors whose IP rotates — e.g.
+// phones on Cloudflare WARP, which exit through a different IPv6 address
+// on every request (the `2a09:bac2:...` / `2a09:bac3:...` Cloudflare
+// WARP pool). Each visit appears as a "new" IP even though it's the
+// same device.
+//
+// UUID-based exclusion fixes this: the beacon always sends the same
+// localStorage UID, regardless of which exit IP was used. Adding a UID
+// here permanently blocks that device across all IP changes.
+//
+// First excluded UID: owner's iPhone (Cloudflare WARP, Toronto).
+// Verified by visit pattern — 2a09:bac3:17da:1ec8::311:xxx at 10:07 AM
+// on Nov 10, with stable UID v-mvpf1vqt-20uje2tf. Future visits from
+// this iPhone will use different WARP exit IPs but the same UID, so
+// they'll all be filtered out.
+const EXCLUDED_UIDS = new Set([
+  'v-mvpf1vqt-20uje2tf'    // owner's iPhone (Cloudflare WARP, Toronto) — added 2026-11-10
+]);
+
 function corsHeaders(origin) {
   const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
@@ -132,6 +152,54 @@ async function readCumulative(env) {
           }
           if (corrected) {
             // Persist immediately so we don't re-subtract on the next cold start.
+            await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
+          }
+        }
+
+        // ─── One-time UID reconciliation (added 2026-11-10) ────────────
+        // Same idea as the IP reconciliation above, but for visitors whose
+        // IP rotates (e.g. phones on Cloudflare WARP). We can't subtract
+        // per-IP (their IPs are gone from the active set already), but the
+        // cumulative.uuids map tracks visit counts PER UID — so we can
+        // subtract that count from totalVisits + delete the UID entry.
+        //
+        // Also sweeps the per-site buckets (main + dashboards) the same
+        // way. Idempotent: deletes the UID entry so the next read won't
+        // re-subtract.
+        //
+        // NOTE: the ips{} and devices{} maps still contain stale entries
+        // for the rotating WARP IPs that were previously attributed to
+        // this UID. Those can't be cleanly unwound without a per-IP→UID
+        // reverse lookup that doesn't exist. So totalVisits drops, but
+        // distinctIPs/distinctDevices counts may stay slightly elevated
+        // until those IPs age out of the 72h visit log (and then out of
+        // the cumulative blob on the next ipGeo rebuild). Acceptable —
+        // the primary fix (stop counting future visits) works immediately.
+        if (cumulative.uuids && EXCLUDED_UIDS.size > 0) {
+          var uidCorrected = false;
+          for (var excludedUid of EXCLUDED_UIDS) {
+            if (cumulative.uuids[excludedUid]) {
+              var staleUidCount = cumulative.uuids[excludedUid];
+              cumulative.totalVisits = Math.max(0, (cumulative.totalVisits || 0) - staleUidCount);
+              delete cumulative.uuids[excludedUid];
+              uidCorrected = true;
+            }
+          }
+          if (cumulative.sites) {
+            for (var siteKey2 of ['main', 'dashboards']) {
+              var sb2 = cumulative.sites[siteKey2];
+              if (!sb2 || !sb2.uuids) continue;
+              for (var excludedUid2 of EXCLUDED_UIDS) {
+                if (sb2.uuids[excludedUid2]) {
+                  var staleUidSite = sb2.uuids[excludedUid2];
+                  sb2.totalVisits = Math.max(0, (sb2.totalVisits || 0) - staleUidSite);
+                  delete sb2.uuids[excludedUid2];
+                  uidCorrected = true;
+                }
+              }
+            }
+          }
+          if (uidCorrected) {
             await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
           }
         }
@@ -513,6 +581,13 @@ async function logVisit(request, env, ctx) {
   try { uid = new URL(request.url).searchParams.get('uid') || ''; } catch(_) {}
   if (!uid || uid.length < 8) uid = '';
 
+  // UID-based exclusion (added 2026-11-10): if this visitor's UID is in
+  // EXCLUDED_UIDS, return null so the visit isn't logged. This catches
+  // visitors whose IP rotates (e.g. phones on Cloudflare WARP) where the
+  // IP-based check above doesn't work — the UID is stable in localStorage
+  // and survives IP changes. Must run AFTER uid is parsed above.
+  if (uid && EXCLUDED_UIDS.has(uid)) return null;
+
   // ─── Referrer capture (added 2026-11-05) ──────────────────────────────
   // The classifier at line 376 above already pulled `referrer` from the
   // Referer header, but only used it to compute the boolean "has referrer /
@@ -641,7 +716,12 @@ export default {
         const deviceList = Object.entries(bucket.devices || {}).filter(([d]) => d.indexOf('Bot') !== 0).map(([d,c]) => ({ device: d, visits: c })).sort((a,b) => b.visits - a.visits);
         var ipGeo = {};
         try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', ipType: v.ipType||'Unknown ASN', asn: v.asn||0, asOrganization: v.asOrganization||'', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'', referrer: v.referrer||'' }; }); } catch(e) {}
-        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', ipType: g.ipType||'Unknown ASN', asn: g.asn||0, asOrganization: g.asOrganization||'', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'', referrer: g.referrer||'' }; }).sort((a,b) => b.visits - a.visits);
+        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).filter(([ip]) => { // Also drop IPs whose most-recent visit had an excluded UID (added 2026-11-10).
+          // This filters the all-time IP list down by UID — catches rotating
+          // WARP IPs that were previously attributed to an excluded device.
+          var g0 = ipGeo[ip] || {};
+          return !(g0.uid && EXCLUDED_UIDS.has(g0.uid));
+        }).map(([ip,c]) => { var g = ipGeo[ip]||{}; return { ip: redactIp(ip), visits: c, country: g.country||'unknown', city: g.city||'unknown', ipType: g.ipType||'Unknown ASN', asn: g.asn||0, asOrganization: g.asOrganization||'', lastSeen: g.lastSeen||'', device: g.device||'unknown', uid: g.uid||'', referrer: g.referrer||'' }; }).sort((a,b) => b.visits - a.visits);
         return new Response(JSON.stringify({ site: bucketLabel, totalVisits: bucket.totalVisits||0, distinctDevices: deviceList.length, distinctIPs: ipList.length, distinctVisitors: Object.keys(bucket.uuids||{}).length, devices: deviceList, ips: ipList, capturedAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
@@ -657,6 +737,11 @@ export default {
         const cutoff = Date.now() - VISIT_RETENTION_MS;
         let recent = deduped.filter(v => new Date(v.ts).getTime() > cutoff);
         recent = EXCLUDED_IPS.size > 0 ? recent.filter(v => !EXCLUDED_IPS.has(v.ip)) : recent;
+        // Also filter excluded UIDs (added 2026-11-10) — catches visitors
+        // whose IP rotates (e.g. phones on Cloudflare WARP) where the
+        // IP-based filter above doesn't work. The UID is stable across
+        // IP changes.
+        recent = EXCLUDED_UIDS.size > 0 ? recent.filter(v => !(v.uid && EXCLUDED_UIDS.has(v.uid))) : recent;
         const sf = url.searchParams.get('site');
         if (sf === 'main' || sf === 'dashboards') recent = recent.filter(v => (v.site||'main') === sf);
         recent = recent.filter(v => !isBotUA(v.ua||''));
