@@ -58,7 +58,11 @@ const EXCLUDED_IPS = new Set([
   '47.57.232.232',    // assistant's outbound IP (NAT pool) — added 2026-10-27
   '8.212.10.159',      // assistant's other outbound IP (NAT pool) — added 2026-10-27
   '8.8.8.8',
-  '9.9.9.9'
+  '9.9.9.9',
+  // Security scanner — bitdiscovery.com attack-surface scanner (added 2026-11-10).
+  // Hit the site twice in 1 second on Nov 8 from AWS Ashburn.
+  // Full unmasked IPv6 stored here (redaction only happens on output).
+  '2600:1f1c:ba0:dd02:342d:d113:f871:ea4d'
 ]);
 
 // ─── Excluded visitor UUIDs (added 2026-11-10) ──────────────────────────
@@ -78,7 +82,8 @@ const EXCLUDED_IPS = new Set([
 // this iPhone will use different WARP exit IPs but the same UID, so
 // they'll all be filtered out.
 const EXCLUDED_UIDS = new Set([
-  'v-mvpf1vqt-20uje2tf'    // owner's iPhone (Cloudflare WARP, Toronto) — added 2026-11-10
+  'v-mvpf1vqt-20uje2tf',    // owner's iPhone (Cloudflare WARP, Toronto) — added 2026-11-10
+  'v-mw8jj5kk-bzg6zmwh'     // bitdiscovery.com security scanner (AWS Ashburn) — added 2026-11-10
 ]);
 
 function corsHeaders(origin) {
@@ -250,7 +255,25 @@ function isBotUA(ua) {
     'got/', 'googlebot', 'bingbot', 'slurp', 'duckduckbot', 'baiduspider',
     'yandexbot', 'ahrefsbot', 'semrushbot', 'facebookexternalhit',
     'twitterbot', 'linkedinbot', 'headlesschrome', 'phantomjs', 'puppeteer',
-    'playwright', 'selenium', 'bot', 'crawl', 'spider', 'scrape'];
+    'playwright', 'selenium', 'bot', 'crawl', 'spider', 'scrape',
+    // Security scanners / asset-discovery tools (added 2026-11-10).
+    // These hit the site looking for vulnerabilities — never real visitors.
+    'bitdiscovery',    // bitdiscovery.com — attack-surface management scanner
+    'nikto',            // Nikto — web server scanner
+    'nmap',             // Nmap NSE scripts
+    'masscan',          // Masscan — fast port scanner
+    'zgrab',            // ZGrab — TLS/HTTP scanner
+    'qualys',           // Qualys — security scanning platform
+    'nessus',           // Nessus — vulnerability scanner
+    'openvas',          // OpenVAS — open-source vuln scanner
+    'acunetix',         // Acunetix — web vulnerability scanner
+    'wpscan',           // WPScan — WordPress scanner
+    'sqlmap',           // SQLMap — SQL injection tool
+    'censys',           // Censys — internet-wide scanner
+    'shodan',           // Shodan — search engine for IoT/scanners
+    'l9scan',           // L9scan — leak scan tool
+    'nuclei'            // Nuclei — template-based scanner
+  ];
   for (var i = 0; i < patterns.length; i++) {
     if (lower.indexOf(patterns[i]) >= 0) return true;
   }
