@@ -65,6 +65,81 @@ const EXCLUDED_IPS = new Set([
   '2600:1f1c:ba0:dd02:342d:d113:f871:ea4d'
 ]);
 
+// ─── Excluded CIDR ranges (added 2026-11-12) ────────────────────────────
+// Sometimes a single bad actor rotates through a whole subnet (e.g. a
+// security scanner using Palo Alto Networks' corporate IP pool). Blocking
+// individual IPs doesn't work — they keep coming from new IPs in the
+// same /24. This list blocks entire CIDR ranges.
+//
+// CIDR matching supports IPv4 only (IPv6 ranges would need a much
+// longer bit-comparison; the only IPv6 we've had to block so far is
+// the bitdiscovery scanner, which we added as a full exact-IP match
+// in EXCLUDED_IPS above).
+//
+// Format: ['CIDR', ...] — matched via isIpInExcludedCidr(ip) below.
+const EXCLUDED_CIDRS = [
+  // Palo Alto Networks corporate subnet (added 2026-11-12).
+  // User requested block after observing ongoing scanning behavior
+  // from rotating 205.169.39.x IPs (4 distinct IPs in 72h):
+  //   205.169.39.18, .171, .225, .232
+  // All from ASN 3356 (Palo Alto Networks, Inc), Dallas US.
+  // Visit pattern: real Chrome UA but uid=(none) (no JS ran), spoofed
+  // Referer headers ('bing.com', 'groq-proxy.insight-analytics.workers.dev'),
+  // 2 visits in the same second — security researcher probing the
+  // beacon endpoint with manually-set headers.
+  // Blocking the whole /24 since the scanner rotates within it.
+  '205.169.39.0/24'
+];
+
+// Convert an IPv4 dotted-quad string to a 32-bit unsigned integer.
+// Returns NaN on parse failure (so callers can use isNaN to detect).
+function ipv4ToUint32(ip) {
+  var parts = ip.split('.');
+  if (parts.length !== 4) return NaN;
+  var n = 0;
+  for (var i = 0; i < 4; i++) {
+    var octet = parseInt(parts[i], 10);
+    if (isNaN(octet) || octet < 0 || octet > 255) return NaN;
+    n = (n * 256) + octet;
+  }
+  return n >>> 0;  // force unsigned
+}
+
+// Returns true if the given IP is in any of the EXCLUDED_CIDRS ranges.
+// Only handles IPv4 — IPv6 IPs return false (handled separately via
+// EXCLUDED_IPS exact match).
+function isIpInExcludedCidr(ip) {
+  if (!ip || ip.indexOf(':') >= 0) return false;  // skip IPv6
+  if (EXCLUDED_CIDRS.length === 0) return false;
+  var ipNum = ipv4ToUint32(ip);
+  if (isNaN(ipNum)) return false;
+  for (var i = 0; i < EXCLUDED_CIDRS.length; i++) {
+    var cidr = EXCLUDED_CIDRS[i];
+    var slashIdx = cidr.indexOf('/');
+    if (slashIdx < 0) continue;  // not a CIDR, skip
+    var baseIp = cidr.slice(0, slashIdx);
+    var prefixBits = parseInt(cidr.slice(slashIdx + 1), 10);
+    if (isNaN(prefixBits) || prefixBits < 0 || prefixBits > 32) continue;
+    var baseNum = ipv4ToUint32(baseIp);
+    if (isNaN(baseNum)) continue;
+    // Build the mask: top `prefixBits` bits set, rest zero.
+    // For prefixBits=24: mask = 0xFFFFFF00
+    // For prefixBits=32: mask = 0xFFFFFFFF (exact match)
+    // For prefixBits=0:  mask = 0 (matches everything — don't do this)
+    var mask = prefixBits === 0 ? 0 : (0xFFFFFFFF << (32 - prefixBits)) >>> 0;
+    if ((ipNum & mask) === (baseNum & mask)) return true;
+  }
+  return false;
+}
+
+// Combined check: is this IP excluded (exact match OR CIDR range)?
+function isIpExcluded(ip) {
+  if (!ip) return false;
+  if (EXCLUDED_IPS.has(ip)) return true;
+  if (isIpInExcludedCidr(ip)) return true;
+  return false;
+}
+
 // ─── Excluded visitor UUIDs (added 2026-11-10) ──────────────────────────
 // IP-based exclusion doesn't work for visitors whose IP rotates — e.g.
 // phones on Cloudflare WARP, which exit through a different IPv6 address
@@ -157,6 +232,51 @@ async function readCumulative(env) {
           }
           if (corrected) {
             // Persist immediately so we don't re-subtract on the next cold start.
+            await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
+          }
+        }
+
+        // ─── One-time CIDR reconciliation (added 2026-11-12) ────────────
+        // Walk the ENTIRE cumulative.ips map (not just EXCLUDED_IPS) and
+        // subtract prior counts for any IP that falls in an EXCLUDED_CIDRS
+        // range. This is necessary because CIDR-blocked IPs aren't in the
+        // exact-match EXCLUDED_IPS set — the reconciliation above misses
+        // them. Without this sweep, the Palo Alto scanner's prior visits
+        // (4 distinct IPs in the /24) would stay baked into totalVisits.
+        //
+        // Same idempotent pattern: deletes each matched IP from cumulative.ips
+        // so the next read won't re-subtract. Also sweeps per-site buckets.
+        if (cumulative.ips && EXCLUDED_CIDRS.length > 0) {
+          var cidrCorrected = false;
+          // Iterate over a snapshot of the keys (we delete during iteration)
+          var allIps = Object.keys(cumulative.ips);
+          for (var i = 0; i < allIps.length; i++) {
+            var ipKey = allIps[i];
+            if (isIpInExcludedCidr(ipKey)) {
+              var staleCidrCount = cumulative.ips[ipKey];
+              cumulative.totalVisits = Math.max(0, (cumulative.totalVisits || 0) - staleCidrCount);
+              delete cumulative.ips[ipKey];
+              cidrCorrected = true;
+            }
+          }
+          // Sweep per-site buckets
+          if (cumulative.sites) {
+            for (var siteKeyC of ['main', 'dashboards']) {
+              var sbC = cumulative.sites[siteKeyC];
+              if (!sbC || !sbC.ips) continue;
+              var siteIps = Object.keys(sbC.ips);
+              for (var j = 0; j < siteIps.length; j++) {
+                var siteIpKey = siteIps[j];
+                if (isIpInExcludedCidr(siteIpKey)) {
+                  var staleSiteCidrCount = sbC.ips[siteIpKey];
+                  sbC.totalVisits = Math.max(0, (sbC.totalVisits || 0) - staleSiteCidrCount);
+                  delete sbC.ips[siteIpKey];
+                  cidrCorrected = true;
+                }
+              }
+            }
+          }
+          if (cidrCorrected) {
             await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
           }
         }
@@ -590,7 +710,11 @@ async function logVisit(request, env, ctx) {
   var ip = headers.get('cf-connecting-ip') || headers.get('x-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip') || 'unknown';
   ip = ip.replace(/^\[|\]$/g, '').trim();
 
-  if (EXCLUDED_IPS.has(ip)) return null;
+  // Combined check: exact IP match OR CIDR range match. Using isIpExcluded()
+  // (which calls both EXCLUDED_IPS.has AND isIpInExcludedCidr) so we catch
+  // visitors from blocked subnets even when their specific IP isn't in the
+  // exact-match list. Added 2026-11-12 for the Palo Alto /24 block.
+  if (isIpExcluded(ip)) return null;
 
   var ua = headers.get('user-agent') || 'unknown';
   if (isBotUA(ua)) return null;
@@ -739,7 +863,7 @@ export default {
         const deviceList = Object.entries(bucket.devices || {}).filter(([d]) => d.indexOf('Bot') !== 0).map(([d,c]) => ({ device: d, visits: c })).sort((a,b) => b.visits - a.visits);
         var ipGeo = {};
         try { const bv = await readVisitLogKV(env); [...bv, ...visitLog].forEach(v => { if (v.ip && !ipGeo[v.ip]) ipGeo[v.ip] = { country: v.country||'unknown', city: v.city||'unknown', ipType: v.ipType||'Unknown ASN', asn: v.asn||0, asOrganization: v.asOrganization||'', lastSeen: v.ts, device: v.ua?parseDeviceUA(v.ua):'unknown', uid: v.uid||'', referrer: v.referrer||'' }; }); } catch(e) {}
-        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !EXCLUDED_IPS.has(ip)).filter(([ip]) => { // Also drop IPs whose most-recent visit had an excluded UID (added 2026-11-10).
+        const ipList = Object.entries(bucket.ips||{}).filter(([ip]) => !isIpExcluded(ip)).filter(([ip]) => { // Also drop IPs whose most-recent visit had an excluded UID (added 2026-11-10).
           // This filters the all-time IP list down by UID — catches rotating
           // WARP IPs that were previously attributed to an excluded device.
           var g0 = ipGeo[ip] || {};
@@ -759,7 +883,10 @@ export default {
         const deduped = merged.filter(v => { const k = v.ts+'|'+v.ip; if (seen.has(k)) return false; seen.add(k); return true; });
         const cutoff = Date.now() - VISIT_RETENTION_MS;
         let recent = deduped.filter(v => new Date(v.ts).getTime() > cutoff);
-        recent = EXCLUDED_IPS.size > 0 ? recent.filter(v => !EXCLUDED_IPS.has(v.ip)) : recent;
+        // Combined filter: exact-IP exclusion + CIDR-range exclusion.
+        // Using isIpExcluded() so the Palo Alto /24 (and any future CIDR
+        // ranges) are also filtered from the 72h visit log on read.
+        recent = recent.filter(v => !isIpExcluded(v.ip));
         // Also filter excluded UIDs (added 2026-11-10) — catches visitors
         // whose IP rotates (e.g. phones on Cloudflare WARP) where the
         // IP-based filter above doesn't work. The UID is stable across
