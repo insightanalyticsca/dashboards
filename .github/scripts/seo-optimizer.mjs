@@ -664,7 +664,9 @@ Content: ${content.text.slice(0, 800)}`);
       }
       if (seo.description) {
         if (html.match(/<meta\s+name=["']description["']/i)) {
-          html = html.replace(/<meta\s+name=["']description["']\s+content=["'][^"']*["']/is, `<meta name="description" content="${escAttr(seo.description)}">`);
+          // CRITICAL: consume the closing > of the tag to prevent accumulating
+          // stray > characters on each cron run. Bug found 2026-11-12.
+          html = html.replace(/<meta\s+name=["']description["']\s+content=["'][^"']*["']\s*\/?>/is, `<meta name="description" content="${escAttr(seo.description)}">`);
         } else {
           html = html.replace(/<head[^>]*>/i, m => `${m}\n  <meta name="description" content="${escAttr(seo.description)}">`);
         }
@@ -672,9 +674,10 @@ Content: ${content.text.slice(0, 800)}`);
       }
       if (seo.keywords) {
         if (html.match(/<meta\s+name=["']keywords["']/i)) {
-          html = html.replace(/<meta\s+name=["']keywords["']\s+content=["'][^"']*["']/is, `<meta name="keywords" content="${escAttr(seo.keywords)}">`);
+          // Same fix as description regex above — consume closing >.
+          html = html.replace(/<meta\s+name=["']keywords["']\s+content=["'][^"']*["']\s*\/?>/is, `<meta name="keywords" content="${escAttr(seo.keywords)}">`);
         } else {
-          html = html.replace(/<meta\s+name=["']description["']\s+content=["'][^"']*["']/is, m => `${m}\n  <meta name="keywords" content="${escAttr(seo.keywords)}">`);
+          html = html.replace(/<meta\s+name=["']description["']\s+content=["'][^"']*["']\s*\/?>/is, m => `${m}\n  <meta name="keywords" content="${escAttr(seo.keywords)}">`);
         }
         changeLog.keywords = seo.keywords;
       }
