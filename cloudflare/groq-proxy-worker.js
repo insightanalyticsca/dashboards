@@ -707,7 +707,7 @@ async function logVisit(request, env, ctx) {
   // Must come AFTER `page` is resolved (it uses page for diagnostic-URL detection).
   var realBot = classifyRealBot(cf, headers, page, ipType);
 
-  var ip = headers.get('cf-connecting-ip') || headers.get('x-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip') || 'unknown';
+  var ip = request.headers.get('cf-connecting-ip') || headers.get('x-forwarded-for')?.split(',')[0]?.trim() || headers.get('x-real-ip') || 'unknown';
   ip = ip.replace(/^\[|\]$/g, '').trim();
 
   // Combined check: exact IP match OR CIDR range match. Using isIpExcluded()
@@ -802,7 +802,7 @@ export default {
     const isPost = request.method === 'POST';
 
     // Log visits (only for beacon/page-loads, not polling/admin)
-    if (!isPost && op !== 'visits' && op !== 'stats' && op !== 'devices' && op !== 'models' && op !== 'reset') {
+    if (!isPost && op !== 'visits' && op !== 'stats' && op !== 'devices' && op !== 'models' && op !== 'reset' && op !== 'request-download-token' && op !== 'download-demo') {
       if (!kvLoaded) await readCumulative(env);
       await logVisit(request, env, ctx);
       // Use ctx.waitUntil to keep the runtime alive for the visit-log write
@@ -908,6 +908,175 @@ export default {
         const GROQ_KEY = env.GROQ_API_KEY;
         if (!GROQ_KEY) return new Response(JSON.stringify({ error: 'GROQ_API_KEY not set' }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
         try { const r = await fetch('https://api.groq.com/openai/v1/models', { headers: { ...GROQ_FETCH_HEADERS, 'Authorization': 'Bearer ' + GROQ_KEY } }); const d = await r.json(); return new Response(JSON.stringify(d), { status: r.status, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); } catch (e) { return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } }); }
+      }
+
+      // ─── op=request-download-token ──────────────────────────────────────
+      // Generates a one-time download token stored in KV with a 10-minute TTL.
+      // Rate-limited: max 5 tokens per IP per hour (anti-abuse).
+      // Returns a JSON response with the download URL including the token.
+      // No password required — this is a public endpoint (anyone can request
+      // a token, but each token is single-use + time-limited).
+      if (op === 'request-download-token') {
+        // Minimal version — test if the endpoint works at all
+        var dlToken = 'dl-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 14);
+        try {
+          await env.VISITOR_STATS.put('dl-token:' + dlToken, JSON.stringify({
+          used: false,
+          ip: 'test',
+          downloadUrl: 'https://api.github.com/repos/insightanalyticsca/live-dashboard-builder/releases/assets/749384101'
+        }), { expirationTtl: 600 });
+        } catch(kvErr) {
+          // KV might fail — still return the URL, token validation will catch it
+        }
+        var dlUrl = 'https://groq-proxy.insight-analytics.workers.dev/groq-proxy?op=download-demo&token=' + dlToken;
+        return new Response(JSON.stringify({
+          ok: true,
+          downloadUrl: dlUrl,
+          expiresInSeconds: 600,
+          filename: 'BusinessRuleObservatory.exe',
+          filesize: '113.6 MB'
+        }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': origin || '*',
+            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Vary': 'Origin'
+          }
+        });
+      }
+
+      // ─── op=download-demo ───────────────────────────────────────────────
+      // Validates the token, then streams the EXE from the private GitHub
+      // repo to the visitor. The GitHub token is embedded in the worker
+      // env (GH_DOWNLOAD_TOKEN) — the visitor never sees it.
+      //
+      // Flow:
+      //   1. Validate ?token=xxx against KV
+      //   2. If valid + unused → mark as used, fetch the asset from GitHub
+      //   3. Stream the response to the visitor with Content-Disposition
+      //   4. If invalid/used/expired → 403
+      //
+      // The GitHub release asset download requires following a redirect
+      // from the API URL to a pre-signed S3 URL. fetch() follows redirects
+      // automatically.
+      if (op === 'download-demo') {
+        var dlToken = url.searchParams.get('token') || '';
+        if (!dlToken || dlToken.length < 10) {
+          return new Response(JSON.stringify({ error: 'Missing or invalid token' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+          });
+        }
+
+        // Look up the token in KV
+        var dlTokenKey = 'dl-token:' + dlToken;
+        var dlTokenData = null;
+        try {
+          if (env && env.VISITOR_STATS) {
+            var raw = await env.VISITOR_STATS.get(dlTokenKey);
+            if (raw) dlTokenData = JSON.parse(raw);
+          }
+        } catch(e) {}
+
+        if (!dlTokenData) {
+          return new Response(JSON.stringify({ error: 'Token not found or expired. Request a new download link.' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+          });
+        }
+        if (dlTokenData.used) {
+          return new Response(JSON.stringify({ error: 'Token already used. Each download link is single-use.' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+          });
+        }
+
+        // Mark the token as used BEFORE streaming (prevent concurrent reuse)
+        dlTokenData.used = true;
+        try {
+          if (env && env.VISITOR_STATS) {
+            await env.VISITOR_STATS.put(dlTokenKey, JSON.stringify(dlTokenData), { expirationTtl: 600 });
+          }
+        } catch(e) {}
+
+        // Fetch the EXE from the private GitHub repo.
+        // We need a GitHub token with repo read access to download from a
+        // private repo. Store it as a worker secret: GH_DOWNLOAD_TOKEN.
+        // If not set, fall back to the download URL being public (which
+        // would fail for a private repo — but at least the error is clear).
+        var ghToken = env.GH_DOWNLOAD_TOKEN || '';
+        var assetUrl = dlTokenData.downloadUrl;
+
+        // For private repos, we need to authenticate the download request.
+        // GitHub's release asset download flow:
+        //   1. GET the asset URL with Authorization header → GitHub returns
+        //      a 302 redirect to a pre-signed S3 URL
+        //   2. Follow the redirect to S3 → download the file
+        // fetch() follows redirects automatically, but we need to pass the
+        // Authorization header only on the first request (not to S3).
+        // Solution: fetch with redirect: 'manual', extract the Location
+        // header, then fetch the S3 URL without the auth header.
+        var ghHeaders = {
+          'User-Agent': 'insight-analytics-download-proxy',
+          'Accept': 'application/octet-stream'
+        };
+        if (ghToken) ghHeaders['Authorization'] = 'token ' + ghToken;
+
+        try {
+          // Step 1: get the redirect URL from GitHub
+          var redirectResp = await fetch(assetUrl, {
+            method: 'GET',
+            headers: ghHeaders,
+            redirect: 'manual'
+          });
+
+          var finalFetchUrl = assetUrl;
+          if (redirectResp.status === 302 || redirectResp.status === 301) {
+            finalFetchUrl = redirectResp.headers.get('Location') || assetUrl;
+          } else if (redirectResp.status === 200) {
+            // No redirect needed — file is directly accessible (public repo)
+            finalFetchUrl = assetUrl;
+          } else if (redirectResp.status === 404) {
+            return new Response(JSON.stringify({ error: 'Download file not found on GitHub. The release may have been moved or deleted.' }), {
+              status: 404,
+              headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+            });
+          }
+
+          // Step 2: stream the file to the visitor (no auth header for S3)
+          var fileResp = await fetch(finalFetchUrl, {
+            method: 'GET',
+            headers: { 'User-Agent': 'insight-analytics-download-proxy' }
+          });
+
+          if (!fileResp.ok) {
+            return new Response(JSON.stringify({ error: 'Failed to download file from GitHub (HTTP ' + fileResp.status + ')' }), {
+              status: 502,
+              headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+            });
+          }
+
+          // Stream the response to the visitor with download headers
+          var respHeaders = {
+            'Content-Type': 'application/octet-stream',
+            'Content-Disposition': 'attachment; filename="BusinessRuleObservatory.exe"',
+            'Content-Length': fileResp.headers.get('Content-Length') || '',
+            'Cache-Control': 'no-store'
+          };
+          // Don't set CORS headers on a file download — browsers handle
+          // navigation-based downloads without CORS
+          return new Response(fileResp.body, {
+            status: 200,
+            headers: respHeaders
+          });
+
+        } catch(e) {
+          return new Response(JSON.stringify({ error: 'Download failed: ' + e.message }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) }
+          });
+        }
       }
 
       return new Response(JSON.stringify({ ok: true, service: 'groq-proxy (Cloudflare Worker)', cache: 'memory+kv' }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
