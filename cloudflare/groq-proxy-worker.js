@@ -917,12 +917,17 @@ export default {
       // No password required — this is a public endpoint (anyone can request
       // a token, but each token is single-use + time-limited).
       if (op === 'request-download-token') {
-        // Minimal version — test if the endpoint works at all
+        // Capture external referrer (where the visitor came from BEFORE the
+        // site — e.g. google.com, linkedin.com). Passed from the browser's
+        // document.referrer via &ext_referrer= query param.
+        var extReferrer = url.searchParams.get('ext_referrer') || '';
+
         var dlToken = 'dl-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 14);
         try {
           await env.VISITOR_STATS.put('dl-token:' + dlToken, JSON.stringify({
           used: false,
           ip: 'test',
+          extReferrer: extReferrer,
           downloadUrl: 'https://api.github.com/repos/insightanalyticsca/live-dashboard-builder/releases/assets/749384101'
         }), { expirationTtl: 600 });
         } catch(kvErr) {
@@ -999,6 +1004,66 @@ export default {
             await env.VISITOR_STATS.put(dlTokenKey, JSON.stringify(dlTokenData), { expirationTtl: 600 });
           }
         } catch(e) {}
+
+        // ─── Send email notification to dev@insight-analytics.ca ────────
+        // Fires a POST to the Netlify send-email function (which has the
+        // Resend API key) with the download details. Uses ctx.waitUntil so
+        // it doesn't delay the file download.
+        //
+        // The email includes: timestamp, visitor IP (masked), geo (country +
+        // city from Cloudflare's request.cf), ASN organization, referrer
+        // (where they came from before the site — captured from the Referer
+        // header), and User-Agent (browser + OS).
+        //
+        // The send-email function expects { name, email, message, company }.
+        // We encode the download info in those fields.
+        try {
+          var cf = request.cf || {};
+          var visitorIp = request.headers.get('cf-connecting-ip') || 'unknown';
+          var maskedIp = redactIp(visitorIp);
+          var referer = request.headers.get('referer') || 'direct (no referrer)';
+          var extRef = dlTokenData.extReferrer || 'direct / unknown';
+          var ua = request.headers.get('user-agent') || 'unknown';
+          var country = cf.country || 'unknown';
+          var city = cf.city || 'unknown';
+          var asnOrg = cf.asOrganization || 'unknown';
+          var dlTime = new Date().toISOString();
+
+          // Build the email body — encode download info in contact form fields
+          var emailBody = {
+            name: 'Demo Download — BusinessRuleObservatory.exe',
+            email: 'noreply@insight-analytics.ca',
+            company: maskedIp + ' · ' + city + ', ' + country + ' · ' + asnOrg,
+            message: [
+              'A visitor downloaded the Business Rule Observatory demo EXE.',
+              '',
+              'Timestamp: ' + dlTime,
+              'IP (masked): ' + maskedIp,
+              'Location: ' + city + ', ' + country,
+              'ASN: ' + asnOrg + ' (AS' + (cf.asn || 'unknown') + ')',
+              'External referrer (where they came from): ' + extRef,
+              'Page referrer (on-site): ' + referer,
+              'User-Agent: ' + ua,
+              'Token: ' + dlToken,
+              '',
+              'This is an automated notification from the Cloudflare Worker download proxy.'
+            ].join('\n')
+          };
+
+          // Fire-and-forget via ctx.waitUntil — don't delay the download
+          ctx.waitUntil(
+            fetch('https://startling-belekoy-b0ec70.netlify.app/send-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Origin': 'https://insight-analytics.ca'
+              },
+              body: JSON.stringify(emailBody)
+            }).catch(function(e) { /* silent — email failure shouldn't block download */ })
+          );
+        } catch(emailErr) {
+          // Email sending failure should never block the download
+        }
 
         // Fetch the EXE from the private GitHub repo.
         // We need a GitHub token with repo read access to download from a
