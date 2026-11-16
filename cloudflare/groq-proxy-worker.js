@@ -1103,8 +1103,8 @@ export default {
                     'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({
-                    from: 'Insight Analytics <noreply@insight-analytics.ca>',
-                    to: 'dev@insight-analytics.ca',
+                    from: 'Insight Analytics <onboarding@resend.dev>',
+                    to: 'register@insight-analytics.ca',
                     subject: 'EXE Download — ' + maskedIp + ' · ' + dlCity + ', ' + dlCountry,
                     text: emailText
                   })
