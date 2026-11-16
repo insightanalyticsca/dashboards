@@ -1005,64 +1005,78 @@ export default {
           }
         } catch(e) {}
 
-        // ─── Send email notification to dev@insight-analytics.ca ────────
-        // Fires a POST to the Netlify send-email function (which has the
-        // Resend API key) with the download details. Uses ctx.waitUntil so
-        // it doesn't delay the file download.
+        // ─── Log download event to KV (shows in activity panel) ─────────
+        // Instead of email (which requires RESEND_API_KEY on Netlify — not
+        // configured), we log the download as a visit-like entry in the same
+        // KV store the activity tracker uses. The download shows up in the
+        // gear panel alongside regular visits, with page='download:EXE'.
         //
-        // The email includes: timestamp, visitor IP (masked), geo (country +
-        // city from Cloudflare's request.cf), ASN organization, referrer
-        // (where they came from before the site — captured from the Referer
-        // header), and User-Agent (browser + OS).
-        //
-        // The send-email function expects { name, email, message, company }.
-        // We encode the download info in those fields.
+        // This is fire-and-forget via ctx.waitUntil — doesn't delay the
+        // download. Includes: timestamp, IP (raw — redacted on read by
+        // op=visits), geo, ASN, UA, external referrer (where they came
+        // from before the site), on-site referrer.
         try {
-          var cf = request.cf || {};
-          var visitorIp = request.headers.get('cf-connecting-ip') || 'unknown';
-          var maskedIp = redactIp(visitorIp);
-          var referer = request.headers.get('referer') || 'direct (no referrer)';
-          var extRef = dlTokenData.extReferrer || 'direct / unknown';
-          var ua = request.headers.get('user-agent') || 'unknown';
-          var country = cf.country || 'unknown';
-          var city = cf.city || 'unknown';
-          var asnOrg = cf.asOrganization || 'unknown';
-          var dlTime = new Date().toISOString();
+          var dlCf = request.cf || {};
+          var dlIp = request.headers.get('cf-connecting-ip') || 'unknown';
+          var dlIpType = classifyIpType(dlCf);
+          var dlRealBot = classifyRealBot(dlCf, request.headers, 'download:BusinessRuleObservatory.exe', dlIpType);
+          var dlUa = request.headers.get('user-agent') || 'unknown';
+          var dlDevice = parseDeviceUA(dlUa);
+          var dlCountry = dlCf.country || 'unknown';
+          var dlCity = dlCf.city || 'unknown';
+          var dlAsn = dlCf.asn || 0;
+          var dlAsnOrg = dlCf.asOrganization || '';
+          var dlReferer = request.headers.get('referer') || '';
+          var dlExtRef = dlTokenData.extReferrer || '';
 
-          // Build the email body — encode download info in contact form fields
-          var emailBody = {
-            name: 'Demo Download — BusinessRuleObservatory.exe',
-            email: 'noreply@insight-analytics.ca',
-            company: maskedIp + ' · ' + city + ', ' + country + ' · ' + asnOrg,
-            message: [
-              'A visitor downloaded the Business Rule Observatory demo EXE.',
-              '',
-              'Timestamp: ' + dlTime,
-              'IP (masked): ' + maskedIp,
-              'Location: ' + city + ', ' + country,
-              'ASN: ' + asnOrg + ' (AS' + (cf.asn || 'unknown') + ')',
-              'External referrer (where they came from): ' + extRef,
-              'Page referrer (on-site): ' + referer,
-              'User-Agent: ' + ua,
-              'Token: ' + dlToken,
-              '',
-              'This is an automated notification from the Cloudflare Worker download proxy.'
-            ].join('\n')
+          // Build the referrer origin (same logic as logVisit)
+          var dlRefOrigin = '';
+          if (dlExtRef) {
+            try { var dlRefUrl = new URL(dlExtRef); var dlRefHost = dlRefUrl.hostname.replace(/^www\./, '').toLowerCase(); if (dlRefHost !== 'insight-analytics.ca' && dlRefHost !== 'insightanalyticsca.github.io') { dlRefOrigin = dlRefUrl.protocol + '//' + dlRefUrl.hostname; } } catch(e) { dlRefOrigin = dlExtRef.slice(0, 100); }
+          }
+
+          // Create a visit-like entry for the download
+          var dlVisit = {
+            ts: new Date().toISOString(),
+            ip: dlIp,
+            country: dlCountry,
+            city: dlCity,
+            ipType: dlIpType,
+            asn: dlAsn,
+            asOrganization: dlAsnOrg,
+            realLabel: dlRealBot.label,
+            realScore: dlRealBot.score,
+            realReason: dlRealBot.reason,
+            page: 'download:BusinessRuleObservatory.exe',
+            method: 'GET',
+            ua: dlUa,
+            site: 'main',
+            uid: '',
+            referrer: dlRefOrigin
           };
 
-          // Fire-and-forget via ctx.waitUntil — don't delay the download
-          ctx.waitUntil(
-            fetch('https://startling-belekoy-b0ec70.netlify.app/send-email', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Origin': 'https://insight-analytics.ca'
-              },
-              body: JSON.stringify(emailBody)
-            }).catch(function(e) { /* silent — email failure shouldn't block download */ })
-          );
-        } catch(emailErr) {
-          // Email sending failure should never block the download
+          // Push to in-memory visitLog
+          visitLog.push(dlVisit);
+          if (visitLog.length > MAX_VISITS) visitLog.shift();
+
+          // Update cumulative counts (download counts as a visit)
+          if (!isIpExcluded(dlIp) && !isBotUA(dlUa)) {
+            if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } };
+            cumulative.totalVisits++;
+            cumulative.ips[dlIp] = (cumulative.ips[dlIp] || 0) + 1;
+            cumulative.devices[dlDevice] = (cumulative.devices[dlDevice] || 0) + 1;
+            cumulative.sites.main.totalVisits++;
+            cumulative.sites.main.ips[dlIp] = (cumulative.sites.main.ips[dlIp] || 0) + 1;
+            cumulative.sites.main.devices[dlDevice] = (cumulative.sites.main.devices[dlDevice] || 0) + 1;
+          }
+
+          // Persist to KV (fire-and-forget)
+          ctx.waitUntil((async function() {
+            try { await writeCumulative(env); } catch(e) {}
+            try { await writeVisitLogKV(env, [dlVisit]); } catch(e) {}
+          })());
+        } catch(dlLogErr) {
+          // Download logging failure should never block the download
         }
 
         // Fetch the EXE from the private GitHub repo.
