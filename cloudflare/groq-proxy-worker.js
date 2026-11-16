@@ -1070,10 +1070,49 @@ export default {
             cumulative.sites.main.devices[dlDevice] = (cumulative.sites.main.devices[dlDevice] || 0) + 1;
           }
 
-          // Persist to KV (fire-and-forget)
+          // Persist to KV + send email notification (fire-and-forget)
           ctx.waitUntil((async function() {
+            // 1. Log to KV (shows in activity panel)
             try { await writeCumulative(env); } catch(e) {}
             try { await writeVisitLogKV(env, [dlVisit]); } catch(e) {}
+
+            // 2. Send email via Resend API directly (no Netlify dependency)
+            try {
+              var resendKey = env.RESEND_API_KEY || '';
+              if (resendKey) {
+                var maskedIp = redactIp(dlIp);
+                var emailText = [
+                  'A visitor downloaded the Business Rule Observatory demo EXE.',
+                  '',
+                  'Timestamp: ' + dlVisit.ts,
+                  'IP (masked): ' + maskedIp,
+                  'Location: ' + dlCity + ', ' + dlCountry,
+                  'ASN: ' + dlAsnOrg + ' (AS' + dlAsn + ')',
+                  'IP Type: ' + dlIpType,
+                  'Real/Bot: ' + dlRealBot.label + ' (' + dlRealBot.score + ')',
+                  'External referrer: ' + (dlRefOrigin || 'direct / unknown'),
+                  'User-Agent: ' + dlUa,
+                  '',
+                  '— Cloudflare Worker download proxy'
+                ].join('\n');
+
+                await fetch('https://api.resend.com/emails', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': 'Bearer ' + resendKey,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    from: 'Insight Analytics <noreply@insight-analytics.ca>',
+                    to: 'dev@insight-analytics.ca',
+                    subject: 'EXE Download — ' + maskedIp + ' · ' + dlCity + ', ' + dlCountry,
+                    text: emailText
+                  })
+                });
+              }
+            } catch(emailErr) {
+              // Email failure should never block anything
+            }
           })());
         } catch(dlLogErr) {
           // Download logging failure should never block the download
