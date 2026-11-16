@@ -88,7 +88,17 @@ const EXCLUDED_CIDRS = [
   // 2 visits in the same second — security researcher probing the
   // beacon endpoint with manually-set headers.
   // Blocking the whole /24 since the scanner rotates within it.
-  '205.169.39.0/24'
+  '205.169.39.0/24',
+
+  // AWS Boardman scanner subnets (added 2026-11-15).
+  // Two visits from AWS US-West (Boardman, Oregon) with real Chrome macOS
+  // UA but uid=(none) — automated headless browser / scanner:
+  //   35.95.41.90  (2 visits, Nov 15 9:33 PM)
+  //   52.13.115.118 (1 visit, Nov 15 9:02 PM)
+  // Both have spoofed Referer headers, no JS UID, cloud IP + real UA.
+  // Blocking both /24s to catch any rotation within those ranges.
+  '35.95.41.0/24',
+  '52.13.115.0/24'
 ];
 
 // Convert an IPv4 dotted-quad string to a 32-bit unsigned integer.
