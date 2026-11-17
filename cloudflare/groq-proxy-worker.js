@@ -60,9 +60,22 @@ const EXCLUDED_IPS = new Set([
   '8.8.8.8',
   '9.9.9.9',
   // Security scanner — bitdiscovery.com attack-surface scanner (added 2026-11-10).
-  // Hit the site twice in 1 second on Nov 8 from AWS Ashburn.
-  // Full unmasked IPv6 stored here (redaction only happens on output).
-  '2600:1f1c:ba0:dd02:342d:d113:f871:ea4d'
+  '2600:1f1c:ba0:dd02:342d:d113:f871:ea4d',
+  // Council Bluffs scanners (Google LLC, added 2026-11-17).
+  // uid=(none), real Chrome UA, page=direct, no referrer — automated probes.
+  // 104.197.69.115 — 2 visits Nov 17 (one with ref=groq-proxy URL, spoofed)
+  // 34.122.147.229 — 1 visit Nov 17
+  // 34.123.170.104 — 1 visit Nov 16
+  '104.197.69.115',
+  '34.122.147.229',
+  '34.123.170.104',
+  // AWS Ashburn scanners (added 2026-11-17).
+  // uid=(none), old macOS 10_10_1 UA, page=direct, Likely Bot(80).
+  // Rotating through different AWS Ashburn IPs — same scanner campaign.
+  '100.25.25.148',
+  '23.22.108.251',
+  '32.193.53.179',
+  '44.214.252.38'
 ]);
 
 // ─── Excluded CIDR ranges (added 2026-11-12) ────────────────────────────
