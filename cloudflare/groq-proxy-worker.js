@@ -825,7 +825,7 @@ export default {
     const isPost = request.method === 'POST';
 
     // Log visits (only for beacon/page-loads, not polling/admin)
-    if (!isPost && op !== 'visits' && op !== 'stats' && op !== 'devices' && op !== 'models' && op !== 'reset' && op !== 'request-download-token' && op !== 'download-demo') {
+    if (!isPost && op !== 'visits' && op !== 'stats' && op !== 'devices' && op !== 'models' && op !== 'reset' && op !== 'request-download-token' && op !== 'download-demo' && op !== 'page-stats') {
       if (!kvLoaded) await readCumulative(env);
       await logVisit(request, env, ctx);
       // Use ctx.waitUntil to keep the runtime alive for the visit-log write
@@ -858,6 +858,52 @@ export default {
         await writeCumulative(env);
         await writeKV(env, 'visits-72h', JSON.stringify([]));
         return new Response(JSON.stringify({ success: true, message: 'All visitor counters reset to 0', resetAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+      }
+
+      // op=page-stats — public endpoint returning per-page unique visitor counts
+      // for the last 72h. Respects all blacklists (excluded IPs, CIDRs, UIDs, bots).
+      // No password required — returns only aggregate counts per page path, no PII.
+      if (op === 'page-stats') {
+        if (!kvLoaded) await readCumulative(env);
+        try {
+          const bv = await readVisitLogKV(env);
+          const merged = [...bv, ...visitLog];
+          const seen = new Set();
+          const deduped = merged.filter(v => {
+            const k = v.ts + '|' + v.ip;
+            if (seen.has(k)) return false;
+            seen.add(k);
+            return true;
+          });
+          const cutoff = Date.now() - VISIT_RETENTION_MS;
+          let recent = deduped.filter(v => new Date(v.ts).getTime() > cutoff);
+          // Apply all blacklists
+          recent = recent.filter(v => !isIpExcluded(v.ip));
+          recent = EXCLUDED_UIDS.size > 0 ? recent.filter(v => !(v.uid && EXCLUDED_UIDS.has(v.uid))) : recent;
+          // Filter bots
+          recent = recent.filter(v => v.realLabel !== 'Bot' && v.realLabel !== 'Likely Bot');
+          // Group by page path, count unique IPs per page
+          var pageMap = {}; // page → Set of IPs
+          for (var v of recent) {
+            var p = v.page || '';
+            if (!p || p === '/') continue;
+            // Only count insight article pages (skip beacons, downloads, etc.)
+            if (!p.startsWith('/insights/') && !p.startsWith('/demos/') && !p.startsWith('/dashboards-preview/')) continue;
+            if (!pageMap[p]) pageMap[p] = new Set();
+            pageMap[p].add(v.ip);
+          }
+          var pages = {};
+          for (var pg in pageMap) {
+            pages[pg] = pageMap[pg].size;
+          }
+          return new Response(JSON.stringify({
+            pages: pages,
+            window: '72h',
+            generatedAt: new Date().toISOString()
+          }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        } catch(e) {
+          return new Response(JSON.stringify({ error: e.message, pages: {} }), { status: 500, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
+        }
       }
 
       // op=stats
