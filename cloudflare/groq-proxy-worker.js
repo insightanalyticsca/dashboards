@@ -197,7 +197,7 @@ function corsHeaders(origin) {
 
 const memCache = new Map();
 const visitLog = [];
-let cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
+let cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, pages: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
 let kvLoaded = false;
 
 async function readKV(env, key) {
@@ -217,6 +217,7 @@ async function readCumulative(env) {
       if (parsed && typeof parsed.totalVisits === 'number') {
         cumulative = parsed;
         if (!cumulative.uuids) cumulative.uuids = {};
+        if (!cumulative.pages) cumulative.pages = {};
         if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } };
         if (!cumulative.sites.main.uuids) cumulative.sites.main.uuids = {};
         if (!cumulative.sites.dashboards.uuids) cumulative.sites.dashboards.uuids = {};
@@ -797,6 +798,13 @@ async function logVisit(request, env, ctx) {
   cumulative.ips[ip] = (cumulative.ips[ip] || 0) + 1;
   cumulative.devices[device] = (cumulative.devices[device] || 0) + 1;
   if (uid) cumulative.uuids[uid] = (cumulative.uuids[uid] || 0) + 1;
+  // Per-page unique IP tracking (all-time, for op=page-stats endpoint)
+  // Stores { page: { ip: visitCount } } — the number of keys = unique visitors for that page
+  if (visit.page && visit.page !== 'direct') {
+    if (!cumulative.pages) cumulative.pages = {};
+    if (!cumulative.pages[visit.page]) cumulative.pages[visit.page] = {};
+    cumulative.pages[visit.page][ip] = (cumulative.pages[visit.page][ip] || 0) + 1;
+  }
   if (!cumulative.sites) cumulative.sites = { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } };
   if (!cumulative.sites[site]) cumulative.sites[site] = { totalVisits: 0, ips: {}, devices: {}, uuids: {} };
   cumulative.sites[site].totalVisits++;
@@ -852,7 +860,7 @@ export default {
       if (op === 'reset') {
         const pwd = url.searchParams.get('password') || '';
         if (pwd !== ADMIN_PASSWORD) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 403, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
-        cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
+        cumulative = { totalVisits: 0, ips: {}, devices: {}, uuids: {}, pages: {}, sites: { main: { totalVisits: 0, ips: {}, devices: {}, uuids: {} }, dashboards: { totalVisits: 0, ips: {}, devices: {}, uuids: {} } } };
         visitLog.length = 0;
         kvLoaded = true;
         await writeCumulative(env);
@@ -860,45 +868,30 @@ export default {
         return new Response(JSON.stringify({ success: true, message: 'All visitor counters reset to 0', resetAt: new Date().toISOString() }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
       }
 
-      // op=page-stats — public endpoint returning per-page unique visitor counts
-      // for the last 72h. Respects all blacklists (excluded IPs, CIDRs, UIDs, bots).
-      // No password required — returns only aggregate counts per page path, no PII.
+      // op=page-stats — public endpoint returning per-page unique visitor counts.
+      // Reads from cumulative.pages (all-time, never purged) for historical data.
+      // Applies blacklist filtering: excludes IPs in EXCLUDED_IPS, EXCLUDED_CIDRS,
+      // and UIDs in EXCLUDED_UIDS. No password required — aggregate counts only.
       if (op === 'page-stats') {
         if (!kvLoaded) await readCumulative(env);
         try {
-          const bv = await readVisitLogKV(env);
-          const merged = [...bv, ...visitLog];
-          const seen = new Set();
-          const deduped = merged.filter(v => {
-            const k = v.ts + '|' + v.ip;
-            if (seen.has(k)) return false;
-            seen.add(k);
-            return true;
-          });
-          const cutoff = Date.now() - VISIT_RETENTION_MS;
-          let recent = deduped.filter(v => new Date(v.ts).getTime() > cutoff);
-          // Apply all blacklists
-          recent = recent.filter(v => !isIpExcluded(v.ip));
-          recent = EXCLUDED_UIDS.size > 0 ? recent.filter(v => !(v.uid && EXCLUDED_UIDS.has(v.uid))) : recent;
-          // Filter bots
-          recent = recent.filter(v => v.realLabel !== 'Bot' && v.realLabel !== 'Likely Bot');
-          // Group by page path, count unique IPs per page
-          var pageMap = {}; // page → Set of IPs
-          for (var v of recent) {
-            var p = v.page || '';
-            if (!p || p === '/') continue;
-            // Only count insight article pages (skip beacons, downloads, etc.)
-            if (!p.startsWith('/insights/') && !p.startsWith('/demos/') && !p.startsWith('/dashboards-preview/')) continue;
-            if (!pageMap[p]) pageMap[p] = new Set();
-            pageMap[p].add(v.ip);
-          }
+          var rawPages = cumulative.pages || {};
           var pages = {};
-          for (var pg in pageMap) {
-            pages[pg] = pageMap[pg].size;
+          for (var pg in rawPages) {
+            // Only count /insights/, /demos/, and /dashboards-preview/ pages
+            if (!pg.startsWith('/insights/') && !pg.startsWith('/demos/') && !pg.startsWith('/dashboards-preview/')) continue;
+            var ipMap = rawPages[pg];
+            if (!ipMap) continue;
+            // Count unique IPs, excluding blacklisted ones
+            var uniqueCount = 0;
+            for (var pip in ipMap) {
+              if (!isIpExcluded(pip)) uniqueCount++;
+            }
+            if (uniqueCount > 0) pages[pg] = uniqueCount;
           }
           return new Response(JSON.stringify({
             pages: pages,
-            window: '72h',
+            window: 'all-time',
             generatedAt: new Date().toISOString()
           }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) } });
         } catch(e) {
