@@ -78,6 +78,68 @@ const EXCLUDED_IPS = new Set([
   '44.214.252.38'
 ]);
 
+// ─── Excluded IPv6 /64 prefixes (added 2026-11-26) ──────────────────────
+// IPv6 addresses from the same /64 share the first 4 groups (64 bits).
+// Blocking the full /64 catches all IPs in the same hosting allocation,
+// even when the bot rotates through different addresses in the range.
+// Each entry is the first 4 groups of the IPv6 address, lowercase.
+const EXCLUDED_IPV6_PREFIXES = [
+  // Hetzner Online GmbH — high-confidence automated bot scanner.
+  // Prefix: 2a01:4f8:271:5c2e::/64
+  '2a01:04f8:0271:5c2e',
+  // FlokiNET — high-confidence automated bot scanner.
+  // Prefix: 2a06:1700:0002:05f5::/64
+  '2a06:1700:0002:05f5'
+];
+
+// Normalize an IPv6 address to full 8-group form (each group 4 hex digits,
+// lowercase, zero-padded). Returns null if the input is not valid IPv6.
+// e.g. "2a01:4f8:271:5c2e::1" → "2a01:04f8:0271:5c2e:0000:0000:0000:0001"
+function normalizeIPv6(ip) {
+  if (!ip || ip.indexOf(':') === -1) return null;
+  // Handle IPv4-mapped IPv6 (::ffff:1.2.3.4) — not relevant for prefix match
+  if (ip.indexOf('.') !== -1) return null;
+  try {
+    // Expand :: to the right number of :0000: groups
+    var parts = ip.split(':');
+    var hasDoubleColon = ip.indexOf('::') !== -1;
+    if (hasDoubleColon) {
+      // Find where :: is and expand
+      var expanded = [];
+      var seenEmpty = false;
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i] === '' && !seenEmpty) {
+          // Insert zeros for the :: expansion
+          var zerosNeeded = 8 - parts.length + 1;
+          for (var j = 0; j < zerosNeeded; j++) expanded.push('0000');
+          seenEmpty = true;
+        } else if (parts[i] !== '') {
+          expanded.push(parts[i]);
+        }
+      }
+      // Handle trailing :: (e.g. "2a01::")
+      while (expanded.length < 8) expanded.push('0000');
+      parts = expanded.slice(0, 8);
+    }
+    // Pad each group to 4 digits, lowercase
+    parts = parts.map(function(p) { return p.toLowerCase().padStart(4, '0'); });
+    if (parts.length !== 8) return null;
+    return parts.join(':');
+  } catch(e) { return null; }
+}
+
+// Check if an IPv6 address is in any excluded /64 prefix
+function isIPv6Excluded(ip) {
+  var normalized = normalizeIPv6(ip);
+  if (!normalized) return false;
+  // Extract the first 4 groups (the /64 prefix)
+  var prefix = normalized.split(':').slice(0, 4).join(':');
+  for (var i = 0; i < EXCLUDED_IPV6_PREFIXES.length; i++) {
+    if (prefix === EXCLUDED_IPV6_PREFIXES[i]) return true;
+  }
+  return false;
+}
+
 // ─── Excluded CIDR ranges (added 2026-11-12) ────────────────────────────
 // Sometimes a single bad actor rotates through a whole subnet (e.g. a
 // security scanner using Palo Alto Networks' corporate IP pool). Blocking
@@ -160,6 +222,7 @@ function isIpExcluded(ip) {
   if (!ip) return false;
   if (EXCLUDED_IPS.has(ip)) return true;
   if (isIpInExcludedCidr(ip)) return true;
+  if (isIPv6Excluded(ip)) return true;
   return false;
 }
 
