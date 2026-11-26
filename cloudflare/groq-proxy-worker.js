@@ -368,6 +368,44 @@ async function readCumulative(env) {
           }
         }
 
+        // ─── One-time IPv6 /64 prefix reconciliation (added 2026-11-26) ──
+        // Walk the ENTIRE cumulative.ips map and subtract prior counts for
+        // any IPv6 address that falls in an EXCLUDED_IPV6_PREFIXES range.
+        // Same idempotent pattern as the CIDR sweep above.
+        if (cumulative.ips && EXCLUDED_IPV6_PREFIXES.length > 0) {
+          var ipv6Corrected = false;
+          var allIps6 = Object.keys(cumulative.ips);
+          for (var i6 = 0; i6 < allIps6.length; i6++) {
+            var ipKey6 = allIps6[i6];
+            if (isIPv6Excluded(ipKey6)) {
+              var staleIpv6 = cumulative.ips[ipKey6];
+              cumulative.totalVisits = Math.max(0, (cumulative.totalVisits || 0) - staleIpv6);
+              delete cumulative.ips[ipKey6];
+              ipv6Corrected = true;
+            }
+          }
+          // Also sweep per-site buckets
+          if (cumulative.sites) {
+            for (var siteKey6 of ['main', 'dashboards']) {
+              var sb6 = cumulative.sites[siteKey6];
+              if (!sb6 || !sb6.ips) continue;
+              var siteIps6 = Object.keys(sb6.ips);
+              for (var j6 = 0; j6 < siteIps6.length; j6++) {
+                var siteIpKey6 = siteIps6[j6];
+                if (isIPv6Excluded(siteIpKey6)) {
+                  var staleSiteIpv6 = sb6.ips[siteIpKey6];
+                  sb6.totalVisits = Math.max(0, (sb6.totalVisits || 0) - staleSiteIpv6);
+                  delete sb6.ips[siteIpKey6];
+                  ipv6Corrected = true;
+                }
+              }
+            }
+          }
+          if (ipv6Corrected) {
+            await writeKV(env, 'cumulative-v2', JSON.stringify(cumulative));
+          }
+        }
+
         // ─── One-time UID reconciliation (added 2026-11-10) ────────────
         // Same idea as the IP reconciliation above, but for visitors whose
         // IP rotates (e.g. phones on Cloudflare WARP). We can't subtract
